@@ -1,0 +1,46 @@
+name: Task
+description: 개발 작업, 설정, 리팩터링 등 실행 단위 작업을 등록합니다.
+title: "[Task] "
+labels: ["task"]
+body:
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: 이 작업의 목표를 작성해주세요.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - Chore
+        - Docs
+        - Refactor
+        - Test
+        - UI
+        - Feature
+        - Bugfix
+        - CI/CD
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      description: 완료 기준을 checklist로 작성해주세요.
+      placeholder: |
+        - [ ] 디렉토리 구조 생성
+        - [ ] 빈 Dart 파일 생성
+        - [ ] PR 템플릿 확인
+    validations:
+      required: true
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: 참고할 맥락이나 제약이 있다면 작성해주세요.
