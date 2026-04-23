@@ -1,8 +1,8 @@
-type: chore:
+"type: chore":
   - head-branch:
       - "^chore/"
 
-type: docs:
+"type: docs":
   - head-branch:
       - "^docs/"
   - changed-files:
@@ -10,46 +10,46 @@ type: docs:
           - "**/*.md"
           - "docs/**"
 
-type: feature:
+"type: feature":
   - head-branch:
       - "^feature/"
       - "^feat/"
 
-type: fix:
+"type: fix":
   - head-branch:
       - "^fix/"
       - "^bugfix/"
       - "^hotfix/"
 
-area: github:
+"area: github":
   - changed-files:
       - any-glob-to-any-file:
           - ".github/**"
 
-area: architecture:
+"area: architecture":
   - changed-files:
       - any-glob-to-any-file:
           - "lib/app/**"
           - "lib/core/**"
           - "lib/shared/**"
 
-area: feature:
+"area: feature":
   - changed-files:
       - any-glob-to-any-file:
           - "lib/features/**"
           - "test/features/**"
 
-platform: android:
+"platform: android":
   - changed-files:
       - any-glob-to-any-file:
           - "android/**"
 
-platform: ios:
+"platform: ios":
   - changed-files:
       - any-glob-to-any-file:
           - "ios/**"
 
-platform: web:
+"platform: web":
   - changed-files:
       - any-glob-to-any-file:
           - "web/**"
