@@ -59,53 +59,77 @@ class _TrustMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    final shieldSize = isCompact ? 86.0 : 110.0;
+
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          width: isCompact ? 72 : 96,
-          height: isCompact ? 72 : 96,
-          clipBehavior: Clip.antiAlias,
-          decoration: const BoxDecoration(
-            color: Color(0xFFEFF4FF),
-            shape: BoxShape.circle,
-          ),
-          child: Image.asset(
-            'assets/images/home/brand/RTI.png',
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => Icon(
-              Icons.shield_outlined,
-              color: AppColors.primary,
-              size: isCompact ? 40 : 54,
-            ),
-          ),
+        Text(
+          'Re:view가 더 믿을 수 있는 이유',
+          style: Theme.of(context).textTheme.titleMedium,
         ),
-        SizedBox(width: isCompact ? AppSpacing.md : AppSpacing.lg),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Re:view가 더 믿을 수 있는 이유',
-                style: Theme.of(context).textTheme.titleMedium,
+        const SizedBox(height: AppSpacing.lg),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'RTI 리뷰 신뢰도 지수',
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
+                    '광고·조작 리뷰를 필터링하고 실사용 리뷰를 분석해 신뢰도를 제공합니다.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  TextButton(
+                    onPressed: () {},
+                    style: TextButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text('자세히 보기'),
+                        SizedBox(width: AppSpacing.xxs),
+                        Icon(Icons.chevron_right, size: 16),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              Text(
-                'RTI 리뷰 신뢰도 지수',
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Container(
+              width: shieldSize,
+              height: shieldSize,
+              clipBehavior: Clip.antiAlias,
+              decoration: const BoxDecoration(
+                color: Color(0xFFEFF4FF),
+                shape: BoxShape.circle,
+              ),
+              child: Image.asset(
+                'assets/images/home/brand/RTI.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) => Icon(
+                  Icons.shield_outlined,
+                  color: AppColors.primary,
+                  size: isCompact ? 44 : 58,
                 ),
               ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                '광고·조작 리뷰를 필터링하고 실사용 리뷰를 분석해 신뢰도를 제공합니다.',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
