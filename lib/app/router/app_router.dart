@@ -4,16 +4,16 @@ import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/signup_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_dashboard_page.dart';
-import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
+import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
-    initialLocation: RoutePaths.landing,
+    initialLocation: RoutePaths.home,
     routes: [
       GoRoute(
-        path: RoutePaths.landing,
-        name: RouteNames.landing,
-        builder: (context, state) => const LandingPage(),
+        path: RoutePaths.home,
+        name: RouteNames.home,
+        builder: (context, state) => const HomePage(),
       ),
       GoRoute(
         path: RoutePaths.login,
@@ -26,8 +26,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SignupPage(),
       ),
       GoRoute(
-        path: RoutePaths.home,
-        name: RouteNames.home,
+        path: RoutePaths.dashboard,
+        name: RouteNames.dashboard,
         builder: (context, state) => const HomeDashboardPage(),
       ),
     ],

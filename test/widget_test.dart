@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/app.dart';
 
 void main() {
-  testWidgets('shows landing page on initial route', (tester) async {
+  testWidgets('shows home page on initial route', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: ReViewApp()));
     await tester.pumpAndSettle();
 
@@ -12,7 +12,7 @@ void main() {
     expect(find.text('쿨썸머 인기템 모음'), findsOneWidget);
   });
 
-  testWidgets('navigates to login route from landing page', (tester) async {
+  testWidgets('navigates to login route from home page', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: ReViewApp()));
     await tester.pumpAndSettle();
 

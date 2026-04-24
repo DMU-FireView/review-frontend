@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/landing/presentation/data/home_landing_content.dart';
-import 'package:re_view_front/features/landing/presentation/widgets/product_card.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/product_card.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class ProductRecommendationSection extends StatelessWidget {
   const ProductRecommendationSection({required this.products, super.key});
 
-  final List<LandingProductData> products;
+  final List<HomeProductData> products;
 
   @override
   Widget build(BuildContext context) {
     return _SectionShell(
       title: '에디터가 고른 리뷰 추천',
       icon: Icons.verified_outlined,
-      trailing: TextButton(onPressed: () {}, child: const Text('더보기')),
       child: products.isEmpty
           ? const _ProductEmptyState()
           : GridView.builder(
@@ -97,13 +96,11 @@ class _SectionShell extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.child,
-    this.trailing,
   });
 
   final String title;
   final IconData icon;
   final Widget child;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +117,6 @@ class _SectionShell extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            ?trailing,
           ],
         ),
         const SizedBox(height: AppSpacing.md),
