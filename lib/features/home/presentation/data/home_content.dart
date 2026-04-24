@@ -62,17 +62,50 @@ const banners = [
 ];
 
 const quickCategories = [
-  QuickCategoryData(label: '오늘출발', icon: Icons.local_shipping_outlined),
-  QuickCategoryData(label: '브랜드데이', icon: Icons.workspace_premium_outlined),
-  QuickCategoryData(label: '타임딜', icon: Icons.percent_outlined),
-  QuickCategoryData(label: '리뷰랭킹', icon: Icons.emoji_events_outlined),
-  QuickCategoryData(label: '선물하기', icon: Icons.card_giftcard_outlined),
-  QuickCategoryData(label: '뷰티', icon: Icons.spa_outlined),
-  QuickCategoryData(label: '가전', icon: Icons.devices_other_outlined),
-  QuickCategoryData(label: '인테리어', icon: Icons.chair_outlined),
-  QuickCategoryData(label: '푸드', icon: Icons.apple_outlined),
-  QuickCategoryData(label: '스포츠', icon: Icons.sports_tennis_outlined),
-  QuickCategoryData(label: '전체보기', icon: Icons.grid_view_outlined),
+  QuickCategoryData(
+    label: '오늘출발',
+    iconAssetPath: 'assets/images/home/icons/icon-quick-delivery.png',
+  ),
+  QuickCategoryData(
+    label: '브랜드데이',
+    iconAssetPath: 'assets/images/home/icons/icon-brand-day.png',
+  ),
+  QuickCategoryData(
+    label: '타임딜',
+    iconAssetPath: 'assets/images/home/icons/icon-time-deal.png',
+  ),
+  QuickCategoryData(
+    label: '리뷰랭킹',
+    iconAssetPath: 'assets/images/home/icons/icon-review-ranking.png',
+  ),
+  QuickCategoryData(
+    label: '선물하기',
+    iconAssetPath: 'assets/images/home/icons/icon-gift.png',
+  ),
+  QuickCategoryData(
+    label: '뷰티',
+    iconAssetPath: 'assets/images/home/icons/icon-beauty.png',
+  ),
+  QuickCategoryData(
+    label: '가전',
+    iconAssetPath: 'assets/images/home/icons/icon-appliance.png',
+  ),
+  QuickCategoryData(
+    label: '인테리어',
+    iconAssetPath: 'assets/images/home/icons/icon-interior.png',
+  ),
+  QuickCategoryData(
+    label: '푸드',
+    iconAssetPath: 'assets/images/home/icons/icon-food.png',
+  ),
+  QuickCategoryData(
+    label: '스포츠',
+    iconAssetPath: 'assets/images/home/icons/icon-sports.png',
+  ),
+  QuickCategoryData(
+    label: '전체보기',
+    iconAssetPath: 'assets/images/home/icons/icon-all-categories.png',
+  ),
 ];
 
 const recommendedProducts = <HomeProductData>[];
@@ -119,10 +152,10 @@ class HomeBannerData {
 }
 
 class QuickCategoryData {
-  const QuickCategoryData({required this.label, required this.icon});
+  const QuickCategoryData({required this.label, required this.iconAssetPath});
 
   final String label;
-  final IconData icon;
+  final String iconAssetPath;
 }
 
 class HomeProductData {
