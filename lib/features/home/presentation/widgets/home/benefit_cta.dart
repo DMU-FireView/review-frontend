@@ -26,32 +26,52 @@ class BenefitCTA extends StatelessWidget {
         padding: EdgeInsets.all(
           context.isMobile ? AppSpacing.lg : AppSpacing.xl,
         ),
-        child: context.isMobile
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: _children(context),
-              )
-            : Row(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final useInlineGift = constraints.maxWidth >= 520;
+
+            final content = Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _children(context, constraints.maxWidth),
+            );
+
+            if (context.isMobile || !useInlineGift) {
+              return Stack(
                 children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: _children(context),
+                  content,
+                  const Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Icon(
+                      Icons.card_giftcard,
+                      color: Color(0x332563EB),
+                      size: 72,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xl),
-                  const Icon(
-                    Icons.card_giftcard,
-                    color: AppColors.primary,
-                    size: 96,
-                  ),
                 ],
-              ),
+              );
+            }
+
+            return Row(
+              children: [
+                Expanded(child: content),
+                const SizedBox(width: AppSpacing.xl),
+                const Icon(
+                  Icons.card_giftcard,
+                  color: AppColors.primary,
+                  size: 96,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
 
-  List<Widget> _children(BuildContext context) {
+  List<Widget> _children(BuildContext context, double maxWidth) {
+    final itemWidth = maxWidth < 520 ? 96.0 : 124.0;
+
     return [
       Text('첫 구매 고객을 위한 혜택', style: Theme.of(context).textTheme.titleMedium),
       const SizedBox(height: AppSpacing.xs),
@@ -68,7 +88,7 @@ class BenefitCTA extends StatelessWidget {
         children: [
           for (final item in items)
             Container(
-              width: 124,
+              width: itemWidth,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.sm,
                 vertical: AppSpacing.sm,
