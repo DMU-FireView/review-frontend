@@ -115,9 +115,18 @@ class _TrustFeatures extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const items = [
-      _FeatureItem(icon: Icons.receipt_long_outlined, label: '실사용 리뷰 분석'),
-      _FeatureItem(icon: Icons.gpp_maybe_outlined, label: '광고/조작 필터링'),
-      _FeatureItem(icon: Icons.verified_outlined, label: '신뢰도 점수 제공'),
+      _FeatureItem(
+        iconAssetPath: 'assets/images/home/icons/icon-review-analysis.png',
+        label: '실사용 리뷰 분석',
+      ),
+      _FeatureItem(
+        iconAssetPath: 'assets/images/home/icons/icon-fraud-filter.png',
+        label: '광고/조작 필터링',
+      ),
+      _FeatureItem(
+        iconAssetPath: 'assets/images/home/icons/icon-trust-score.png',
+        label: '신뢰도 점수 제공',
+      ),
     ];
 
     return Row(
@@ -133,9 +142,9 @@ class _TrustFeatures extends StatelessWidget {
 }
 
 class _FeatureItem extends StatelessWidget {
-  const _FeatureItem({required this.icon, required this.label});
+  const _FeatureItem({required this.iconAssetPath, required this.label});
 
-  final IconData icon;
+  final String iconAssetPath;
   final String label;
 
   @override
@@ -143,7 +152,19 @@ class _FeatureItem extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: AppColors.primary, size: 30),
+        SizedBox(
+          width: 34,
+          height: 34,
+          child: Image.asset(
+            iconAssetPath,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.image_not_supported_outlined,
+              color: AppColors.primary,
+              size: 24,
+            ),
+          ),
+        ),
         const SizedBox(height: AppSpacing.sm),
         Text(
           label,
