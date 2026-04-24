@@ -1,13 +1,13 @@
 abstract final class RoutePaths {
-  static const landing = '/';
+  static const home = '/';
   static const login = '/login';
   static const signup = '/signup';
-  static const home = '/home';
+  static const dashboard = '/dashboard';
 }
 
 abstract final class RouteNames {
-  static const landing = 'landing';
+  static const home = 'home';
   static const login = 'login';
   static const signup = 'signup';
-  static const home = 'home';
+  static const dashboard = 'dashboard';
 }
