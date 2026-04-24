@@ -8,7 +8,7 @@ class HomeLogo extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       'Re:view',
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
         color: AppColors.textPrimary,
         fontWeight: FontWeight.w900,
       ),
