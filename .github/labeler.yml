@@ -1,0 +1,88 @@
+chore:
+  - head-branch:
+      - "^chore/"
+
+docs:
+  - head-branch:
+      - "^docs/"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**"
+
+feature:
+  - head-branch:
+      - "^feature/"
+      - "^feat/"
+
+bug:
+  - head-branch:
+      - "^fix/"
+      - "^bugfix/"
+      - "^hotfix/"
+
+test:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "test/**"
+          - "integration_test/**"
+
+ci:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/workflows/**"
+
+github-template:
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/ISSUE_TEMPLATE/**"
+          - ".github/pull_request_template.md"
+
+app:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/app/**"
+
+core:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/core/**"
+
+shared:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/shared/**"
+
+landing:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/features/landing/**"
+          - "test/features/landing/**"
+
+auth:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/features/auth/**"
+          - "test/features/auth/**"
+
+home:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/features/home/**"
+          - "test/features/home/**"
+
+android:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "android/**"
+
+ios:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "ios/**"
+
+web:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "web/**"
+          - "vercel.json"
