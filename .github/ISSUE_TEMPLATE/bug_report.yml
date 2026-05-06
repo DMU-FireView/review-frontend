@@ -1,0 +1,66 @@
+name: Bug Report
+description: 버그 또는 예상과 다른 동작을 제보합니다.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: 어떤 문제가 발생했는지 간단히 설명해주세요.
+      placeholder: 예) 모바일 웹에서 홈 대시보드 카드가 화면 밖으로 넘어갑니다.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: 재현 순서를 작성해주세요.
+      placeholder: |
+        1. /home 접속
+        2. 모바일 viewport로 변경
+        3. 위험 급증 상품 섹션 확인
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: 기대한 동작을 작성해주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: 실제 동작을 작성해주세요.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      multiple: true
+      options:
+        - Web Desktop
+        - Web Mobile
+        - Android
+        - iOS
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Screenshots / Logs
+      description: 가능하면 스크린샷, 콘솔 로그, 에러 메시지를 첨부해주세요.
+
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: 추가로 공유할 내용이 있다면 작성해주세요.
