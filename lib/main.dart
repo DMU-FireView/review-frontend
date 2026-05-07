@@ -1,21 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/app/app.dart';
 
 void main() {
-  runApp(const ReViewApp());
-}
-
-class ReViewApp extends StatelessWidget {
-  const ReViewApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Re:view',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-      ),
-      home: const Scaffold(),
-    );
-  }
+  runApp(const ProviderScope(child: ReViewApp()));
 }
