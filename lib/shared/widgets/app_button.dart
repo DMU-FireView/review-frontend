@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:re_view_front/app/theme/app_spacing.dart';
 
 enum AppButtonVariant { filled, outlined, text }
 
@@ -9,6 +10,7 @@ class AppButton extends StatelessWidget {
     this.variant = AppButtonVariant.filled,
     this.icon,
     this.isExpanded = false,
+    this.isLoading = false,
     super.key,
   });
 
@@ -17,27 +19,57 @@ class AppButton extends StatelessWidget {
   final AppButtonVariant variant;
   final Widget? icon;
   final bool isExpanded;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
-    final child = icon == null
+    final effectiveOnPressed = isLoading ? null : onPressed;
+    final progressIndicator = SizedBox.square(
+      dimension: 18,
+      child: CircularProgressIndicator(
+        strokeWidth: 2,
+        color: switch (variant) {
+          AppButtonVariant.filled => Theme.of(context).colorScheme.onPrimary,
+          AppButtonVariant.outlined ||
+          AppButtonVariant.text => Theme.of(context).colorScheme.primary,
+        },
+      ),
+    );
+    final child = isLoading
+        ? Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              progressIndicator,
+              const SizedBox(width: AppSpacing.xs),
+              Text(label),
+            ],
+          )
+        : icon == null
         ? Text(label)
         : Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [icon!, const SizedBox(width: 8), Text(label)],
+            children: [
+              icon!,
+              const SizedBox(width: AppSpacing.xs),
+              Text(label),
+            ],
           );
 
     final button = switch (variant) {
       AppButtonVariant.filled => FilledButton(
-        onPressed: onPressed,
+        onPressed: effectiveOnPressed,
         child: child,
       ),
       AppButtonVariant.outlined => OutlinedButton(
-        onPressed: onPressed,
+        onPressed: effectiveOnPressed,
         child: child,
       ),
-      AppButtonVariant.text => TextButton(onPressed: onPressed, child: child),
+      AppButtonVariant.text => TextButton(
+        onPressed: effectiveOnPressed,
+        child: child,
+      ),
     };
 
     if (!isExpanded) {
