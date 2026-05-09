@@ -55,7 +55,7 @@ class _DesktopHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            const _BrandLogo(showMark: true),
+            const _BrandLogo(showMark: false),
             const SizedBox(width: AppSpacing.xxl),
             const Expanded(child: landing.SearchBar()),
             const SizedBox(width: AppSpacing.xl),
