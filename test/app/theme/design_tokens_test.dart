@@ -9,7 +9,7 @@ void main() {
   test('defines core color tokens for the app theme', () {
     expect(AppColors.primary, const Color(0xFF2563EB));
     expect(AppColors.background, const Color(0xFFF8FAFC));
-    expect(AppColors.error, const Color(0xFFDC2626));
+    expect(AppColors.error, const Color(0xFFC62828));
   });
 
   test('defines common spacing and radius scale', () {
