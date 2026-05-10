@@ -2,6 +2,7 @@ class AppConfig {
   const AppConfig({
     required this.apiBaseUrl,
     required this.homeDashboardPath,
+    required this.signupPath,
     required this.naverOAuthPath,
     required this.googleOAuthPath,
     required this.connectTimeout,
@@ -15,6 +16,7 @@ class AppConfig {
         'HOME_DASHBOARD_PATH',
         defaultValue: '/api/home/dashboard',
       ),
+      signupPath: String.fromEnvironment('SIGNUP_PATH'),
       naverOAuthPath: String.fromEnvironment(
         'NAVER_OAUTH_PATH',
         defaultValue: '/oauth2/authorization/naver',
@@ -30,6 +32,7 @@ class AppConfig {
 
   final String apiBaseUrl;
   final String homeDashboardPath;
+  final String signupPath;
   final String naverOAuthPath;
   final String googleOAuthPath;
   final Duration connectTimeout;
