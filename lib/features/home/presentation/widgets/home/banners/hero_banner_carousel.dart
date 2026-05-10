@@ -38,7 +38,11 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     final width = context.viewportSize.width;
-    final nextFraction = context.isMobile ? 0.88 : (width < 1200 ? 0.74 : 0.56);
+    final nextFraction = context.isMobile
+        ? 0.88
+        : (width < 900
+              ? 0.82
+              : (width < 1200 ? 0.68 : (width < 1600 ? 0.50 : 0.42)));
     if (nextFraction == _viewportFraction) {
       return;
     }
@@ -58,7 +62,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     }
 
     return SizedBox(
-      height: context.isMobile ? 340 : (context.isTablet ? 320 : 300),
+      height: context.isMobile ? 340 : (context.isTablet ? 320 : 330),
       child: Stack(
         alignment: Alignment.center,
         children: [
