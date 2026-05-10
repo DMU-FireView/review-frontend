@@ -37,12 +37,16 @@ class ProductCard extends StatelessWidget {
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: AppColors.surfaceMuted),
-                      ),
+                      child: product.imageUrl.isEmpty
+                          ? const ColoredBox(color: AppColors.surfaceMuted)
+                          : Image.network(
+                              product.imageUrl,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const ColoredBox(
+                                    color: AppColors.surfaceMuted,
+                                  ),
+                            ),
                     ),
                     Positioned(
                       top: AppSpacing.sm,
@@ -118,14 +122,15 @@ class ProductCard extends StatelessWidget {
                             style: Theme.of(context).textTheme.labelMedium,
                           ),
                         ),
-                        Text(
-                          product.rtiLabel,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.w900,
-                              ),
-                        ),
+                        if (product.rtiLabel.isNotEmpty)
+                          Text(
+                            product.rtiLabel,
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                          ),
                       ],
                     ),
                   ],
@@ -146,6 +151,10 @@ class _Label extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (label.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.primary,
