@@ -1,35 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:re_view_front/core/platform/external_redirect.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_footer.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/signup_card.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/signup_value_panel.dart';
+import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
+import 'package:re_view_front/features/auth/presentation/view_models/signup_state.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
-class SignupPage extends StatefulWidget {
+class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  ConsumerState<SignupPage> createState() => _SignupPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
+class _SignupPageState extends ConsumerState<SignupPage> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
   bool _obscurePassword = true;
   bool _obscurePasswordConfirm = true;
-  bool _agreedToTerms = true;
-  bool _agreedToMarketing = false;
 
   @override
   void dispose() {
+    _nameController.removeListener(_handleNameChanged);
+    _emailController.removeListener(_handleEmailChanged);
+    _passwordController.removeListener(_handlePasswordChanged);
+    _passwordConfirmController.removeListener(_handlePasswordConfirmChanged);
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -38,7 +45,24 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_handleNameChanged);
+    _emailController.addListener(_handleEmailChanged);
+    _passwordController.addListener(_handlePasswordChanged);
+    _passwordConfirmController.addListener(_handlePasswordConfirmChanged);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final signupState = ref.watch(signupViewModelProvider);
+
+    ref.listen<SignupState>(signupViewModelProvider, (previous, next) {
+      if (next.status == SignupSubmissionStatus.success) {
+        context.go(RoutePaths.login);
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
@@ -63,7 +87,10 @@ class _SignupPageState extends State<SignupPage> {
                         children: [
                           const _FadeUp(delay: 0, child: SignupValuePanel()),
                           const SizedBox(height: AppSpacing.xl),
-                          _FadeUp(delay: 90, child: _buildSignupCard()),
+                          _FadeUp(
+                            delay: 90,
+                            child: _buildSignupCard(signupState),
+                          ),
                         ],
                       )
                     : Row(
@@ -80,7 +107,7 @@ class _SignupPageState extends State<SignupPage> {
                               alignment: Alignment.centerRight,
                               child: _FadeUp(
                                 delay: 120,
-                                child: _buildSignupCard(),
+                                child: _buildSignupCard(signupState),
                               ),
                             ),
                           ),
@@ -95,7 +122,7 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
-  SignupCard _buildSignupCard() {
+  SignupCard _buildSignupCard(SignupState signupState) {
     return SignupCard(
       nameController: _nameController,
       emailController: _emailController,
@@ -103,17 +130,29 @@ class _SignupPageState extends State<SignupPage> {
       passwordConfirmController: _passwordConfirmController,
       obscurePassword: _obscurePassword,
       obscurePasswordConfirm: _obscurePasswordConfirm,
-      agreedToTerms: _agreedToTerms,
-      agreedToMarketing: _agreedToMarketing,
+      agreedToTerms: signupState.agreedToTerms,
+      agreedToMarketing: signupState.agreedToMarketing,
+      nameError: signupState.nameError,
+      emailError: signupState.emailError,
+      passwordError: signupState.passwordError,
+      passwordConfirmError: signupState.passwordConfirmError,
+      termsError: signupState.termsError,
+      failureMessage: signupState.failureMessage,
+      isLoading: signupState.isLoading,
       onPasswordVisibilityPressed: () {
         setState(() => _obscurePassword = !_obscurePassword);
       },
       onPasswordConfirmVisibilityPressed: () {
         setState(() => _obscurePasswordConfirm = !_obscurePasswordConfirm);
       },
-      onTermsChanged: (value) => setState(() => _agreedToTerms = value),
-      onMarketingChanged: (value) => setState(() => _agreedToMarketing = value),
+      onTermsChanged: (value) {
+        ref.read(signupViewModelProvider.notifier).termsChanged(value);
+      },
+      onMarketingChanged: (value) {
+        ref.read(signupViewModelProvider.notifier).marketingChanged(value);
+      },
       onSignupPressed: _handleSignupPressed,
+      onOAuthPressed: signupState.isLoading ? null : _handleOAuthPressed,
       onLoginPressed: () => context.go(RoutePaths.login),
     );
   }
@@ -130,7 +169,44 @@ class _SignupPageState extends State<SignupPage> {
     return const EdgeInsets.fromLTRB(32, 56, 32, 48);
   }
 
-  void _handleSignupPressed() {}
+  void _handleNameChanged() {
+    ref
+        .read(signupViewModelProvider.notifier)
+        .nameChanged(_nameController.text);
+  }
+
+  void _handleEmailChanged() {
+    ref
+        .read(signupViewModelProvider.notifier)
+        .emailChanged(_emailController.text);
+  }
+
+  void _handlePasswordChanged() {
+    ref
+        .read(signupViewModelProvider.notifier)
+        .passwordChanged(_passwordController.text);
+  }
+
+  void _handlePasswordConfirmChanged() {
+    ref
+        .read(signupViewModelProvider.notifier)
+        .passwordConfirmChanged(_passwordConfirmController.text);
+  }
+
+  void _handleSignupPressed() {
+    ref.read(signupViewModelProvider.notifier).submit();
+  }
+
+  Future<void> _handleOAuthPressed(OAuthProvider provider) async {
+    final uri = await ref
+        .read(signupViewModelProvider.notifier)
+        .startOAuth(provider);
+    if (uri == null) {
+      return;
+    }
+
+    redirectToExternalUrl(uri);
+  }
 }
 
 class _FadeUp extends StatefulWidget {
