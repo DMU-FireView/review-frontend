@@ -1,14 +1,23 @@
+import 'package:dio/dio.dart';
 import 'package:re_view_front/core/config/app_config.dart';
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/core/network/network_exception.dart';
 import 'package:re_view_front/core/result/result.dart';
+import 'package:re_view_front/features/auth/data/datasources/auth_remote_data_source.dart';
+import 'package:re_view_front/features/auth/data/dtos/signup_request_dto.dart';
 import 'package:re_view_front/features/auth/domain/entities/auth_user.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  const AuthRepositoryImpl(this._config);
+  const AuthRepositoryImpl({
+    required AppConfig config,
+    required AuthRemoteDataSource remoteDataSource,
+  }) : _config = config,
+       _remoteDataSource = remoteDataSource;
 
   final AppConfig _config;
+  final AuthRemoteDataSource _remoteDataSource;
 
   @override
   Future<Result<AuthUser>> login({
@@ -16,6 +25,26 @@ class AuthRepositoryImpl implements AuthRepository {
     required String password,
   }) async {
     return const FailureResult(Failure(message: '로그인 API가 아직 연결되지 않았습니다.'));
+  }
+
+  @override
+  Future<Result<AuthUser>> signup({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final user = await _remoteDataSource.signup(
+        SignupRequestDto(name: name, email: email, password: password),
+      );
+      return Success(user.toEntity());
+    } on AuthEndpointNotConfiguredException {
+      return const FailureResult(Failure(message: '회원가입 API 경로가 설정되지 않았습니다.'));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(Failure(message: '회원가입을 완료하지 못했습니다.', cause: error));
+    }
   }
 
   @override
