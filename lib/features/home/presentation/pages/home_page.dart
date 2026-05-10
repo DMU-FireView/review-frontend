@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
+import 'package:re_view_front/features/home/domain/entities/trending_keyword.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
+import 'package:re_view_front/features/home/presentation/view_models/home_dashboard_state.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/benefit_cta.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/banners/hero_banner_carousel.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_footer.dart';
@@ -17,15 +22,17 @@ import 'package:re_view_front/features/home/presentation/widgets/home/review_tru
 import 'package:re_view_front/features/home/presentation/widgets/home/trending_keyword_chips.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
+import 'package:re_view_front/shared/widgets/error_view.dart';
+import 'package:re_view_front/shared/widgets/loading_view.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
   final _scrollController = ScrollController();
   final _searchFocusNode = FocusNode();
   final _heroKey = GlobalKey();
@@ -45,6 +52,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final useWideCommerceGrid = context.viewportSize.width >= 1120;
+    final dashboardState = ref.watch(homeDashboardViewModelProvider);
+    final dashboardProducts = _recommendedProductsFrom(dashboardState);
+    final dashboardKeywords = _trendingKeywordsFrom(dashboardState);
     final page = Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -90,14 +100,31 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
-                  _FadeUp(
-                    delay: 120,
-                    child: const TrendingKeywordChips(
-                      keywords: trendingKeywords,
+                  if (dashboardState is HomeDashboardLoading) ...[
+                    const SizedBox(
+                      height: 240,
+                      child: AppLoadingView(message: '홈 데이터를 불러오는 중입니다.'),
                     ),
-                  ),
-                  if (trendingKeywords.isNotEmpty)
                     const SizedBox(height: AppSpacing.xl),
+                  ] else if (dashboardState is HomeDashboardFailure) ...[
+                    SizedBox(
+                      height: 280,
+                      child: AppErrorView(
+                        message: dashboardState.failure.message,
+                        onRetry: () => ref
+                            .read(homeDashboardViewModelProvider.notifier)
+                            .refresh(),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                  ] else ...[
+                    _FadeUp(
+                      delay: 120,
+                      child: TrendingKeywordChips(keywords: dashboardKeywords),
+                    ),
+                    if (dashboardKeywords.isNotEmpty)
+                      const SizedBox(height: AppSpacing.xl),
+                  ],
                   if (useWideCommerceGrid)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,8 +134,8 @@ class _HomePageState extends State<HomePage> {
                           child: _FadeUp(
                             key: _recommendationKey,
                             delay: 180,
-                            child: const ProductRecommendationSection(
-                              products: recommendedProducts,
+                            child: ProductRecommendationSection(
+                              products: dashboardProducts,
                             ),
                           ),
                         ),
@@ -140,8 +167,8 @@ class _HomePageState extends State<HomePage> {
                     _FadeUp(
                       key: _recommendationKey,
                       delay: 180,
-                      child: const ProductRecommendationSection(
-                        products: recommendedProducts,
+                      child: ProductRecommendationSection(
+                        products: dashboardProducts,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -253,6 +280,55 @@ class _HomePageState extends State<HomePage> {
       curve: Curves.easeOutCubic,
       alignment: 0.04,
     );
+  }
+
+  List<HomeProductData> _recommendedProductsFrom(HomeDashboardState state) {
+    return switch (state) {
+      HomeDashboardSuccess(dashboard: final dashboard) =>
+        dashboard.recommendedProducts
+            .map(_toHomeProductData)
+            .toList(growable: false),
+      _ => const [],
+    };
+  }
+
+  List<String> _trendingKeywordsFrom(HomeDashboardState state) {
+    return switch (state) {
+      HomeDashboardSuccess(dashboard: final dashboard) =>
+        dashboard.trendingKeywords
+            .map(_toKeywordLabel)
+            .where((keyword) => keyword.isNotEmpty)
+            .toList(growable: false),
+      _ => const [],
+    };
+  }
+
+  HomeProductData _toHomeProductData(DashboardProduct product) {
+    return HomeProductData(
+      name: product.name,
+      storeName: product.storeName,
+      priceLabel: _formatPrice(product.price),
+      ratingLabel: product.rating?.toStringAsFixed(1) ?? '-',
+      reviewCountLabel: product.reviewCount?.toString() ?? '-',
+      rtiLabel: product.rtiScore == null ? '' : 'RTI ${product.rtiScore}',
+      imageUrl: product.imageUrl,
+      label: product.label ?? '',
+    );
+  }
+
+  String _toKeywordLabel(TrendingKeyword keyword) => keyword.keyword;
+
+  String _formatPrice(int price) {
+    final digits = price.toString();
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) {
+        buffer.write(',');
+      }
+      buffer.write(digits[i]);
+    }
+
+    return '$buffer원';
   }
 }
 
