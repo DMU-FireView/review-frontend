@@ -14,6 +14,7 @@ class HomeHeader extends StatelessWidget {
     required this.onWishPressed,
     required this.onCartPressed,
     required this.onNavItemPressed,
+    this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
     super.key,
@@ -25,6 +26,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
+  final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
 
@@ -49,6 +51,7 @@ class HomeHeader extends StatelessWidget {
           ),
           child: useCompactHeader
               ? _MobileHeader(
+                  onLogoPressed: onLogoPressed,
                   onLoginPressed: onLoginPressed,
                   onNotificationPressed: onLoginPressed,
                   onCartPressed: onCartPressed,
@@ -61,6 +64,7 @@ class HomeHeader extends StatelessWidget {
                   onWishPressed: onWishPressed,
                   onCartPressed: onCartPressed,
                   onNavItemPressed: onNavItemPressed,
+                  onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
                 ),
@@ -78,6 +82,7 @@ class _DesktopHeader extends StatelessWidget {
     required this.onWishPressed,
     required this.onCartPressed,
     required this.onNavItemPressed,
+    this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
   });
@@ -88,6 +93,7 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
+  final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
 
@@ -103,7 +109,7 @@ class _DesktopHeader extends StatelessWidget {
               width: 360,
               child: Row(
                 children: [
-                  const HomeLogo(),
+                  HomeLogo(onTap: onLogoPressed),
                   const SizedBox(width: AppSpacing.xxl),
                   _TopLink(label: '고객센터', onTap: onLoginPressed),
                   const SizedBox(width: AppSpacing.lg),
@@ -232,12 +238,14 @@ class _TopLink extends StatelessWidget {
 
 class _MobileHeader extends StatelessWidget {
   const _MobileHeader({
+    this.onLogoPressed,
     required this.onLoginPressed,
     required this.onNotificationPressed,
     required this.onCartPressed,
     this.searchFocusNode,
   });
 
+  final VoidCallback? onLogoPressed;
   final VoidCallback onLoginPressed;
   final VoidCallback onNotificationPressed;
   final VoidCallback onCartPressed;
@@ -249,7 +257,7 @@ class _MobileHeader extends StatelessWidget {
       children: [
         Row(
           children: [
-            const HomeLogo(),
+            HomeLogo(onTap: onLogoPressed),
             const Spacer(),
             if (!context.isMobile) ...[
               TextButton(onPressed: onLoginPressed, child: const Text('로그인')),
