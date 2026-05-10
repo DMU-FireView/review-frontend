@@ -43,11 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final hasRecommendedProducts = recommendedProducts.isNotEmpty;
-    final useWideCommerceGrid =
-        hasRecommendedProducts && context.viewportSize.width >= 1120;
-    final useWideInfoBand =
-        !hasRecommendedProducts && context.viewportSize.width >= 1120;
+    final useWideCommerceGrid = context.viewportSize.width >= 1120;
     final page = Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -66,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverToBoxAdapter(
             child: AppContentView(
-              maxWidth: 1920,
+              maxWidth: 1440,
               padding: _homeContentPadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -127,41 +123,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     )
-                  else if (useWideInfoBand) ...[
-                    _FadeUp(
-                      key: _recommendationKey,
-                      delay: 180,
-                      child: const ProductRecommendationSection(
-                        products: recommendedProducts,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          flex: 11,
-                          child: _FadeUp(
-                            delay: 240,
-                            child: ReviewTrustInfoCard(),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xl),
-                        Expanded(
-                          flex: 9,
-                          child: _FadeUp(
-                            key: _benefitKey,
-                            delay: 300,
-                            child: BenefitCTA(
-                              items: benefitItems,
-                              onBenefitPressed: () =>
-                                  context.go(RoutePaths.login),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ] else ...[
+                  else ...[
                     _FadeUp(
                       key: _recommendationKey,
                       delay: 180,
