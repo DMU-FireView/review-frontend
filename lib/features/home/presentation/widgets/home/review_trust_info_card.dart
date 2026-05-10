@@ -21,26 +21,32 @@ class ReviewTrustInfoCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Padding(
-        padding: EdgeInsets.all(
-          context.isMobile ? AppSpacing.lg : AppSpacing.xl,
-        ),
-        child: context.isMobile
-            ? const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _TrustMain(),
-                  SizedBox(height: AppSpacing.lg),
-                  _TrustFeatures(),
-                ],
-              )
-            : const Row(
-                children: [
-                  Expanded(flex: 5, child: _TrustMain()),
-                  SizedBox(width: AppSpacing.xl),
-                  Expanded(flex: 6, child: _TrustFeatures()),
-                ],
-              ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final useHorizontalLayout = constraints.maxWidth >= 760;
+
+          return Padding(
+            padding: EdgeInsets.all(
+              context.isMobile ? AppSpacing.lg : AppSpacing.xl,
+            ),
+            child: useHorizontalLayout
+                ? const Row(
+                    children: [
+                      Expanded(flex: 5, child: _TrustMain()),
+                      SizedBox(width: AppSpacing.xl),
+                      Expanded(flex: 6, child: _TrustFeatures()),
+                    ],
+                  )
+                : const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _TrustMain(),
+                      SizedBox(height: AppSpacing.lg),
+                      _TrustFeatures(),
+                    ],
+                  ),
+          );
+        },
       ),
     );
   }

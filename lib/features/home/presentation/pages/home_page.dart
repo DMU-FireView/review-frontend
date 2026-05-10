@@ -1,0 +1,367 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/app/theme/app_colors.dart';
+import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/benefit_cta.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/banners/hero_banner_carousel.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_footer.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/popular_category_section.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/product_recommendation_section.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/quick_category_row.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/review_trust_info_card.dart';
+import 'package:re_view_front/shared/extensions/context_extensions.dart';
+import 'package:re_view_front/shared/widgets/app_content_view.dart';
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final _scrollController = ScrollController();
+  final _searchFocusNode = FocusNode();
+  final _heroKey = GlobalKey();
+  final _categoryKey = GlobalKey();
+  final _recommendationKey = GlobalKey();
+  final _benefitKey = GlobalKey();
+  final _popularCategoryKey = GlobalKey();
+  String _selectedNavItem = '홈';
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final useWideCommerceGrid = context.viewportSize.width >= 1180;
+    final page = Scaffold(
+      backgroundColor: AppColors.background,
+      body: CustomScrollView(
+        controller: _scrollController,
+        slivers: [
+          SliverToBoxAdapter(
+            child: HomeHeader(
+              navItems: homeNavItems,
+              selectedNavItem: _selectedNavItem,
+              onLoginPressed: () => context.go(RoutePaths.login),
+              onWishPressed: () => context.go(RoutePaths.login),
+              onCartPressed: () => context.go(RoutePaths.login),
+              onNavItemPressed: _handleNavItemPressed,
+              searchFocusNode: _searchFocusNode,
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: AppContentView(
+              maxWidth: 1320,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _FadeUp(
+                    key: _heroKey,
+                    delay: 0,
+                    child: HeroBannerCarousel(
+                      items: banners,
+                      onBannerPressed: _handleBannerPressed,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  _FadeUp(
+                    key: _categoryKey,
+                    delay: 60,
+                    child: QuickCategoryRow(
+                      items: quickCategories,
+                      onCategoryPressed: _handleCategoryPressed,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  if (useWideCommerceGrid)
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 14,
+                          child: _FadeUp(
+                            key: _recommendationKey,
+                            delay: 180,
+                            child: const ProductRecommendationSection(
+                              products: recommendedProducts,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: AppSpacing.xl),
+                        Expanded(
+                          flex: 7,
+                          child: Column(
+                            children: [
+                              const _FadeUp(
+                                delay: 240,
+                                child: ReviewTrustInfoCard(),
+                              ),
+                              const SizedBox(height: AppSpacing.xl),
+                              _FadeUp(
+                                key: _benefitKey,
+                                delay: 300,
+                                child: BenefitCTA(
+                                  items: benefitItems,
+                                  onBenefitPressed: () =>
+                                      context.go(RoutePaths.login),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  else ...[
+                    _FadeUp(
+                      key: _recommendationKey,
+                      delay: 180,
+                      child: const ProductRecommendationSection(
+                        products: recommendedProducts,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    const _FadeUp(delay: 240, child: ReviewTrustInfoCard()),
+                    const SizedBox(height: AppSpacing.xl),
+                    _FadeUp(
+                      key: _benefitKey,
+                      delay: 300,
+                      child: BenefitCTA(
+                        items: benefitItems,
+                        onBenefitPressed: () => context.go(RoutePaths.login),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.xl),
+                  _FadeUp(
+                    key: _popularCategoryKey,
+                    delay: 360,
+                    child: PopularCategorySection(
+                      items: popularCategories,
+                      onCategoryPressed: _handleCategoryPressed,
+                    ),
+                  ),
+                  SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
+                ],
+              ),
+            ),
+          ),
+          const SliverToBoxAdapter(child: HomeFooter()),
+        ],
+      ),
+      bottomNavigationBar: context.isMobile
+          ? _HomeBottomTabs(
+              onHomePressed: () => _handleNavItemPressed('홈'),
+              onCategoryPressed: () => _scrollTo(_categoryKey),
+              onSearchPressed: () => _searchFocusNode.requestFocus(),
+              onWishPressed: () => _handleNavItemPressed('베스트'),
+              onMyPressed: () => context.go(RoutePaths.login),
+            )
+          : null,
+    );
+
+    return page;
+  }
+
+  void _handleNavItemPressed(String item) {
+    setState(() => _selectedNavItem = item);
+
+    switch (item) {
+      case '홈':
+        _scrollController.animateTo(
+          0,
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutCubic,
+        );
+      case '브랜드데이':
+      case '타임딜':
+      case '선물하기':
+        _scrollTo(_benefitKey);
+      case '베스트':
+      case '신상품':
+      case '리뷰 LIVE':
+      case '리뷰랭킹':
+      case '기획전':
+        _scrollTo(_recommendationKey);
+      case '반려동물':
+      case '여행/레저':
+        _scrollTo(_popularCategoryKey);
+      default:
+        _scrollTo(_categoryKey);
+    }
+  }
+
+  void _handleCategoryPressed(String label) {
+    if (label == '전체보기') {
+      _scrollTo(_popularCategoryKey);
+      return;
+    }
+
+    setState(() => _selectedNavItem = label);
+    _scrollTo(_recommendationKey);
+  }
+
+  void _handleBannerPressed(HomeBannerData banner) {
+    _scrollTo(_recommendationKey);
+  }
+
+  void _scrollTo(GlobalKey key) {
+    final targetContext = key.currentContext;
+    if (targetContext == null) {
+      return;
+    }
+
+    Scrollable.ensureVisible(
+      targetContext,
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutCubic,
+      alignment: 0.04,
+    );
+  }
+}
+
+class _FadeUp extends StatefulWidget {
+  const _FadeUp({required this.child, required this.delay, super.key});
+
+  final Widget child;
+  final int delay;
+
+  @override
+  State<_FadeUp> createState() => _FadeUpState();
+}
+
+class _FadeUpState extends State<_FadeUp> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _offset;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+    _opacity = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _offset = Tween<Offset>(
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    _timer = Timer(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
+    );
+  }
+}
+
+class _HomeBottomTabs extends StatelessWidget {
+  const _HomeBottomTabs({
+    required this.onHomePressed,
+    required this.onCategoryPressed,
+    required this.onSearchPressed,
+    required this.onWishPressed,
+    required this.onMyPressed,
+  });
+
+  final VoidCallback onHomePressed;
+  final VoidCallback onCategoryPressed;
+  final VoidCallback onSearchPressed;
+  final VoidCallback onWishPressed;
+  final VoidCallback onMyPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    const items = [
+      (Icons.home_filled, '홈'),
+      (Icons.grid_view_outlined, '카테고리'),
+      (Icons.search, '검색'),
+      (Icons.favorite_border, '찜'),
+      (Icons.person_outline, '마이'),
+    ];
+    final callbacks = [
+      onHomePressed,
+      onCategoryPressed,
+      onSearchPressed,
+      onWishPressed,
+      onMyPressed,
+    ];
+
+    return Container(
+      height: 72 + MediaQuery.paddingOf(context).bottom,
+      padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
+      decoration: const BoxDecoration(
+        color: AppColors.surface,
+        border: Border(top: BorderSide(color: AppColors.border)),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x140F172A),
+            blurRadius: 18,
+            offset: Offset(0, -6),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          for (var i = 0; i < items.length; i++)
+            Expanded(
+              child: InkWell(
+                onTap: callbacks[i],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      items[i].$1,
+                      color: items[i].$2 == '홈'
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                      size: 27,
+                    ),
+                    const SizedBox(height: AppSpacing.xxs),
+                    Text(
+                      items[i].$2,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: items[i].$2 == '홈'
+                            ? AppColors.textPrimary
+                            : AppColors.textSecondary,
+                        fontWeight: items[i].$2 == '홈'
+                            ? FontWeight.w900
+                            : FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,13 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/landing/presentation/data/home_landing_content.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class HeroBannerCarousel extends StatefulWidget {
-  const HeroBannerCarousel({required this.items, super.key});
+  const HeroBannerCarousel({
+    required this.items,
+    this.onBannerPressed,
+    super.key,
+  });
 
   final List<HomeBannerData> items;
+  final ValueChanged<HomeBannerData>? onBannerPressed;
 
   @override
   State<HeroBannerCarousel> createState() => _HeroBannerCarouselState();
@@ -15,6 +22,7 @@ class HeroBannerCarousel extends StatefulWidget {
 
 class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   late PageController _controller;
+  Timer? _autoTimer;
   double _viewportFraction = 0.58;
   int _activeIndex = 0;
   bool _isPaused = false;
@@ -23,6 +31,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   void initState() {
     super.initState();
     _controller = PageController(viewportFraction: _viewportFraction);
+    _startAutoTimer();
   }
 
   @override
@@ -70,12 +79,16 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
                   top: isActive ? 0 : AppSpacing.sm,
                   bottom: isActive ? 0 : AppSpacing.sm,
                 ),
-                child: _BannerCard(item: item, isActive: isActive),
+                child: _BannerCard(
+                  item: item,
+                  isActive: isActive,
+                  onPressed: () => widget.onBannerPressed?.call(item),
+                ),
               );
             },
           ),
           Positioned(
-            left: context.isMobile ? AppSpacing.xs : AppSpacing.lg,
+            left: context.isMobile ? AppSpacing.xs : -12,
             child: _CircleControl(
               icon: Icons.chevron_left,
               onTap: () => _moveBy(-1),
@@ -129,7 +142,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   }
 
   void _moveBy(int delta) {
-    final next = (_activeIndex + delta).clamp(0, widget.items.length - 1);
+    final next = (_activeIndex + delta) % widget.items.length;
     setState(() => _activeIndex = next);
     _controller.animateToPage(
       next,
@@ -140,19 +153,37 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
 
   @override
   void dispose() {
+    _autoTimer?.cancel();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _startAutoTimer() {
+    _autoTimer = Timer.periodic(const Duration(seconds: 5), (_) {
+      if (!mounted || _isPaused || widget.items.length < 2) {
+        return;
+      }
+
+      _moveBy(1);
+    });
   }
 }
 
 class _BannerCard extends StatelessWidget {
-  const _BannerCard({required this.item, required this.isActive});
+  const _BannerCard({
+    required this.item,
+    required this.isActive,
+    required this.onPressed,
+  });
 
   final HomeBannerData item;
   final bool isActive;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
+    final useCompactText = context.viewportSize.width < 1280;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: item.color,
@@ -190,13 +221,15 @@ class _BannerCard extends StatelessWidget {
                     Text(
                       item.emphasis,
                       style:
-                          (context.isMobile
+                          (context.isMobile || useCompactText
                                   ? Theme.of(context).textTheme.headlineSmall
                                   : Theme.of(context).textTheme.displayMedium)
                               ?.copyWith(
                                 color: item.accentColor,
                                 fontWeight: FontWeight.w900,
                               ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: AppSpacing.md),
                     Text(
@@ -207,7 +240,7 @@ class _BannerCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.lg),
                     OutlinedButton(
-                      onPressed: () {},
+                      onPressed: onPressed,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -270,7 +303,7 @@ class _BannerVisual extends StatelessWidget {
               ],
             ),
             child: Text(
-              '${item.badgeLabel}\n${item.trustLabel}',
+              '${item.badgeLabel}\n신뢰도 확인',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: AppColors.primary,

@@ -17,8 +17,8 @@ class HomeDashboardPage extends StatelessWidget {
         actions: [
           AppButton(
             variant: AppButtonVariant.text,
-            onPressed: () => context.go(RoutePaths.landing),
-            label: '처음으로',
+            onPressed: () => context.go(RoutePaths.home),
+            label: '홈으로',
           ),
         ],
       ),

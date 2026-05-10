@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/landing/presentation/data/home_landing_content.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({required this.product, super.key});
 
-  final LandingProductData product;
+  final HomeProductData product;
 
   @override
   Widget build(BuildContext context) {
