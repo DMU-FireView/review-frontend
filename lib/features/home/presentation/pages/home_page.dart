@@ -68,6 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               onWishPressed: () => context.go(RoutePaths.login),
               onCartPressed: () => context.go(RoutePaths.login),
               onNavItemPressed: _handleNavItemPressed,
+              onLogoPressed: () => context.go(RoutePaths.home),
               searchFocusNode: _searchFocusNode,
             ),
           ),

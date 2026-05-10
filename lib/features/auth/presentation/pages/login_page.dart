@@ -1,53 +1,114 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:re_view_front/app/responsive/breakpoints.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/auth/presentation/widgets/login_card.dart';
+import 'package:re_view_front/features/auth/presentation/widgets/login_footer.dart';
+import 'package:re_view_front/features/auth/presentation/widgets/login_value_panel.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
-import 'package:re_view_front/shared/widgets/app_button.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _rememberMe = true;
+  bool _obscurePassword = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('로그인')),
-      body: AppContentView(
-        maxWidth: AppBreakpoints.authMaxWidth,
-        padding: context.pagePadding.copyWith(
-          left: context.isMobile ? AppSpacing.md : AppSpacing.lg,
-          right: context.isMobile ? AppSpacing.md : AppSpacing.lg,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              'Re:view에 로그인',
-              style: Theme.of(context).textTheme.headlineSmall,
+      backgroundColor: AppColors.background,
+      body: Column(
+        children: [
+          HomeHeader(
+            navItems: homeNavItems,
+            selectedNavItem: '홈',
+            onLoginPressed: () {},
+            onWishPressed: () => context.go(RoutePaths.home),
+            onCartPressed: () => context.go(RoutePaths.home),
+            onNavItemPressed: (_) => context.go(RoutePaths.home),
+            onLogoPressed: () => context.go(RoutePaths.home),
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: AppContentView(
+                maxWidth: 1360,
+                padding: _pagePadding(context),
+                child: context.isMobile
+                    ? Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const LoginValuePanel(),
+                          const SizedBox(height: AppSpacing.xl),
+                          _buildLoginCard(context),
+                        ],
+                      )
+                    : Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(flex: 12, child: LoginValuePanel()),
+                          const SizedBox(width: 64),
+                          Expanded(
+                            flex: 8,
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: _buildLoginCard(context),
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              '인증 화면은 다음 feature 작업에서 연결됩니다.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            AppButton(
-              isExpanded: true,
-              label: '홈으로 이동',
-              onPressed: () => context.go(RoutePaths.home),
-            ),
-            AppButton(
-              isExpanded: true,
-              label: '회원가입하기',
-              variant: AppButtonVariant.text,
-              onPressed: () => context.go(RoutePaths.signup),
-            ),
-          ],
-        ),
+          ),
+          const LoginFooter(),
+        ],
       ),
     );
   }
+
+  LoginCard _buildLoginCard(BuildContext context) {
+    return LoginCard(
+      emailController: _emailController,
+      passwordController: _passwordController,
+      rememberMe: _rememberMe,
+      obscurePassword: _obscurePassword,
+      onRememberChanged: (value) => setState(() => _rememberMe = value),
+      onPasswordVisibilityPressed: () {
+        setState(() => _obscurePassword = !_obscurePassword);
+      },
+      onLoginPressed: _handleLoginPressed,
+      onSignupPressed: () => context.go(RoutePaths.signup),
+    );
+  }
+
+  EdgeInsets _pagePadding(BuildContext context) {
+    if (context.isMobile) {
+      return const EdgeInsets.fromLTRB(16, 28, 16, 48);
+    }
+
+    if (context.isTablet) {
+      return const EdgeInsets.fromLTRB(24, 48, 24, 64);
+    }
+
+    return const EdgeInsets.fromLTRB(32, 56, 32, 48);
+  }
+
+  void _handleLoginPressed() {}
 }
