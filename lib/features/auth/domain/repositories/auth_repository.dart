@@ -8,5 +8,11 @@ abstract interface class AuthRepository {
     required String password,
   });
 
+  Future<Result<AuthUser>> signup({
+    required String name,
+    required String email,
+    required String password,
+  });
+
   Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider);
 }

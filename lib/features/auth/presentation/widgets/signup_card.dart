@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class SignupCard extends StatelessWidget {
@@ -13,11 +14,19 @@ class SignupCard extends StatelessWidget {
     required this.obscurePasswordConfirm,
     required this.agreedToTerms,
     required this.agreedToMarketing,
+    required this.nameError,
+    required this.emailError,
+    required this.passwordError,
+    required this.passwordConfirmError,
+    required this.termsError,
+    required this.failureMessage,
+    required this.isLoading,
     required this.onPasswordVisibilityPressed,
     required this.onPasswordConfirmVisibilityPressed,
     required this.onTermsChanged,
     required this.onMarketingChanged,
     required this.onSignupPressed,
+    required this.onOAuthPressed,
     required this.onLoginPressed,
     super.key,
   });
@@ -30,11 +39,19 @@ class SignupCard extends StatelessWidget {
   final bool obscurePasswordConfirm;
   final bool agreedToTerms;
   final bool agreedToMarketing;
+  final String? nameError;
+  final String? emailError;
+  final String? passwordError;
+  final String? passwordConfirmError;
+  final String? termsError;
+  final String? failureMessage;
+  final bool isLoading;
   final VoidCallback onPasswordVisibilityPressed;
   final VoidCallback onPasswordConfirmVisibilityPressed;
   final ValueChanged<bool> onTermsChanged;
   final ValueChanged<bool> onMarketingChanged;
-  final VoidCallback onSignupPressed;
+  final VoidCallback? onSignupPressed;
+  final ValueChanged<OAuthProvider>? onOAuthPressed;
   final VoidCallback onLoginPressed;
 
   @override
@@ -89,6 +106,7 @@ class SignupCard extends StatelessWidget {
                 label: '이름',
                 hintText: '이름을 입력하세요',
                 prefixIcon: Icons.person_outline,
+                errorText: nameError,
               ),
               const SizedBox(height: AppSpacing.md),
               _SignupInputField(
@@ -98,6 +116,7 @@ class SignupCard extends StatelessWidget {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 prefixIcon: Icons.mail_outline,
+                errorText: emailError,
               ),
               const SizedBox(height: AppSpacing.md),
               _SignupInputField(
@@ -107,9 +126,10 @@ class SignupCard extends StatelessWidget {
                 obscureText: obscurePassword,
                 textInputAction: TextInputAction.next,
                 prefixIcon: Icons.lock_outline,
+                errorText: passwordError,
                 helperText: '영문, 숫자, 특수문자를 포함해 8자 이상으로 설정해주세요.',
                 trailing: TextButton(
-                  onPressed: onPasswordVisibilityPressed,
+                  onPressed: isLoading ? null : onPasswordVisibilityPressed,
                   child: Text(obscurePassword ? '보기' : '숨김'),
                 ),
               ),
@@ -121,8 +141,11 @@ class SignupCard extends StatelessWidget {
                 obscureText: obscurePasswordConfirm,
                 textInputAction: TextInputAction.done,
                 prefixIcon: Icons.check,
+                errorText: passwordConfirmError,
                 trailing: TextButton(
-                  onPressed: onPasswordConfirmVisibilityPressed,
+                  onPressed: isLoading
+                      ? null
+                      : onPasswordConfirmVisibilityPressed,
                   child: Text(obscurePasswordConfirm ? '보기' : '숨김'),
                 ),
               ),
@@ -130,14 +153,20 @@ class SignupCard extends StatelessWidget {
               _AgreementBox(
                 agreedToTerms: agreedToTerms,
                 agreedToMarketing: agreedToMarketing,
+                termsError: termsError,
+                isLoading: isLoading,
                 onTermsChanged: onTermsChanged,
                 onMarketingChanged: onMarketingChanged,
               ),
+              if (failureMessage != null) ...[
+                const SizedBox(height: AppSpacing.md),
+                _SignupFailureMessage(message: failureMessage!),
+              ],
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 height: 58,
                 child: FilledButton(
-                  onPressed: agreedToTerms ? onSignupPressed : null,
+                  onPressed: isLoading ? null : onSignupPressed,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primaryDark,
                     foregroundColor: AppColors.onPrimary,
@@ -145,7 +174,15 @@ class SignupCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text('회원가입하고 온보딩 시작'),
+                  child: isLoading
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.onPrimary,
+                          ),
+                        )
+                      : const Text('회원가입하고 온보딩 시작'),
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -156,13 +193,17 @@ class SignupCard extends StatelessWidget {
               _SocialSignupButton(
                 label: '네이버 계정으로 가입하기',
                 mark: 'N',
-                onPressed: () {},
+                onPressed: isLoading || onOAuthPressed == null
+                    ? null
+                    : () => onOAuthPressed!(OAuthProvider.naver),
               ),
               const SizedBox(height: AppSpacing.sm),
               _SocialSignupButton(
                 label: 'Google 계정으로 가입하기',
                 mark: 'G',
-                onPressed: () {},
+                onPressed: isLoading || onOAuthPressed == null
+                    ? null
+                    : () => onOAuthPressed!(OAuthProvider.google),
               ),
               const SizedBox(height: AppSpacing.xl),
               const Divider(height: 1),
@@ -199,6 +240,7 @@ class _SignupInputField extends StatelessWidget {
     this.keyboardType,
     this.textInputAction,
     this.obscureText = false,
+    this.errorText,
     this.helperText,
     this.trailing,
   });
@@ -210,6 +252,7 @@ class _SignupInputField extends StatelessWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final bool obscureText;
+  final String? errorText;
   final String? helperText;
   final Widget? trailing;
 
@@ -235,6 +278,7 @@ class _SignupInputField extends StatelessWidget {
             obscureText: obscureText,
             decoration: InputDecoration(
               hintText: hintText,
+              errorText: errorText,
               prefixIcon: Icon(prefixIcon),
               suffixIcon: trailing,
               filled: true,
@@ -280,12 +324,16 @@ class _AgreementBox extends StatelessWidget {
   const _AgreementBox({
     required this.agreedToTerms,
     required this.agreedToMarketing,
+    required this.termsError,
+    required this.isLoading,
     required this.onTermsChanged,
     required this.onMarketingChanged,
   });
 
   final bool agreedToTerms;
   final bool agreedToMarketing;
+  final String? termsError;
+  final bool isLoading;
   final ValueChanged<bool> onTermsChanged;
   final ValueChanged<bool> onMarketingChanged;
 
@@ -303,7 +351,9 @@ class _AgreementBox extends StatelessWidget {
           children: [
             CheckboxListTile(
               value: agreedToTerms,
-              onChanged: (value) => onTermsChanged(value ?? false),
+              onChanged: isLoading
+                  ? null
+                  : (value) => onTermsChanged(value ?? false),
               dense: true,
               controlAffinity: ListTileControlAffinity.leading,
               title: Text(
@@ -316,7 +366,9 @@ class _AgreementBox extends StatelessWidget {
             ),
             CheckboxListTile(
               value: agreedToMarketing,
-              onChanged: (value) => onMarketingChanged(value ?? false),
+              onChanged: isLoading
+                  ? null
+                  : (value) => onMarketingChanged(value ?? false),
               dense: true,
               controlAffinity: ListTileControlAffinity.leading,
               title: Text(
@@ -324,6 +376,62 @@ class _AgreementBox extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            if (termsError != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                ),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    termsError!,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.error,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SignupFailureMessage extends StatelessWidget {
+  const _SignupFailureMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.errorSoft,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFF7C6C6)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.error_outline, color: AppColors.error, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w700,
+                  height: 1.45,
                 ),
               ),
             ),
@@ -416,7 +524,7 @@ class _SocialSignupButton extends StatelessWidget {
 
   final String label;
   final String mark;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
