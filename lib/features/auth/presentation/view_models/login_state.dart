@@ -1,3 +1,5 @@
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
+
 enum LoginSubmissionStatus { idle, loading, success, failure }
 
 class LoginState {
@@ -9,6 +11,7 @@ class LoginState {
     this.passwordError,
     this.failureMessage,
     this.status = LoginSubmissionStatus.idle,
+    this.oauthLoadingProvider,
   });
 
   final String email;
@@ -18,9 +21,13 @@ class LoginState {
   final String? passwordError;
   final String? failureMessage;
   final LoginSubmissionStatus status;
+  final OAuthProvider? oauthLoadingProvider;
 
-  bool get isLoading => status == LoginSubmissionStatus.loading;
+  bool get isLoading =>
+      status == LoginSubmissionStatus.loading || oauthLoadingProvider != null;
   bool get isSuccess => status == LoginSubmissionStatus.success;
+  bool isOAuthLoading(OAuthProvider provider) =>
+      oauthLoadingProvider == provider;
 
   LoginState copyWith({
     String? email,
@@ -30,9 +37,11 @@ class LoginState {
     String? passwordError,
     String? failureMessage,
     LoginSubmissionStatus? status,
+    OAuthProvider? oauthLoadingProvider,
     bool clearEmailError = false,
     bool clearPasswordError = false,
     bool clearFailureMessage = false,
+    bool clearOAuthLoadingProvider = false,
   }) {
     return LoginState(
       email: email ?? this.email,
@@ -46,6 +55,9 @@ class LoginState {
           ? null
           : failureMessage ?? this.failureMessage,
       status: status ?? this.status,
+      oauthLoadingProvider: clearOAuthLoadingProvider
+          ? null
+          : oauthLoadingProvider ?? this.oauthLoadingProvider,
     );
   }
 }
