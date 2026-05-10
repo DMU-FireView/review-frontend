@@ -31,7 +31,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final useCompactHeader =
-        context.isMobile || context.viewportSize.width < 900;
+        context.isMobile || context.viewportSize.width < 1100;
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -93,36 +93,59 @@ class _DesktopHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final searchWidth = (context.viewportSize.width * 0.34).clamp(440.0, 560.0);
+
     return Column(
       children: [
         Row(
           children: [
-            const HomeLogo(),
-            const SizedBox(width: AppSpacing.xxl),
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 560),
-              child: SizedBox(
-                width: context.viewportSize.width * 0.36,
-                child: home.SearchBar(focusNode: searchFocusNode),
+            SizedBox(
+              width: 360,
+              child: Row(
+                children: [
+                  const HomeLogo(),
+                  const SizedBox(width: AppSpacing.xxl),
+                  _TopLink(label: '고객센터', onTap: onLoginPressed),
+                  const SizedBox(width: AppSpacing.lg),
+                  _TopLink(label: '판매자 입점', onTap: onLoginPressed),
+                  const SizedBox(width: AppSpacing.lg),
+                  _TopLink(label: '앱 다운로드', onTap: onLoginPressed),
+                ],
               ),
             ),
-            const Spacer(),
-            const SizedBox(width: AppSpacing.xl),
-            _HeaderAction(
-              icon: Icons.person_outline,
-              label: '로그인',
-              onTap: onLoginPressed,
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: searchWidth,
+                  child: home.SearchBar(focusNode: searchFocusNode),
+                ),
+              ),
             ),
-            _HeaderAction(
-              icon: Icons.favorite_border,
-              label: '찜',
-              onTap: onWishPressed,
-            ),
-            _HeaderAction(
-              icon: Icons.shopping_cart_outlined,
-              label: '장바구니',
-              onTap: onCartPressed,
-              badge: cartCount == null || cartCount == 0 ? null : '$cartCount',
+            SizedBox(
+              width: 240,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _HeaderAction(
+                    icon: Icons.person_outline,
+                    label: '로그인',
+                    onTap: onLoginPressed,
+                  ),
+                  _HeaderAction(
+                    icon: Icons.favorite_border,
+                    label: '찜',
+                    onTap: onWishPressed,
+                  ),
+                  _HeaderAction(
+                    icon: Icons.shopping_cart_outlined,
+                    label: '장바구니',
+                    onTap: onCartPressed,
+                    badge: cartCount == null || cartCount == 0
+                        ? null
+                        : '$cartCount',
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -178,6 +201,31 @@ class _DesktopHeader extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _TopLink extends StatelessWidget {
+  const _TopLink({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(6),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
     );
   }
 }

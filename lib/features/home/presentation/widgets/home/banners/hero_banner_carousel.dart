@@ -23,14 +23,18 @@ class HeroBannerCarousel extends StatefulWidget {
 class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   late PageController _controller;
   Timer? _autoTimer;
-  double _viewportFraction = 0.58;
+  double _viewportFraction = 0.46;
   int _activeIndex = 0;
   bool _isPaused = false;
 
   @override
   void initState() {
     super.initState();
-    _controller = PageController(viewportFraction: _viewportFraction);
+    _activeIndex = widget.items.length > 1 ? 1 : 0;
+    _controller = PageController(
+      viewportFraction: _viewportFraction,
+      initialPage: _activeIndex,
+    );
     _startAutoTimer();
   }
 
@@ -40,7 +44,9 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     final width = context.viewportSize.width;
     final nextFraction = context.isMobile
         ? 0.88
-        : (width < 900 ? 0.82 : (width < 1200 ? 0.68 : 0.50));
+        : (width < 900
+              ? 0.82
+              : (width < 1200 ? 0.68 : (width < 1600 ? 0.46 : 0.36)));
     if (nextFraction == _viewportFraction) {
       return;
     }
@@ -60,13 +66,13 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     }
 
     return SizedBox(
-      height: context.isMobile ? 340 : (context.isTablet ? 320 : 330),
+      height: context.isMobile ? 340 : (context.isTablet ? 320 : 300),
       child: Stack(
         alignment: Alignment.center,
         children: [
           PageView.builder(
             controller: _controller,
-            padEnds: true,
+            padEnds: false,
             itemCount: widget.items.length,
             onPageChanged: (index) => setState(() => _activeIndex = index),
             itemBuilder: (context, index) {
@@ -138,6 +144,14 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
               ],
             ),
           ),
+          if (!context.isMobile) ...[
+            const Positioned.fill(
+              child: IgnorePointer(child: _CarouselEdgeFade(isLeft: true)),
+            ),
+            const Positioned.fill(
+              child: IgnorePointer(child: _CarouselEdgeFade(isLeft: false)),
+            ),
+          ],
         ],
       ),
     );
@@ -168,6 +182,29 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
 
       _moveBy(1);
     });
+  }
+}
+
+class _CarouselEdgeFade extends StatelessWidget {
+  const _CarouselEdgeFade({required this.isLeft});
+
+  final bool isLeft;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+      child: Container(
+        width: 120,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: isLeft ? Alignment.centerLeft : Alignment.centerRight,
+            end: isLeft ? Alignment.centerRight : Alignment.centerLeft,
+            colors: const [AppColors.background, Color(0x00F8FAFC)],
+          ),
+        ),
+      ),
+    );
   }
 }
 

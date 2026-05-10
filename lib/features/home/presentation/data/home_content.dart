@@ -108,6 +108,8 @@ const quickCategories = [
   ),
 ];
 
+const trendingKeywords = <String>[];
+
 const recommendedProducts = <HomeProductData>[];
 
 const popularCategories = [

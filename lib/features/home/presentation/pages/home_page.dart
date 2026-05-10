@@ -14,6 +14,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/popular_ca
 import 'package:re_view_front/features/home/presentation/widgets/home/product_recommendation_section.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/quick_category_row.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/review_trust_info_card.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/trending_keyword_chips.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
@@ -61,21 +62,25 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
+              child: _FadeUp(
+                key: _heroKey,
+                delay: 0,
+                child: HeroBannerCarousel(
+                  items: banners,
+                  onBannerPressed: _handleBannerPressed,
+                ),
+              ),
+            ),
+          ),
+          SliverToBoxAdapter(
             child: AppContentView(
               maxWidth: 1440,
               padding: _homeContentPadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _FadeUp(
-                    key: _heroKey,
-                    delay: 0,
-                    child: HeroBannerCarousel(
-                      items: banners,
-                      onBannerPressed: _handleBannerPressed,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
                   _FadeUp(
                     key: _categoryKey,
                     delay: 60,
@@ -85,6 +90,14 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xl),
+                  _FadeUp(
+                    delay: 120,
+                    child: const TrendingKeywordChips(
+                      keywords: trendingKeywords,
+                    ),
+                  ),
+                  if (trendingKeywords.isNotEmpty)
+                    const SizedBox(height: AppSpacing.xl),
                   if (useWideCommerceGrid)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
