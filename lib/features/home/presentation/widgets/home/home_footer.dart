@@ -41,7 +41,7 @@ class HomeFooter extends StatelessWidget {
                   ),
                 ),
               Text(
-                'Copyright Re:view. All rights reserved.',
+                'Copyright 2026 Re:view. All rights reserved.',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: AppColors.textTertiary,
                 ),

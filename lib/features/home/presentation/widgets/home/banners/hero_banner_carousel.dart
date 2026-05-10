@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
@@ -24,16 +25,18 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   late PageController _controller;
   Timer? _autoTimer;
   double _viewportFraction = 0.46;
+  int _currentPage = 0;
   int _activeIndex = 0;
   bool _isPaused = false;
 
   @override
   void initState() {
     super.initState();
-    _activeIndex = widget.items.length > 1 ? 1 : 0;
+    _currentPage = _initialPageFor(widget.items.length);
+    _activeIndex = _realIndexFor(_currentPage);
     _controller = PageController(
       viewportFraction: _viewportFraction,
-      initialPage: _activeIndex,
+      initialPage: _currentPage,
     );
     _startAutoTimer();
   }
@@ -55,7 +58,23 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     _controller.dispose();
     _controller = PageController(
       viewportFraction: _viewportFraction,
-      initialPage: _activeIndex,
+      initialPage: _currentPage,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant HeroBannerCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.items.length == widget.items.length) {
+      return;
+    }
+
+    _currentPage = _initialPageFor(widget.items.length);
+    _activeIndex = _realIndexFor(_currentPage);
+    _controller.dispose();
+    _controller = PageController(
+      viewportFraction: _viewportFraction,
+      initialPage: _currentPage,
     );
   }
 
@@ -73,11 +92,15 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
           PageView.builder(
             controller: _controller,
             padEnds: false,
-            itemCount: widget.items.length,
-            onPageChanged: (index) => setState(() => _activeIndex = index),
+            itemCount: widget.items.length < 2 ? widget.items.length : null,
+            onPageChanged: (index) => setState(() {
+              _currentPage = index;
+              _activeIndex = _realIndexFor(index);
+            }),
             itemBuilder: (context, index) {
-              final item = widget.items[index];
-              final isActive = index == _activeIndex;
+              final realIndex = _realIndexFor(index);
+              final item = widget.items[realIndex];
+              final isActive = realIndex == _activeIndex;
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 280),
@@ -110,38 +133,12 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
             ),
           ),
           Positioned(
-            left: context.isMobile ? AppSpacing.xl : AppSpacing.xxl,
-            bottom: AppSpacing.xl,
-            child: Row(
-              children: [
-                for (var i = 0; i < widget.items.length; i++)
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: i == _activeIndex ? 34 : 9,
-                    height: 7,
-                    margin: const EdgeInsets.only(right: AppSpacing.xs),
-                    decoration: BoxDecoration(
-                      color: i == _activeIndex
-                          ? AppColors.textPrimary
-                          : AppColors.borderStrong,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                  ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  '${_activeIndex + 1} / ${widget.items.length}',
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                IconButton(
-                  tooltip: _isPaused ? '재생' : '일시정지',
-                  onPressed: () => setState(() => _isPaused = !_isPaused),
-                  icon: Icon(_isPaused ? Icons.play_arrow : Icons.pause),
-                  color: AppColors.textPrimary,
-                ),
-              ],
+            bottom: AppSpacing.md,
+            child: _BannerProgress(
+              itemCount: widget.items.length,
+              activeIndex: _activeIndex,
+              isPaused: _isPaused,
+              onPauseToggle: () => setState(() => _isPaused = !_isPaused),
             ),
           ),
           if (!context.isMobile) ...[
@@ -158,8 +155,15 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   }
 
   void _moveBy(int delta) {
-    final next = (_activeIndex + delta) % widget.items.length;
-    setState(() => _activeIndex = next);
+    if (widget.items.isEmpty) {
+      return;
+    }
+
+    final next = widget.items.length < 2 ? 0 : _currentPage + delta;
+    setState(() {
+      _currentPage = next;
+      _activeIndex = _realIndexFor(next);
+    });
     _controller.animateToPage(
       next,
       duration: const Duration(milliseconds: 320),
@@ -183,6 +187,23 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
       _moveBy(1);
     });
   }
+
+  int _initialPageFor(int itemCount) {
+    if (itemCount < 2) {
+      return 0;
+    }
+
+    return itemCount * 1000;
+  }
+
+  int _realIndexFor(int page) {
+    final itemCount = widget.items.length;
+    if (itemCount == 0) {
+      return 0;
+    }
+
+    return page % itemCount;
+  }
 }
 
 class _CarouselEdgeFade extends StatelessWidget {
@@ -201,6 +222,82 @@ class _CarouselEdgeFade extends StatelessWidget {
             begin: isLeft ? Alignment.centerLeft : Alignment.centerRight,
             end: isLeft ? Alignment.centerRight : Alignment.centerLeft,
             colors: const [AppColors.background, Color(0x00F8FAFC)],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BannerProgress extends StatelessWidget {
+  const _BannerProgress({
+    required this.itemCount,
+    required this.activeIndex,
+    required this.isPaused,
+    required this.onPauseToggle,
+  });
+
+  final int itemCount;
+  final int activeIndex;
+  final bool isPaused;
+  final VoidCallback onPauseToggle;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(999),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.22),
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.34)),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x140F172A),
+                blurRadius: 18,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xs,
+              vertical: 6,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (var i = 0; i < itemCount; i++)
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    width: i == activeIndex ? 28 : 7,
+                    height: 6,
+                    margin: const EdgeInsets.only(right: 5),
+                    decoration: BoxDecoration(
+                      color: i == activeIndex
+                          ? AppColors.textPrimary.withValues(alpha: 0.92)
+                          : Colors.white.withValues(alpha: 0.72),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                  ),
+                const SizedBox(width: AppSpacing.xxs),
+                SizedBox.square(
+                  dimension: 24,
+                  child: IconButton(
+                    tooltip: isPaused ? '재생' : '일시정지',
+                    onPressed: onPauseToggle,
+                    icon: Icon(
+                      isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
+                      size: 16,
+                    ),
+                    color: AppColors.textPrimary.withValues(alpha: 0.9),
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
