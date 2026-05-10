@@ -1,10 +1,14 @@
 import 'package:re_view_front/core/config/app_config.dart';
+import 'package:re_view_front/core/network/api_response.dart';
 import 'package:re_view_front/core/network/api_client.dart';
 import 'package:re_view_front/features/auth/data/dtos/auth_user_dto.dart';
+import 'package:re_view_front/features/auth/data/dtos/login_request_dto.dart';
 import 'package:re_view_front/features/auth/data/dtos/signup_request_dto.dart';
 
 abstract interface class AuthRemoteDataSource {
-  Future<AuthUserDto> signup(SignupRequestDto request);
+  Future<AuthUserDto> login(LoginRequestDto request);
+
+  Future<void> signup(SignupRequestDto request);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -18,23 +22,36 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final AppConfig _config;
 
   @override
-  Future<AuthUserDto> signup(SignupRequestDto request) async {
-    final path = _config.signupPath.trim();
-    if (path.isEmpty) {
-      throw const AuthEndpointNotConfiguredException();
-    }
-
-    final response = await _apiClient.post(path, data: request.toJson());
-    final data = response.data;
+  Future<AuthUserDto> login(LoginRequestDto request) async {
+    final response = await _apiClient.post(
+      _config.loginPath,
+      data: request.toJson(),
+    );
+    final payload = _readPayload<Map<String, dynamic>>(response.data);
+    final data = payload.requireSuccess();
 
     if (data is Map<String, dynamic>) {
       return AuthUserDto.fromJson(data);
     }
 
-    throw const FormatException('Invalid signup response');
+    throw const FormatException('Invalid login response');
   }
-}
 
-class AuthEndpointNotConfiguredException implements Exception {
-  const AuthEndpointNotConfiguredException();
+  @override
+  Future<void> signup(SignupRequestDto request) async {
+    final response = await _apiClient.post(
+      _config.signupPath,
+      data: request.toJson(),
+    );
+    final payload = _readPayload<Object?>(response.data);
+    payload.requireSuccess();
+  }
+
+  ApiResponse<T> _readPayload<T>(Object? data) {
+    if (data is Map<String, dynamic>) {
+      return ApiResponse<T>.fromJson(data);
+    }
+
+    throw const FormatException('Invalid API response');
+  }
 }
