@@ -23,6 +23,8 @@ class DashboardProductDto {
         'brandName',
         'brand',
         'sellerName',
+        'platform',
+        'categoryDisplayName',
       ]),
       price: _readInt(json, ['price', 'salePrice', 'discountPrice']),
       imageUrl: _readString(json, [
@@ -33,13 +35,23 @@ class DashboardProductDto {
         'image',
       ]),
       label: _readNullableString(json, ['label', 'badge', 'tag']),
-      rating: _readDouble(json, ['rating', 'starRating', 'averageRating']),
+      rating: _readDouble(json, [
+        'rating',
+        'starRating',
+        'averageRating',
+        'avgRating',
+      ]),
       reviewCount: _readIntOrNull(json, [
         'reviewCount',
         'reviewsCount',
         'review_count',
       ]),
-      rtiScore: _readIntOrNull(json, ['rtiScore', 'rti', 'trustScore']),
+      rtiScore: _readIntOrNull(json, [
+        'rtiScore',
+        'rti',
+        'trustScore',
+        'avgRti',
+      ]),
     );
   }
 
