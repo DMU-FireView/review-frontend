@@ -8,7 +8,7 @@ abstract interface class AuthRepository {
     required String password,
   });
 
-  Future<Result<AuthUser>> signup({
+  Future<Result<void>> signup({
     required String name,
     required String email,
     required String password,
