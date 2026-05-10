@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_theme.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/banners/hero_banner_carousel.dart';
 
 void main() {
   late GoRouter router;
@@ -35,8 +36,8 @@ void main() {
     await tester.pumpWidget(buildSubject());
 
     expect(find.text('Re:view'), findsOneWidget);
-    expect(find.text('리뷰가 증명하는 여름 준비'), findsOneWidget);
-    expect(find.text('쿨썸머 인기템 모음'), findsOneWidget);
+    expect(find.byType(HeroBannerCarousel), findsOneWidget);
+    expect(find.byType(Image), findsWidgets);
     expect(find.text('Re:view가 더 믿을 수 있는 이유'), findsOneWidget);
     expect(find.text('추천 상품 API 연결 대기 중'), findsOneWidget);
     expect(find.text('지금 많이 찾는 키워드'), findsNothing);
@@ -76,7 +77,7 @@ void main() {
 
     await tester.pumpWidget(buildSubject());
 
-    expect(find.text('쿨썸머 인기템 모음'), findsOneWidget);
+    expect(find.byType(HeroBannerCarousel), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

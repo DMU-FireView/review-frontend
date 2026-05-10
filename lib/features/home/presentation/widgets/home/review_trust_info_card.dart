@@ -62,15 +62,19 @@ class _TrustMain extends StatelessWidget {
         Container(
           width: 96,
           height: 96,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFFEFF4FF),
-            borderRadius: BorderRadius.circular(28),
+          clipBehavior: Clip.antiAlias,
+          decoration: const BoxDecoration(
+            color: Color(0xFFEFF4FF),
+            shape: BoxShape.circle,
           ),
-          child: const Icon(
-            Icons.shield_outlined,
-            color: AppColors.primary,
-            size: 54,
+          child: Image.asset(
+            'assets/images/home/brand/RTI.png',
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) => const Icon(
+              Icons.shield_outlined,
+              color: AppColors.primary,
+              size: 54,
+            ),
           ),
         ),
         const SizedBox(width: AppSpacing.lg),

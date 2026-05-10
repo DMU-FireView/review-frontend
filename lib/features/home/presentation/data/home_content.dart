@@ -21,6 +21,7 @@ const banners = [
     description: '실사용 리뷰로 고른 믿을 수 있는 선택',
     ctaLabel: '지금 확인하기',
     badgeLabel: 'RTI 추천',
+    assetPath: 'assets/images/home/banners/banner_1.png',
     color: Color(0xFFEAF4FF),
     accentColor: Color(0xFF2563EB),
     icon: Icons.air,
@@ -31,6 +32,7 @@ const banners = [
     description: '리뷰 흐름이 안정적인 신선 식품을 먼저 확인하세요',
     ctaLabel: '자세히 보기',
     badgeLabel: 'RTI 안정',
+    assetPath: 'assets/images/home/banners/banner_2.png',
     color: Color(0xFFEAF6E6),
     accentColor: Color(0xFF2E7D32),
     icon: Icons.eco_outlined,
@@ -41,9 +43,21 @@ const banners = [
     description: '반복 패턴과 광고 신호를 낮춘 뷰티 상품 흐름',
     ctaLabel: '둘러보기',
     badgeLabel: 'RTI 추천',
+    assetPath: 'assets/images/home/banners/banner_3.png',
     color: Color(0xFFFFF1F7),
     accentColor: Color(0xFFE65100),
     icon: Icons.spa_outlined,
+  ),
+  HomeBannerData(
+    title: '반려생활 필수템 모음',
+    emphasis: '리뷰로 고른 생활템',
+    description: '검증된 리뷰 흐름을 기준으로 탐색하세요',
+    ctaLabel: '더 알아보기',
+    badgeLabel: 'RTI 추천',
+    assetPath: 'assets/images/home/banners/banner_4.png',
+    color: Color(0xFFF8FAFC),
+    accentColor: Color(0xFF0F172A),
+    icon: Icons.pets_outlined,
   ),
 ];
 
@@ -87,6 +101,7 @@ class HomeBannerData {
     required this.description,
     required this.ctaLabel,
     required this.badgeLabel,
+    required this.assetPath,
     required this.color,
     required this.accentColor,
     required this.icon,
@@ -97,6 +112,7 @@ class HomeBannerData {
   final String description;
   final String ctaLabel;
   final String badgeLabel;
+  final String assetPath;
   final Color color;
   final Color accentColor;
   final IconData icon;
