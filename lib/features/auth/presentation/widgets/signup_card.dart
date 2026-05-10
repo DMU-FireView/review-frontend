@@ -103,7 +103,6 @@ class SignupCard extends StatelessWidget {
                 label: '이름',
                 hintText: '이름을 입력하세요',
                 prefixIcon: Icons.person_outline,
-                helperText: '서버 전송 시 nickname 필드로 전달됩니다.',
               ),
               const SizedBox(height: AppSpacing.md),
               _SignupInputField(
