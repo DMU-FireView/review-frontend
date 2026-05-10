@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final useWideCommerceGrid = context.viewportSize.width >= 1180;
+    final useWideCommerceGrid = context.viewportSize.width >= 1120;
     final page = Scaffold(
       backgroundColor: AppColors.background,
       body: CustomScrollView(
@@ -62,7 +62,8 @@ class _HomePageState extends State<HomePage> {
           ),
           SliverToBoxAdapter(
             child: AppContentView(
-              maxWidth: 1320,
+              maxWidth: 1480,
+              padding: _homeContentPadding(context),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -100,7 +101,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         const SizedBox(width: AppSpacing.xl),
                         Expanded(
-                          flex: 7,
+                          flex: 8,
                           child: Column(
                             children: [
                               const _FadeUp(
@@ -171,6 +172,18 @@ class _HomePageState extends State<HomePage> {
     );
 
     return page;
+  }
+
+  EdgeInsets _homeContentPadding(BuildContext context) {
+    if (context.isMobile) {
+      return const EdgeInsets.fromLTRB(16, 20, 16, 0);
+    }
+
+    if (context.isTablet) {
+      return const EdgeInsets.fromLTRB(24, 28, 24, 0);
+    }
+
+    return const EdgeInsets.fromLTRB(40, 32, 40, 0);
   }
 
   void _handleNavItemPressed(String item) {

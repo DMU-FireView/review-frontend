@@ -40,7 +40,7 @@ class ReviewTrustInfoCard extends StatelessWidget {
                 : const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _TrustMain(),
+                      _TrustMain(isCompact: true),
                       SizedBox(height: AppSpacing.lg),
                       _TrustFeatures(),
                     ],
@@ -53,15 +53,18 @@ class ReviewTrustInfoCard extends StatelessWidget {
 }
 
 class _TrustMain extends StatelessWidget {
-  const _TrustMain();
+  const _TrustMain({this.isCompact = false});
+
+  final bool isCompact;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 96,
-          height: 96,
+          width: isCompact ? 72 : 96,
+          height: isCompact ? 72 : 96,
           clipBehavior: Clip.antiAlias,
           decoration: const BoxDecoration(
             color: Color(0xFFEFF4FF),
@@ -70,14 +73,14 @@ class _TrustMain extends StatelessWidget {
           child: Image.asset(
             'assets/images/home/brand/RTI.png',
             fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) => const Icon(
+            errorBuilder: (context, error, stackTrace) => Icon(
               Icons.shield_outlined,
               color: AppColors.primary,
-              size: 54,
+              size: isCompact ? 40 : 54,
             ),
           ),
         ),
-        const SizedBox(width: AppSpacing.lg),
+        SizedBox(width: isCompact ? AppSpacing.md : AppSpacing.lg),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
