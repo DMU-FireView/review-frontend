@@ -21,7 +21,6 @@ const banners = [
     description: '실사용 리뷰로 고른 믿을 수 있는 선택',
     ctaLabel: '지금 확인하기',
     badgeLabel: 'RTI 추천',
-    trustLabel: '92% 신뢰도',
     color: Color(0xFFEAF4FF),
     accentColor: Color(0xFF2563EB),
     icon: Icons.air,
@@ -32,7 +31,6 @@ const banners = [
     description: '리뷰 흐름이 안정적인 신선 식품을 먼저 확인하세요',
     ctaLabel: '자세히 보기',
     badgeLabel: 'RTI 안정',
-    trustLabel: '88% 신뢰도',
     color: Color(0xFFEAF6E6),
     accentColor: Color(0xFF2E7D32),
     icon: Icons.eco_outlined,
@@ -43,7 +41,6 @@ const banners = [
     description: '반복 패턴과 광고 신호를 낮춘 뷰티 상품 흐름',
     ctaLabel: '둘러보기',
     badgeLabel: 'RTI 추천',
-    trustLabel: '91% 신뢰도',
     color: Color(0xFFFFF1F7),
     accentColor: Color(0xFFE65100),
     icon: Icons.spa_outlined,
@@ -64,18 +61,7 @@ const quickCategories = [
   QuickCategoryData(label: '전체보기', icon: Icons.grid_view_outlined),
 ];
 
-const trendingKeywords = [
-  '선풍기',
-  '냉감패드',
-  '맥북에어',
-  '리팩젤케이크',
-  '선크림',
-  '여름 샌들',
-  '제습기',
-  '캠핑의자',
-];
-
-const recommendedProducts = <LandingProductData>[];
+const recommendedProducts = <HomeProductData>[];
 
 const popularCategories = [
   PopularCategoryData(label: '여성패션', icon: Icons.checkroom_outlined),
@@ -101,7 +87,6 @@ class HomeBannerData {
     required this.description,
     required this.ctaLabel,
     required this.badgeLabel,
-    required this.trustLabel,
     required this.color,
     required this.accentColor,
     required this.icon,
@@ -112,7 +97,6 @@ class HomeBannerData {
   final String description;
   final String ctaLabel;
   final String badgeLabel;
-  final String trustLabel;
   final Color color;
   final Color accentColor;
   final IconData icon;
@@ -125,8 +109,8 @@ class QuickCategoryData {
   final IconData icon;
 }
 
-class LandingProductData {
-  const LandingProductData({
+class HomeProductData {
+  const HomeProductData({
     required this.name,
     required this.storeName,
     required this.priceLabel,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/landing/presentation/data/home_landing_content.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class BenefitCTA extends StatelessWidget {
