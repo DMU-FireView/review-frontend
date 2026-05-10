@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/core/network/api_response.dart';
 import 'package:re_view_front/core/network/network_exception.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/home/data/datasources/home_remote_data_source.dart';
@@ -16,6 +17,8 @@ class HomeRepositoryImpl implements HomeRepository {
     try {
       final dashboard = await _remoteDataSource.getHomeDashboard();
       return Success(dashboard.toEntity());
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
     } on DioException catch (error) {
       return FailureResult(failureFromDioException(error));
     } on Object catch (error) {
