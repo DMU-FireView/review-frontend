@@ -1,5 +1,4 @@
 import 'package:re_view_front/core/result/result.dart';
-import 'package:re_view_front/features/auth/domain/entities/auth_user.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/domain/repositories/auth_repository.dart';
 
@@ -8,7 +7,7 @@ class SignupUseCase {
 
   final AuthRepository _repository;
 
-  Future<Result<AuthUser>> call({
+  Future<Result<void>> call({
     required String name,
     required String email,
     required String password,
