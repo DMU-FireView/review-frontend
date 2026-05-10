@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:re_view_front/core/platform/external_redirect.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_card.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_footer.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_value_panel.dart';
@@ -128,6 +130,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         setState(() => _obscurePassword = !_obscurePassword);
       },
       onLoginPressed: loginState.isLoading ? null : _handleLoginPressed,
+      onOAuthPressed: loginState.isLoading ? null : _handleOAuthPressed,
       onSignupPressed: () => context.go(RoutePaths.signup),
     );
   }
@@ -158,6 +161,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _handleLoginPressed() {
     ref.read(loginViewModelProvider.notifier).submit();
+  }
+
+  Future<void> _handleOAuthPressed(OAuthProvider provider) async {
+    final uri = await ref
+        .read(loginViewModelProvider.notifier)
+        .startOAuth(provider);
+    if (uri == null) {
+      return;
+    }
+
+    redirectToExternalUrl(uri);
   }
 }
 

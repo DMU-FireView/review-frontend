@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/domain/usecases/login_use_case.dart';
 import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
 import 'package:re_view_front/features/auth/presentation/view_models/login_state.dart';
@@ -70,6 +71,37 @@ class LoginViewModel extends Notifier<LoginState> {
         status: LoginSubmissionStatus.failure,
         failureMessage: failure.message,
       ),
+    );
+  }
+
+  Future<Uri?> startOAuth(OAuthProvider provider) async {
+    state = state.copyWith(
+      oauthLoadingProvider: provider,
+      status: LoginSubmissionStatus.idle,
+      clearFailureMessage: true,
+      clearEmailError: true,
+      clearPasswordError: true,
+    );
+
+    final result = await _loginUseCase.startOAuth(provider);
+
+    if (!ref.mounted) {
+      return null;
+    }
+
+    return result.when(
+      success: (uri) {
+        state = state.copyWith(clearOAuthLoadingProvider: true);
+        return uri;
+      },
+      failure: (failure) {
+        state = state.copyWith(
+          status: LoginSubmissionStatus.failure,
+          failureMessage: failure.message,
+          clearOAuthLoadingProvider: true,
+        );
+        return null;
+      },
     );
   }
 
