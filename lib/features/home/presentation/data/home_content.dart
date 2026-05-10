@@ -112,16 +112,7 @@ const trendingKeywords = <String>[];
 
 const recommendedProducts = <HomeProductData>[];
 
-const popularCategories = [
-  PopularCategoryData(label: '여성패션', icon: Icons.checkroom_outlined),
-  PopularCategoryData(label: '남성패션', icon: Icons.man_2_outlined),
-  PopularCategoryData(label: '신발/잡화', icon: Icons.shopping_bag_outlined),
-  PopularCategoryData(label: '뷰티', icon: Icons.spa_outlined),
-  PopularCategoryData(label: '가전/디지털', icon: Icons.devices_other_outlined),
-  PopularCategoryData(label: '가구/인테리어', icon: Icons.chair_outlined),
-  PopularCategoryData(label: '식품/건강', icon: Icons.restaurant_outlined),
-  PopularCategoryData(label: '스포츠/레저', icon: Icons.sports_tennis_outlined),
-];
+const popularCategories = <PopularCategoryData>[];
 
 const benefitItems = [
   BenefitData(title: '10%', description: '웰컴 쿠폰'),

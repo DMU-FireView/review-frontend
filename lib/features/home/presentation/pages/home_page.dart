@@ -122,33 +122,47 @@ class _HomePageState extends ConsumerState<HomePage> {
                       delay: 120,
                       child: TrendingKeywordChips(keywords: dashboardKeywords),
                     ),
-                    if (dashboardKeywords.isNotEmpty)
-                      const SizedBox(height: AppSpacing.xl),
+                    const SizedBox(height: AppSpacing.xl),
                   ],
                   if (useWideCommerceGrid)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          flex: 14,
-                          child: _FadeUp(
-                            key: _recommendationKey,
-                            delay: 180,
-                            child: ProductRecommendationSection(
-                              products: dashboardProducts,
-                            ),
+                          flex: 13,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _FadeUp(
+                                key: _recommendationKey,
+                                delay: 180,
+                                child: ProductRecommendationSection(
+                                  products: dashboardProducts,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              _FadeUp(
+                                key: _popularCategoryKey,
+                                delay: 360,
+                                child: PopularCategorySection(
+                                  items: popularCategories,
+                                  onCategoryPressed: _handleCategoryPressed,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.xl),
+                        const SizedBox(width: 20),
                         Expanded(
-                          flex: 8,
+                          flex: 9,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
                               const _FadeUp(
                                 delay: 240,
                                 child: ReviewTrustInfoCard(),
                               ),
-                              const SizedBox(height: AppSpacing.xl),
+                              const SizedBox(height: 20),
                               _FadeUp(
                                 key: _benefitKey,
                                 delay: 300,
@@ -183,15 +197,17 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.xl),
-                  _FadeUp(
-                    key: _popularCategoryKey,
-                    delay: 360,
-                    child: PopularCategorySection(
-                      items: popularCategories,
-                      onCategoryPressed: _handleCategoryPressed,
+                  if (!useWideCommerceGrid) ...[
+                    const SizedBox(height: AppSpacing.xl),
+                    _FadeUp(
+                      key: _popularCategoryKey,
+                      delay: 360,
+                      child: PopularCategorySection(
+                        items: popularCategories,
+                        onCategoryPressed: _handleCategoryPressed,
+                      ),
                     ),
-                  ),
+                  ],
                   SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
                 ],
               ),
