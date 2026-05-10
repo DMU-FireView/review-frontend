@@ -1,5 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/core/network/api_response.dart';
+
+Failure failureFromApiResponseException(ApiResponseException error) {
+  return Failure(message: error.message, code: error.code, cause: error);
+}
 
 Failure failureFromDioException(DioException error) {
   final statusCode = error.response?.statusCode;
@@ -7,10 +12,13 @@ Failure failureFromDioException(DioException error) {
   final serverMessage = data is Map<String, dynamic>
       ? data['message']?.toString()
       : null;
+  final errorCode = data is Map<String, dynamic>
+      ? data['errorCode']?.toString()
+      : null;
 
   return Failure(
     message: serverMessage ?? _messageForType(error.type),
-    code: error.type.name,
+    code: errorCode ?? error.type.name,
     statusCode: statusCode,
     cause: error,
   );

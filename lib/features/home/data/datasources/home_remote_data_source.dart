@@ -1,4 +1,5 @@
 import 'package:re_view_front/core/config/app_config.dart';
+import 'package:re_view_front/core/network/api_response.dart';
 import 'package:re_view_front/core/network/api_client.dart';
 import 'package:re_view_front/features/home/data/dtos/dashboard_summary_dto.dart';
 
@@ -22,7 +23,12 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     final data = response.data;
 
     if (data is Map<String, dynamic>) {
-      return DashboardSummaryDto.fromJson(data);
+      final payload = ApiResponse<Object?>.fromJson(data);
+      final dashboard = payload.requireSuccess();
+
+      if (dashboard is Map<String, dynamic>) {
+        return DashboardSummaryDto.fromJson(dashboard);
+      }
     }
 
     return const DashboardSummaryDto(
