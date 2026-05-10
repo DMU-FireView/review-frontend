@@ -22,8 +22,8 @@ class _SearchBarState extends State<SearchBar> {
         : AppColors.surface;
 
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) => _setHovered(true),
+      onExit: (_) => _setHovered(false),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
@@ -51,7 +51,7 @@ class _SearchBarState extends State<SearchBar> {
           child: ColoredBox(
             color: backgroundColor,
             child: Focus(
-              onFocusChange: (value) => setState(() => _isFocused = value),
+              onFocusChange: _setFocused,
               child: TextField(
                 focusNode: widget.focusNode,
                 textInputAction: TextInputAction.search,
@@ -85,5 +85,29 @@ class _SearchBarState extends State<SearchBar> {
         ),
       ),
     );
+  }
+
+  void _setHovered(bool value) {
+    if (_isHovered == value) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _isHovered != value) {
+        setState(() => _isHovered = value);
+      }
+    });
+  }
+
+  void _setFocused(bool value) {
+    if (_isFocused == value) {
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _isFocused != value) {
+        setState(() => _isFocused = value);
+      }
+    });
   }
 }
