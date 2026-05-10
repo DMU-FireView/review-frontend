@@ -5,8 +5,9 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_footer.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/signup_card.dart';
-import 'package:re_view_front/features/auth/presentation/widgets/signup_header.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/signup_value_panel.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
@@ -42,9 +43,14 @@ class _SignupPageState extends State<SignupPage> {
       backgroundColor: AppColors.background,
       body: Column(
         children: [
-          SignupHeader(
-            onLogoPressed: () => context.go(RoutePaths.home),
+          HomeHeader(
+            navItems: homeNavItems,
+            selectedNavItem: '홈',
             onLoginPressed: () => context.go(RoutePaths.login),
+            onWishPressed: () => context.go(RoutePaths.home),
+            onCartPressed: () => context.go(RoutePaths.home),
+            onNavItemPressed: (_) => context.go(RoutePaths.home),
+            onLogoPressed: () => context.go(RoutePaths.home),
           ),
           Expanded(
             child: SingleChildScrollView(
@@ -124,14 +130,7 @@ class _SignupPageState extends State<SignupPage> {
     return const EdgeInsets.fromLTRB(32, 56, 32, 48);
   }
 
-  void _handleSignupPressed() {
-    final signupPayloadPreview = {
-      'nickname': _nameController.text.trim(),
-      'email': _emailController.text.trim(),
-      'password': _passwordController.text,
-    };
-    debugPrint('Signup payload preview: $signupPayloadPreview');
-  }
+  void _handleSignupPressed() {}
 }
 
 class _FadeUp extends StatefulWidget {
