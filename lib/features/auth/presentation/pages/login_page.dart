@@ -74,21 +74,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const LoginValuePanel(),
+                          const _FadeUp(delay: 0, child: LoginValuePanel()),
                           const SizedBox(height: AppSpacing.xl),
-                          _buildLoginCard(context, loginState),
+                          _FadeUp(
+                            delay: 90,
+                            child: _buildLoginCard(context, loginState),
+                          ),
                         ],
                       )
                     : Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          const Expanded(flex: 12, child: LoginValuePanel()),
+                          const Expanded(
+                            flex: 12,
+                            child: _FadeUp(delay: 0, child: LoginValuePanel()),
+                          ),
                           const SizedBox(width: 64),
                           Expanded(
                             flex: 8,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: _buildLoginCard(context, loginState),
+                              child: _FadeUp(
+                                delay: 120,
+                                child: _buildLoginCard(context, loginState),
+                              ),
                             ),
                           ),
                         ],
@@ -96,7 +105,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ),
             ),
           ),
-          const LoginFooter(),
+          const _FadeUp(delay: 220, child: LoginFooter()),
         ],
       ),
     );
@@ -149,5 +158,55 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   void _handleLoginPressed() {
     ref.read(loginViewModelProvider.notifier).submit();
+  }
+}
+
+class _FadeUp extends StatefulWidget {
+  const _FadeUp({required this.child, required this.delay});
+
+  final Widget child;
+  final int delay;
+
+  @override
+  State<_FadeUp> createState() => _FadeUpState();
+}
+
+class _FadeUpState extends State<_FadeUp> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  late final Animation<Offset> _offset;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 420),
+    );
+    _opacity = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _offset = Tween<Offset>(
+      begin: const Offset(0, 0.04),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+
+    Future<void>.delayed(Duration(milliseconds: widget.delay), () {
+      if (mounted) {
+        _controller.forward();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: SlideTransition(position: _offset, child: widget.child),
+    );
   }
 }
