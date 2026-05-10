@@ -20,4 +20,8 @@ class ApiClient {
   }) {
     return dio.get(path, queryParameters: queryParameters);
   }
+
+  Future<Response<dynamic>> post(String path, {Object? data}) {
+    return dio.post(path, data: data);
+  }
 }
