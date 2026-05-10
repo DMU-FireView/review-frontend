@@ -47,7 +47,19 @@ class QuickCategoryRow extends StatelessWidget {
                         ),
                       ],
                     ),
-                    child: Icon(item.icon, color: AppColors.primary, size: 28),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.xs),
+                      child: Image.asset(
+                        item.iconAssetPath,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.image_not_supported_outlined,
+                              color: AppColors.primary,
+                              size: 24,
+                            ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
