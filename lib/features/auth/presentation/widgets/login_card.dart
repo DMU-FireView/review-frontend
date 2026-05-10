@@ -9,6 +9,10 @@ class LoginCard extends StatelessWidget {
     required this.passwordController,
     required this.rememberMe,
     required this.obscurePassword,
+    this.emailError,
+    this.passwordError,
+    this.failureMessage,
+    this.isLoading = false,
     required this.onRememberChanged,
     required this.onPasswordVisibilityPressed,
     required this.onLoginPressed,
@@ -20,9 +24,13 @@ class LoginCard extends StatelessWidget {
   final TextEditingController passwordController;
   final bool rememberMe;
   final bool obscurePassword;
+  final String? emailError;
+  final String? passwordError;
+  final String? failureMessage;
+  final bool isLoading;
   final ValueChanged<bool> onRememberChanged;
   final VoidCallback onPasswordVisibilityPressed;
-  final VoidCallback onLoginPressed;
+  final VoidCallback? onLoginPressed;
   final VoidCallback onSignupPressed;
 
   @override
@@ -79,6 +87,7 @@ class LoginCard extends StatelessWidget {
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 prefixIcon: Icons.mail_outline,
+                errorText: emailError,
               ),
               const SizedBox(height: AppSpacing.lg),
               _LoginInputField(
@@ -88,17 +97,24 @@ class LoginCard extends StatelessWidget {
                 obscureText: obscurePassword,
                 textInputAction: TextInputAction.done,
                 prefixIcon: Icons.lock_outline,
+                errorText: passwordError,
                 trailing: TextButton(
                   onPressed: onPasswordVisibilityPressed,
                   child: Text(obscurePassword ? '보기' : '숨김'),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
+              if (failureMessage != null) ...[
+                _LoginFailureMessage(message: failureMessage!),
+                const SizedBox(height: AppSpacing.md),
+              ],
               Row(
                 children: [
                   Checkbox(
                     value: rememberMe,
-                    onChanged: (value) => onRememberChanged(value ?? false),
+                    onChanged: isLoading
+                        ? null
+                        : (value) => onRememberChanged(value ?? false),
                   ),
                   Expanded(
                     child: Text(
@@ -109,7 +125,10 @@ class LoginCard extends StatelessWidget {
                       ),
                     ),
                   ),
-                  TextButton(onPressed: () {}, child: const Text('계정 도움말')),
+                  TextButton(
+                    onPressed: isLoading ? null : () {},
+                    child: const Text('계정 도움말'),
+                  ),
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
@@ -124,7 +143,15 @@ class LoginCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: const Text('로그인'),
+                  child: isLoading
+                      ? const SizedBox.square(
+                          dimension: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.onPrimary,
+                          ),
+                        )
+                      : const Text('로그인'),
                 ),
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -133,13 +160,13 @@ class LoginCard extends StatelessWidget {
               _SocialLoginButton(
                 label: '네이버 계정으로 계속하기',
                 mark: 'N',
-                onPressed: () {},
+                onPressed: isLoading ? null : () {},
               ),
               const SizedBox(height: AppSpacing.sm),
               _SocialLoginButton(
                 label: 'Google 계정으로 계속하기',
                 mark: 'G',
-                onPressed: () {},
+                onPressed: isLoading ? null : () {},
               ),
               const SizedBox(height: AppSpacing.xl),
               const _PrivacyNotice(),
@@ -175,6 +202,7 @@ class _LoginInputField extends StatelessWidget {
     required this.label,
     required this.hintText,
     required this.prefixIcon,
+    this.errorText,
     this.keyboardType,
     this.textInputAction,
     this.obscureText = false,
@@ -185,6 +213,7 @@ class _LoginInputField extends StatelessWidget {
   final String label;
   final String hintText;
   final IconData prefixIcon;
+  final String? errorText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final bool obscureText;
@@ -220,6 +249,7 @@ class _LoginInputField extends StatelessWidget {
             obscureText: obscureText,
             decoration: InputDecoration(
               hintText: hintText,
+              errorText: errorText,
               prefixIcon: Icon(prefixIcon),
               suffixIcon: trailing,
               filled: true,
@@ -247,6 +277,43 @@ class _LoginInputField extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class _LoginFailureMessage extends StatelessWidget {
+  const _LoginFailureMessage({required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.errorSoft,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFF7C6C6)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(Icons.error_outline, color: AppColors.error, size: 20),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: Text(
+                message,
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.error,
+                  fontWeight: FontWeight.w700,
+                  height: 1.45,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
