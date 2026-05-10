@@ -16,24 +16,24 @@ class QuickCategoryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 104,
+      height: 112,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: items.length,
-        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.lg),
+        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.md),
         itemBuilder: (context, index) {
           final item = items[index];
 
           return SizedBox(
-            width: 78,
+            width: 86,
             child: InkWell(
               borderRadius: BorderRadius.circular(18),
               onTap: () => onCategoryPressed?.call(item.label),
               child: Column(
                 children: [
                   Container(
-                    width: 58,
-                    height: 58,
+                    width: 64,
+                    height: 64,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       color: AppColors.surface,
