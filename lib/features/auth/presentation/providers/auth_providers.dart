@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:re_view_front/core/config/app_config.dart';
-import 'package:re_view_front/core/network/api_client.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:re_view_front/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:re_view_front/features/auth/domain/repositories/auth_repository.dart';
@@ -10,14 +9,6 @@ import 'package:re_view_front/features/auth/presentation/view_models/login_state
 import 'package:re_view_front/features/auth/presentation/view_models/login_view_model.dart';
 import 'package:re_view_front/features/auth/presentation/view_models/signup_state.dart';
 import 'package:re_view_front/features/auth/presentation/view_models/signup_view_model.dart';
-
-final appConfigProvider = Provider<AppConfig>((ref) {
-  return AppConfig.fromEnvironment();
-});
-
-final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(ref.watch(appConfigProvider));
-});
 
 final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>((ref) {
   return AuthRemoteDataSourceImpl(
@@ -30,6 +21,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     config: ref.watch(appConfigProvider),
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
+    tokenStore: ref.watch(authTokenStoreProvider),
   );
 });
 
