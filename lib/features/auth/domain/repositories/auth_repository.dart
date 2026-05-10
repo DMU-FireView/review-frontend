@@ -1,9 +1,12 @@
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/auth/domain/entities/auth_user.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 
 abstract interface class AuthRepository {
   Future<Result<AuthUser>> login({
     required String email,
     required String password,
   });
+
+  Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider);
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class LoginCard extends StatelessWidget {
@@ -16,6 +17,7 @@ class LoginCard extends StatelessWidget {
     required this.onRememberChanged,
     required this.onPasswordVisibilityPressed,
     required this.onLoginPressed,
+    required this.onOAuthPressed,
     required this.onSignupPressed,
     super.key,
   });
@@ -31,6 +33,7 @@ class LoginCard extends StatelessWidget {
   final ValueChanged<bool> onRememberChanged;
   final VoidCallback onPasswordVisibilityPressed;
   final VoidCallback? onLoginPressed;
+  final ValueChanged<OAuthProvider>? onOAuthPressed;
   final VoidCallback onSignupPressed;
 
   @override
@@ -160,13 +163,17 @@ class LoginCard extends StatelessWidget {
               _SocialLoginButton(
                 label: '네이버 계정으로 계속하기',
                 mark: 'N',
-                onPressed: isLoading ? null : () {},
+                onPressed: onOAuthPressed == null
+                    ? null
+                    : () => onOAuthPressed!(OAuthProvider.naver),
               ),
               const SizedBox(height: AppSpacing.sm),
               _SocialLoginButton(
                 label: 'Google 계정으로 계속하기',
                 mark: 'G',
-                onPressed: isLoading ? null : () {},
+                onPressed: onOAuthPressed == null
+                    ? null
+                    : () => onOAuthPressed!(OAuthProvider.google),
               ),
               const SizedBox(height: AppSpacing.xl),
               const _PrivacyNotice(),
@@ -353,7 +360,7 @@ class _SocialLoginButton extends StatelessWidget {
 
   final String label;
   final String mark;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
