@@ -184,80 +184,97 @@ class _BannerCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final useCompactText = context.viewportSize.width < 1280;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: item.color,
+    return Semantics(
+      button: true,
+      label: '${item.title} ${item.emphasis}',
+      child: InkWell(
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white),
-        boxShadow: [
-          if (isActive)
-            const BoxShadow(
-              color: Color(0x160F172A),
-              blurRadius: 24,
-              offset: Offset(0, 16),
-            ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Padding(
-          padding: EdgeInsets.all(context.isMobile ? AppSpacing.xl : 38),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 11,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+        onTap: onPressed,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: item.color,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: Colors.white),
+            boxShadow: [
+              if (isActive)
+                const BoxShadow(
+                  color: Color(0x160F172A),
+                  blurRadius: 24,
+                  offset: Offset(0, 16),
+                ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: Image.asset(
+              item.assetPath,
+              fit: BoxFit.cover,
+              alignment: Alignment.center,
+              errorBuilder: (context, error, stackTrace) => Padding(
+                padding: EdgeInsets.all(context.isMobile ? AppSpacing.xl : 38),
+                child: Row(
                   children: [
-                    Text(
-                      item.title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Text(
-                      item.emphasis,
-                      style:
-                          (context.isMobile || useCompactText
-                                  ? Theme.of(context).textTheme.headlineSmall
-                                  : Theme.of(context).textTheme.displayMedium)
-                              ?.copyWith(
-                                color: item.accentColor,
-                                fontWeight: FontWeight.w900,
-                              ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    Text(
-                      item.description,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-                    OutlinedButton(
-                      onPressed: onPressed,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
+                    Expanded(
+                      flex: 11,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(item.ctaLabel),
-                          const SizedBox(width: AppSpacing.xxs),
-                          const Icon(Icons.chevron_right, size: 18),
+                          Text(
+                            item.title,
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          Text(
+                            item.emphasis,
+                            style:
+                                (context.isMobile || useCompactText
+                                        ? Theme.of(
+                                            context,
+                                          ).textTheme.headlineSmall
+                                        : Theme.of(
+                                            context,
+                                          ).textTheme.displayMedium)
+                                    ?.copyWith(
+                                      color: item.accentColor,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Text(
+                            item.description,
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: AppColors.textSecondary),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          OutlinedButton(
+                            onPressed: onPressed,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(item.ctaLabel),
+                                const SizedBox(width: AppSpacing.xxs),
+                                const Icon(Icons.chevron_right, size: 18),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
+                    if (!context.isMobile) ...[
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(flex: 8, child: _BannerVisual(item: item)),
+                    ],
                   ],
                 ),
               ),
-              if (!context.isMobile) ...[
-                const SizedBox(width: AppSpacing.md),
-                Expanded(flex: 8, child: _BannerVisual(item: item)),
-              ],
-            ],
+            ),
           ),
         ),
       ),
