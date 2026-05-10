@@ -9,20 +9,46 @@ class TrendingKeywordChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (keywords.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return _SectionBlock(
       title: '지금 많이 찾는 키워드',
       icon: Icons.auto_awesome,
-      child: Wrap(
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.sm,
-        children: [
-          for (var i = 0; i < keywords.length; i++)
-            _KeywordChip(rank: i + 1, label: keywords[i]),
-        ],
+      child: keywords.isEmpty
+          ? const _KeywordEmptyState()
+          : Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (var i = 0; i < keywords.length; i++)
+                  _KeywordChip(rank: i + 1, label: keywords[i]),
+              ],
+            ),
+    );
+  }
+}
+
+class _KeywordEmptyState extends StatelessWidget {
+  const _KeywordEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        child: Text(
+          '표시할 키워드가 없습니다.',
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
     );
   }
