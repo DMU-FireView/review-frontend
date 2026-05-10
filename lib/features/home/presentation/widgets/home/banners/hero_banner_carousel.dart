@@ -40,9 +40,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
     final width = context.viewportSize.width;
     final nextFraction = context.isMobile
         ? 0.88
-        : (width < 900
-              ? 0.82
-              : (width < 1200 ? 0.68 : (width < 1600 ? 0.50 : 0.42)));
+        : (width < 900 ? 0.82 : (width < 1200 ? 0.68 : 0.50));
     if (nextFraction == _viewportFraction) {
       return;
     }
@@ -68,7 +66,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
         children: [
           PageView.builder(
             controller: _controller,
-            padEnds: false,
+            padEnds: true,
             itemCount: widget.items.length,
             onPageChanged: (index) => setState(() => _activeIndex = index),
             itemBuilder: (context, index) {

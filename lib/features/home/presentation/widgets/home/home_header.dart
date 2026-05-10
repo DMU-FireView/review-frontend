@@ -30,6 +30,9 @@ class HomeHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final useCompactHeader =
+        context.isMobile || context.viewportSize.width < 900;
+
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -44,7 +47,7 @@ class HomeHeader extends StatelessWidget {
             context.isMobile ? AppSpacing.md : AppSpacing.xl,
             AppSpacing.sm,
           ),
-          child: context.isMobile
+          child: useCompactHeader
               ? _MobileHeader(
                   onLoginPressed: onLoginPressed,
                   onNotificationPressed: onLoginPressed,
@@ -96,7 +99,14 @@ class _DesktopHeader extends StatelessWidget {
           children: [
             const HomeLogo(),
             const SizedBox(width: AppSpacing.xxl),
-            Expanded(child: home.SearchBar(focusNode: searchFocusNode)),
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 560),
+              child: SizedBox(
+                width: context.viewportSize.width * 0.36,
+                child: home.SearchBar(focusNode: searchFocusNode),
+              ),
+            ),
+            const Spacer(),
             const SizedBox(width: AppSpacing.xl),
             _HeaderAction(
               icon: Icons.person_outline,
@@ -120,7 +130,15 @@ class _DesktopHeader extends StatelessWidget {
         Row(
           children: [
             const Icon(Icons.menu, color: AppColors.textPrimary, size: 22),
-            const SizedBox(width: AppSpacing.md),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              '카테고리',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xxl),
             Expanded(
               child: SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -185,6 +203,10 @@ class _MobileHeader extends StatelessWidget {
           children: [
             const HomeLogo(),
             const Spacer(),
+            if (!context.isMobile) ...[
+              TextButton(onPressed: onLoginPressed, child: const Text('로그인')),
+              const SizedBox(width: AppSpacing.xs),
+            ],
             IconButton(
               tooltip: '알림',
               onPressed: onNotificationPressed,
