@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
@@ -6,26 +7,36 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_card.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_footer.dart';
 import 'package:re_view_front/features/auth/presentation/widgets/login_value_panel.dart';
+import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
+import 'package:re_view_front/features/auth/presentation/view_models/login_state.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _rememberMe = true;
   bool _obscurePassword = true;
 
   @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_handleEmailChanged);
+    _passwordController.addListener(_handlePasswordChanged);
+  }
+
+  @override
   void dispose() {
+    _emailController.removeListener(_handleEmailChanged);
+    _passwordController.removeListener(_handlePasswordChanged);
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -33,6 +44,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final loginState = ref.watch(loginViewModelProvider);
+
+    ref.listen<LoginState>(loginViewModelProvider, (previous, next) {
+      if (next.status == LoginSubmissionStatus.success) {
+        context.go(RoutePaths.home);
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Column(
@@ -57,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           const LoginValuePanel(),
                           const SizedBox(height: AppSpacing.xl),
-                          _buildLoginCard(context),
+                          _buildLoginCard(context, loginState),
                         ],
                       )
                     : Row(
@@ -69,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                             flex: 8,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: _buildLoginCard(context),
+                              child: _buildLoginCard(context, loginState),
                             ),
                           ),
                         ],
@@ -83,17 +102,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  LoginCard _buildLoginCard(BuildContext context) {
+  LoginCard _buildLoginCard(BuildContext context, LoginState loginState) {
     return LoginCard(
       emailController: _emailController,
       passwordController: _passwordController,
-      rememberMe: _rememberMe,
+      rememberMe: loginState.rememberMe,
       obscurePassword: _obscurePassword,
-      onRememberChanged: (value) => setState(() => _rememberMe = value),
+      emailError: loginState.emailError,
+      passwordError: loginState.passwordError,
+      failureMessage: loginState.failureMessage,
+      isLoading: loginState.isLoading,
+      onRememberChanged: (value) {
+        ref.read(loginViewModelProvider.notifier).rememberMeChanged(value);
+      },
       onPasswordVisibilityPressed: () {
         setState(() => _obscurePassword = !_obscurePassword);
       },
-      onLoginPressed: _handleLoginPressed,
+      onLoginPressed: loginState.isLoading ? null : _handleLoginPressed,
       onSignupPressed: () => context.go(RoutePaths.signup),
     );
   }
@@ -110,5 +135,19 @@ class _LoginPageState extends State<LoginPage> {
     return const EdgeInsets.fromLTRB(32, 56, 32, 48);
   }
 
-  void _handleLoginPressed() {}
+  void _handleEmailChanged() {
+    ref
+        .read(loginViewModelProvider.notifier)
+        .emailChanged(_emailController.text);
+  }
+
+  void _handlePasswordChanged() {
+    ref
+        .read(loginViewModelProvider.notifier)
+        .passwordChanged(_passwordController.text);
+  }
+
+  void _handleLoginPressed() {
+    ref.read(loginViewModelProvider.notifier).submit();
+  }
 }
