@@ -66,7 +66,10 @@ class LoginViewModel extends Notifier<LoginState> {
     }
 
     state = result.when(
-      success: (_) => state.copyWith(status: LoginSubmissionStatus.success),
+      success: (user) => state.copyWith(
+        status: LoginSubmissionStatus.success,
+        onboardingCompleted: user.onboardingCompleted,
+      ),
       failure: (failure) => state.copyWith(
         status: LoginSubmissionStatus.failure,
         failureMessage: failure.message,

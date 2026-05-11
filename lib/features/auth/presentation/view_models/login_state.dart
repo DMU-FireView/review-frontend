@@ -12,6 +12,7 @@ class LoginState {
     this.failureMessage,
     this.status = LoginSubmissionStatus.idle,
     this.oauthLoadingProvider,
+    this.onboardingCompleted = false,
   });
 
   final String email;
@@ -22,6 +23,7 @@ class LoginState {
   final String? failureMessage;
   final LoginSubmissionStatus status;
   final OAuthProvider? oauthLoadingProvider;
+  final bool onboardingCompleted;
 
   bool get isLoading =>
       status == LoginSubmissionStatus.loading || oauthLoadingProvider != null;
@@ -38,6 +40,7 @@ class LoginState {
     String? failureMessage,
     LoginSubmissionStatus? status,
     OAuthProvider? oauthLoadingProvider,
+    bool? onboardingCompleted,
     bool clearEmailError = false,
     bool clearPasswordError = false,
     bool clearFailureMessage = false,
@@ -58,6 +61,7 @@ class LoginState {
       oauthLoadingProvider: clearOAuthLoadingProvider
           ? null
           : oauthLoadingProvider ?? this.oauthLoadingProvider,
+      onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
     );
   }
 }
