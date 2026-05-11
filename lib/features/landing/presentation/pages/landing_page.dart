@@ -70,13 +70,16 @@ class _LandingCard extends StatelessWidget {
             padding: isMobile
                 ? const EdgeInsets.symmetric(
                     horizontal: AppSpacing.md,
-                    vertical: AppSpacing.xl,
+                    vertical: AppSpacing.md,
                   )
-                : const EdgeInsets.all(AppSpacing.xxl),
+                : const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xxl,
+                    vertical: AppSpacing.lg,
+                  ),
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: AppBreakpoints.wideContentMaxWidth,
-                maxHeight: viewportHeight - AppSpacing.xxl * 2,
+                maxHeight: viewportHeight - AppSpacing.lg * 2,
               ),
               child: Material(
                 color: AppColors.surface,
