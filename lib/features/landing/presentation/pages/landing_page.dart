@@ -63,6 +63,7 @@ class _LandingCard extends StatelessWidget {
     return ResponsiveLayout(
       builder: (context, screenSize) {
         final isMobile = screenSize == AppScreenSize.mobile;
+        final viewportHeight = MediaQuery.sizeOf(context).height;
 
         return Center(
           child: Padding(
@@ -73,8 +74,9 @@ class _LandingCard extends StatelessWidget {
                   )
                 : const EdgeInsets.all(AppSpacing.xxl),
             child: ConstrainedBox(
-              constraints: const BoxConstraints(
+              constraints: BoxConstraints(
                 maxWidth: AppBreakpoints.wideContentMaxWidth,
+                maxHeight: viewportHeight - AppSpacing.xxl * 2,
               ),
               child: Material(
                 color: AppColors.surface,
@@ -123,23 +125,21 @@ class _DesktopContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IntrinsicHeight(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 5,
-            child: Padding(
-              padding: const EdgeInsets.only(right: AppSpacing.xxl),
-              child: LandingHeroSection(
-                onStartPressed: onStartPressed,
-                onRtiInfoPressed: onRtiInfoPressed,
-              ),
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.xxl),
+            child: LandingHeroSection(
+              onStartPressed: onStartPressed,
+              onRtiInfoPressed: onRtiInfoPressed,
             ),
           ),
-          const Expanded(flex: 6, child: LandingRtiDemoCard()),
-        ],
-      ),
+        ),
+        const Expanded(flex: 6, child: LandingRtiDemoCard()),
+      ],
     );
   }
 }
