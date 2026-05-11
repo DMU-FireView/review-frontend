@@ -6,6 +6,8 @@ class AppConfig {
     required this.signupPath,
     required this.naverOAuthPath,
     required this.googleOAuthPath,
+    required this.passwordResetRequestPath,
+    required this.passwordResetPath,
     required this.connectTimeout,
     required this.receiveTimeout,
   });
@@ -33,6 +35,14 @@ class AppConfig {
         'GOOGLE_OAUTH_PATH',
         defaultValue: '/oauth2/authorization/google',
       ),
+      passwordResetRequestPath: String.fromEnvironment(
+        'PASSWORD_RESET_REQUEST_PATH',
+        defaultValue: '/api/auth/password/reset-request',
+      ),
+      passwordResetPath: String.fromEnvironment(
+        'PASSWORD_RESET_PATH',
+        defaultValue: '/api/auth/password/reset',
+      ),
       connectTimeout: Duration(seconds: 10),
       receiveTimeout: Duration(seconds: 15),
     );
@@ -44,6 +54,8 @@ class AppConfig {
   final String signupPath;
   final String naverOAuthPath;
   final String googleOAuthPath;
+  final String passwordResetRequestPath;
+  final String passwordResetPath;
   final Duration connectTimeout;
   final Duration receiveTimeout;
 }

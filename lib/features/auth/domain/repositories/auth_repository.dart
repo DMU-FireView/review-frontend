@@ -23,4 +23,11 @@ abstract interface class AuthRepository {
     required String nickname,
     required bool onboardingCompleted,
   });
+
+  Future<Result<String>> sendPasswordResetRequest(String email);
+
+  Future<Result<void>> resetPassword({
+    required String token,
+    required String newPassword,
+  });
 }
