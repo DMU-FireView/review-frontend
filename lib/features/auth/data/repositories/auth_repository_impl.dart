@@ -7,6 +7,7 @@ import 'package:re_view_front/core/network/network_exception.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:re_view_front/features/auth/data/dtos/login_request_dto.dart';
+import 'package:re_view_front/features/auth/data/dtos/password_reset_request_dto.dart';
 import 'package:re_view_front/features/auth/data/dtos/signup_request_dto.dart';
 import 'package:re_view_front/features/auth/domain/entities/auth_user.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
@@ -95,6 +96,43 @@ class AuthRepositoryImpl implements AuthRepository {
     } on Object catch (error) {
       return FailureResult(
         Failure(message: 'OAuth 처리 중 오류가 발생했습니다.', cause: error),
+      );
+    }
+  }
+
+  @override
+  Future<Result<String>> sendPasswordResetRequest(String email) async {
+    try {
+      final token = await _remoteDataSource.sendPasswordResetRequest(email);
+      return Success(token);
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: '인증 이메일을 발송하지 못했습니다.', cause: error),
+      );
+    }
+  }
+
+  @override
+  Future<Result<void>> resetPassword({
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      await _remoteDataSource.resetPassword(
+        PasswordResetRequestDto(token: token, newPassword: newPassword),
+      );
+      return const Success<void>(null);
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: '비밀번호를 변경하지 못했습니다.', cause: error),
       );
     }
   }
