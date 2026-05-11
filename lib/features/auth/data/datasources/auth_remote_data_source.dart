@@ -3,12 +3,17 @@ import 'package:re_view_front/core/network/api_response.dart';
 import 'package:re_view_front/core/network/api_client.dart';
 import 'package:re_view_front/features/auth/data/dtos/auth_user_dto.dart';
 import 'package:re_view_front/features/auth/data/dtos/login_request_dto.dart';
+import 'package:re_view_front/features/auth/data/dtos/password_reset_request_dto.dart';
 import 'package:re_view_front/features/auth/data/dtos/signup_request_dto.dart';
 
 abstract interface class AuthRemoteDataSource {
   Future<AuthUserDto> login(LoginRequestDto request);
 
   Future<void> signup(SignupRequestDto request);
+
+  Future<String> sendPasswordResetRequest(String email);
+
+  Future<void> resetPassword(PasswordResetRequestDto request);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -41,6 +46,31 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<void> signup(SignupRequestDto request) async {
     final response = await _apiClient.post(
       _config.signupPath,
+      data: request.toJson(),
+    );
+    final payload = _readPayload<Object?>(response.data);
+    payload.requireSuccess();
+  }
+
+  @override
+  Future<String> sendPasswordResetRequest(String email) async {
+    final response = await _apiClient.post(
+      '${_config.passwordResetRequestPath}?email=${Uri.encodeComponent(email)}',
+    );
+    final payload = _readPayload<Map<String, dynamic>>(response.data);
+    final data = payload.requireSuccess();
+
+    if (data is Map<String, dynamic> && data['resetToken'] is String) {
+      return data['resetToken'] as String;
+    }
+
+    throw const FormatException('Invalid password reset response');
+  }
+
+  @override
+  Future<void> resetPassword(PasswordResetRequestDto request) async {
+    final response = await _apiClient.post(
+      _config.passwordResetPath,
       data: request.toJson(),
     );
     final payload = _readPayload<Object?>(response.data);
