@@ -74,6 +74,32 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Result<AuthUser>> handleOAuthCallback({
+    required String accessToken,
+    required String tokenType,
+    required String email,
+    required String nickname,
+    required bool onboardingCompleted,
+  }) async {
+    try {
+      _tokenStore.save(accessToken: accessToken, tokenType: tokenType);
+      final user = AuthUser(
+        id: email,
+        email: email,
+        name: nickname,
+        accessToken: accessToken,
+        tokenType: tokenType,
+        onboardingCompleted: onboardingCompleted,
+      );
+      return Success(user);
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: 'OAuth 처리 중 오류가 발생했습니다.', cause: error),
+      );
+    }
+  }
+
+  @override
   Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider) async {
     final path = switch (provider) {
       OAuthProvider.naver => _config.naverOAuthPath,
