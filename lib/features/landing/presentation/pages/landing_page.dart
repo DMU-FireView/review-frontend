@@ -1,0 +1,190 @@
+import 'dart:ui';
+
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/responsive/breakpoints.dart';
+import 'package:re_view_front/app/responsive/responsive_layout.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/app/theme/app_colors.dart';
+import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
+import 'package:re_view_front/features/landing/presentation/widgets/landing_hero_section.dart';
+import 'package:re_view_front/features/landing/presentation/widgets/landing_rti_demo_card.dart';
+
+class LandingPage extends StatelessWidget {
+  const LandingPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        const IgnorePointer(child: HomePage()),
+        _Backdrop(onDismiss: () => context.go(RoutePaths.home)),
+        _LandingCard(
+          onClose: () => context.go(RoutePaths.home),
+          onStartPressed: () => context.go(RoutePaths.signup),
+          onRtiInfoPressed: () => context.go(RoutePaths.home),
+        ),
+      ],
+    );
+  }
+}
+
+class _Backdrop extends StatelessWidget {
+  const _Backdrop({required this.onDismiss});
+
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onDismiss,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: Container(color: const Color(0x660F172A)),
+      ),
+    );
+  }
+}
+
+class _LandingCard extends StatelessWidget {
+  const _LandingCard({
+    required this.onClose,
+    required this.onStartPressed,
+    required this.onRtiInfoPressed,
+  });
+
+  final VoidCallback onClose;
+  final VoidCallback onStartPressed;
+  final VoidCallback onRtiInfoPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      builder: (context, screenSize) {
+        final isMobile = screenSize == AppScreenSize.mobile;
+        final viewportHeight = MediaQuery.sizeOf(context).height;
+
+        return Center(
+          child: Padding(
+            padding: isMobile
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xl,
+                  )
+                : const EdgeInsets.all(AppSpacing.xxl),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: AppBreakpoints.wideContentMaxWidth,
+                maxHeight: viewportHeight - AppSpacing.xxl * 2,
+              ),
+              child: Material(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.xl),
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      padding: isMobile
+                          ? const EdgeInsets.all(AppSpacing.lg)
+                          : const EdgeInsets.all(AppSpacing.xxl),
+                      child: isMobile
+                          ? _MobileContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            )
+                          : _DesktopContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            ),
+                    ),
+                    Positioned(
+                      top: AppSpacing.md,
+                      right: AppSpacing.md,
+                      child: _CloseButton(onPressed: onClose),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DesktopContent extends StatelessWidget {
+  const _DesktopContent({
+    required this.onStartPressed,
+    required this.onRtiInfoPressed,
+  });
+
+  final VoidCallback onStartPressed;
+  final VoidCallback onRtiInfoPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.xxl),
+            child: LandingHeroSection(
+              onStartPressed: onStartPressed,
+              onRtiInfoPressed: onRtiInfoPressed,
+            ),
+          ),
+        ),
+        const Expanded(flex: 6, child: LandingRtiDemoCard()),
+      ],
+    );
+  }
+}
+
+class _MobileContent extends StatelessWidget {
+  const _MobileContent({
+    required this.onStartPressed,
+    required this.onRtiInfoPressed,
+  });
+
+  final VoidCallback onStartPressed;
+  final VoidCallback onRtiInfoPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LandingHeroSection(
+          onStartPressed: onStartPressed,
+          onRtiInfoPressed: onRtiInfoPressed,
+        ),
+        const SizedBox(height: AppSpacing.xl),
+        const LandingRtiDemoCard(),
+      ],
+    );
+  }
+}
+
+class _CloseButton extends StatelessWidget {
+  const _CloseButton({required this.onPressed});
+
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      onPressed: onPressed,
+      icon: const Icon(Icons.close),
+      color: AppColors.textSecondary,
+      tooltip: '홈으로',
+      style: IconButton.styleFrom(
+        backgroundColor: AppColors.surface,
+        shape: const CircleBorder(),
+      ),
+    );
+  }
+}
