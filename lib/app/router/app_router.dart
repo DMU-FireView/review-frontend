@@ -6,12 +6,18 @@ import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_pa
 import 'package:re_view_front/features/auth/presentation/pages/signup_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_dashboard_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
+import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
-    initialLocation: RoutePaths.home,
+    initialLocation: RoutePaths.landing,
     routes: [
+      GoRoute(
+        path: RoutePaths.landing,
+        name: RouteNames.landing,
+        builder: (context, state) => const LandingPage(),
+      ),
       GoRoute(
         path: RoutePaths.home,
         name: RouteNames.home,
