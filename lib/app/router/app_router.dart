@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_page.dart';
+import 'package:re_view_front/features/auth/presentation/pages/password_reset_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/signup_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_dashboard_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
@@ -49,6 +50,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => OAuthCallbackPage(
           queryParams: state.uri.queryParameters,
         ),
+      ),
+      GoRoute(
+        path: RoutePaths.passwordReset,
+        name: RouteNames.passwordReset,
+        builder: (context, state) => const PasswordResetPage(),
       ),
     ],
   );

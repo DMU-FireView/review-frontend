@@ -19,6 +19,7 @@ class LoginCard extends StatelessWidget {
     required this.onLoginPressed,
     required this.onOAuthPressed,
     required this.onSignupPressed,
+    this.onForgotPasswordPressed,
     super.key,
   });
 
@@ -35,6 +36,7 @@ class LoginCard extends StatelessWidget {
   final VoidCallback? onLoginPressed;
   final ValueChanged<OAuthProvider>? onOAuthPressed;
   final VoidCallback onSignupPressed;
+  final VoidCallback? onForgotPasswordPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +103,7 @@ class LoginCard extends StatelessWidget {
                 textInputAction: TextInputAction.done,
                 prefixIcon: Icons.lock_outline,
                 errorText: passwordError,
+                onForgotPassword: onForgotPasswordPressed,
                 trailing: TextButton(
                   onPressed: onPasswordVisibilityPressed,
                   child: Text(obscurePassword ? '보기' : '숨김'),
@@ -214,6 +217,7 @@ class _LoginInputField extends StatelessWidget {
     this.textInputAction,
     this.obscureText = false,
     this.trailing,
+    this.onForgotPassword,
   });
 
   final TextEditingController controller;
@@ -225,6 +229,7 @@ class _LoginInputField extends StatelessWidget {
   final TextInputAction? textInputAction;
   final bool obscureText;
   final Widget? trailing;
+  final VoidCallback? onForgotPassword;
 
   @override
   Widget build(BuildContext context) {
@@ -243,7 +248,10 @@ class _LoginInputField extends StatelessWidget {
               ),
             ),
             if (label == '비밀번호')
-              TextButton(onPressed: () {}, child: const Text('비밀번호 찾기')),
+              TextButton(
+                onPressed: onForgotPassword,
+                child: const Text('비밀번호 찾기'),
+              ),
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
