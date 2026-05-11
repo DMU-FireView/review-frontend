@@ -50,6 +50,6 @@ final handleOAuthCallbackUseCaseProvider =
 });
 
 final oauthCallbackViewModelProvider =
-    AutoDisposeNotifierProvider<OAuthCallbackViewModel, OAuthCallbackState>(
+    NotifierProvider<OAuthCallbackViewModel, OAuthCallbackState>(
   OAuthCallbackViewModel.new,
 );
