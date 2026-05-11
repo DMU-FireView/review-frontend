@@ -2,8 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
 import 'package:re_view_front/features/auth/presentation/view_models/oauth_callback_state.dart';
 
-class OAuthCallbackViewModel
-    extends AutoDisposeNotifier<OAuthCallbackState> {
+class OAuthCallbackViewModel extends Notifier<OAuthCallbackState> {
   @override
   OAuthCallbackState build() => const OAuthCallbackState();
 
