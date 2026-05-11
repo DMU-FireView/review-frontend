@@ -21,9 +21,9 @@ class LandingRtiDemoCard extends StatelessWidget {
         children: [
           _TrustBadgeRow(),
           SizedBox(height: AppSpacing.md),
-          _ProductInfoRow(),
+          _ProductSkeleton(),
           SizedBox(height: AppSpacing.md),
-          _RtiSummarySection(),
+          _RtiSummarySkeleton(),
           SizedBox(height: AppSpacing.md),
           _RtiDisclaimer(),
         ],
@@ -39,7 +39,7 @@ class _TrustBadgeRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Icon(Icons.shield, color: AppColors.primary, size: 18),
+        const Icon(Icons.shield, color: AppColors.primary, size: 16),
         const SizedBox(width: AppSpacing.xxs),
         Text(
           '신뢰 높음',
@@ -68,8 +68,8 @@ class _TrustBadgeRow extends StatelessWidget {
   }
 }
 
-class _ProductInfoRow extends StatelessWidget {
-  const _ProductInfoRow();
+class _ProductSkeleton extends StatelessWidget {
+  const _ProductSkeleton();
 
   @override
   Widget build(BuildContext context) {
@@ -80,113 +80,46 @@ class _ProductInfoRow extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       padding: const EdgeInsets.all(AppSpacing.md),
-      child: Row(
+      child: const Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 88,
-            height: 88,
-            decoration: BoxDecoration(
-              color: AppColors.surfaceMuted,
-              borderRadius: BorderRadius.circular(AppRadius.sm),
-            ),
-            child: const Icon(
-              Icons.headphones,
-              size: 48,
-              color: AppColors.textTertiary,
+          _SkeletonBox(width: 80, height: 80, radius: AppRadius.sm),
+          SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _SkeletonBox(height: 14, radius: AppRadius.xs),
+                SizedBox(height: AppSpacing.xs),
+                _SkeletonBox(width: 120, height: 14, radius: AppRadius.xs),
+                SizedBox(height: AppSpacing.sm),
+                _SkeletonBox(width: 80, height: 18, radius: AppRadius.xs),
+                SizedBox(height: AppSpacing.xs),
+                _SkeletonBox(width: 100, height: 12, radius: AppRadius.xs),
+              ],
             ),
           ),
-          const SizedBox(width: AppSpacing.md),
-          const Expanded(child: _ProductDetails()),
         ],
       ),
     );
   }
 }
 
-class _ProductDetails extends StatelessWidget {
-  const _ProductDetails();
+class _RtiSummarySkeleton extends StatelessWidget {
+  const _RtiSummarySkeleton();
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'SOUNDPRO ANC 노이즈캔슬링 헤드폰 Pro 화이트',
-          style: AppTextStyles.labelLarge,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Text(
-          '89,000원',
-          style: AppTextStyles.titleMedium.copyWith(color: AppColors.textPrimary),
-        ),
-        const SizedBox(height: AppSpacing.xxs),
-        Row(
-          children: [
-            ...List.generate(
-              4,
-              (_) => const Icon(
-                Icons.star,
-                color: Color(0xFFFBBF24),
-                size: 14,
-              ),
-            ),
-            const Icon(
-              Icons.star_half,
-              color: Color(0xFFFBBF24),
-              size: 14,
-            ),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              '4.8',
-              style: AppTextStyles.caption.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              '리뷰 1,306',
-              style: AppTextStyles.caption,
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class _RtiSummarySection extends StatelessWidget {
-  const _RtiSummarySection();
-
-  static const _metrics = [
-    _RtiMetric(
-      icon: Icons.verified_user_outlined,
-      label: '신뢰 높음',
-      value: '상위 8%',
-      color: AppColors.success,
-    ),
-    _RtiMetric(
-      icon: Icons.trending_down,
-      label: '광고 패턴 낮음',
-      value: '위험도 12%',
-      color: AppColors.primary,
-    ),
-    _RtiMetric(
-      icon: Icons.chat_bubble_outline,
-      label: '반복 문구 적음',
-      value: '반복도 9%',
-      color: AppColors.primary,
-    ),
-    _RtiMetric(
-      icon: Icons.check_circle_outline,
-      label: '이상 징후 없음',
-      value: '정상',
-      color: AppColors.success,
-    ),
+  static const _labels = ['신뢰 높음', '광고 패턴 낮음', '반복 문구 적음', '이상 징후 없음'];
+  static const _icons = [
+    Icons.verified_user_outlined,
+    Icons.trending_down,
+    Icons.chat_bubble_outline,
+    Icons.check_circle_outline,
+  ];
+  static const _colors = [
+    AppColors.success,
+    AppColors.primary,
+    AppColors.primary,
+    AppColors.success,
   ];
 
   @override
@@ -203,14 +136,11 @@ class _RtiSummarySection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text(
-                'Re:view 분석 요약',
-                style: AppTextStyles.labelLarge,
-              ),
+              Text('Re:view 분석 요약', style: AppTextStyles.labelLarge),
               const SizedBox(width: AppSpacing.xxs),
               const Icon(
                 Icons.info_outline,
-                size: 14,
+                size: 13,
                 color: AppColors.textTertiary,
               ),
             ],
@@ -218,60 +148,30 @@ class _RtiSummarySection extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
-              for (final metric in _metrics)
-                Expanded(child: _RtiMetricTile(metric: metric)),
+              for (var i = 0; i < _labels.length; i++)
+                Expanded(
+                  child: Column(
+                    children: [
+                      Icon(_icons[i], color: _colors[i], size: 22),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        _labels[i],
+                        style: AppTextStyles.caption.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      const _SkeletonBox(width: 36, height: 10, radius: AppRadius.xs),
+                    ],
+                  ),
+                ),
             ],
           ),
         ],
       ),
-    );
-  }
-}
-
-class _RtiMetric {
-  const _RtiMetric({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-}
-
-class _RtiMetricTile extends StatelessWidget {
-  const _RtiMetricTile({required this.metric});
-
-  final _RtiMetric metric;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(metric.icon, color: metric.color, size: 24),
-        const SizedBox(height: AppSpacing.xxs),
-        Text(
-          metric.label,
-          style: AppTextStyles.caption.copyWith(
-            color: AppColors.textSecondary,
-          ),
-          textAlign: TextAlign.center,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 2),
-        Text(
-          metric.value,
-          style: AppTextStyles.caption.copyWith(
-            color: metric.color,
-            fontWeight: FontWeight.w600,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
     );
   }
 }
@@ -284,19 +184,69 @@ class _RtiDisclaimer extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Icon(
-          Icons.info_outline,
-          size: 14,
-          color: AppColors.textTertiary,
-        ),
+        const Icon(Icons.info_outline, size: 13, color: AppColors.textTertiary),
         const SizedBox(width: AppSpacing.xxs),
         Expanded(
           child: Text(
-            '실제 사용자 리뷰를 기반으로 분석하여 광고성/조작 신호는 필터링되어 분석에 반영됩니다.',
+            '실제 사용자 리뷰를 기반으로 분석하여\n광고성/조작 신호는 필터링되어 분석에 반영됩니다.',
             style: AppTextStyles.caption,
           ),
         ),
       ],
+    );
+  }
+}
+
+class _SkeletonBox extends StatefulWidget {
+  const _SkeletonBox({
+    this.width,
+    required this.height,
+    this.radius = 0,
+  });
+
+  final double? width;
+  final double height;
+  final double radius;
+
+  @override
+  State<_SkeletonBox> createState() => _SkeletonBoxState();
+}
+
+class _SkeletonBoxState extends State<_SkeletonBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    )..repeat(reverse: true);
+    _opacity = Tween<double>(begin: 0.35, end: 0.7).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _opacity,
+      child: Container(
+        width: widget.width,
+        height: widget.height,
+        decoration: BoxDecoration(
+          color: AppColors.border,
+          borderRadius: BorderRadius.circular(widget.radius),
+        ),
+      ),
     );
   }
 }
