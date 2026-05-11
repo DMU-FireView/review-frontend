@@ -136,6 +136,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       onLoginPressed: loginState.isLoading ? null : _handleLoginPressed,
       onOAuthPressed: loginState.isLoading ? null : _handleOAuthPressed,
       onSignupPressed: () => context.go(RoutePaths.signup),
+      onForgotPasswordPressed: () => context.go(RoutePaths.passwordReset),
     );
   }
 
