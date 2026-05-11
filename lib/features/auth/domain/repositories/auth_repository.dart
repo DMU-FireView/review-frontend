@@ -15,4 +15,12 @@ abstract interface class AuthRepository {
   });
 
   Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider);
+
+  Future<Result<AuthUser>> handleOAuthCallback({
+    required String accessToken,
+    required String tokenType,
+    required String email,
+    required String nickname,
+    required bool onboardingCompleted,
+  });
 }
