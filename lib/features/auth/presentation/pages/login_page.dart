@@ -50,7 +50,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen<LoginState>(loginViewModelProvider, (previous, next) {
       if (next.status == LoginSubmissionStatus.success) {
-        context.go(RoutePaths.home);
+        context.go(
+          next.onboardingCompleted
+              ? RoutePaths.dashboard
+              : RoutePaths.onboarding,
+        );
       }
     });
 
