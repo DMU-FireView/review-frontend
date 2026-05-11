@@ -80,3 +80,5 @@ playwright-report/
 # Docs
 docs
 
+# Vercel
+.vercel
