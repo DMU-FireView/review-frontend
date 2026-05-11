@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/responsive/breakpoints.dart';
@@ -5,7 +7,7 @@ import 'package:re_view_front/app/responsive/responsive_layout.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/app/theme/app_text_styles.dart';
+import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/widgets/landing_hero_section.dart';
 import 'package:re_view_front/features/landing/presentation/widgets/landing_rti_demo_card.dart';
 
@@ -14,62 +16,104 @@ class LandingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: ResponsiveLayout(
-          builder: (context, screenSize) {
-            final isDesktop = screenSize == AppScreenSize.desktop;
-            final isTablet = screenSize == AppScreenSize.tablet;
-
-            return Stack(
-              children: [
-                SingleChildScrollView(
-                  padding: isDesktop
-                      ? const EdgeInsets.symmetric(
-                          horizontal: AppSpacing.xxxl,
-                          vertical: AppSpacing.xxl,
-                        )
-                      : isTablet
-                      ? const EdgeInsets.all(AppSpacing.xl)
-                      : const EdgeInsets.all(AppSpacing.md),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: AppBreakpoints.wideContentMaxWidth,
-                      ),
-                      child: isDesktop || isTablet
-                          ? _DesktopLayout(
-                              onStartPressed: () =>
-                                  context.go(RoutePaths.signup),
-                              onRtiInfoPressed: () =>
-                                  context.go(RoutePaths.home),
-                            )
-                          : _MobileLayout(
-                              onStartPressed: () =>
-                                  context.go(RoutePaths.signup),
-                              onRtiInfoPressed: () =>
-                                  context.go(RoutePaths.home),
-                            ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: AppSpacing.md,
-                  right: AppSpacing.md,
-                  child: _HomeLink(onPressed: () => context.go(RoutePaths.home)),
-                ),
-              ],
-            );
-          },
+    return Stack(
+      children: [
+        const IgnorePointer(child: HomePage()),
+        _Backdrop(onDismiss: () => context.go(RoutePaths.home)),
+        _LandingCard(
+          onClose: () => context.go(RoutePaths.home),
+          onStartPressed: () => context.go(RoutePaths.signup),
+          onRtiInfoPressed: () => context.go(RoutePaths.home),
         ),
+      ],
+    );
+  }
+}
+
+class _Backdrop extends StatelessWidget {
+  const _Backdrop({required this.onDismiss});
+
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onDismiss,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: Container(color: const Color(0x660F172A)),
       ),
     );
   }
 }
 
-class _DesktopLayout extends StatelessWidget {
-  const _DesktopLayout({
+class _LandingCard extends StatelessWidget {
+  const _LandingCard({
+    required this.onClose,
+    required this.onStartPressed,
+    required this.onRtiInfoPressed,
+  });
+
+  final VoidCallback onClose;
+  final VoidCallback onStartPressed;
+  final VoidCallback onRtiInfoPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ResponsiveLayout(
+      builder: (context, screenSize) {
+        final isMobile = screenSize == AppScreenSize.mobile;
+
+        return Center(
+          child: Padding(
+            padding: isMobile
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xl,
+                  )
+                : const EdgeInsets.all(AppSpacing.xxl),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppBreakpoints.wideContentMaxWidth,
+              ),
+              child: Material(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(AppRadius.xl),
+                clipBehavior: Clip.antiAlias,
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      padding: isMobile
+                          ? const EdgeInsets.all(AppSpacing.lg)
+                          : const EdgeInsets.all(AppSpacing.xxl),
+                      child: isMobile
+                          ? _MobileContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            )
+                          : _DesktopContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            ),
+                    ),
+                    Positioned(
+                      top: AppSpacing.md,
+                      right: AppSpacing.md,
+                      child: _CloseButton(onPressed: onClose),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _DesktopContent extends StatelessWidget {
+  const _DesktopContent({
     required this.onStartPressed,
     required this.onRtiInfoPressed,
   });
@@ -79,42 +123,29 @@ class _DesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x140F172A),
-            blurRadius: 40,
-            offset: Offset(0, 16),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(AppSpacing.xxl),
-      child: IntrinsicHeight(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 5,
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Padding(
+              padding: const EdgeInsets.only(right: AppSpacing.xxl),
               child: LandingHeroSection(
                 onStartPressed: onStartPressed,
                 onRtiInfoPressed: onRtiInfoPressed,
               ),
             ),
-            const SizedBox(width: AppSpacing.xxl),
-            const Expanded(flex: 6, child: LandingRtiDemoCard()),
-          ],
-        ),
+          ),
+          const Expanded(flex: 6, child: LandingRtiDemoCard()),
+        ],
       ),
     );
   }
 }
 
-class _MobileLayout extends StatelessWidget {
-  const _MobileLayout({
+class _MobileContent extends StatelessWidget {
+  const _MobileContent({
     required this.onStartPressed,
     required this.onRtiInfoPressed,
   });
@@ -127,39 +158,32 @@ class _MobileLayout extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const SizedBox(height: AppSpacing.xl),
         LandingHeroSection(
           onStartPressed: onStartPressed,
           onRtiInfoPressed: onRtiInfoPressed,
         ),
         const SizedBox(height: AppSpacing.xl),
         const LandingRtiDemoCard(),
-        const SizedBox(height: AppSpacing.xl),
       ],
     );
   }
 }
 
-class _HomeLink extends StatelessWidget {
-  const _HomeLink({required this.onPressed});
+class _CloseButton extends StatelessWidget {
+  const _CloseButton({required this.onPressed});
 
   final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
+    return IconButton(
       onPressed: onPressed,
-      icon: const Icon(Icons.close, size: 16),
-      label: Text(
-        '홈으로',
-        style: AppTextStyles.bodyMedium.copyWith(color: AppColors.textSecondary),
-      ),
-      style: TextButton.styleFrom(
-        foregroundColor: AppColors.textSecondary,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xxs,
-        ),
+      icon: const Icon(Icons.close),
+      color: AppColors.textSecondary,
+      tooltip: '홈으로',
+      style: IconButton.styleFrom(
+        backgroundColor: AppColors.surface,
+        shape: const CircleBorder(),
       ),
     );
   }
