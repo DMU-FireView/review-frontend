@@ -3,6 +3,7 @@ abstract final class RoutePaths {
   static const login = '/login';
   static const signup = '/signup';
   static const dashboard = '/dashboard';
+  static const oauthCallback = '/auth/callback';
 }
 
 abstract final class RouteNames {
@@ -10,4 +11,5 @@ abstract final class RouteNames {
   static const login = 'login';
   static const signup = 'signup';
   static const dashboard = 'dashboard';
+  static const oauthCallback = 'oauthCallback';
 }
