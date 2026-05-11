@@ -31,8 +31,11 @@ class _OAuthCallbackPageState extends ConsumerState<OAuthCallbackPage> {
   Widget build(BuildContext context) {
     ref.listen(oauthCallbackViewModelProvider, (_, next) {
       if (next.status == OAuthCallbackStatus.success) {
-        // onboardingCompleted 기준 분기는 feat/auth-routing에서 처리
-        context.go(RoutePaths.dashboard);
+        context.go(
+          next.onboardingCompleted
+              ? RoutePaths.dashboard
+              : RoutePaths.onboarding,
+        );
       }
     });
 
