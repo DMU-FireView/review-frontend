@@ -9,6 +9,7 @@ import 'package:re_view_front/features/home/presentation/pages/home_dashboard_pa
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
@@ -45,11 +46,16 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const HomeDashboardPage(),
       ),
       GoRoute(
+        path: RoutePaths.search,
+        name: RouteNames.search,
+        builder: (context, state) =>
+            SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+      ),
+      GoRoute(
         path: RoutePaths.oauthCallback,
         name: RouteNames.oauthCallback,
-        builder: (context, state) => OAuthCallbackPage(
-          queryParams: state.uri.queryParameters,
-        ),
+        builder: (context, state) =>
+            OAuthCallbackPage(queryParams: state.uri.queryParameters),
       ),
       GoRoute(
         path: RoutePaths.passwordReset,
