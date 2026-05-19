@@ -14,6 +14,8 @@ abstract interface class AuthRepository {
     required String password,
   });
 
+  Future<Result<void>> logout();
+
   Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider);
 
   Future<Result<AuthUser>> handleOAuthCallback({
