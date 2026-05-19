@@ -3,9 +3,10 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 
 class SearchBar extends StatefulWidget {
-  const SearchBar({this.focusNode, super.key});
+  const SearchBar({this.focusNode, this.onSubmitted, super.key});
 
   final FocusNode? focusNode;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -55,6 +56,7 @@ class _SearchBarState extends State<SearchBar> {
               child: TextField(
                 focusNode: widget.focusNode,
                 textInputAction: TextInputAction.search,
+                onSubmitted: widget.onSubmitted,
                 decoration: InputDecoration(
                   hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
