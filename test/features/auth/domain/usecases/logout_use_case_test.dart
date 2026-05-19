@@ -3,55 +3,35 @@ import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/auth/domain/entities/auth_user.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/features/auth/domain/repositories/auth_repository.dart';
-import 'package:re_view_front/features/auth/domain/usecases/login_use_case.dart';
+import 'package:re_view_front/features/auth/domain/usecases/logout_use_case.dart';
 
 void main() {
-  test('delegates email login to auth repository', () async {
+  test('delegates logout to auth repository', () async {
     final repository = _FakeAuthRepository();
-    final useCase = LoginUseCase(repository);
+    final useCase = LogoutUseCase(repository);
 
-    final result = await useCase(
-      email: 'user@example.com',
-      password: 'pass1234',
-    );
+    final result = await useCase();
 
-    expect(result, isA<Success<AuthUser>>());
-    expect(repository.loginEmail, 'user@example.com');
-    expect(repository.loginPassword, 'pass1234');
-  });
-
-  test('delegates OAuth login URI creation to auth repository', () async {
-    final repository = _FakeAuthRepository();
-    final useCase = LoginUseCase(repository);
-
-    final result = await useCase.startOAuth(OAuthProvider.naver);
-
-    expect(result, isA<Success<Uri>>());
-    expect(repository.oauthProvider, OAuthProvider.naver);
+    expect(result, isA<Success<void>>());
+    expect(repository.logoutCalled, isTrue);
   });
 }
 
 class _FakeAuthRepository implements AuthRepository {
-  String? loginEmail;
-  String? loginPassword;
-  OAuthProvider? oauthProvider;
+  bool logoutCalled = false;
+
+  @override
+  Future<Result<void>> logout() async {
+    logoutCalled = true;
+    return const Success(null);
+  }
 
   @override
   Future<Result<AuthUser>> login({
     required String email,
     required String password,
   }) async {
-    loginEmail = email;
-    loginPassword = password;
-    return const Success(
-      AuthUser(id: '1', email: 'user@example.com', accessToken: 'token'),
-    );
-  }
-
-  @override
-  Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider) async {
-    oauthProvider = provider;
-    return Success(Uri.parse('https://api.example.com/oauth/naver'));
+    return const Success(AuthUser(id: '1', email: 'user@example.com'));
   }
 
   @override
@@ -64,8 +44,8 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Result<void>> logout() async {
-    return const Success(null);
+  Future<Result<Uri>> getOAuthLoginUri(OAuthProvider provider) async {
+    return Success(Uri.parse('https://api.example.com/oauth'));
   }
 
   @override
