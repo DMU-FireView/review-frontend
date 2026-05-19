@@ -75,6 +75,16 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Result<void>> logout() async {
+    try {
+      _tokenStore.clear();
+      return const Success<void>(null);
+    } on Object catch (error) {
+      return FailureResult(Failure(message: '로그아웃을 완료하지 못했습니다.', cause: error));
+    }
+  }
+
+  @override
   Future<Result<AuthUser>> handleOAuthCallback({
     required String accessToken,
     required String tokenType,
@@ -131,9 +141,7 @@ class AuthRepositoryImpl implements AuthRepository {
     } on DioException catch (error) {
       return FailureResult(failureFromDioException(error));
     } on Object catch (error) {
-      return FailureResult(
-        Failure(message: '비밀번호를 변경하지 못했습니다.', cause: error),
-      );
+      return FailureResult(Failure(message: '비밀번호를 변경하지 못했습니다.', cause: error));
     }
   }
 
