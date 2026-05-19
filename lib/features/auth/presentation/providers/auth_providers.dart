@@ -5,6 +5,7 @@ import 'package:re_view_front/features/auth/data/repositories/auth_repository_im
 import 'package:re_view_front/features/auth/domain/repositories/auth_repository.dart';
 import 'package:re_view_front/features/auth/domain/usecases/handle_oauth_callback_use_case.dart';
 import 'package:re_view_front/features/auth/domain/usecases/login_use_case.dart';
+import 'package:re_view_front/features/auth/domain/usecases/logout_use_case.dart';
 import 'package:re_view_front/features/auth/domain/usecases/reset_password_use_case.dart';
 import 'package:re_view_front/features/auth/domain/usecases/send_password_reset_request_use_case.dart';
 import 'package:re_view_front/features/auth/domain/usecases/signup_use_case.dart';
@@ -40,6 +41,10 @@ final signupUseCaseProvider = Provider<SignupUseCase>((ref) {
   return SignupUseCase(ref.watch(authRepositoryProvider));
 });
 
+final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
+  return LogoutUseCase(ref.watch(authRepositoryProvider));
+});
+
 final loginViewModelProvider = NotifierProvider<LoginViewModel, LoginState>(
   LoginViewModel.new,
 );
@@ -48,20 +53,21 @@ final signupViewModelProvider = NotifierProvider<SignupViewModel, SignupState>(
   SignupViewModel.new,
 );
 
-final handleOAuthCallbackUseCaseProvider =
-    Provider<HandleOAuthCallbackUseCase>((ref) {
-  return HandleOAuthCallbackUseCase(ref.watch(authRepositoryProvider));
-});
+final handleOAuthCallbackUseCaseProvider = Provider<HandleOAuthCallbackUseCase>(
+  (ref) {
+    return HandleOAuthCallbackUseCase(ref.watch(authRepositoryProvider));
+  },
+);
 
 final oauthCallbackViewModelProvider =
     NotifierProvider<OAuthCallbackViewModel, OAuthCallbackState>(
-  OAuthCallbackViewModel.new,
-);
+      OAuthCallbackViewModel.new,
+    );
 
 final sendPasswordResetRequestUseCaseProvider =
     Provider<SendPasswordResetRequestUseCase>((ref) {
-  return SendPasswordResetRequestUseCase(ref.watch(authRepositoryProvider));
-});
+      return SendPasswordResetRequestUseCase(ref.watch(authRepositoryProvider));
+    });
 
 final resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>((ref) {
   return ResetPasswordUseCase(ref.watch(authRepositoryProvider));
@@ -69,5 +75,5 @@ final resetPasswordUseCaseProvider = Provider<ResetPasswordUseCase>((ref) {
 
 final passwordResetViewModelProvider =
     NotifierProvider.autoDispose<PasswordResetViewModel, PasswordResetState>(
-  PasswordResetViewModel.new,
-);
+      PasswordResetViewModel.new,
+    );
