@@ -3,79 +3,94 @@ import 'package:re_view_front/features/search/presentation/view_models/search_re
 
 const mockSearchProducts = [
   SearchResultProduct(
-    id: 'mock-stand-mixer-01',
-    name: '브리즈핸드 무선 핸디 선풍기 4세대',
-    storeName: 'Breeze Lab',
-    category: '가전',
-    price: 34900,
-    originalPrice: 42900,
-    rating: 4.8,
-    reviewCount: 1832,
-    rtiScore: 94,
+    id: 1,
+    name: 'AeroFit ANC 무선 블루투스 이어폰',
     imageUrl:
-        'https://images.unsplash.com/photo-1585338107529-13afc5f02586?auto=format&fit=crop&w=700&q=80',
-    summary: '소음과 배터리 지속시간에 대한 실제 사용 리뷰가 안정적으로 유지되고 있어요.',
-    badge: 'RTI 추천',
+        'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=700&q=80',
+    price: 89000,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 91,
+    rtiGrade: 'SAFE',
+    rtiColor: '#22C55E',
+    reviewCount: 1284,
+    avgRating: 4.8,
   ),
   SearchResultProduct(
-    id: 'mock-cleaner-02',
-    name: '라이트클린 무선 청소기 미니',
-    storeName: 'Light Clean',
-    category: '생활',
-    price: 89900,
-    originalPrice: 119000,
-    rating: 4.6,
-    reviewCount: 926,
-    rtiScore: 88,
+    id: 2,
+    name: '이어온 QuietBuds Lite ANC 커널형 무선',
     imageUrl:
-        'https://images.unsplash.com/photo-1558317374-067fb5f30001?auto=format&fit=crop&w=700&q=80',
-    summary: '흡입력 만족 리뷰가 많고, 반복 문구 비율이 낮은 편입니다.',
-    badge: '리뷰 안정',
+        'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=700&q=80',
+    price: 62500,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 63,
+    rtiGrade: 'SUSPICIOUS',
+    rtiColor: '#F97316',
+    reviewCount: 892,
+    avgRating: 4.5,
   ),
   SearchResultProduct(
-    id: 'mock-cream-03',
-    name: '세라 수분 장벽 크림 80ml',
-    storeName: 'Derma Note',
-    category: '뷰티',
-    price: 21800,
-    originalPrice: 27000,
-    rating: 4.7,
-    reviewCount: 3140,
-    rtiScore: 91,
+    id: 3,
+    name: 'XY Pro 초경량 ANC 블루투스 이어폰 2026 신형',
     imageUrl:
-        'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&w=700&q=80',
-    summary: '민감성 피부 리뷰의 표현 편차가 자연스럽고 재구매 언급이 많습니다.',
-    badge: '재구매 높음',
+        'https://images.unsplash.com/photo-1610438235354-a6ae5528385c?auto=format&fit=crop&w=700&q=80',
+    price: 39900,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 38,
+    rtiGrade: 'DANGER',
+    rtiColor: '#EF4444',
+    reviewCount: 2104,
+    avgRating: 4.7,
   ),
   SearchResultProduct(
-    id: 'mock-coffee-04',
-    name: '데일리 콜드브루 원액 12개입',
-    storeName: 'Morning Bean',
-    category: '푸드',
-    price: 16900,
-    originalPrice: 19900,
-    rating: 4.5,
-    reviewCount: 711,
-    rtiScore: 83,
+    id: 4,
+    name: '아이오 플러스 StudioTone ANC 프리미엄 무선',
     imageUrl:
-        'https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=700&q=80',
-    summary: '맛과 배송 상태 리뷰가 고르게 분포하지만 일부 프로모션성 문구가 감지됩니다.',
-    badge: '가격 좋음',
-  ),
-  SearchResultProduct(
-    id: 'mock-chair-05',
-    name: '모듈핏 메쉬 사무용 의자',
-    storeName: 'Work Studio',
-    category: '인테리어',
+        'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=700&q=80',
     price: 149000,
-    originalPrice: 179000,
-    rating: 4.4,
-    reviewCount: 504,
-    rtiScore: 79,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 82,
+    rtiGrade: 'SAFE',
+    rtiColor: '#22C55E',
+    reviewCount: 456,
+    avgRating: 4.9,
+  ),
+  SearchResultProduct(
+    id: 5,
+    name: '더블팟Pods ANC 통화 노이즈 저감 이어셋',
     imageUrl:
-        'https://images.unsplash.com/photo-1580480055273-228ff5388ef8?auto=format&fit=crop&w=700&q=80',
-    summary: '조립 난이도와 착좌감 리뷰가 충분하지만 체형별 평가 편차가 있습니다.',
-    badge: '비교 필요',
+        'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=700&q=80',
+    price: 74000,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 58,
+    rtiGrade: 'SUSPICIOUS',
+    rtiColor: '#F97316',
+    reviewCount: 318,
+    avgRating: 4.4,
+  ),
+  SearchResultProduct(
+    id: 6,
+    name: 'AirWave ANC 생활방수 블루투스 이어폰',
+    imageUrl:
+        'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=700&q=80',
+    price: 55900,
+    category: 'ELECTRONICS',
+    categoryDisplayName: '이어폰',
+    platform: null,
+    avgRti: 76,
+    rtiGrade: 'SAFE',
+    rtiColor: '#22C55E',
+    reviewCount: 742,
+    avgRating: 4.6,
   ),
 ];
 
@@ -86,30 +101,57 @@ SearchResultsState mockSearchResultsFor(String query) {
       : mockSearchProducts
             .where((product) {
               return product.name.toLowerCase().contains(keyword) ||
-                  product.storeName.toLowerCase().contains(keyword) ||
-                  product.category.toLowerCase().contains(keyword);
+                  product.category.toLowerCase().contains(keyword) ||
+                  product.categoryDisplayName.toLowerCase().contains(keyword);
             })
             .toList(growable: false);
 
   return SearchResultsState(
     query: query.trim(),
     products: products,
-    filters: [
-      SearchFilterChipData(label: '전체', count: products.length, selected: true),
-      SearchFilterChipData(
-        label: 'RTI 90+',
-        count: products.where((product) => product.rtiScore >= 90).length,
-      ),
-      SearchFilterChipData(
-        label: '리뷰 1,000+',
-        count: products.where((product) => product.reviewCount >= 1000).length,
-      ),
-      SearchFilterChipData(
-        label: '할인중',
-        count: products
-            .where((product) => product.originalPrice != null)
-            .length,
-      ),
+    totalCount: query.trim().isEmpty ? products.length : 248,
+    quickFilters: [
+      SearchFilterChipData(label: '전체', count: 248, selected: true),
+      const SearchFilterChipData(label: 'RTI 80+', count: 132),
+      const SearchFilterChipData(label: '아이폰 추천', count: 86),
+      const SearchFilterChipData(label: '통화 품질 우수', count: 54),
+      const SearchFilterChipData(label: '장시간 배터리', count: 47),
+      const SearchFilterChipData(label: '가성비', count: 39),
+      const SearchFilterChipData(label: '출시 6개월 이내', count: 22),
+      const SearchFilterChipData(label: '무선충전 지원', count: 18),
+    ],
+    categoryFilters: const [
+      SearchFilterChipData(label: '이어폰', count: 142, selected: true),
+      SearchFilterChipData(label: '헤드폰', count: 61),
+      SearchFilterChipData(label: '스피커', count: 24),
+      SearchFilterChipData(label: '액세서리', count: 21),
+    ],
+    priceRanges: const [
+      SearchFilterChipData(label: '3만원 이하', count: 18),
+      SearchFilterChipData(label: '3~7만원', count: 73),
+      SearchFilterChipData(label: '7~15만원', count: 92),
+      SearchFilterChipData(label: '15만원 이상', count: 65, selected: true),
     ],
   );
+}
+
+const mockSearchBrands = [
+  'SoundRoom',
+  'Modern Audio',
+  'Daily Gadget',
+  'Audio Lab',
+  'Tech Corner',
+  'Base Market',
+];
+
+const mockProductBadges = ['무료배송', '오늘출발', '특가', '무료배송', '오늘출발', '무료배송'];
+
+String mockBrandFor(SearchResultProduct product) {
+  final index = (product.id - 1).clamp(0, mockSearchBrands.length - 1);
+  return mockSearchBrands[index];
+}
+
+String mockBadgeFor(SearchResultProduct product) {
+  final index = (product.id - 1).clamp(0, mockProductBadges.length - 1);
+  return mockProductBadges[index];
 }
