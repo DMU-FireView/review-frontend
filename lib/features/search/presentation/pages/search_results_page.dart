@@ -35,7 +35,7 @@ class SearchResultsPage extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: AppContentView(
-              maxWidth: 1200,
+              maxWidth: 1280,
               padding: EdgeInsets.fromLTRB(
                 context.isMobile ? AppSpacing.md : AppSpacing.xl,
                 context.isMobile ? AppSpacing.lg : AppSpacing.xl,
@@ -75,55 +75,223 @@ class _SearchHeader extends StatelessWidget {
       ),
       child: SafeArea(
         bottom: false,
-        child: AppContentView(
-          maxWidth: 1200,
+        child: Padding(
           padding: EdgeInsets.fromLTRB(
             context.isMobile ? AppSpacing.md : AppSpacing.xl,
-            AppSpacing.md,
+            AppSpacing.sm,
             context.isMobile ? AppSpacing.md : AppSpacing.xl,
-            AppSpacing.md,
+            AppSpacing.sm,
           ),
           child: context.isMobile
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        HomeLogo(onTap: () => context.go(RoutePaths.home)),
-                        const Spacer(),
-                        IconButton(
-                          tooltip: '홈',
-                          onPressed: () => context.go(RoutePaths.home),
-                          icon: const Icon(Icons.home_outlined),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    home.SearchBar(
-                      initialValue: query,
-                      onSubmitted: onSearchSubmitted,
-                    ),
-                  ],
+              ? _MobileSearchHeader(
+                  query: query,
+                  onSearchSubmitted: onSearchSubmitted,
                 )
-              : Row(
-                  children: [
-                    HomeLogo(onTap: () => context.go(RoutePaths.home)),
-                    const SizedBox(width: AppSpacing.xxl),
-                    Expanded(
-                      child: home.SearchBar(
-                        initialValue: query,
-                        onSubmitted: onSearchSubmitted,
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.lg),
-                    TextButton.icon(
-                      onPressed: () => context.go(RoutePaths.home),
-                      icon: const Icon(Icons.home_outlined, size: 18),
-                      label: const Text('홈으로'),
-                    ),
-                  ],
+              : _DesktopSearchHeader(
+                  query: query,
+                  onSearchSubmitted: onSearchSubmitted,
                 ),
         ),
+      ),
+    );
+  }
+}
+
+class _DesktopSearchHeader extends StatelessWidget {
+  const _DesktopSearchHeader({
+    required this.query,
+    required this.onSearchSubmitted,
+  });
+
+  final String query;
+  final ValueChanged<String> onSearchSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    const navItems = [
+      '홈',
+      '브랜드데이',
+      '베스트',
+      '신상품',
+      '타임딜',
+      '리뷰 LIVE',
+      '리뷰랭킹',
+      '기획전',
+      '선물하기',
+      '반려동물',
+      '여행/레저',
+    ];
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            SizedBox(
+              width: 360,
+              child: Row(
+                children: [
+                  HomeLogo(onTap: () => context.go(RoutePaths.home)),
+                  const SizedBox(width: AppSpacing.xl),
+                  _HeaderLink(label: '고객센터'),
+                  const SizedBox(width: AppSpacing.lg),
+                  _HeaderLink(label: '판매자 입점'),
+                  const SizedBox(width: AppSpacing.lg),
+                  _HeaderLink(label: '앱 다운로드'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Center(
+                child: SizedBox(
+                  width: 520,
+                  child: home.SearchBar(
+                    initialValue: query,
+                    onSubmitted: onSearchSubmitted,
+                    onSearchPressed: onSearchSubmitted,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 240,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: const [
+                  _HeaderAction(icon: Icons.person_outline, label: '로그인'),
+                  _HeaderAction(icon: Icons.favorite_border, label: '찜'),
+                  _HeaderAction(
+                    icon: Icons.shopping_cart_outlined,
+                    label: '장바구니',
+                    badge: '2',
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            const Icon(Icons.menu, color: AppColors.textPrimary, size: 22),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              '카테고리',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xxl),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final item in navItems)
+                      Padding(
+                        padding: const EdgeInsets.only(right: AppSpacing.xl),
+                        child: Text(
+                          item,
+                          style: Theme.of(context).textTheme.labelLarge
+                              ?.copyWith(
+                                color: item == '홈'
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _MobileSearchHeader extends StatelessWidget {
+  const _MobileSearchHeader({
+    required this.query,
+    required this.onSearchSubmitted,
+  });
+
+  final String query;
+  final ValueChanged<String> onSearchSubmitted;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Row(
+          children: [
+            HomeLogo(onTap: () => context.go(RoutePaths.home)),
+            const Spacer(),
+            IconButton(
+              tooltip: '홈',
+              onPressed: () => context.go(RoutePaths.home),
+              icon: const Icon(Icons.home_outlined),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        home.SearchBar(
+          initialValue: query,
+          onSubmitted: onSearchSubmitted,
+          onSearchPressed: onSearchSubmitted,
+        ),
+      ],
+    );
+  }
+}
+
+class _HeaderLink extends StatelessWidget {
+  const _HeaderLink({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: AppColors.textSecondary,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+}
+
+class _HeaderAction extends StatelessWidget {
+  const _HeaderAction({required this.icon, required this.label, this.badge});
+
+  final IconData icon;
+  final String label;
+  final String? badge;
+
+  @override
+  Widget build(BuildContext context) {
+    final iconWidget = Icon(icon, size: 24, color: AppColors.textPrimary);
+
+    return Padding(
+      padding: const EdgeInsets.only(left: AppSpacing.lg),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          badge == null
+              ? iconWidget
+              : Badge(label: Text(badge!), child: iconWidget),
+          const SizedBox(height: AppSpacing.xxs),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -155,7 +323,7 @@ class _SearchResultsBody extends StatelessWidget {
       children: [
         _SearchSummary(state: state),
         const SizedBox(height: AppSpacing.lg),
-        _SearchToolbar(state: state),
+        _QuickFilterRow(filters: state.quickFilters),
         const SizedBox(height: AppSpacing.lg),
         if (state.isEmpty)
           SizedBox(
@@ -167,8 +335,23 @@ class _SearchResultsBody extends StatelessWidget {
                   : '다른 검색어나 더 넓은 카테고리로 다시 검색해보세요.',
             ),
           )
+        else if (context.isMobile)
+          Column(
+            children: [
+              _FilterPanel(state: state, compact: true),
+              const SizedBox(height: AppSpacing.md),
+              _ResultColumn(state: state),
+            ],
+          )
         else
-          _ProductGrid(products: state.products),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: 300, child: _FilterPanel(state: state)),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(child: _ResultColumn(state: state)),
+            ],
+          ),
       ],
     );
   }
@@ -192,15 +375,16 @@ class _SearchSummary extends StatelessWidget {
           title,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             color: AppColors.textPrimary,
+            fontSize: context.isMobile ? 24 : 32,
             fontWeight: FontWeight.w900,
           ),
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
-          '리뷰 신뢰도와 반복 패턴을 함께 보고 고를 수 있는 상품 ${state.totalCount}개',
+          '총 ${state.displayTotalCount}개 상품 · RTI 신뢰 필터 적용 가능',
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
             color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
@@ -208,38 +392,429 @@ class _SearchSummary extends StatelessWidget {
   }
 }
 
-class _SearchToolbar extends StatelessWidget {
-  const _SearchToolbar({required this.state});
+class _QuickFilterRow extends StatelessWidget {
+  const _QuickFilterRow({required this.filters});
+
+  final List<SearchFilterChipData> filters;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          for (final filter in filters)
+            Padding(
+              padding: const EdgeInsets.only(right: AppSpacing.sm),
+              child: ChoiceChip(
+                selected: filter.selected,
+                label: Text(
+                  filter.label == '전체' ? '전체 ${filter.count}' : filter.label,
+                ),
+                onSelected: (_) {},
+                selectedColor: AppColors.primary,
+                backgroundColor: AppColors.surface,
+                labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: filter.selected
+                      ? AppColors.onPrimary
+                      : AppColors.textPrimary,
+                  fontWeight: FontWeight.w800,
+                ),
+                side: BorderSide(
+                  color: filter.selected ? AppColors.primary : AppColors.border,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(999),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: AppSpacing.xs,
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _FilterPanel extends StatelessWidget {
+  const _FilterPanel({required this.state, this.compact = false});
 
   final SearchResultsState state;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: AppRadius.medium,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A0F172A),
+            blurRadius: 20,
+            offset: Offset(0, 10),
+          ),
+        ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
-        child: Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            for (final filter in state.filters)
-              FilterChip(
-                selected: filter.selected,
-                label: Text('${filter.label} ${filter.count}'),
-                onSelected: (_) {},
-                selectedColor: AppColors.primaryLight,
-                checkmarkColor: AppColors.primary,
-                side: BorderSide(
-                  color: filter.selected ? AppColors.primary : AppColors.border,
+            Row(
+              children: [
+                Text(
+                  '필터',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const Spacer(),
+                TextButton(onPressed: () {}, child: const Text('초기화')),
+              ],
+            ),
+            const Divider(height: AppSpacing.xl),
+            _FilterSection(
+              title: '카테고리',
+              children: [
+                for (final item in state.categoryFilters)
+                  _CheckboxRow(
+                    label: item.label,
+                    trailing: '${item.count}',
+                    selected: item.selected,
+                  ),
+              ],
+            ),
+            const Divider(height: AppSpacing.xl),
+            _FilterSection(
+              title: '가격대',
+              children: [
+                Row(
+                  children: const [
+                    Expanded(child: _PriceBox(label: '30,000')),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+                      child: Text('~'),
+                    ),
+                    Expanded(child: _PriceBox(label: '200,000')),
+                    SizedBox(width: AppSpacing.xs),
+                    Text('원'),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  children: [
+                    for (final item in state.priceRanges)
+                      _PriceRangeChip(
+                        label: item.label,
+                        selected: item.selected,
+                      ),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(height: AppSpacing.xl),
+            _FilterSection(
+              title: '브랜드',
+              children: const [_SelectBox(label: '브랜드를 선택하세요')],
+            ),
+            const Divider(height: AppSpacing.xl),
+            _FilterSection(
+              title: 'RTI 신뢰 점수',
+              trailing: '${state.selectedRtiMinimum}점 이상',
+              children: [
+                SliderTheme(
+                  data: SliderTheme.of(context).copyWith(
+                    trackHeight: 6,
+                    thumbShape: const RoundSliderThumbShape(
+                      enabledThumbRadius: 10,
+                    ),
+                  ),
+                  child: Slider(
+                    value: state.selectedRtiMinimum.toDouble(),
+                    min: 0,
+                    max: 100,
+                    divisions: 4,
+                    onChanged: (_) {},
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: const [
+                    _ScaleLabel(label: '0'),
+                    _ScaleLabel(label: '50'),
+                    _ScaleLabel(label: '75'),
+                    _ScaleLabel(label: '100'),
+                  ],
+                ),
+              ],
+            ),
+            const Divider(height: AppSpacing.xl),
+            _FilterSection(
+              title: '리뷰 조건',
+              children: const [
+                _CheckboxRow(label: '리뷰 50개 이상', selected: true),
+                _CheckboxRow(label: '사진 포함'),
+                _CheckboxRow(label: '최근 30일 리뷰 포함'),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () {},
+                    child: const Text('초기화'),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  flex: 2,
+                  child: FilledButton(
+                    onPressed: () {},
+                    child: Text('${state.displayTotalCount}개 결과 보기'),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FilterSection extends StatelessWidget {
+  const _FilterSection({
+    required this.title,
+    required this.children,
+    this.trailing,
+  });
+
+  final String title;
+  final String? trailing;
+  final List<Widget> children;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            Text(
+              title,
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const Spacer(),
+            if (trailing != null)
+              Text(
+                trailing!,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-            const _ToolbarSpacer(),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        ...children,
+      ],
+    );
+  }
+}
+
+class _CheckboxRow extends StatelessWidget {
+  const _CheckboxRow({
+    required this.label,
+    this.trailing,
+    this.selected = false,
+  });
+
+  final String label;
+  final String? trailing;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+      child: Row(
+        children: [
+          SizedBox.square(
+            dimension: 18,
+            child: Checkbox(value: selected, onChanged: (_) {}),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+          if (trailing != null)
+            Text(
+              trailing!,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PriceBox extends StatelessWidget {
+  const _PriceBox({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.borderStrong),
+        borderRadius: AppRadius.small,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.sm,
+        ),
+        child: Text(
+          label,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PriceRangeChip extends StatelessWidget {
+  const _PriceRangeChip({required this.label, required this.selected});
+
+  final String label;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: selected ? AppColors.primaryLight : AppColors.surfaceMuted,
+        borderRadius: AppRadius.small,
+        border: Border.all(
+          color: selected ? AppColors.primaryLight : AppColors.border,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.xs,
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+            color: selected ? AppColors.primary : AppColors.textPrimary,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SelectBox extends StatelessWidget {
+  const _SelectBox({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppColors.borderStrong),
+        borderRadius: AppRadius.small,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sm,
+          vertical: AppSpacing.sm,
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            const Icon(Icons.expand_more, size: 18),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ScaleLabel extends StatelessWidget {
+  const _ScaleLabel({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      label,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+        color: AppColors.textSecondary,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+}
+
+class _ResultColumn extends StatelessWidget {
+  const _ResultColumn({required this.state});
+
+  final SearchResultsState state;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          children: [
+            const Spacer(),
+            Text(
+              '${state.displayTotalCount}개 결과',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.lg),
             PopupMenuButton<SearchSortOption>(
               initialValue: state.sortOption,
               tooltip: '정렬',
@@ -250,20 +825,27 @@ class _SearchToolbar extends StatelessWidget {
               ],
               child: DecoratedBox(
                 decoration: BoxDecoration(
+                  color: AppColors.surface,
                   border: Border.all(color: AppColors.borderStrong),
                   borderRadius: AppRadius.small,
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.xs,
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.sm,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.sort, size: 18),
-                      const SizedBox(width: AppSpacing.xxs),
-                      Text(state.sortOption.label),
+                      Text(
+                        state.sortOption.label,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      const Icon(Icons.expand_more, size: 18),
                     ],
                   ),
                 ),
@@ -271,17 +853,12 @@ class _SearchToolbar extends StatelessWidget {
             ),
           ],
         ),
-      ),
+        const SizedBox(height: AppSpacing.md),
+        _ProductGrid(products: state.products),
+        const SizedBox(height: AppSpacing.lg),
+        const _Pagination(),
+      ],
     );
-  }
-}
-
-class _ToolbarSpacer extends StatelessWidget {
-  const _ToolbarSpacer();
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(width: context.isMobile ? 0 : AppSpacing.xl);
   }
 }
 
@@ -307,175 +884,190 @@ class _ProductGrid extends StatelessWidget {
         crossAxisCount: columns,
         mainAxisSpacing: AppSpacing.md,
         crossAxisSpacing: AppSpacing.md,
-        mainAxisExtent: columns == 1 ? 250 : 420,
+        mainAxisExtent: columns == 1 ? 430 : 430,
       ),
       itemBuilder: (context, index) {
-        return _SearchProductCard(
-          product: products[index],
-          compact: columns == 1,
-        );
+        return _SearchProductCard(product: products[index]);
       },
     );
   }
 }
 
 class _SearchProductCard extends StatelessWidget {
-  const _SearchProductCard({required this.product, required this.compact});
+  const _SearchProductCard({required this.product});
 
   final SearchResultProduct product;
-  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final image = ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.md),
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: Image.network(
-          product.imageUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              const ColoredBox(color: AppColors.surfaceMuted),
-        ),
-      ),
-    );
-
-    final info = _ProductInfo(product: product, compact: compact);
+    final rtiColor = _colorFromHex(product.rtiColor);
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: AppRadius.medium,
+        borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0F0F172A),
-            blurRadius: 16,
-            offset: Offset(0, 8),
+            color: Color(0x0A0F172A),
+            blurRadius: 18,
+            offset: Offset(0, 10),
           ),
         ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
-        child: compact
-            ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Stack(
                 children: [
-                  SizedBox(width: 132, child: image),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: info),
-                ],
-              )
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: image),
-                  const SizedBox(height: AppSpacing.md),
-                  info,
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFAFBFF),
+                        borderRadius: AppRadius.medium,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(AppSpacing.md),
+                        child: Image.network(
+                          product.imageUrl,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const ColoredBox(color: AppColors.surfaceMuted),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: AppSpacing.xs,
+                    right: AppSpacing.xs,
+                    child: _RtiBadge(
+                      value: product.avgRti.round(),
+                      color: rtiColor,
+                    ),
+                  ),
                 ],
               ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              mockBrandFor(product),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Text(
+              product.name,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w900,
+                height: 1.25,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                const Icon(Icons.star, color: Color(0xFFF59E0B), size: 18),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(
+                  product.avgRating.toStringAsFixed(1),
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(
+                  '(리뷰 ${_formatCount(product.reviewCount)})',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                _DeliveryBadge(label: mockBadgeFor(product)),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _formatPrice(product.price),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                _SquareIconButton(
+                  icon: Icons.favorite_border,
+                  onPressed: () {},
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                _SquareIconButton(
+                  icon: Icons.shopping_cart_outlined,
+                  onPressed: () {},
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            OutlinedButton(onPressed: () {}, child: const Text('상품 상세 보기')),
+          ],
+        ),
       ),
     );
   }
 }
 
-class _ProductInfo extends StatelessWidget {
-  const _ProductInfo({required this.product, required this.compact});
+class _RtiBadge extends StatelessWidget {
+  const _RtiBadge({required this.value, required this.color});
 
-  final SearchResultProduct product;
-  final bool compact;
+  final int value;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: AppRadius.small,
+        border: Border.all(color: color.withValues(alpha: 0.28)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.xxs,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (product.badge != null) _Badge(label: product.badge!),
-            const Spacer(),
-            Text(
-              'RTI ${product.rtiScore}',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          product.name,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xxs),
-        Text(
-          '${product.storeName} · ${product.category}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Row(
-          children: [
-            Text(
-              _formatPrice(product.price),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            if (product.originalPrice != null) ...[
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                _formatPrice(product.originalPrice!),
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppColors.textTertiary,
-                  decoration: TextDecoration.lineThrough,
-                ),
-              ),
-            ],
-          ],
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Row(
-          children: [
-            const Icon(Icons.star, color: Color(0xFFF59E0B), size: 16),
+            Icon(Icons.verified_user_outlined, color: color, size: 16),
             const SizedBox(width: AppSpacing.xxs),
             Text(
-              '${product.rating.toStringAsFixed(1)} (${product.reviewCount})',
+              'RTI $value',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
+                color: color,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.sm),
-        Text(
-          product.summary,
-          maxLines: compact ? 1 : 2,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(
-            context,
-          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
-        ),
-      ],
+      ),
     );
   }
 }
 
-class _Badge extends StatelessWidget {
-  const _Badge({required this.label});
+class _DeliveryBadge extends StatelessWidget {
+  const _DeliveryBadge({required this.label});
 
   final String label;
 
@@ -488,15 +1080,86 @@ class _Badge extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs,
+          horizontal: AppSpacing.sm,
           vertical: AppSpacing.xxs,
         ),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: AppColors.primary,
             fontWeight: FontWeight.w900,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SquareIconButton extends StatelessWidget {
+  const _SquareIconButton({required this.icon, required this.onPressed});
+
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 42,
+      child: OutlinedButton(
+        onPressed: onPressed,
+        style: OutlinedButton.styleFrom(
+          padding: EdgeInsets.zero,
+          shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+        ),
+        child: Icon(icon, size: 22),
+      ),
+    );
+  }
+}
+
+class _Pagination extends StatelessWidget {
+  const _Pagination();
+
+  @override
+  Widget build(BuildContext context) {
+    const pages = ['1', '2', '3', '4', '5'];
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        _PageButton(icon: Icons.chevron_left, selected: false),
+        for (final page in pages)
+          _PageButton(label: page, selected: page == '1'),
+        _PageButton(icon: Icons.chevron_right, selected: false),
+      ],
+    );
+  }
+}
+
+class _PageButton extends StatelessWidget {
+  const _PageButton({this.label, this.icon, required this.selected});
+
+  final String? label;
+  final IconData? icon;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxs),
+      child: SizedBox.square(
+        dimension: 40,
+        child: OutlinedButton(
+          onPressed: () {},
+          style: OutlinedButton.styleFrom(
+            padding: EdgeInsets.zero,
+            backgroundColor: selected ? AppColors.primary : AppColors.surface,
+            foregroundColor: selected
+                ? AppColors.onPrimary
+                : AppColors.textPrimary,
+            shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+          ),
+          child: icon == null ? Text(label!) : Icon(icon, size: 18),
         ),
       ),
     );
@@ -514,4 +1177,27 @@ String _formatPrice(int price) {
   }
 
   return '$buffer원';
+}
+
+String _formatCount(int count) {
+  final digits = count.toString();
+  final buffer = StringBuffer();
+  for (var i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) {
+      buffer.write(',');
+    }
+    buffer.write(digits[i]);
+  }
+
+  return buffer.toString();
+}
+
+Color _colorFromHex(String hex) {
+  final normalized = hex.replaceFirst('#', '');
+  final value = int.tryParse('FF$normalized', radix: 16);
+  if (value == null) {
+    return AppColors.primary;
+  }
+
+  return Color(value);
 }
