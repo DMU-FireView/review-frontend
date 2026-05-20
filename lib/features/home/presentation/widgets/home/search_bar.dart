@@ -7,12 +7,14 @@ class SearchBar extends StatefulWidget {
     this.focusNode,
     this.initialValue,
     this.onSubmitted,
+    this.onSearchPressed,
     super.key,
   });
 
   final FocusNode? focusNode;
   final String? initialValue;
   final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onSearchPressed;
 
   @override
   State<SearchBar> createState() => _SearchBarState();
@@ -94,9 +96,12 @@ class _SearchBarState extends State<SearchBar> {
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textTertiary,
                   ),
-                  suffixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.primary,
+                  suffixIcon: IconButton(
+                    tooltip: '검색',
+                    icon: const Icon(Icons.search, color: AppColors.primary),
+                    onPressed: widget.onSearchPressed == null
+                        ? null
+                        : () => widget.onSearchPressed!(_controller.text),
                   ),
                   filled: true,
                   fillColor: backgroundColor,
