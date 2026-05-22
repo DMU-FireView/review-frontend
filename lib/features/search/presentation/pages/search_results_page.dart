@@ -14,14 +14,44 @@ import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/loading_view.dart';
 
-class SearchResultsPage extends StatelessWidget {
+class SearchResultsPage extends StatefulWidget {
   const SearchResultsPage({required this.query, super.key});
 
   final String query;
 
   @override
+  State<SearchResultsPage> createState() => _SearchResultsPageState();
+}
+
+class _SearchResultsPageState extends State<SearchResultsPage> {
+  final Set<String> _selectedCategories = {'이어폰'};
+  final Set<String> _selectedPriceRanges = {};
+  final Set<String> _selectedReviewConditions = {'리뷰 50개 이상'};
+  late final TextEditingController _minPriceController;
+  late final TextEditingController _maxPriceController;
+  String _selectedQuickFilter = '전체';
+  SearchSortOption _sortOption = SearchSortOption.accuracy;
+  double _selectedRtiMinimum = 50;
+  bool _isRtiFilterActive = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _minPriceController = TextEditingController(text: '30000');
+    _maxPriceController = TextEditingController(text: '200000');
+  }
+
+  @override
+  void dispose() {
+    _minPriceController.dispose();
+    _maxPriceController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final state = mockSearchResultsFor(query);
+    final state = mockSearchResultsFor(widget.query);
+    final products = _sortProducts(_filterProducts(state.products));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -35,14 +65,40 @@ class SearchResultsPage extends StatelessWidget {
           ),
           SliverToBoxAdapter(
             child: AppContentView(
-              maxWidth: 1280,
+              maxWidth: 1760,
               padding: EdgeInsets.fromLTRB(
-                context.isMobile ? AppSpacing.md : AppSpacing.xl,
+                context.isMobile ? AppSpacing.md : AppSpacing.lg,
                 context.isMobile ? AppSpacing.lg : AppSpacing.xl,
-                context.isMobile ? AppSpacing.md : AppSpacing.xl,
+                context.isMobile ? AppSpacing.md : AppSpacing.lg,
                 AppSpacing.xxxl,
               ),
-              child: _SearchResultsBody(state: state),
+              child: _SearchResultsBody(
+                state: state,
+                products: products,
+                selectedQuickFilter: _selectedQuickFilter,
+                selectedCategories: _selectedCategories,
+                selectedPriceRanges: _selectedPriceRanges,
+                selectedReviewConditions: _selectedReviewConditions,
+                minPriceController: _minPriceController,
+                maxPriceController: _maxPriceController,
+                selectedRtiMinimum: _selectedRtiMinimum,
+                sortOption: _sortOption,
+                onQuickFilterSelected: _handleQuickFilterSelected,
+                onCategoryToggled: _toggleCategory,
+                onPriceRangeToggled: _togglePriceRange,
+                onReviewConditionToggled: _toggleReviewCondition,
+                onPriceChanged: () => setState(() {}),
+                onRtiMinimumChanged: (value) {
+                  setState(() {
+                    _selectedRtiMinimum = value;
+                    _isRtiFilterActive = true;
+                  });
+                },
+                onSortChanged: (value) {
+                  setState(() => _sortOption = value);
+                },
+                onResetFilters: _resetFilters,
+              ),
             ),
           ),
         ],
@@ -57,6 +113,155 @@ class SearchResultsPage extends StatelessWidget {
     }
 
     context.goNamed(RouteNames.search, queryParameters: {'q': nextQuery});
+  }
+
+  void _handleQuickFilterSelected(String label) {
+    setState(() {
+      _selectedQuickFilter = label;
+      if (label == 'RTI 80+') {
+        _selectedRtiMinimum = 80;
+        _isRtiFilterActive = true;
+      }
+    });
+  }
+
+  void _toggleCategory(String label) {
+    setState(() {
+      _toggleSetValue(_selectedCategories, label);
+    });
+  }
+
+  void _togglePriceRange(String label) {
+    setState(() {
+      _toggleSetValue(_selectedPriceRanges, label);
+    });
+  }
+
+  void _toggleReviewCondition(String label) {
+    setState(() {
+      _toggleSetValue(_selectedReviewConditions, label);
+    });
+  }
+
+  void _resetFilters() {
+    setState(() {
+      _selectedCategories
+        ..clear()
+        ..add('이어폰');
+      _selectedPriceRanges..clear();
+      _minPriceController.text = '30000';
+      _maxPriceController.text = '200000';
+      _selectedReviewConditions
+        ..clear()
+        ..add('리뷰 50개 이상');
+      _selectedQuickFilter = '전체';
+      _sortOption = SearchSortOption.accuracy;
+      _selectedRtiMinimum = 50;
+      _isRtiFilterActive = false;
+    });
+  }
+
+  List<SearchResultProduct> _filterProducts(
+    List<SearchResultProduct> products,
+  ) {
+    return products
+        .where((product) {
+          if (_selectedCategories.isNotEmpty &&
+              !_selectedCategories.contains(product.categoryDisplayName)) {
+            return false;
+          }
+
+          if (_selectedPriceRanges.isNotEmpty &&
+              !_selectedPriceRanges.any(
+                (range) => _matchesPriceRange(product, range),
+              )) {
+            return false;
+          }
+
+          final minPrice = _parsePrice(_minPriceController.text);
+          final maxPrice = _parsePrice(_maxPriceController.text);
+          if (minPrice != null && product.price < minPrice) {
+            return false;
+          }
+          if (maxPrice != null && product.price > maxPrice) {
+            return false;
+          }
+
+          if (_isRtiFilterActive && product.avgRti < _selectedRtiMinimum) {
+            return false;
+          }
+
+          if (_selectedReviewConditions.contains('리뷰 50개 이상') &&
+              product.reviewCount < 50) {
+            return false;
+          }
+
+          if (_selectedQuickFilter != '전체' &&
+              !_matchesQuickFilter(product, _selectedQuickFilter)) {
+            return false;
+          }
+
+          return true;
+        })
+        .toList(growable: false);
+  }
+
+  List<SearchResultProduct> _sortProducts(List<SearchResultProduct> products) {
+    final sorted = [...products];
+    switch (_sortOption) {
+      case SearchSortOption.accuracy:
+        return sorted;
+      case SearchSortOption.rti:
+        sorted.sort((a, b) => b.avgRti.compareTo(a.avgRti));
+        break;
+      case SearchSortOption.reviewCount:
+        sorted.sort((a, b) => b.reviewCount.compareTo(a.reviewCount));
+        break;
+      case SearchSortOption.priceLow:
+        sorted.sort((a, b) => a.price.compareTo(b.price));
+        break;
+    }
+    return sorted;
+  }
+
+  bool _matchesPriceRange(SearchResultProduct product, String label) {
+    return switch (label) {
+      '3만원 이하' => product.price <= 30000,
+      '3~7만원' => product.price > 30000 && product.price <= 70000,
+      '7~15만원' => product.price > 70000 && product.price <= 150000,
+      '15만원 이상' => product.price >= 150000,
+      _ => true,
+    };
+  }
+
+  int? _parsePrice(String value) {
+    final normalized = value.replaceAll(',', '').trim();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    return int.tryParse(normalized);
+  }
+
+  bool _matchesQuickFilter(SearchResultProduct product, String label) {
+    return switch (label) {
+      'RTI 80+' => product.avgRti >= 80,
+      '아이폰 추천' => product.name.contains('아이오') || product.avgRti >= 80,
+      '통화 품질 우수' => product.name.contains('통화') || product.avgRating >= 4.7,
+      '장시간 배터리' => product.price >= 70000,
+      '가성비' => product.price <= 70000,
+      '출시 6개월 이내' => product.name.contains('2026'),
+      '무선충전 지원' => product.id.isEven,
+      _ => true,
+    };
+  }
+
+  void _toggleSetValue(Set<String> values, String value) {
+    if (values.contains(value)) {
+      values.remove(value);
+    } else {
+      values.add(value);
+    }
   }
 }
 
@@ -242,9 +447,45 @@ class _HeaderAction extends StatelessWidget {
 }
 
 class _SearchResultsBody extends StatelessWidget {
-  const _SearchResultsBody({required this.state});
+  const _SearchResultsBody({
+    required this.state,
+    required this.products,
+    required this.selectedQuickFilter,
+    required this.selectedCategories,
+    required this.selectedPriceRanges,
+    required this.selectedReviewConditions,
+    required this.minPriceController,
+    required this.maxPriceController,
+    required this.selectedRtiMinimum,
+    required this.sortOption,
+    required this.onQuickFilterSelected,
+    required this.onCategoryToggled,
+    required this.onPriceRangeToggled,
+    required this.onReviewConditionToggled,
+    required this.onPriceChanged,
+    required this.onRtiMinimumChanged,
+    required this.onSortChanged,
+    required this.onResetFilters,
+  });
 
   final SearchResultsState state;
+  final List<SearchResultProduct> products;
+  final String selectedQuickFilter;
+  final Set<String> selectedCategories;
+  final Set<String> selectedPriceRanges;
+  final Set<String> selectedReviewConditions;
+  final TextEditingController minPriceController;
+  final TextEditingController maxPriceController;
+  final double selectedRtiMinimum;
+  final SearchSortOption sortOption;
+  final ValueChanged<String> onQuickFilterSelected;
+  final ValueChanged<String> onCategoryToggled;
+  final ValueChanged<String> onPriceRangeToggled;
+  final ValueChanged<String> onReviewConditionToggled;
+  final VoidCallback onPriceChanged;
+  final ValueChanged<double> onRtiMinimumChanged;
+  final ValueChanged<SearchSortOption> onSortChanged;
+  final VoidCallback onResetFilters;
 
   @override
   Widget build(BuildContext context) {
@@ -267,7 +508,11 @@ class _SearchResultsBody extends StatelessWidget {
       children: [
         _SearchSummary(state: state),
         const SizedBox(height: AppSpacing.lg),
-        _QuickFilterRow(filters: state.quickFilters),
+        _QuickFilterRow(
+          filters: state.quickFilters,
+          selectedFilter: selectedQuickFilter,
+          onSelected: onQuickFilterSelected,
+        ),
         const SizedBox(height: AppSpacing.lg),
         if (state.isEmpty)
           SizedBox(
@@ -282,18 +527,64 @@ class _SearchResultsBody extends StatelessWidget {
         else if (context.isMobile)
           Column(
             children: [
-              _FilterPanel(state: state, compact: true),
+              _FilterPanel(
+                state: state,
+                selectedCategories: selectedCategories,
+                selectedPriceRanges: selectedPriceRanges,
+                selectedReviewConditions: selectedReviewConditions,
+                minPriceController: minPriceController,
+                maxPriceController: maxPriceController,
+                selectedRtiMinimum: selectedRtiMinimum,
+                resultCount: products.length,
+                compact: true,
+                onCategoryToggled: onCategoryToggled,
+                onPriceRangeToggled: onPriceRangeToggled,
+                onReviewConditionToggled: onReviewConditionToggled,
+                onPriceChanged: onPriceChanged,
+                onRtiMinimumChanged: onRtiMinimumChanged,
+                onResetFilters: onResetFilters,
+              ),
               const SizedBox(height: AppSpacing.md),
-              _ResultColumn(state: state),
+              _ResultColumn(
+                state: state,
+                products: products,
+                sortOption: sortOption,
+                onSortChanged: onSortChanged,
+              ),
             ],
           )
         else
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(width: 300, child: _FilterPanel(state: state)),
+              SizedBox(
+                width: 300,
+                child: _FilterPanel(
+                  state: state,
+                  selectedCategories: selectedCategories,
+                  selectedPriceRanges: selectedPriceRanges,
+                  selectedReviewConditions: selectedReviewConditions,
+                  minPriceController: minPriceController,
+                  maxPriceController: maxPriceController,
+                  selectedRtiMinimum: selectedRtiMinimum,
+                  resultCount: products.length,
+                  onCategoryToggled: onCategoryToggled,
+                  onPriceRangeToggled: onPriceRangeToggled,
+                  onReviewConditionToggled: onReviewConditionToggled,
+                  onPriceChanged: onPriceChanged,
+                  onRtiMinimumChanged: onRtiMinimumChanged,
+                  onResetFilters: onResetFilters,
+                ),
+              ),
               const SizedBox(width: AppSpacing.lg),
-              Expanded(child: _ResultColumn(state: state)),
+              Expanded(
+                child: _ResultColumn(
+                  state: state,
+                  products: products,
+                  sortOption: sortOption,
+                  onSortChanged: onSortChanged,
+                ),
+              ),
             ],
           ),
       ],
@@ -337,9 +628,15 @@ class _SearchSummary extends StatelessWidget {
 }
 
 class _QuickFilterRow extends StatelessWidget {
-  const _QuickFilterRow({required this.filters});
+  const _QuickFilterRow({
+    required this.filters,
+    required this.selectedFilter,
+    required this.onSelected,
+  });
 
   final List<SearchFilterChipData> filters;
+  final String selectedFilter;
+  final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -350,30 +647,12 @@ class _QuickFilterRow extends StatelessWidget {
           for (final filter in filters)
             Padding(
               padding: const EdgeInsets.only(right: AppSpacing.sm),
-              child: ChoiceChip(
-                selected: filter.selected,
-                label: Text(
-                  filter.label == '전체' ? '전체 ${filter.count}' : filter.label,
-                ),
-                onSelected: (_) {},
-                selectedColor: AppColors.primary,
-                backgroundColor: AppColors.surface,
-                labelStyle: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: filter.selected
-                      ? AppColors.onPrimary
-                      : AppColors.textPrimary,
-                  fontWeight: FontWeight.w800,
-                ),
-                side: BorderSide(
-                  color: filter.selected ? AppColors.primary : AppColors.border,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: AppSpacing.xs,
-                ),
+              child: _QuickFilterPill(
+                label: filter.label == '전체'
+                    ? '전체 ${filter.count}'
+                    : filter.label,
+                selected: filter.label == selectedFilter,
+                onPressed: () => onSelected(filter.label),
               ),
             ),
         ],
@@ -382,10 +661,97 @@ class _QuickFilterRow extends StatelessWidget {
   }
 }
 
+class _QuickFilterPill extends StatelessWidget {
+  const _QuickFilterPill({
+    required this.label,
+    required this.selected,
+    required this.onPressed,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = selected ? AppColors.onPrimary : AppColors.textPrimary;
+
+    return Material(
+      color: selected ? AppColors.primary : AppColors.surface,
+      borderRadius: BorderRadius.circular(999),
+      child: InkWell(
+        onTap: onPressed,
+        borderRadius: BorderRadius.circular(999),
+        child: Container(
+          constraints: const BoxConstraints(minWidth: 96, minHeight: 38),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.xs,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(
+              color: selected ? AppColors.primary : AppColors.borderStrong,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (selected) ...[
+                Icon(Icons.check, size: 14, color: foreground),
+                const SizedBox(width: AppSpacing.xxs),
+              ],
+              Text(
+                label,
+                softWrap: false,
+                overflow: TextOverflow.visible,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: foreground,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _FilterPanel extends StatelessWidget {
-  const _FilterPanel({required this.state, this.compact = false});
+  const _FilterPanel({
+    required this.state,
+    required this.selectedCategories,
+    required this.selectedPriceRanges,
+    required this.selectedReviewConditions,
+    required this.minPriceController,
+    required this.maxPriceController,
+    required this.selectedRtiMinimum,
+    required this.resultCount,
+    required this.onCategoryToggled,
+    required this.onPriceRangeToggled,
+    required this.onReviewConditionToggled,
+    required this.onPriceChanged,
+    required this.onRtiMinimumChanged,
+    required this.onResetFilters,
+    this.compact = false,
+  });
 
   final SearchResultsState state;
+  final Set<String> selectedCategories;
+  final Set<String> selectedPriceRanges;
+  final Set<String> selectedReviewConditions;
+  final TextEditingController minPriceController;
+  final TextEditingController maxPriceController;
+  final double selectedRtiMinimum;
+  final int resultCount;
+  final ValueChanged<String> onCategoryToggled;
+  final ValueChanged<String> onPriceRangeToggled;
+  final ValueChanged<String> onReviewConditionToggled;
+  final VoidCallback onPriceChanged;
+  final ValueChanged<double> onRtiMinimumChanged;
+  final VoidCallback onResetFilters;
   final bool compact;
 
   @override
@@ -418,7 +784,7 @@ class _FilterPanel extends StatelessWidget {
                   ),
                 ),
                 const Spacer(),
-                TextButton(onPressed: () {}, child: const Text('초기화')),
+                TextButton(onPressed: onResetFilters, child: const Text('초기화')),
               ],
             ),
             const Divider(height: AppSpacing.xl),
@@ -429,7 +795,8 @@ class _FilterPanel extends StatelessWidget {
                   _CheckboxRow(
                     label: item.label,
                     trailing: '${item.count}',
-                    selected: item.selected,
+                    selected: selectedCategories.contains(item.label),
+                    onChanged: () => onCategoryToggled(item.label),
                   ),
               ],
             ),
@@ -438,15 +805,25 @@ class _FilterPanel extends StatelessWidget {
               title: '가격대',
               children: [
                 Row(
-                  children: const [
-                    Expanded(child: _PriceBox(label: '30,000')),
-                    Padding(
+                  children: [
+                    Expanded(
+                      child: _PriceBox(
+                        controller: minPriceController,
+                        onChanged: onPriceChanged,
+                      ),
+                    ),
+                    const Padding(
                       padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
                       child: Text('~'),
                     ),
-                    Expanded(child: _PriceBox(label: '200,000')),
-                    SizedBox(width: AppSpacing.xs),
-                    Text('원'),
+                    Expanded(
+                      child: _PriceBox(
+                        controller: maxPriceController,
+                        onChanged: onPriceChanged,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Text('원'),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -457,7 +834,8 @@ class _FilterPanel extends StatelessWidget {
                     for (final item in state.priceRanges)
                       _PriceRangeChip(
                         label: item.label,
-                        selected: item.selected,
+                        selected: selectedPriceRanges.contains(item.label),
+                        onPressed: () => onPriceRangeToggled(item.label),
                       ),
                   ],
                 ),
@@ -471,21 +849,27 @@ class _FilterPanel extends StatelessWidget {
             const Divider(height: AppSpacing.xl),
             _FilterSection(
               title: 'RTI 신뢰 점수',
-              trailing: '${state.selectedRtiMinimum}점 이상',
+              trailing: '${selectedRtiMinimum.round()}점 이상',
               children: [
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
                     trackHeight: 6,
-                    thumbShape: const RoundSliderThumbShape(
+                    thumbColor: AppColors.surface,
+                    activeTrackColor: AppColors.primary,
+                    inactiveTrackColor: AppColors.border,
+                    overlayColor: AppColors.primary.withValues(alpha: 0.12),
+                    thumbShape: const _OutlinedRoundSliderThumbShape(
                       enabledThumbRadius: 10,
+                      borderWidth: 2,
+                      borderColor: AppColors.primary,
                     ),
                   ),
                   child: Slider(
-                    value: state.selectedRtiMinimum.toDouble(),
+                    value: selectedRtiMinimum,
                     min: 0,
                     max: 100,
-                    divisions: 4,
-                    onChanged: (_) {},
+                    divisions: 100,
+                    onChanged: onRtiMinimumChanged,
                   ),
                 ),
                 Row(
@@ -502,30 +886,26 @@ class _FilterPanel extends StatelessWidget {
             const Divider(height: AppSpacing.xl),
             _FilterSection(
               title: '리뷰 조건',
-              children: const [
-                _CheckboxRow(label: '리뷰 50개 이상', selected: true),
-                _CheckboxRow(label: '사진 포함'),
-                _CheckboxRow(label: '최근 30일 리뷰 포함'),
+              children: [
+                for (final label in const [
+                  '리뷰 50개 이상',
+                  '사진 포함',
+                  '최근 30일 리뷰 포함',
+                ])
+                  _CheckboxRow(
+                    label: label,
+                    selected: selectedReviewConditions.contains(label),
+                    onChanged: () => onReviewConditionToggled(label),
+                  ),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {},
-                    child: const Text('초기화'),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  flex: 2,
-                  child: FilledButton(
-                    onPressed: () {},
-                    child: Text('${state.displayTotalCount}개 결과 보기'),
-                  ),
-                ),
-              ],
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {},
+                child: Text('$resultCount개 결과 보기'),
+              ),
             ),
           ],
         ),
@@ -580,11 +960,13 @@ class _FilterSection extends StatelessWidget {
 class _CheckboxRow extends StatelessWidget {
   const _CheckboxRow({
     required this.label,
+    required this.onChanged,
     this.trailing,
     this.selected = false,
   });
 
   final String label;
+  final VoidCallback onChanged;
   final String? trailing;
   final bool selected;
 
@@ -596,7 +978,7 @@ class _CheckboxRow extends StatelessWidget {
         children: [
           SizedBox.square(
             dimension: 18,
-            child: Checkbox(value: selected, onChanged: (_) {}),
+            child: Checkbox(value: selected, onChanged: (_) => onChanged()),
           ),
           const SizedBox(width: AppSpacing.xs),
           Expanded(
@@ -623,28 +1005,43 @@ class _CheckboxRow extends StatelessWidget {
 }
 
 class _PriceBox extends StatelessWidget {
-  const _PriceBox({required this.label});
+  const _PriceBox({required this.controller, required this.onChanged});
 
-  final String label;
+  final TextEditingController controller;
+  final VoidCallback onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.borderStrong),
-        borderRadius: AppRadius.small,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs,
-          vertical: AppSpacing.sm,
+    return SizedBox(
+      height: 42,
+      child: TextField(
+        controller: controller,
+        keyboardType: TextInputType.number,
+        textAlign: TextAlign.center,
+        onChanged: (_) => onChanged(),
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w700,
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w700,
+        decoration: InputDecoration(
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.xs,
+            vertical: AppSpacing.sm,
+          ),
+          filled: true,
+          fillColor: AppColors.surface,
+          border: OutlineInputBorder(
+            borderRadius: AppRadius.small,
+            borderSide: const BorderSide(color: AppColors.borderStrong),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: AppRadius.small,
+            borderSide: const BorderSide(color: AppColors.borderStrong),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: AppRadius.small,
+            borderSide: const BorderSide(color: AppColors.primary),
           ),
         ),
       ),
@@ -653,31 +1050,41 @@ class _PriceBox extends StatelessWidget {
 }
 
 class _PriceRangeChip extends StatelessWidget {
-  const _PriceRangeChip({required this.label, required this.selected});
+  const _PriceRangeChip({
+    required this.label,
+    required this.selected,
+    required this.onPressed,
+  });
 
   final String label;
   final bool selected;
+  final VoidCallback onPressed;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: selected ? AppColors.primaryLight : AppColors.surfaceMuted,
+    return Material(
+      color: selected ? AppColors.primary : AppColors.surface,
+      borderRadius: AppRadius.small,
+      child: InkWell(
+        onTap: onPressed,
         borderRadius: AppRadius.small,
-        border: Border.all(
-          color: selected ? AppColors.primaryLight : AppColors.border,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs,
-        ),
-        child: Text(
-          label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: selected ? AppColors.primary : AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: AppRadius.small,
+            border: Border.all(
+              color: selected ? AppColors.primary : AppColors.borderStrong,
+            ),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
+          child: Text(
+            label,
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: selected ? AppColors.onPrimary : AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
           ),
         ),
       ),
@@ -738,10 +1145,66 @@ class _ScaleLabel extends StatelessWidget {
   }
 }
 
+class _OutlinedRoundSliderThumbShape extends SliderComponentShape {
+  const _OutlinedRoundSliderThumbShape({
+    required this.enabledThumbRadius,
+    required this.borderWidth,
+    required this.borderColor,
+  });
+
+  final double enabledThumbRadius;
+  final double borderWidth;
+  final Color borderColor;
+
+  @override
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) {
+    return Size.fromRadius(enabledThumbRadius);
+  }
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    required bool isDiscrete,
+    required TextPainter labelPainter,
+    required RenderBox parentBox,
+    required SliderThemeData sliderTheme,
+    required TextDirection textDirection,
+    required double value,
+    required double textScaleFactor,
+    required Size sizeWithOverflow,
+  }) {
+    final canvas = context.canvas;
+    canvas.drawCircle(
+      center,
+      enabledThumbRadius,
+      Paint()..color = sliderTheme.thumbColor ?? AppColors.surface,
+    );
+    canvas.drawCircle(
+      center,
+      enabledThumbRadius - borderWidth / 2,
+      Paint()
+        ..color = borderColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = borderWidth,
+    );
+  }
+}
+
 class _ResultColumn extends StatelessWidget {
-  const _ResultColumn({required this.state});
+  const _ResultColumn({
+    required this.state,
+    required this.products,
+    required this.sortOption,
+    required this.onSortChanged,
+  });
 
   final SearchResultsState state;
+  final List<SearchResultProduct> products;
+  final SearchSortOption sortOption;
+  final ValueChanged<SearchSortOption> onSortChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -752,7 +1215,7 @@ class _ResultColumn extends StatelessWidget {
           children: [
             const Spacer(),
             Text(
-              '${state.displayTotalCount}개 결과',
+              '${products.length}개 결과',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w800,
@@ -760,9 +1223,9 @@ class _ResultColumn extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.lg),
             PopupMenuButton<SearchSortOption>(
-              initialValue: state.sortOption,
+              initialValue: sortOption,
               tooltip: '정렬',
-              onSelected: (_) {},
+              onSelected: onSortChanged,
               itemBuilder: (context) => [
                 for (final option in SearchSortOption.values)
                   PopupMenuItem(value: option, child: Text(option.label)),
@@ -782,7 +1245,7 @@ class _ResultColumn extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        state.sortOption.label,
+                        sortOption.label,
                         style: Theme.of(context).textTheme.labelLarge?.copyWith(
                           color: AppColors.textPrimary,
                           fontWeight: FontWeight.w800,
@@ -798,9 +1261,19 @@ class _ResultColumn extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.md),
-        _ProductGrid(products: state.products),
-        const SizedBox(height: AppSpacing.lg),
-        const _Pagination(),
+        if (products.isEmpty)
+          const SizedBox(
+            height: 360,
+            child: AppEmptyView(
+              title: '필터에 맞는 상품이 없어요',
+              message: '필터를 초기화하거나 조건을 조금 넓혀보세요.',
+            ),
+          )
+        else ...[
+          _ProductGrid(products: products),
+          const SizedBox(height: AppSpacing.lg),
+          const _Pagination(),
+        ],
       ],
     );
   }
@@ -813,25 +1286,40 @@ class _ProductGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.sizeOf(context).width;
-    final columns = width >= 1180
-        ? 3
-        : width >= 760
-        ? 2
-        : 1;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        final columns = width >= 1500
+            ? 5
+            : width >= 1180
+            ? 4
+            : width >= 820
+            ? 3
+            : width >= 560
+            ? 2
+            : 1;
+        final cardHeight = switch (columns) {
+          1 => 480.0,
+          2 => 450.0,
+          3 => 430.0,
+          4 => 400.0,
+          _ => 380.0,
+        };
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: products.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: columns,
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        mainAxisExtent: columns == 1 ? 430 : 430,
-      ),
-      itemBuilder: (context, index) {
-        return _SearchProductCard(product: products[index]);
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: products.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: columns,
+            mainAxisSpacing: AppSpacing.md,
+            crossAxisSpacing: AppSpacing.md,
+            mainAxisExtent: cardHeight,
+          ),
+          itemBuilder: (context, index) {
+            return _SearchProductCard(product: products[index]);
+          },
+        );
       },
     );
   }
@@ -860,11 +1348,12 @@ class _SearchProductCard extends StatelessWidget {
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: const EdgeInsets.all(AppSpacing.sm),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(
+            AspectRatio(
+              aspectRatio: 16 / 8.5,
               child: Stack(
                 children: [
                   Positioned.fill(
@@ -873,11 +1362,12 @@ class _SearchProductCard extends StatelessWidget {
                         color: const Color(0xFFFAFBFF),
                         borderRadius: AppRadius.medium,
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppSpacing.md),
+                      child: ClipRRect(
+                        borderRadius: AppRadius.medium,
                         child: Image.network(
                           product.imageUrl,
-                          fit: BoxFit.contain,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center,
                           errorBuilder: (context, error, stackTrace) =>
                               const ColoredBox(color: AppColors.surfaceMuted),
                         ),
@@ -895,7 +1385,7 @@ class _SearchProductCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
             Text(
               mockBrandFor(product),
               maxLines: 1,
@@ -908,45 +1398,54 @@ class _SearchProductCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               product.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              softWrap: true,
+              maxLines: 3,
+              overflow: TextOverflow.visible,
+              style: Theme.of(context).textTheme.titleSmall?.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w900,
                 height: 1.25,
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            Row(
+            const SizedBox(height: AppSpacing.sm),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                const Icon(Icons.star, color: Color(0xFFF59E0B), size: 18),
-                const SizedBox(width: AppSpacing.xxs),
-                Text(
-                  product.avgRating.toStringAsFixed(1),
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.star, color: Color(0xFFF59E0B), size: 18),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Text(
+                      product.avgRating.toStringAsFixed(1),
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.xxs),
+                    Text(
+                      '(리뷰 ${_formatCount(product.reviewCount)})',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.xxs),
-                Text(
-                  '(리뷰 ${_formatCount(product.reviewCount)})',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
                 _DeliveryBadge(label: mockBadgeFor(product)),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            const Spacer(),
+            const SizedBox(height: AppSpacing.sm),
             Row(
               children: [
                 Expanded(
                   child: Text(
                     _formatPrice(product.price),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w900,
                     ),
@@ -963,7 +1462,7 @@ class _SearchProductCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            const SizedBox(height: AppSpacing.sm),
             OutlinedButton(onPressed: () {}, child: const Text('상품 상세 보기')),
           ],
         ),
@@ -982,9 +1481,9 @@ class _RtiBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: AppColors.surface.withValues(alpha: 0.76),
         borderRadius: AppRadius.small,
-        border: Border.all(color: color.withValues(alpha: 0.28)),
+        border: Border.all(color: color.withValues(alpha: 0.36)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -1048,14 +1547,14 @@ class _SquareIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox.square(
-      dimension: 42,
+      dimension: 38,
       child: OutlinedButton(
         onPressed: onPressed,
         style: OutlinedButton.styleFrom(
           padding: EdgeInsets.zero,
           shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
         ),
-        child: Icon(icon, size: 22),
+        child: Icon(icon, size: 20),
       ),
     );
   }
