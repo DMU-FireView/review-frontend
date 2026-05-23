@@ -1607,10 +1607,10 @@ class _PriceRangeSlider extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dataBounds = _priceBounds(products);
-    final sliderBounds = _sliderBounds(dataBounds);
-    final minBound = sliderBounds.$1.toDouble();
-    final maxBound = sliderBounds.$2.toDouble();
-    final bins = _priceBins(products, dataBounds);
+    final chartBounds = (0, dataBounds.$2);
+    final minBound = chartBounds.$1.toDouble();
+    final maxBound = chartBounds.$2.toDouble();
+    final bins = _priceBins(products, chartBounds);
     final maxBin = bins.reduce((value, element) {
       return value > element ? value : element;
     });
@@ -1618,8 +1618,8 @@ class _PriceRangeSlider extends StatelessWidget {
         _parseControllerPrice(minPriceController.text) ?? dataBounds.$1;
     final currentMax =
         _parseControllerPrice(maxPriceController.text) ?? dataBounds.$2;
-    final start = currentMin.clamp(sliderBounds.$1, sliderBounds.$2).toDouble();
-    final end = currentMax.clamp(sliderBounds.$1, sliderBounds.$2).toDouble();
+    final start = currentMin.clamp(chartBounds.$1, chartBounds.$2).toDouble();
+    final end = currentMax.clamp(chartBounds.$1, chartBounds.$2).toDouble();
     final values = RangeValues(
       start <= end ? start : end,
       end >= start ? end : start,
@@ -1648,7 +1648,7 @@ class _PriceRangeSlider extends StatelessWidget {
                           active: _binOverlapsSelection(
                             index,
                             bins.length,
-                            dataBounds,
+                            chartBounds,
                             values,
                           ),
                         ),
@@ -1675,7 +1675,7 @@ class _PriceRangeSlider extends StatelessWidget {
                               _binOverlapsSelection(
                                 index,
                                 bins.length,
-                                dataBounds,
+                                chartBounds,
                                 values,
                               )
                               ? AppColors.primary
@@ -1709,11 +1709,11 @@ class _PriceRangeSlider extends StatelessWidget {
                 onChanged: (next) {
                   minPriceController.text = next.start
                       .round()
-                      .clamp(dataBounds.$1, dataBounds.$2)
+                      .clamp(chartBounds.$1, chartBounds.$2)
                       .toString();
                   maxPriceController.text = next.end
                       .round()
-                      .clamp(dataBounds.$1, dataBounds.$2)
+                      .clamp(chartBounds.$1, chartBounds.$2)
                       .toString();
                   onChanged();
                 },
@@ -1775,12 +1775,6 @@ class _PriceRangeSlider extends StatelessWidget {
     });
 
     return (minPrice, maxPrice == minPrice ? minPrice + 1 : maxPrice);
-  }
-
-  (int, int) _sliderBounds((int, int) bounds) {
-    final span = (bounds.$2 - bounds.$1).clamp(1, 1 << 31);
-    final padding = (span * 0.08).round().clamp(1000, 50000);
-    return (bounds.$1 - padding, bounds.$2 + padding);
   }
 
   int? _parseControllerPrice(String value) {
