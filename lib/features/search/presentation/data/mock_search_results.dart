@@ -111,7 +111,7 @@ SearchResultsState mockSearchResultsFor(String query) {
                 product.platform,
               ].whereType<String>().join(' ').toLowerCase();
 
-              return keywordTokens.every(searchableText.contains);
+              return keywordTokens.any(searchableText.contains);
             })
             .toList(growable: false);
 
