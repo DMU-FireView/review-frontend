@@ -108,104 +108,48 @@ class _DesktopSearchHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const navItems = [
-      '홈',
-      '브랜드데이',
-      '베스트',
-      '신상품',
-      '타임딜',
-      '리뷰 LIVE',
-      '리뷰랭킹',
-      '기획전',
-      '선물하기',
-      '반려동물',
-      '여행/레저',
-    ];
-
-    return Column(
+    return Row(
       children: [
-        Row(
-          children: [
-            SizedBox(
-              width: 360,
-              child: Row(
-                children: [
-                  HomeLogo(onTap: () => context.go(RoutePaths.home)),
-                  const SizedBox(width: AppSpacing.xl),
-                  _HeaderLink(label: '고객센터'),
-                  const SizedBox(width: AppSpacing.lg),
-                  _HeaderLink(label: '판매자 입점'),
-                  const SizedBox(width: AppSpacing.lg),
-                  _HeaderLink(label: '앱 다운로드'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Center(
-                child: SizedBox(
-                  width: 520,
-                  child: home.SearchBar(
-                    initialValue: query,
-                    onSubmitted: onSearchSubmitted,
-                    onSearchPressed: onSearchSubmitted,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 240,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: const [
-                  _HeaderAction(icon: Icons.person_outline, label: '로그인'),
-                  _HeaderAction(icon: Icons.favorite_border, label: '찜'),
-                  _HeaderAction(
-                    icon: Icons.shopping_cart_outlined,
-                    label: '장바구니',
-                    badge: '2',
-                  ),
-                ],
-              ),
-            ),
-          ],
+        SizedBox(
+          width: 360,
+          child: Row(
+            children: [
+              HomeLogo(onTap: () => context.go(RoutePaths.home)),
+              const SizedBox(width: AppSpacing.xl),
+              _HeaderLink(label: '고객센터'),
+              const SizedBox(width: AppSpacing.lg),
+              _HeaderLink(label: '판매자 입점'),
+              const SizedBox(width: AppSpacing.lg),
+              _HeaderLink(label: '앱 다운로드'),
+            ],
+          ),
         ),
-        const SizedBox(height: AppSpacing.md),
-        Row(
-          children: [
-            const Icon(Icons.menu, color: AppColors.textPrimary, size: 22),
-            const SizedBox(width: AppSpacing.xs),
-            Text(
-              '카테고리',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
+        Expanded(
+          child: Center(
+            child: SizedBox(
+              width: 520,
+              child: home.SearchBar(
+                initialValue: query,
+                onSubmitted: onSearchSubmitted,
+                onSearchPressed: onSearchSubmitted,
               ),
             ),
-            const SizedBox(width: AppSpacing.xxl),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final item in navItems)
-                      Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.xl),
-                        child: Text(
-                          item,
-                          style: Theme.of(context).textTheme.labelLarge
-                              ?.copyWith(
-                                color: item == '홈'
-                                    ? AppColors.primary
-                                    : AppColors.textPrimary,
-                                fontWeight: FontWeight.w800,
-                              ),
-                        ),
-                      ),
-                  ],
-                ),
+          ),
+        ),
+        SizedBox(
+          width: 240,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: const [
+              _HeaderAction(icon: Icons.person_outline, label: '로그인'),
+              _HeaderAction(icon: Icons.favorite_border, label: '찜'),
+              _HeaderAction(
+                icon: Icons.shopping_cart_outlined,
+                label: '장바구니',
+                badge: '2',
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
