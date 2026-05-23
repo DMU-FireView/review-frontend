@@ -4,7 +4,10 @@ enum SearchSortOption {
   accuracy(label: '정확도 순'),
   rti(label: 'RTI 높은순'),
   reviewCount(label: '리뷰 많은순'),
-  priceLow(label: '낮은 가격순');
+  sales(label: '판매 많은순'),
+  priceLow(label: '낮은 가격순'),
+  priceHigh(label: '높은 가격순'),
+  newest(label: '신상품순');
 
   const SearchSortOption({required this.label});
 
