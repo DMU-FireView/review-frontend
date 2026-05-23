@@ -2716,34 +2716,6 @@ class _SearchProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rtiColor = _colorFromHex(product.rtiColor);
-    final isCompact = MediaQuery.sizeOf(context).width < 760;
-    final image = SizedBox(
-      width: isCompact ? 120 : 188,
-      height: isCompact ? 92 : 126,
-      child: Stack(
-        children: [
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: AppRadius.medium,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                errorBuilder: (context, error, stackTrace) =>
-                    const ColoredBox(color: AppColors.surfaceMuted),
-              ),
-            ),
-          ),
-          Positioned(
-            top: AppSpacing.xs,
-            right: AppSpacing.xs,
-            child: _RtiBadge(value: product.avgRti.round(), color: rtiColor),
-          ),
-        ],
-      ),
-    );
-    final details = _ListTileDetails(product: product);
-    final actions = _ListTileActions(product: product, compact: isCompact);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -2909,6 +2881,34 @@ class _SearchProductListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rtiColor = _colorFromHex(product.rtiColor);
+    final isCompact = MediaQuery.sizeOf(context).width < 760;
+    final image = SizedBox(
+      width: isCompact ? 120 : 188,
+      height: isCompact ? 92 : 126,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: AppRadius.medium,
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                errorBuilder: (context, error, stackTrace) =>
+                    const ColoredBox(color: AppColors.surfaceMuted),
+              ),
+            ),
+          ),
+          Positioned(
+            top: AppSpacing.xs,
+            right: AppSpacing.xs,
+            child: _RtiBadge(value: product.avgRti.round(), color: rtiColor),
+          ),
+        ],
+      ),
+    );
+    final details = _ListTileDetails(product: product);
+    final actions = _ListTileActions(product: product, compact: isCompact);
 
     return DecoratedBox(
       decoration: BoxDecoration(
