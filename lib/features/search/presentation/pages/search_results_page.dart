@@ -33,6 +33,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   String _selectedQuickFilter = '전체';
   String? _selectedBrand;
   SearchSortOption _sortOption = SearchSortOption.accuracy;
+  _SearchViewMode _viewMode = _SearchViewMode.grid;
   double _selectedRtiMinimum = 50;
   bool _isPriceFilterActive = false;
   bool _isRtiFilterActive = false;
@@ -92,6 +93,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 maxPriceController: _maxPriceController,
                 selectedRtiMinimum: _selectedRtiMinimum,
                 sortOption: _sortOption,
+                viewMode: _viewMode,
                 onQuickFilterSelected: _handleQuickFilterSelected,
                 onCategoryToggled: _toggleCategory,
                 onPriceRangeToggled: _togglePriceRange,
@@ -125,6 +127,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                     _pageSize = pageSize;
                     _currentPage = 1;
                   });
+                },
+                onViewModeChanged: (viewMode) {
+                  setState(() => _viewMode = viewMode);
                 },
                 onResetFilters: _resetFilters,
               ),
@@ -233,6 +238,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         ..add('리뷰 50개 이상');
       _selectedQuickFilter = '전체';
       _sortOption = SearchSortOption.accuracy;
+      _viewMode = _SearchViewMode.grid;
       _selectedRtiMinimum = 50;
       _isRtiFilterActive = false;
       _currentPage = 1;
@@ -426,6 +432,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     }
   }
 }
+
+enum _SearchViewMode { grid, list }
 
 class _SearchHeader extends StatelessWidget {
   const _SearchHeader({required this.query, required this.onSearchSubmitted});
@@ -634,6 +642,7 @@ class _SearchResultsBody extends StatelessWidget {
     required this.maxPriceController,
     required this.selectedRtiMinimum,
     required this.sortOption,
+    required this.viewMode,
     required this.currentPage,
     required this.pageSize,
     required this.onQuickFilterSelected,
@@ -647,6 +656,7 @@ class _SearchResultsBody extends StatelessWidget {
     required this.onSortChanged,
     required this.onPageSelected,
     required this.onPageSizeChanged,
+    required this.onViewModeChanged,
     required this.onResetFilters,
   });
 
@@ -662,6 +672,7 @@ class _SearchResultsBody extends StatelessWidget {
   final TextEditingController maxPriceController;
   final double selectedRtiMinimum;
   final SearchSortOption sortOption;
+  final _SearchViewMode viewMode;
   final int currentPage;
   final int pageSize;
   final ValueChanged<String> onQuickFilterSelected;
@@ -675,6 +686,7 @@ class _SearchResultsBody extends StatelessWidget {
   final ValueChanged<SearchSortOption> onSortChanged;
   final ValueChanged<int> onPageSelected;
   final ValueChanged<int> onPageSizeChanged;
+  final ValueChanged<_SearchViewMode> onViewModeChanged;
   final VoidCallback onResetFilters;
 
   @override
@@ -737,11 +749,13 @@ class _SearchResultsBody extends StatelessWidget {
               state: state,
               products: products,
               sortOption: sortOption,
+              viewMode: viewMode,
               currentPage: currentPage,
               pageSize: pageSize,
               onSortChanged: onSortChanged,
               onPageSelected: onPageSelected,
               onPageSizeChanged: onPageSizeChanged,
+              onViewModeChanged: onViewModeChanged,
             ),
           ],
         ],
@@ -794,11 +808,13 @@ class _SearchResultsBody extends StatelessWidget {
                   state: state,
                   products: products,
                   sortOption: sortOption,
+                  viewMode: viewMode,
                   currentPage: currentPage,
                   pageSize: pageSize,
                   onSortChanged: onSortChanged,
                   onPageSelected: onPageSelected,
                   onPageSizeChanged: onPageSizeChanged,
+                  onViewModeChanged: onViewModeChanged,
                 ),
             ],
           ),
@@ -1777,8 +1793,8 @@ class _PriceHistogramBar extends StatelessWidget {
         height: height,
         decoration: BoxDecoration(
           color: active
-              ? AppColors.primary.withValues(alpha: 0.24)
-              : AppColors.primaryLight,
+              ? AppColors.primary.withValues(alpha: 0.5)
+              : const Color(0xFFE8EEF8),
           borderRadius: const BorderRadius.vertical(top: Radius.circular(3)),
         ),
       ),
@@ -1970,21 +1986,25 @@ class _ResultColumn extends StatelessWidget {
     required this.state,
     required this.products,
     required this.sortOption,
+    required this.viewMode,
     required this.currentPage,
     required this.pageSize,
     required this.onSortChanged,
     required this.onPageSelected,
     required this.onPageSizeChanged,
+    required this.onViewModeChanged,
   });
 
   final SearchResultsState state;
   final List<SearchResultProduct> products;
   final SearchSortOption sortOption;
+  final _SearchViewMode viewMode;
   final int currentPage;
   final int pageSize;
   final ValueChanged<SearchSortOption> onSortChanged;
   final ValueChanged<int> onPageSelected;
   final ValueChanged<int> onPageSizeChanged;
+  final ValueChanged<_SearchViewMode> onViewModeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -2015,9 +2035,11 @@ class _ResultColumn extends StatelessWidget {
             _ResultToolbar(
               resultCount: products.length,
               sortOption: sortOption,
+              viewMode: viewMode,
               pageSize: pageSize,
               onSortChanged: onSortChanged,
               onPageSizeChanged: onPageSizeChanged,
+              onViewModeChanged: onViewModeChanged,
             ),
             const SizedBox(height: AppSpacing.md),
             if (products.isEmpty)
@@ -2029,7 +2051,10 @@ class _ResultColumn extends StatelessWidget {
                 ),
               )
             else ...[
-              _ProductGrid(products: pageProducts, columns: columns),
+              if (viewMode == _SearchViewMode.grid)
+                _ProductGrid(products: pageProducts, columns: columns)
+              else
+                _ProductList(products: pageProducts),
               if (totalPages > 1) ...[
                 const SizedBox(height: AppSpacing.lg),
                 _Pagination(
@@ -2091,20 +2116,43 @@ class _ProductGrid extends StatelessWidget {
   }
 }
 
+class _ProductList extends StatelessWidget {
+  const _ProductList({required this.products});
+
+  final List<SearchResultProduct> products;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const ValueKey('search-product-list'),
+      children: [
+        for (final product in products) ...[
+          _SearchProductListTile(product: product),
+          const SizedBox(height: AppSpacing.sm),
+        ],
+      ],
+    );
+  }
+}
+
 class _ResultToolbar extends StatelessWidget {
   const _ResultToolbar({
     required this.resultCount,
     required this.sortOption,
+    required this.viewMode,
     required this.pageSize,
     required this.onSortChanged,
     required this.onPageSizeChanged,
+    required this.onViewModeChanged,
   });
 
   final int resultCount;
   final SearchSortOption sortOption;
+  final _SearchViewMode viewMode;
   final int pageSize;
   final ValueChanged<SearchSortOption> onSortChanged;
   final ValueChanged<int> onPageSizeChanged;
+  final ValueChanged<_SearchViewMode> onViewModeChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -2124,37 +2172,42 @@ class _ResultToolbar extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.xs,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          alignment: WrapAlignment.spaceBetween,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _SortSegmentedControl(
-              options: options,
-              selectedOption: sortOption,
-              onChanged: onSortChanged,
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '$resultCount개 결과',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w800,
-                  ),
+            Expanded(
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: _SortSegmentedControl(
+                  options: options,
+                  selectedOption: sortOption,
+                  onChanged: onSortChanged,
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                _ViewModeButton(icon: Icons.grid_view_rounded, selected: true),
-                _ViewModeButton(icon: Icons.view_list_rounded),
-                const SizedBox(width: AppSpacing.xs),
-                _PageSizeButton(
-                  pageSize: pageSize,
-                  onChanged: onPageSizeChanged,
-                ),
-              ],
+              ),
             ),
+            const SizedBox(width: AppSpacing.md),
+            Text(
+              '$resultCount개 결과',
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            _ViewModeButton(
+              icon: Icons.grid_view_rounded,
+              tooltip: '카드형 보기',
+              selected: viewMode == _SearchViewMode.grid,
+              onPressed: () => onViewModeChanged(_SearchViewMode.grid),
+            ),
+            _ViewModeButton(
+              icon: Icons.view_list_rounded,
+              tooltip: '리스트형 보기',
+              selected: viewMode == _SearchViewMode.list,
+              onPressed: () => onViewModeChanged(_SearchViewMode.list),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            _PageSizeButton(pageSize: pageSize, onChanged: onPageSizeChanged),
           ],
         ),
       ),
@@ -2177,33 +2230,42 @@ class _SortSegmentedControl extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-          child: Text(
-            '정렬',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w800,
+        SizedBox(
+          height: 36,
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+              child: Text(
+                '정렬',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
             ),
           ),
         ),
-        DecoratedBox(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4F7FC),
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: AppColors.border),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              for (final option in options)
-                _SortSegment(
-                  label: option.label,
-                  selected: option == selectedOption,
-                  onPressed: () => onChanged(option),
-                ),
-            ],
+        SizedBox(
+          height: 36,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xFFF4F7FC),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final option in options)
+                  _SortSegment(
+                    label: option.label,
+                    selected: option == selectedOption,
+                    onPressed: () => onChanged(option),
+                  ),
+              ],
+            ),
           ),
         ),
       ],
@@ -2224,49 +2286,61 @@ class _SortSegment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        backgroundColor: selected ? AppColors.primaryLight : Colors.transparent,
-        foregroundColor: selected ? AppColors.primary : AppColors.textPrimary,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
+    return SizedBox(
+      height: 32,
+      child: TextButton(
+        onPressed: onPressed,
+        style: TextButton.styleFrom(
+          backgroundColor: selected
+              ? AppColors.primaryLight
+              : Colors.transparent,
+          foregroundColor: selected ? AppColors.primary : AppColors.textPrimary,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          minimumSize: const Size(0, 32),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          textStyle: Theme.of(
+            context,
+          ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
         ),
-        minimumSize: const Size(0, 34),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
-        textStyle: Theme.of(
-          context,
-        ).textTheme.labelMedium?.copyWith(fontWeight: FontWeight.w800),
+        child: Text(label, softWrap: false),
       ),
-      child: Text(label, softWrap: false),
     );
   }
 }
 
 class _ViewModeButton extends StatelessWidget {
-  const _ViewModeButton({required this.icon, this.selected = false});
+  const _ViewModeButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onPressed,
+    this.selected = false,
+  });
 
   final IconData icon;
+  final String tooltip;
+  final VoidCallback onPressed;
   final bool selected;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: 32,
-      child: IconButton(
-        onPressed: () {},
-        style: IconButton.styleFrom(
-          backgroundColor: selected
-              ? AppColors.primaryLight
-              : AppColors.surface,
-          foregroundColor: selected
-              ? AppColors.primary
-              : AppColors.textSecondary,
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+    return Tooltip(
+      message: tooltip,
+      child: SizedBox.square(
+        dimension: 32,
+        child: IconButton(
+          onPressed: onPressed,
+          style: IconButton.styleFrom(
+            backgroundColor: selected
+                ? AppColors.primaryLight
+                : AppColors.surface,
+            foregroundColor: selected
+                ? AppColors.primary
+                : AppColors.textSecondary,
+            shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+          ),
+          icon: Icon(icon, size: 17),
         ),
-        icon: Icon(icon, size: 17),
       ),
     );
   }
@@ -2770,6 +2844,174 @@ class _SearchProductCard extends StatelessWidget {
                 const SizedBox(width: AppSpacing.xs),
                 Expanded(child: _ProductDetailButton(onPressed: () {})),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SearchProductListTile extends StatelessWidget {
+  const _SearchProductListTile({required this.product});
+
+  final SearchResultProduct product;
+
+  @override
+  Widget build(BuildContext context) {
+    final rtiColor = _colorFromHex(product.rtiColor);
+
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x080F172A),
+            blurRadius: 14,
+            offset: Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.sm),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(
+              width: 188,
+              height: 126,
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: ClipRRect(
+                      borderRadius: AppRadius.medium,
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.cover,
+                        alignment: Alignment.center,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const ColoredBox(color: AppColors.surfaceMuted),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: AppSpacing.xs,
+                    right: AppSpacing.xs,
+                    child: _RtiBadge(
+                      value: product.avgRti.round(),
+                      color: rtiColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    mockBrandFor(product),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 11,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15,
+                      height: 1.25,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Color(0xFFF59E0B),
+                            size: 15,
+                          ),
+                          const SizedBox(width: AppSpacing.xxs),
+                          Text(
+                            product.avgRating.toStringAsFixed(1),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 12,
+                                ),
+                          ),
+                          const SizedBox(width: AppSpacing.xxs),
+                          Text(
+                            '(리뷰 ${_formatCount(product.reviewCount)})',
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 11,
+                                ),
+                          ),
+                        ],
+                      ),
+                      _DeliveryBadge(label: mockBadgeFor(product)),
+                      for (final chip in mockTraitChipsFor(product))
+                        _ProductTraitChip(label: chip),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            SizedBox(
+              width: 190,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    _formatPrice(product.price),
+                    textAlign: TextAlign.right,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 19,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      _SquareIconButton(
+                        icon: Icons.favorite_border,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      _SquareIconButton(
+                        icon: Icons.shopping_cart_outlined,
+                        onPressed: () {},
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  _ProductDetailButton(onPressed: () {}),
+                ],
+              ),
             ),
           ],
         ),
