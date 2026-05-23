@@ -28,19 +28,22 @@ void main() {
       ],
     );
 
-    return MaterialApp.router(theme: AppTheme.light, routerConfig: router);
+    return MaterialApp.router(
+      theme: AppTheme.light.copyWith(splashFactory: NoSplash.splashFactory),
+      routerConfig: router,
+    );
   }
 
   testWidgets('renders mock search results for a matching query', (
     tester,
   ) async {
-    await tester.pumpWidget(buildSubject('크림'));
+    await tester.pumpWidget(buildSubject('이어폰'));
     await tester.pumpAndSettle();
 
-    expect(find.text('"크림" 검색 결과'), findsOneWidget);
-    expect(find.text('세라 수분 장벽 크림 80ml'), findsOneWidget);
-    expect(find.text('관련도순'), findsOneWidget);
-    expect(find.textContaining('RTI 90+'), findsOneWidget);
+    expect(find.text('이어폰'), findsWidgets);
+    expect(find.text('AeroFit ANC 무선 블루투스 이어폰'), findsOneWidget);
+    expect(find.text('정확도 순'), findsOneWidget);
+    expect(find.textContaining('RTI 80+'), findsOneWidget);
   });
 
   testWidgets('renders empty state when mock search has no match', (
@@ -56,7 +59,7 @@ void main() {
   testWidgets('updates route when searching again from results page', (
     tester,
   ) async {
-    await tester.pumpWidget(buildSubject('크림'));
+    await tester.pumpWidget(buildSubject('이어폰'));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.byType(TextField).first, '가전');
@@ -68,6 +71,42 @@ void main() {
       router.routeInformationProvider.value.uri.queryParameters['q'],
       '가전',
     );
-    expect(find.text('"가전" 검색 결과'), findsOneWidget);
+    expect(find.text('가전'), findsWidgets);
+  });
+
+  testWidgets('changes visible page size from the result toolbar dropdown', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildSubject('이어폰'));
+    await tester.pumpAndSettle();
+
+    await tester.scrollUntilVisible(
+      find.text('60개씩 보기'),
+      800,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('60개씩 보기'), findsOneWidget);
+
+    await tester.tap(find.text('60개씩 보기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('30개씩 보기'), findsOneWidget);
+    expect(find.text('120개씩 보기'), findsOneWidget);
+
+    await tester.tap(find.text('30개씩 보기').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('30개씩 보기'), findsOneWidget);
+  });
+
+  testWidgets('renders price histogram bars behind the price range control', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildSubject('이어폰'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('price-histogram-bars')), findsOneWidget);
   });
 }

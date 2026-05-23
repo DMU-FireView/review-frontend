@@ -122,12 +122,13 @@ SearchResultsState mockSearchResultsFor(String query) {
     quickFilters: [
       SearchFilterChipData(label: '전체', count: 248, selected: true),
       const SearchFilterChipData(label: 'RTI 80+', count: 132),
-      const SearchFilterChipData(label: '아이폰 추천', count: 86),
+      const SearchFilterChipData(label: '무선', count: 224),
+      const SearchFilterChipData(label: '노이즈캔슬링', count: 164),
+      const SearchFilterChipData(label: '커널형', count: 118),
+      const SearchFilterChipData(label: '오픈형', count: 72),
+      const SearchFilterChipData(label: '스포츠/방수', count: 45),
+      const SearchFilterChipData(label: '게이밍', count: 31),
       const SearchFilterChipData(label: '통화 품질 우수', count: 54),
-      const SearchFilterChipData(label: '장시간 배터리', count: 47),
-      const SearchFilterChipData(label: '가성비', count: 39),
-      const SearchFilterChipData(label: '출시 6개월 이내', count: 22),
-      const SearchFilterChipData(label: '무선충전 지원', count: 18),
     ],
     categoryFilters: const [
       SearchFilterChipData(label: '이어폰', count: 142, selected: true),
@@ -136,10 +137,9 @@ SearchResultsState mockSearchResultsFor(String query) {
       SearchFilterChipData(label: '액세서리', count: 21),
     ],
     priceRanges: const [
-      SearchFilterChipData(label: '3만원 이하', count: 18),
-      SearchFilterChipData(label: '3~7만원', count: 73),
-      SearchFilterChipData(label: '7~15만원', count: 92),
-      SearchFilterChipData(label: '15만원 이상', count: 65, selected: true),
+      SearchFilterChipData(label: '1만원 이하', count: 18),
+      SearchFilterChipData(label: '10~30만원', count: 73),
+      SearchFilterChipData(label: '30만원 이상', count: 92),
     ],
   );
 }
@@ -155,6 +155,15 @@ const mockSearchBrands = [
 
 const mockProductBadges = ['무료배송', '오늘출발', '특가', '무료배송', '오늘출발', '무료배송'];
 
+const mockProductTraitChips = [
+  ['가성비', '강한 ANC'],
+  ['편안한 착용감', '통화 선명'],
+  ['신상품', '초경량'],
+  ['프리미엄 음질', '아이폰 추천'],
+  ['통화 품질 우수', '저지연'],
+  ['생활방수', '긴 배터리'],
+];
+
 String mockBrandFor(SearchResultProduct product) {
   final index = (product.id - 1).clamp(0, mockSearchBrands.length - 1);
   return mockSearchBrands[index];
@@ -163,4 +172,9 @@ String mockBrandFor(SearchResultProduct product) {
 String mockBadgeFor(SearchResultProduct product) {
   final index = (product.id - 1).clamp(0, mockProductBadges.length - 1);
   return mockProductBadges[index];
+}
+
+List<String> mockTraitChipsFor(SearchResultProduct product) {
+  final index = (product.id - 1).clamp(0, mockProductTraitChips.length - 1);
+  return mockProductTraitChips[index];
 }
