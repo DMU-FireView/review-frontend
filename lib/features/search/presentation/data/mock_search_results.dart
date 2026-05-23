@@ -96,13 +96,22 @@ const mockSearchProducts = [
 
 SearchResultsState mockSearchResultsFor(String query) {
   final keyword = query.trim().toLowerCase();
+  final keywordTokens = keyword
+      .split(RegExp(r'\s+'))
+      .where((token) => token.isNotEmpty)
+      .toList(growable: false);
   final products = keyword.isEmpty
       ? mockSearchProducts
       : mockSearchProducts
             .where((product) {
-              return product.name.toLowerCase().contains(keyword) ||
-                  product.category.toLowerCase().contains(keyword) ||
-                  product.categoryDisplayName.toLowerCase().contains(keyword);
+              final searchableText = [
+                product.name,
+                product.category,
+                product.categoryDisplayName,
+                product.platform,
+              ].whereType<String>().join(' ').toLowerCase();
+
+              return keywordTokens.every(searchableText.contains);
             })
             .toList(growable: false);
 
