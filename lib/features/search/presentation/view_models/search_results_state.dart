@@ -5,7 +5,7 @@ enum SearchSortOption {
   rti(label: 'RTI 높은순'),
   reviewCount(label: '리뷰 많은순'),
   sales(label: '판매 많은순'),
-  priceLow(label: '낮은 가격순'),
+  priceLow(label: '최저가순'),
   priceHigh(label: '높은 가격순'),
   newest(label: '신상품순');
 
