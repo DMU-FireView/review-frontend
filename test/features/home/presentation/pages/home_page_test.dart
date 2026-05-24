@@ -14,6 +14,7 @@ import 'package:re_view_front/features/home/domain/usecases/get_home_dashboard_u
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/banners/hero_banner_carousel.dart';
+import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
 void main() {
   late GoRouter router;
@@ -40,6 +41,12 @@ void main() {
           builder: (context, state) =>
               const Scaffold(body: Text('signup page')),
         ),
+        GoRoute(
+          path: RoutePaths.search,
+          name: RouteNames.search,
+          builder: (context, state) =>
+              SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+        ),
       ],
     );
 
@@ -62,7 +69,7 @@ void main() {
     expect(find.byType(Image), findsWidgets);
     expect(find.text('Re:view가 더 믿을 수 있는 이유'), findsOneWidget);
     expect(find.text('추천 상품 API 연결 대기 중'), findsOneWidget);
-    expect(find.text('지금 많이 찾는 키워드'), findsNothing);
+    expect(find.text('지금 많이 찾는 키워드'), findsOneWidget);
     expect(find.text('92% 신뢰도'), findsNothing);
     expect(find.text('2'), findsNothing);
   });
@@ -113,6 +120,22 @@ void main() {
 
     expect(router.routeInformationProvider.value.uri.path, RoutePaths.login);
     expect(find.text('login page'), findsOneWidget);
+  });
+
+  testWidgets('moves to search results from header search', (tester) async {
+    await tester.pumpWidget(buildSubject());
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField).first, '크림');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await tester.pumpAndSettle();
+
+    expect(router.routeInformationProvider.value.uri.path, RoutePaths.search);
+    expect(
+      router.routeInformationProvider.value.uri.queryParameters['q'],
+      '크림',
+    );
+    expect(find.text('"크림" 검색 결과'), findsOneWidget);
   });
 
   testWidgets('renders on mobile width without overflow', (tester) async {
