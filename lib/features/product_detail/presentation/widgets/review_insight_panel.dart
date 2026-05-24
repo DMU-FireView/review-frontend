@@ -16,20 +16,7 @@ class ReviewInsightPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.medium,
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x060F172A),
-            blurRadius: 12,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,7 +104,6 @@ class ReviewInsightPanel extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
@@ -131,9 +117,9 @@ class _KeywordChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: AppColors.primaryLight,
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: const Color(0xFFBFD7FF)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -143,7 +129,7 @@ class _KeywordChip extends StatelessWidget {
         child: Text(
           '${keyword.label} ${formatSearchCount(keyword.count)}',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.primary,
+            color: AppColors.textPrimary,
             fontWeight: FontWeight.w700,
             fontSize: 12,
           ),
