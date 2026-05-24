@@ -304,15 +304,22 @@ class ReviewCard extends StatelessWidget {
                   itemCount: review.imageUrls.length,
                   separatorBuilder: (_, __) =>
                       const SizedBox(width: AppSpacing.xs),
-                  itemBuilder: (context, index) => ClipRRect(
-                    borderRadius: AppRadius.small,
-                    child: Image.network(
-                      review.imageUrls[index],
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          const SizedBox.square(dimension: 80),
+                  itemBuilder: (context, index) => GestureDetector(
+                    onTap: () => _showImageDialog(
+                      context,
+                      review.imageUrls,
+                      index,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: AppRadius.small,
+                      child: Image.network(
+                        review.imageUrls[index],
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) =>
+                            const SizedBox.square(dimension: 80),
+                      ),
                     ),
                   ),
                 ),
@@ -417,6 +424,155 @@ class _RtiBadgeSmall extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+void _showImageDialog(
+  BuildContext context,
+  List<String> imageUrls,
+  int initialIndex,
+) {
+  showDialog<void>(
+    context: context,
+    builder: (_) => _ReviewImageDialog(
+      imageUrls: imageUrls,
+      initialIndex: initialIndex,
+    ),
+  );
+}
+
+class _ReviewImageDialog extends StatefulWidget {
+  const _ReviewImageDialog({
+    required this.imageUrls,
+    required this.initialIndex,
+  });
+
+  final List<String> imageUrls;
+  final int initialIndex;
+
+  @override
+  State<_ReviewImageDialog> createState() => _ReviewImageDialogState();
+}
+
+class _ReviewImageDialogState extends State<_ReviewImageDialog> {
+  late int _current;
+
+  @override
+  void initState() {
+    super.initState();
+    _current = widget.initialIndex;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(AppSpacing.md),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.of(context).pop(),
+            child: Container(color: Colors.black54),
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: 680,
+              maxHeight: MediaQuery.of(context).size.height * 0.85,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: ClipRRect(
+                    borderRadius: AppRadius.medium,
+                    child: Image.network(
+                      widget.imageUrls[_current],
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => const SizedBox(
+                        width: 300,
+                        height: 300,
+                        child: Icon(Icons.broken_image_outlined,
+                            size: 48, color: Colors.white38),
+                      ),
+                    ),
+                  ),
+                ),
+                if (widget.imageUrls.length > 1) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _NavButton(
+                        icon: Icons.chevron_left,
+                        enabled: _current > 0,
+                        onTap: () => setState(() => _current--),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      Text(
+                        '${_current + 1} / ${widget.imageUrls.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.md),
+                      _NavButton(
+                        icon: Icons.chevron_right,
+                        enabled: _current < widget.imageUrls.length - 1,
+                        onTap: () => setState(() => _current++),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Positioned(
+            top: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: const CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.black45,
+                child: Icon(Icons.close, color: Colors.white, size: 18),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavButton extends StatelessWidget {
+  const _NavButton({
+    required this.icon,
+    required this.enabled,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final bool enabled;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: enabled ? onTap : null,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: enabled
+            ? Colors.white.withValues(alpha: 0.2)
+            : Colors.white.withValues(alpha: 0.08),
+        child: Icon(
+          icon,
+          color: enabled ? Colors.white : Colors.white38,
+          size: 22,
         ),
       ),
     );
