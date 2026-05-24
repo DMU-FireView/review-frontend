@@ -44,7 +44,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
     );
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.surface,
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
@@ -259,7 +259,7 @@ class _DesktopHeroSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 5,
+            flex: 4,
             child: ProductImageGallery(imageUrls: detail.imageUrls),
           ),
           const SizedBox(width: AppSpacing.xl),
