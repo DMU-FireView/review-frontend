@@ -89,10 +89,11 @@ class _SignalRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = signal.isPositive ? AppColors.success : AppColors.warning;
-    final icon = signal.isPositive
-        ? Icons.check_circle_outline
-        : Icons.warning_amber_outlined;
+    final (color, icon) = signal.value == '자연스러움'
+        ? (AppColors.info, Icons.check_circle)
+        : signal.isPositive
+            ? (AppColors.success, Icons.check_circle)
+            : (AppColors.warning, Icons.cancel);
 
     return Row(
       children: [
