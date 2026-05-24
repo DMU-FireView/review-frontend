@@ -14,6 +14,7 @@ class HomeHeader extends StatelessWidget {
     required this.onWishPressed,
     required this.onCartPressed,
     required this.onNavItemPressed,
+    this.showCategoryNav = true,
     this.onSearchSubmitted,
     this.onLogoPressed,
     this.searchFocusNode,
@@ -27,6 +28,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
+  final bool showCategoryNav;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
@@ -63,6 +65,7 @@ class HomeHeader extends StatelessWidget {
               : _DesktopHeader(
                   navItems: navItems,
                   selectedNavItem: selectedNavItem,
+                  showCategoryNav: showCategoryNav,
                   onLoginPressed: onLoginPressed,
                   onWishPressed: onWishPressed,
                   onCartPressed: onCartPressed,
@@ -82,6 +85,7 @@ class _DesktopHeader extends StatelessWidget {
   const _DesktopHeader({
     required this.navItems,
     required this.selectedNavItem,
+    required this.showCategoryNav,
     required this.onLoginPressed,
     required this.onWishPressed,
     required this.onCartPressed,
@@ -94,6 +98,7 @@ class _DesktopHeader extends StatelessWidget {
 
   final List<String> navItems;
   final String selectedNavItem;
+  final bool showCategoryNav;
   final VoidCallback onLoginPressed;
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
@@ -164,57 +169,59 @@ class _DesktopHeader extends StatelessWidget {
             ),
           ],
         ),
-        const SizedBox(height: AppSpacing.md),
-        Row(
-          children: [
-            const Icon(Icons.menu, color: AppColors.textPrimary, size: 22),
-            const SizedBox(width: AppSpacing.xs),
-            Text(
-              '카테고리',
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.xxl),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final item in navItems)
-                      Padding(
-                        padding: const EdgeInsets.only(right: AppSpacing.xl),
-                        child: TextButton(
-                          onPressed: () => onNavItemPressed(item),
-                          style: TextButton.styleFrom(
-                            minimumSize: Size.zero,
-                            padding: EdgeInsets.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            foregroundColor: item == selectedNavItem
-                                ? AppColors.primary
-                                : AppColors.textPrimary,
-                          ),
-                          child: Text(
-                            item,
-                            style: Theme.of(context).textTheme.labelLarge
-                                ?.copyWith(
-                                  color: item == selectedNavItem
-                                      ? AppColors.primary
-                                      : AppColors.textPrimary,
-                                  fontWeight: item == selectedNavItem
-                                      ? FontWeight.w800
-                                      : FontWeight.w600,
-                                ),
-                          ),
-                        ),
-                      ),
-                  ],
+        if (showCategoryNav) ...[
+          const SizedBox(height: AppSpacing.md),
+          Row(
+            children: [
+              const Icon(Icons.menu, color: AppColors.textPrimary, size: 22),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                '카테고리',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ),
-          ],
-        ),
+              const SizedBox(width: AppSpacing.xxl),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final item in navItems)
+                        Padding(
+                          padding: const EdgeInsets.only(right: AppSpacing.xl),
+                          child: TextButton(
+                            onPressed: () => onNavItemPressed(item),
+                            style: TextButton.styleFrom(
+                              minimumSize: Size.zero,
+                              padding: EdgeInsets.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              foregroundColor: item == selectedNavItem
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
+                            ),
+                            child: Text(
+                              item,
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
+                                    color: item == selectedNavItem
+                                        ? AppColors.primary
+                                        : AppColors.textPrimary,
+                                    fontWeight: item == selectedNavItem
+                                        ? FontWeight.w800
+                                        : FontWeight.w600,
+                                  ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
       ],
     );
   }
