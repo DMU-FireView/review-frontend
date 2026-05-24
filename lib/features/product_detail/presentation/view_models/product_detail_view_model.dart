@@ -5,20 +5,23 @@ import 'package:re_view_front/features/product_detail/domain/usecases/get_produc
 import 'package:re_view_front/features/product_detail/presentation/providers/product_detail_providers.dart';
 import 'package:re_view_front/features/product_detail/presentation/view_models/product_detail_state.dart';
 
-class ProductDetailViewModel
-    extends FamilyNotifier<ProductDetailState, int> {
+class ProductDetailViewModel extends Notifier<ProductDetailState> {
+  ProductDetailViewModel(this._productId);
+
+  final int _productId;
+
   late final GetProductDetailUseCase _getDetail;
   late final GetProductReviewsUseCase _getReviews;
   late final GetReviewInsightUseCase _getInsight;
   late final GetSimilarProductsUseCase _getSimilar;
 
   @override
-  ProductDetailState build(int productId) {
+  ProductDetailState build() {
     _getDetail = ref.watch(getProductDetailUseCaseProvider);
     _getReviews = ref.watch(getProductReviewsUseCaseProvider);
     _getInsight = ref.watch(getReviewInsightUseCaseProvider);
     _getSimilar = ref.watch(getSimilarProductsUseCaseProvider);
-    Future.microtask(() => _load(productId));
+    Future.microtask(() => _load(_productId));
     return const ProductDetailLoading();
   }
 
@@ -64,5 +67,5 @@ class ProductDetailViewModel
     );
   }
 
-  Future<void> refresh(int productId) => _load(productId);
+  Future<void> refresh() => _load(_productId);
 }
