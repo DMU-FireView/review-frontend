@@ -3,17 +3,51 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 
 class SearchBar extends StatefulWidget {
-  const SearchBar({this.focusNode, super.key});
+  const SearchBar({
+    this.focusNode,
+    this.initialValue,
+    this.onSubmitted,
+    this.onSearchPressed,
+    super.key,
+  });
 
   final FocusNode? focusNode;
+  final String? initialValue;
+  final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onSearchPressed;
 
   @override
   State<SearchBar> createState() => _SearchBarState();
 }
 
 class _SearchBarState extends State<SearchBar> {
+  late final TextEditingController _controller;
   bool _isFocused = false;
   bool _isHovered = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? '');
+  }
+
+  @override
+  void didUpdateWidget(covariant SearchBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final nextValue = widget.initialValue ?? '';
+    if (oldWidget.initialValue != widget.initialValue &&
+        _controller.text != nextValue) {
+      _controller.text = nextValue;
+      _controller.selection = TextSelection.collapsed(offset: nextValue.length);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,16 +87,21 @@ class _SearchBarState extends State<SearchBar> {
             child: Focus(
               onFocusChange: _setFocused,
               child: TextField(
+                controller: _controller,
                 focusNode: widget.focusNode,
                 textInputAction: TextInputAction.search,
+                onSubmitted: widget.onSubmitted,
                 decoration: InputDecoration(
                   hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textTertiary,
                   ),
-                  suffixIcon: const Icon(
-                    Icons.search,
-                    color: AppColors.primary,
+                  suffixIcon: IconButton(
+                    tooltip: '검색',
+                    icon: const Icon(Icons.search, color: AppColors.primary),
+                    onPressed: widget.onSearchPressed == null
+                        ? null
+                        : () => widget.onSearchPressed!(_controller.text),
                   ),
                   filled: true,
                   fillColor: backgroundColor,
