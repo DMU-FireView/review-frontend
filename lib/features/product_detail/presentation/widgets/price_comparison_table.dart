@@ -151,61 +151,8 @@ class _PriceRow extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: 80,
-                child: comparison.isLowest
-                    ? ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xs,
-                            vertical: AppSpacing.xxs,
-                          ),
-                          minimumSize: const Size(60, 28),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          backgroundColor: AppColors.primary,
-                          foregroundColor: AppColors.onPrimary,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: AppRadius.small,
-                          ),
-                        ),
-                        child: Text(
-                          comparison.linkLabel,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 11,
-                          ),
-                        ),
-                      )
-                    : OutlinedButton(
-                        onPressed: () {},
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.xs,
-                            vertical: AppSpacing.xxs,
-                          ),
-                          minimumSize: const Size(60, 28),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          foregroundColor: comparison.isOfficial
-                              ? AppColors.primary
-                              : AppColors.textPrimary,
-                          side: BorderSide(
-                            color: comparison.isOfficial
-                                ? AppColors.primary
-                                : AppColors.borderStrong,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: AppRadius.small,
-                          ),
-                        ),
-                        child: Text(
-                          comparison.linkLabel,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 11,
-                          ),
-                        ),
-                      ),
+                width: 84,
+                child: _BuyButton(comparison: comparison),
               ),
             ],
           ),
@@ -272,6 +219,67 @@ class _LowestBadge extends StatelessWidget {
             fontWeight: FontWeight.w900,
             fontSize: 10,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _BuyButton extends StatelessWidget {
+  const _BuyButton({required this.comparison});
+
+  final PriceComparison comparison;
+
+  @override
+  Widget build(BuildContext context) {
+    if (comparison.isLowest) {
+      return FilledButton.icon(
+        onPressed: () {},
+        icon: const Icon(Icons.arrow_outward, size: 12),
+        iconAlignment: IconAlignment.end,
+        label: Text(
+          comparison.linkLabel,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.onPrimary,
+            fontWeight: FontWeight.w800,
+            fontSize: 11,
+          ),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          minimumSize: const Size(72, 30),
+          maximumSize: const Size(double.infinity, 30),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: const StadiumBorder(),
+        ),
+      );
+    }
+
+    return OutlinedButton(
+      onPressed: () {},
+      style: OutlinedButton.styleFrom(
+        foregroundColor: comparison.isOfficial
+            ? AppColors.primary
+            : AppColors.textSecondary,
+        side: BorderSide(
+          color: comparison.isOfficial
+              ? AppColors.primary.withValues(alpha: 0.5)
+              : AppColors.border,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+        minimumSize: const Size(72, 30),
+        maximumSize: const Size(double.infinity, 30),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+        shape: const StadiumBorder(),
+      ),
+      child: Text(
+        comparison.linkLabel,
+        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
         ),
       ),
     );
