@@ -183,8 +183,9 @@ class LoginCard extends StatelessWidget {
               const SizedBox(height: AppSpacing.xl),
               const Divider(height: 1),
               const SizedBox(height: AppSpacing.md),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
                   Text(
                     '아직 계정이 없나요?',
@@ -399,7 +400,7 @@ class _SocialLoginButton extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
-          Text(label),
+          Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
         ],
       ),
     );
