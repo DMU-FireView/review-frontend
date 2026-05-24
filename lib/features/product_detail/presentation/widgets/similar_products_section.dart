@@ -20,9 +20,28 @@ class SimilarProductsSection extends StatefulWidget {
 
 class _SimilarProductsSectionState extends State<SimilarProductsSection> {
   final _scrollController = ScrollController();
+  bool _canScrollLeft = false;
+  bool _canScrollRight = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_updateScrollState);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _updateScrollState());
+  }
+
+  void _updateScrollState() {
+    if (!_scrollController.hasClients) return;
+    final pos = _scrollController.position;
+    setState(() {
+      _canScrollLeft = pos.pixels > 0;
+      _canScrollRight = pos.pixels < pos.maxScrollExtent;
+    });
+  }
 
   @override
   void dispose() {
+    _scrollController.removeListener(_updateScrollState);
     _scrollController.dispose();
     super.dispose();
   }
@@ -54,15 +73,18 @@ class _SimilarProductsSectionState extends State<SimilarProductsSection> {
                 ),
               ),
             ),
-            _ScrollArrowButton(
-              icon: Icons.chevron_left,
-              onPressed: () => _scroll(-280),
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            _ScrollArrowButton(
-              icon: Icons.chevron_right,
-              onPressed: () => _scroll(280),
-            ),
+            if (_canScrollLeft) ...[
+              _ScrollArrowButton(
+                icon: Icons.chevron_left,
+                onPressed: () => _scroll(-280),
+              ),
+              const SizedBox(width: AppSpacing.xs),
+            ],
+            if (_canScrollRight)
+              _ScrollArrowButton(
+                icon: Icons.chevron_right,
+                onPressed: () => _scroll(280),
+              ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
