@@ -19,8 +19,27 @@ class _ReviewListSectionState extends State<ReviewListSection> {
   ReviewSortOption _sortOption = ReviewSortOption.newest;
   bool _verifiedOnly = false;
 
+  List<ProductReview> get _filteredSortedReviews {
+    var list = List<ProductReview>.from(widget.reviews);
+
+    if (_verifiedOnly) {
+      list = list.where((r) => r.isVerifiedPurchase).toList();
+    }
+
+    return switch (_sortOption) {
+      ReviewSortOption.newest => list,
+      ReviewSortOption.verified =>
+        list.where((r) => r.isVerifiedPurchase).toList(),
+      ReviewSortOption.withPhoto =>
+        list.where((r) => r.imageUrls.isNotEmpty).toList(),
+      ReviewSortOption.rtiHigh =>
+        (list..sort((a, b) => b.rtiScore.compareTo(a.rtiScore))),
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
+    final reviews = _filteredSortedReviews;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -31,7 +50,19 @@ class _ReviewListSectionState extends State<ReviewListSection> {
           onVerifiedChanged: (v) => setState(() => _verifiedOnly = v),
         ),
         const SizedBox(height: AppSpacing.md),
-        ...widget.reviews.map((review) => Padding(
+        if (reviews.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            child: Center(
+              child: Text(
+                '해당 조건에 맞는 리뷰가 없습니다.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ),
+        ...reviews.map((review) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
           child: ReviewCard(review: review),
         )),
