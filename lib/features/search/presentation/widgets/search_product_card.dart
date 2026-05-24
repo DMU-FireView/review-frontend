@@ -396,25 +396,26 @@ class RtiBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
+        color: AppColors.surface.withValues(alpha: 0.82),
+        borderRadius: AppRadius.small,
+        border: Border.all(color: color.withValues(alpha: 0.36)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.xs,
-          vertical: 3,
+          vertical: AppSpacing.xxs,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.shield_rounded, color: Colors.white, size: 12),
-            const SizedBox(width: 3),
+            Icon(Icons.verified_user_outlined, color: color, size: 14),
+            const SizedBox(width: AppSpacing.xxs),
             Text(
               'RTI $value',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white,
+                color: color,
                 fontWeight: FontWeight.w900,
-                fontSize: 11,
+                fontSize: 12,
               ),
             ),
           ],
