@@ -88,9 +88,9 @@ class _RtiBadgeLarge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: AppColors.surface,
         borderRadius: AppRadius.small,
-        border: Border.all(color: color.withValues(alpha: 0.4)),
+        border: Border.all(color: AppColors.border),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -98,27 +98,43 @@ class _RtiBadgeLarge extends StatelessWidget {
           vertical: AppSpacing.xs,
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.verified_user_outlined, color: color, size: 16),
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                  ),
+                ),
                 const SizedBox(width: AppSpacing.xxs),
                 Text(
                   'RTI $score',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: color,
+                    color: AppColors.textPrimary,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
+                const SizedBox(width: AppSpacing.xxs),
+                const Icon(
+                  Icons.info_outline,
+                  size: 13,
+                  color: AppColors.textTertiary,
+                ),
               ],
             ),
+            const SizedBox(height: 2),
             Text(
               _rtiLabel(score),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: color,
                 fontWeight: FontWeight.w700,
-                fontSize: 10,
+                fontSize: 11,
               ),
             ),
           ],
