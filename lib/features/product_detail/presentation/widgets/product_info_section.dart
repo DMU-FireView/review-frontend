@@ -88,37 +88,37 @@ class _RtiBadgeLarge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: AppRadius.small,
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+          horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs,
         ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+        child: Column(
           children: [
-            const Icon(Icons.shield_rounded, color: Colors.white, size: 15),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              'RTI $score',
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            Container(
-              width: 1,
-              height: 13,
-              margin: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              color: Colors.white.withValues(alpha: 0.4),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.verified_user_outlined, color: color, size: 16),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(
+                  'RTI $score',
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
             ),
             Text(
               _rtiLabel(score),
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white.withValues(alpha: 0.9),
+                color: color,
                 fontWeight: FontWeight.w700,
+                fontSize: 10,
               ),
             ),
           ],
