@@ -258,12 +258,13 @@ class _DesktopHeroSection extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 420,
+          Expanded(
+            flex: 5,
             child: ProductImageGallery(imageUrls: detail.imageUrls),
           ),
           const SizedBox(width: AppSpacing.xl),
           Expanded(
+            flex: 6,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
