@@ -170,18 +170,19 @@ class _SellerLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (color, letter) = switch (tag) {
-      'coupang' => (const Color(0xFFEF4444), 'C'),
-      'naver' => (const Color(0xFF22C55E), 'N'),
-      '11st' => (const Color(0xFFF97316), '11'),
-      'official' => (AppColors.primary, 'O'),
-      _ => (AppColors.textSecondary, tag.isNotEmpty ? tag[0].toUpperCase() : '?'),
+    final letter = switch (tag) {
+      'coupang' => 'C',
+      'naver' => 'N',
+      '11st' => '11',
+      'official' => 'O',
+      _ => tag.isNotEmpty ? tag[0].toUpperCase() : '?',
     };
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: AppColors.surfaceMuted,
         borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: AppColors.border),
       ),
       child: SizedBox(
         width: 24,
@@ -190,7 +191,7 @@ class _SellerLogo extends StatelessWidget {
           child: Text(
             letter,
             style: TextStyle(
-              color: color,
+              color: AppColors.textSecondary,
               fontWeight: FontWeight.w900,
               fontSize: letter.length > 1 ? 9 : 12,
             ),
