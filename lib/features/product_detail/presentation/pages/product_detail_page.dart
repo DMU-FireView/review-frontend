@@ -18,7 +18,8 @@ import 'package:re_view_front/features/product_detail/presentation/widgets/revie
 import 'package:re_view_front/features/product_detail/presentation/widgets/rti_summary_card.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/similar_products_section.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/trust_signal_card.dart';
-import 'package:re_view_front/features/search/presentation/widgets/search_header.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
@@ -47,8 +48,16 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
       body: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: SearchHeader(
-              query: '',
+            child: HomeHeader(
+              navItems: homeNavItems,
+              selectedNavItem: '',
+              onLoginPressed: () {},
+              onWishPressed: () {},
+              onCartPressed: () {},
+              onNavItemPressed: (item) => context.goNamed(
+                RouteNames.search,
+                queryParameters: {'q': item},
+              ),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {
                   context.goNamed(
@@ -57,6 +66,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   );
                 }
               },
+              onLogoPressed: () => context.goNamed(RouteNames.home),
             ),
           ),
           SliverToBoxAdapter(
@@ -130,6 +140,10 @@ class _DetailContent extends StatelessWidget {
         isMobile
             ? _MobileHeroSection(detail: detail)
             : _DesktopHeroSection(detail: detail),
+        if (!isMobile && detail.specChips.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.md),
+          ProductSpecChipsStrip(chips: detail.specChips),
+        ],
         const SizedBox(height: AppSpacing.xl),
         isMobile
             ? _MobileAnalysisSection(
@@ -258,8 +272,6 @@ class _DesktopHeroSection extends StatelessWidget {
                   comparisons: detail.priceComparisons,
                   totalSellerCount: detail.totalSellerCount,
                 ),
-                const SizedBox(height: AppSpacing.lg),
-                ProductSpecChips(chips: detail.specChips),
               ],
             ),
           ),
