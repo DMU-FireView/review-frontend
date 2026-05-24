@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
@@ -157,7 +159,14 @@ class SearchProductCard extends StatelessWidget {
                   onPressed: () {},
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                Expanded(child: ProductDetailButton(onPressed: () {})),
+                Expanded(
+                  child: ProductDetailButton(
+                    onPressed: () => context.goNamed(
+                      RouteNames.productDetail,
+                      pathParameters: {'id': product.id.toString()},
+                    ),
+                  ),
+                ),
               ],
             ),
           ],
@@ -363,7 +372,14 @@ class ListTileActions extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          ProductDetailButton(onPressed: () {}),
+          Builder(
+            builder: (context) => ProductDetailButton(
+              onPressed: () => context.goNamed(
+                RouteNames.productDetail,
+                pathParameters: {'id': product.id.toString()},
+              ),
+            ),
+          ),
         ],
       ),
     );
