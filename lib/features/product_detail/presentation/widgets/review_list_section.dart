@@ -17,13 +17,13 @@ class ReviewListSection extends StatefulWidget {
 
 class _ReviewListSectionState extends State<ReviewListSection> {
   ReviewSortOption _sortOption = ReviewSortOption.newest;
-  bool _verifiedOnly = false;
+  bool _photoOnly = false;
 
   List<ProductReview> get _filteredSortedReviews {
     var list = List<ProductReview>.from(widget.reviews);
 
-    if (_verifiedOnly) {
-      list = list.where((r) => r.isVerifiedPurchase).toList();
+    if (_photoOnly) {
+      list = list.where((r) => r.imageUrls.isNotEmpty).toList();
     }
 
     return switch (_sortOption) {
@@ -45,9 +45,9 @@ class _ReviewListSectionState extends State<ReviewListSection> {
       children: [
         _FilterRow(
           sortOption: _sortOption,
-          verifiedOnly: _verifiedOnly,
+          photoOnly: _photoOnly,
           onSortChanged: (v) => setState(() => _sortOption = v),
-          onVerifiedChanged: (v) => setState(() => _verifiedOnly = v),
+          onPhotoOnlyChanged: (v) => setState(() => _photoOnly = v),
         ),
         const SizedBox(height: AppSpacing.md),
         if (reviews.isEmpty)
@@ -85,15 +85,15 @@ class _ReviewListSectionState extends State<ReviewListSection> {
 class _FilterRow extends StatelessWidget {
   const _FilterRow({
     required this.sortOption,
-    required this.verifiedOnly,
+    required this.photoOnly,
     required this.onSortChanged,
-    required this.onVerifiedChanged,
+    required this.onPhotoOnlyChanged,
   });
 
   final ReviewSortOption sortOption;
-  final bool verifiedOnly;
+  final bool photoOnly;
   final ValueChanged<ReviewSortOption> onSortChanged;
-  final ValueChanged<bool> onVerifiedChanged;
+  final ValueChanged<bool> onPhotoOnlyChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -123,28 +123,31 @@ class _FilterRow extends StatelessWidget {
           onTap: () => onSortChanged(ReviewSortOption.rtiHigh),
         ),
         const _Divider(),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 18,
-              height: 18,
-              child: Checkbox(
-                value: verifiedOnly,
-                onChanged: (v) => onVerifiedChanged(v ?? false),
-                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                activeColor: AppColors.primary,
+        GestureDetector(
+          onTap: () => onPhotoOnlyChanged(!photoOnly),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: Checkbox(
+                  value: photoOnly,
+                  onChanged: (v) => onPhotoOnlyChanged(v ?? false),
+                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  activeColor: AppColors.primary,
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.xxs),
-            Text(
-              '구매인증만 보기',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
+              const SizedBox(width: AppSpacing.xxs),
+              Text(
+                '사진 리뷰만 보기',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
