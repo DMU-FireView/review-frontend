@@ -69,6 +69,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               onCartPressed: () => context.go(RoutePaths.login),
               onNavItemPressed: _handleNavItemPressed,
               onLogoPressed: () => context.go(RoutePaths.home),
+              onSearchSubmitted: _handleSearchSubmitted,
               searchFocusNode: _searchFocusNode,
             ),
           ),
@@ -283,6 +284,15 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _handleBannerPressed(HomeBannerData banner) {
     _scrollTo(_recommendationKey);
+  }
+
+  void _handleSearchSubmitted(String value) {
+    final query = value.trim();
+    if (query.isEmpty) {
+      return;
+    }
+
+    context.goNamed(RouteNames.search, queryParameters: {'q': query});
   }
 
   void _scrollTo(GlobalKey key) {
