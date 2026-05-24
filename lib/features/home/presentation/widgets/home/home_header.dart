@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
@@ -16,8 +15,6 @@ class HomeHeader extends StatelessWidget {
     required this.onCartPressed,
     required this.onNavItemPressed,
     this.showCategoryNav = true,
-    this.searchKeywords = const [],
-    this.searchRecommendedProducts = const [],
     this.onSearchSubmitted,
     this.onLogoPressed,
     this.searchFocusNode,
@@ -32,8 +29,6 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
   final bool showCategoryNav;
-  final List<String> searchKeywords;
-  final List<HomeProductData> searchRecommendedProducts;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
@@ -65,8 +60,6 @@ class HomeHeader extends StatelessWidget {
                   onNotificationPressed: onLoginPressed,
                   onCartPressed: onCartPressed,
                   onSearchSubmitted: onSearchSubmitted,
-                  searchKeywords: searchKeywords,
-                  searchRecommendedProducts: searchRecommendedProducts,
                   searchFocusNode: searchFocusNode,
                 )
               : _DesktopHeader(
@@ -78,8 +71,6 @@ class HomeHeader extends StatelessWidget {
                   onCartPressed: onCartPressed,
                   onNavItemPressed: onNavItemPressed,
                   onSearchSubmitted: onSearchSubmitted,
-                  searchKeywords: searchKeywords,
-                  searchRecommendedProducts: searchRecommendedProducts,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
@@ -100,8 +91,6 @@ class _DesktopHeader extends StatelessWidget {
     required this.onCartPressed,
     required this.onNavItemPressed,
     this.onSearchSubmitted,
-    this.searchKeywords = const [],
-    this.searchRecommendedProducts = const [],
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
@@ -115,8 +104,6 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
   final ValueChanged<String>? onSearchSubmitted;
-  final List<String> searchKeywords;
-  final List<HomeProductData> searchRecommendedProducts;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
@@ -149,8 +136,6 @@ class _DesktopHeader extends StatelessWidget {
                   width: searchWidth,
                   child: home.SearchBar(
                     focusNode: searchFocusNode,
-                    suggestionKeywords: searchKeywords,
-                    recommendedProducts: searchRecommendedProducts,
                     onSubmitted: onSearchSubmitted,
                   ),
                 ),
@@ -274,8 +259,6 @@ class _MobileHeader extends StatelessWidget {
     required this.onNotificationPressed,
     required this.onCartPressed,
     this.onSearchSubmitted,
-    this.searchKeywords = const [],
-    this.searchRecommendedProducts = const [],
     this.searchFocusNode,
   });
 
@@ -284,8 +267,6 @@ class _MobileHeader extends StatelessWidget {
   final VoidCallback onNotificationPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String>? onSearchSubmitted;
-  final List<String> searchKeywords;
-  final List<HomeProductData> searchRecommendedProducts;
   final FocusNode? searchFocusNode;
 
   @override
@@ -315,8 +296,6 @@ class _MobileHeader extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         home.SearchBar(
           focusNode: searchFocusNode,
-          suggestionKeywords: searchKeywords,
-          recommendedProducts: searchRecommendedProducts,
           onSubmitted: onSearchSubmitted,
         ),
       ],
