@@ -77,7 +77,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                         productDetailViewModelProvider(widget.productId)
                             .notifier,
                       )
-                      .refresh(widget.productId),
+                      .refresh(),
                 ),
                 ProductDetailSuccess(
                   :final detail,
