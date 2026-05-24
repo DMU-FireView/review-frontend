@@ -1,0 +1,1 @@
+enum SearchViewMode { grid, list }
