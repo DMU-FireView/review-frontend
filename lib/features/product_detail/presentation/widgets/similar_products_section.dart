@@ -247,20 +247,21 @@ class _RtiBadgeMini extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(999),
+        color: AppColors.surface.withValues(alpha: 0.88),
+        borderRadius: AppRadius.small,
+        border: Border.all(color: color.withValues(alpha: 0.35)),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.shield_rounded, color: Colors.white, size: 10),
+            Icon(Icons.verified_user_outlined, color: color, size: 11),
             const SizedBox(width: 2),
             Text(
               'RTI $score',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: Colors.white,
+                color: color,
                 fontWeight: FontWeight.w900,
                 fontSize: 10,
               ),
