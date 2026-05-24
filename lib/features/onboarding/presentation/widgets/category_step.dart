@@ -5,7 +5,6 @@ import 'package:re_view_front/app/theme/app_text_styles.dart';
 import 'package:re_view_front/features/onboarding/domain/entities/interest_category.dart';
 import 'package:re_view_front/features/onboarding/presentation/widgets/category_card.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
-import 'package:re_view_front/shared/widgets/app_button.dart';
 
 class CategoryStep extends StatelessWidget {
   const CategoryStep({
@@ -136,10 +135,7 @@ class _CategoryForm extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
-              OutlinedButton(
-                onPressed: onSkip,
-                child: const Text('나중에 할게요'),
-              ),
+              OutlinedButton(onPressed: onSkip, child: const Text('나중에 할게요')),
               const Spacer(),
               FilledButton.icon(
                 onPressed: onNext,
@@ -167,10 +163,7 @@ class _CategoryPreviewPanel extends StatelessWidget {
       children: [
         Text('이런 상품과 리뷰를 보여드려요', style: AppTextStyles.titleMedium),
         const SizedBox(height: AppSpacing.xs),
-        Text(
-          '선택한 카테고리와 관련된 추천 예시예요.',
-          style: AppTextStyles.bodyMedium,
-        ),
+        Text('선택한 카테고리와 관련된 추천 예시예요.', style: AppTextStyles.bodyMedium),
         const SizedBox(height: AppSpacing.xl),
         if (selectedCategories.isEmpty)
           _EmptyPreview()
@@ -232,7 +225,11 @@ class _SelectedPreview extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome, size: 16, color: AppColors.primary),
+              const Icon(
+                Icons.auto_awesome,
+                size: 16,
+                color: AppColors.primary,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Text(
                 '선택된 카테고리',
