@@ -23,21 +23,28 @@ void main() {
 
   testWidgets('shows home page on initial route', (tester) async {
     await tester.pumpWidget(buildSubject());
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Re:view'), findsOneWidget);
+    expect(find.text('시작하기'), findsOneWidget);
     expect(find.text('로그인'), findsWidgets);
     expect(find.byType(HeroBannerCarousel), findsOneWidget);
   });
 
   testWidgets('navigates to login route from home page', (tester) async {
     await tester.pumpWidget(buildSubject());
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    await tester.tap(find.byTooltip('홈으로'));
+    await tester.pumpAndSettle();
+    expect(find.text('시작하기'), findsNothing);
+
+    await tester.tap(find.text('로그인').hitTestable().first);
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('로그인').first);
-    await tester.pumpAndSettle();
-
-    expect(find.text('Re:view에 로그인'), findsOneWidget);
+    expect(find.text('안전한 쇼핑을 위한 로그인'), findsOneWidget);
   });
 }
 
