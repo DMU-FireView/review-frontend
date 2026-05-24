@@ -206,16 +206,16 @@ class _LowestBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF7ED),
+        color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFFFBBF24)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
         child: Text(
           '최저가',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: const Color(0xFFD97706),
+            color: AppColors.primary,
             fontWeight: FontWeight.w900,
             fontSize: 10,
           ),
@@ -232,12 +232,27 @@ class _BuyButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.all(Radius.circular(8)),
+    );
+    const buttonSize = Size(80, 32);
+    const padding = EdgeInsets.symmetric(horizontal: AppSpacing.sm);
+    const tapTarget = MaterialTapTargetSize.shrinkWrap;
+
     if (comparison.isLowest) {
-      return FilledButton.icon(
+      return FilledButton(
         onPressed: () {},
-        icon: const Icon(Icons.arrow_outward, size: 12),
-        iconAlignment: IconAlignment.end,
-        label: Text(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppColors.primary,
+          foregroundColor: AppColors.onPrimary,
+          elevation: 0,
+          padding: padding,
+          minimumSize: buttonSize,
+          maximumSize: const Size(double.infinity, 32),
+          tapTargetSize: tapTarget,
+          shape: shape,
+        ),
+        child: Text(
           comparison.linkLabel,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: AppColors.onPrimary,
@@ -245,39 +260,24 @@ class _BuyButton extends StatelessWidget {
             fontSize: 11,
           ),
         ),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: AppColors.onPrimary,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          minimumSize: const Size(72, 30),
-          maximumSize: const Size(double.infinity, 30),
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          shape: const StadiumBorder(),
-        ),
       );
     }
 
     return OutlinedButton(
       onPressed: () {},
       style: OutlinedButton.styleFrom(
-        foregroundColor: comparison.isOfficial
-            ? AppColors.primary
-            : AppColors.textSecondary,
-        side: BorderSide(
-          color: comparison.isOfficial
-              ? AppColors.primary.withValues(alpha: 0.5)
-              : AppColors.border,
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        minimumSize: const Size(72, 30),
-        maximumSize: const Size(double.infinity, 30),
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: const StadiumBorder(),
+        foregroundColor: AppColors.primary,
+        side: const BorderSide(color: AppColors.primary),
+        padding: padding,
+        minimumSize: buttonSize,
+        maximumSize: const Size(double.infinity, 32),
+        tapTargetSize: tapTarget,
+        shape: shape,
       ),
       child: Text(
         comparison.linkLabel,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
+          color: AppColors.primary,
           fontWeight: FontWeight.w700,
           fontSize: 11,
         ),

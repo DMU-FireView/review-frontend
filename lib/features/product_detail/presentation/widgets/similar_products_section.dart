@@ -62,47 +62,58 @@ class _SimilarProductsSectionState extends State<SimilarProductsSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        Text(
+          '이 제품을 본 고객이 함께 본 제품',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Stack(
+          alignment: Alignment.center,
           children: [
-            Expanded(
-              child: Text(
-                '이 제품을 본 고객이 함께 본 제품',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
+            SizedBox(
+              height: 280,
+              child: ListView.separated(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                padding: EdgeInsets.symmetric(
+                  horizontal: _canScrollLeft || _canScrollRight
+                      ? AppSpacing.xxl
+                      : 0,
+                ),
+                itemCount: widget.products.length,
+                separatorBuilder: (_, __) =>
+                    const SizedBox(width: AppSpacing.md),
+                itemBuilder: (context, index) => _SimilarProductCard(
+                  product: widget.products[index],
+                  onTap: () => context.goNamed(
+                    RouteNames.productDetail,
+                    pathParameters: {
+                      'id': widget.products[index].id.toString(),
+                    },
+                  ),
                 ),
               ),
             ),
-            if (_canScrollLeft) ...[
-              _ScrollArrowButton(
-                icon: Icons.chevron_left,
-                onPressed: () => _scroll(-280),
+            if (_canScrollLeft)
+              Positioned(
+                left: 0,
+                child: _ScrollArrowButton(
+                  icon: Icons.chevron_left,
+                  onPressed: () => _scroll(-280),
+                ),
               ),
-              const SizedBox(width: AppSpacing.xs),
-            ],
             if (_canScrollRight)
-              _ScrollArrowButton(
-                icon: Icons.chevron_right,
-                onPressed: () => _scroll(280),
+              Positioned(
+                right: 0,
+                child: _ScrollArrowButton(
+                  icon: Icons.chevron_right,
+                  onPressed: () => _scroll(280),
+                ),
               ),
           ],
-        ),
-        const SizedBox(height: AppSpacing.md),
-        SizedBox(
-          height: 280,
-          child: ListView.separated(
-            controller: _scrollController,
-            scrollDirection: Axis.horizontal,
-            itemCount: widget.products.length,
-            separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.md),
-            itemBuilder: (context, index) => _SimilarProductCard(
-              product: widget.products[index],
-              onTap: () => context.goNamed(
-                RouteNames.productDetail,
-                pathParameters: {'id': widget.products[index].id.toString()},
-              ),
-            ),
-          ),
         ),
       ],
     );
@@ -120,19 +131,25 @@ class _ScrollArrowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.square(
-      dimension: 32,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          padding: EdgeInsets.zero,
-          side: const BorderSide(color: AppColors.borderStrong),
-          shape: const RoundedRectangleBorder(
-            borderRadius: AppRadius.small,
-          ),
-          foregroundColor: AppColors.textPrimary,
+    return GestureDetector(
+      onTap: onPressed,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          shape: BoxShape.circle,
+          border: Border.all(color: AppColors.borderStrong),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x14000000),
+              blurRadius: 8,
+              offset: Offset(0, 2),
+            ),
+          ],
         ),
-        child: Icon(icon, size: 18),
+        child: SizedBox.square(
+          dimension: 40,
+          child: Icon(icon, size: 20, color: AppColors.textPrimary),
+        ),
       ),
     );
   }

@@ -56,9 +56,9 @@ class _OfficialBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: const Color(0xFFECFDF5),
+        color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(4),
-        border: Border.all(color: const Color(0xFF86EFAC)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -68,7 +68,7 @@ class _OfficialBadge extends StatelessWidget {
         child: Text(
           '공식 판매처',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: const Color(0xFF16A34A),
+            color: AppColors.primary,
             fontWeight: FontWeight.w800,
             fontSize: 11,
           ),
