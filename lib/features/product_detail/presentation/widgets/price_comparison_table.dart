@@ -152,35 +152,60 @@ class _PriceRow extends StatelessWidget {
               ),
               SizedBox(
                 width: 80,
-                child: OutlinedButton(
-                  onPressed: () {},
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.xs,
-                      vertical: AppSpacing.xxs,
-                    ),
-                    minimumSize: const Size(60, 28),
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    foregroundColor: comparison.isOfficial
-                        ? AppColors.primary
-                        : AppColors.textPrimary,
-                    side: BorderSide(
-                      color: comparison.isOfficial
-                          ? AppColors.primary
-                          : AppColors.borderStrong,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: AppRadius.small,
-                    ),
-                  ),
-                  child: Text(
-                    comparison.linkLabel,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
+                child: comparison.isLowest
+                    ? ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs,
+                            vertical: AppSpacing.xxs,
+                          ),
+                          minimumSize: const Size(60, 28),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.onPrimary,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.small,
+                          ),
+                        ),
+                        child: Text(
+                          comparison.linkLabel,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                          ),
+                        ),
+                      )
+                    : OutlinedButton(
+                        onPressed: () {},
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AppSpacing.xs,
+                            vertical: AppSpacing.xxs,
+                          ),
+                          minimumSize: const Size(60, 28),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          foregroundColor: comparison.isOfficial
+                              ? AppColors.primary
+                              : AppColors.textPrimary,
+                          side: BorderSide(
+                            color: comparison.isOfficial
+                                ? AppColors.primary
+                                : AppColors.borderStrong,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: AppRadius.small,
+                          ),
+                        ),
+                        child: Text(
+                          comparison.linkLabel,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
               ),
             ],
           ),
