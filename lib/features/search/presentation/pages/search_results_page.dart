@@ -1606,19 +1606,20 @@ class _PriceRangeSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bounds = _priceBounds(products);
-    final minBound = bounds.$1.toDouble();
-    final maxBound = bounds.$2.toDouble();
-    final bins = _priceBins(products, bounds);
+    final dataBounds = _priceBounds(products);
+    final sliderBounds = _sliderBounds(dataBounds);
+    final minBound = sliderBounds.$1.toDouble();
+    final maxBound = sliderBounds.$2.toDouble();
+    final bins = _priceBins(products, dataBounds);
     final maxBin = bins.reduce((value, element) {
       return value > element ? value : element;
     });
     final currentMin =
-        _parseControllerPrice(minPriceController.text) ?? bounds.$1;
+        _parseControllerPrice(minPriceController.text) ?? dataBounds.$1;
     final currentMax =
-        _parseControllerPrice(maxPriceController.text) ?? bounds.$2;
-    final start = currentMin.clamp(bounds.$1, bounds.$2).toDouble();
-    final end = currentMax.clamp(bounds.$1, bounds.$2).toDouble();
+        _parseControllerPrice(maxPriceController.text) ?? dataBounds.$2;
+    final start = currentMin.clamp(sliderBounds.$1, sliderBounds.$2).toDouble();
+    final end = currentMax.clamp(sliderBounds.$1, sliderBounds.$2).toDouble();
     final values = RangeValues(
       start <= end ? start : end,
       end >= start ? end : start,
@@ -1647,7 +1648,7 @@ class _PriceRangeSlider extends StatelessWidget {
                           active: _binOverlapsSelection(
                             index,
                             bins.length,
-                            bounds,
+                            dataBounds,
                             values,
                           ),
                         ),
@@ -1674,7 +1675,7 @@ class _PriceRangeSlider extends StatelessWidget {
                               _binOverlapsSelection(
                                 index,
                                 bins.length,
-                                bounds,
+                                dataBounds,
                                 values,
                               )
                               ? AppColors.primary
@@ -1706,8 +1707,14 @@ class _PriceRangeSlider extends StatelessWidget {
                 min: minBound,
                 max: maxBound <= minBound ? minBound + 1 : maxBound,
                 onChanged: (next) {
-                  minPriceController.text = next.start.round().toString();
-                  maxPriceController.text = next.end.round().toString();
+                  minPriceController.text = next.start
+                      .round()
+                      .clamp(dataBounds.$1, dataBounds.$2)
+                      .toString();
+                  maxPriceController.text = next.end
+                      .round()
+                      .clamp(dataBounds.$1, dataBounds.$2)
+                      .toString();
                   onChanged();
                 },
               ),
@@ -1768,6 +1775,12 @@ class _PriceRangeSlider extends StatelessWidget {
     });
 
     return (minPrice, maxPrice == minPrice ? minPrice + 1 : maxPrice);
+  }
+
+  (int, int) _sliderBounds((int, int) bounds) {
+    final span = (bounds.$2 - bounds.$1).clamp(1, 1 << 31);
+    final padding = (span * 0.08).round().clamp(1000, 50000);
+    return (bounds.$1 - padding, bounds.$2 + padding);
   }
 
   int? _parseControllerPrice(String value) {
@@ -2172,42 +2185,50 @@ class _ResultToolbar extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xs),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          alignment: WrapAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: _SortSegmentedControl(
-                  options: options,
-                  selectedOption: sortOption,
-                  onChanged: onSortChanged,
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: _SortSegmentedControl(
+                options: options,
+                selectedOption: sortOption,
+                onChanged: onSortChanged,
+              ),
+            ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '$resultCount개 결과',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
-              ),
+                const SizedBox(width: AppSpacing.sm),
+                _ViewModeButton(
+                  icon: Icons.grid_view_rounded,
+                  tooltip: '카드형 보기',
+                  selected: viewMode == _SearchViewMode.grid,
+                  onPressed: () => onViewModeChanged(_SearchViewMode.grid),
+                ),
+                _ViewModeButton(
+                  icon: Icons.view_list_rounded,
+                  tooltip: '리스트형 보기',
+                  selected: viewMode == _SearchViewMode.list,
+                  onPressed: () => onViewModeChanged(_SearchViewMode.list),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                _PageSizeButton(
+                  pageSize: pageSize,
+                  onChanged: onPageSizeChanged,
+                ),
+              ],
             ),
-            const SizedBox(width: AppSpacing.md),
-            Text(
-              '$resultCount개 결과',
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            _ViewModeButton(
-              icon: Icons.grid_view_rounded,
-              tooltip: '카드형 보기',
-              selected: viewMode == _SearchViewMode.grid,
-              onPressed: () => onViewModeChanged(_SearchViewMode.grid),
-            ),
-            _ViewModeButton(
-              icon: Icons.view_list_rounded,
-              tooltip: '리스트형 보기',
-              selected: viewMode == _SearchViewMode.list,
-              onPressed: () => onViewModeChanged(_SearchViewMode.list),
-            ),
-            const SizedBox(width: AppSpacing.xs),
-            _PageSizeButton(pageSize: pageSize, onChanged: onPageSizeChanged),
           ],
         ),
       ),
@@ -2695,6 +2716,34 @@ class _SearchProductCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rtiColor = _colorFromHex(product.rtiColor);
+    final isCompact = MediaQuery.sizeOf(context).width < 760;
+    final image = SizedBox(
+      width: isCompact ? 120 : 188,
+      height: isCompact ? 92 : 126,
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: ClipRRect(
+              borderRadius: AppRadius.medium,
+              child: Image.network(
+                product.imageUrl,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+                errorBuilder: (context, error, stackTrace) =>
+                    const ColoredBox(color: AppColors.surfaceMuted),
+              ),
+            ),
+          ),
+          Positioned(
+            top: AppSpacing.xs,
+            right: AppSpacing.xs,
+            child: _RtiBadge(value: product.avgRti.round(), color: rtiColor),
+          ),
+        ],
+      ),
+    );
+    final details = _ListTileDetails(product: product);
+    final actions = _ListTileActions(product: product, compact: isCompact);
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -2876,145 +2925,148 @@ class _SearchProductListTile extends StatelessWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              width: 188,
-              height: 126,
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: ClipRRect(
-                      borderRadius: AppRadius.medium,
-                      child: Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                        alignment: Alignment.center,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const ColoredBox(color: AppColors.surfaceMuted),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    top: AppSpacing.xs,
-                    right: AppSpacing.xs,
-                    child: _RtiBadge(
-                      value: product.avgRti.round(),
-                      color: rtiColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    mockBrandFor(product),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxs),
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                      height: 1.25,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    runSpacing: AppSpacing.xs,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(
-                            Icons.star,
-                            color: Color(0xFFF59E0B),
-                            size: 15,
-                          ),
-                          const SizedBox(width: AppSpacing.xxs),
-                          Text(
-                            product.avgRating.toStringAsFixed(1),
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w900,
-                                  fontSize: 12,
-                                ),
-                          ),
-                          const SizedBox(width: AppSpacing.xxs),
-                          Text(
-                            '(리뷰 ${_formatCount(product.reviewCount)})',
-                            style: Theme.of(context).textTheme.labelSmall
-                                ?.copyWith(
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 11,
-                                ),
-                          ),
-                        ],
-                      ),
-                      _DeliveryBadge(label: mockBadgeFor(product)),
-                      for (final chip in mockTraitChipsFor(product))
-                        _ProductTraitChip(label: chip),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            SizedBox(
-              width: 190,
-              child: Column(
+        child: isCompact
+            ? Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text(
-                    _formatPrice(product.price),
-                    textAlign: TextAlign.right,
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 19,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _SquareIconButton(
-                        icon: Icons.favorite_border,
-                        onPressed: () {},
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      _SquareIconButton(
-                        icon: Icons.shopping_cart_outlined,
-                        onPressed: () {},
-                      ),
+                      image,
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(child: details),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  _ProductDetailButton(onPressed: () {}),
+                  const SizedBox(height: AppSpacing.sm),
+                  actions,
+                ],
+              )
+            : Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  image,
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(child: details),
+                  const SizedBox(width: AppSpacing.md),
+                  actions,
                 ],
               ),
+      ),
+    );
+  }
+}
+
+class _ListTileDetails extends StatelessWidget {
+  const _ListTileDetails({required this.product});
+
+  final SearchResultProduct product;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          mockBrandFor(product),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w800,
+            fontSize: 11,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xxs),
+        Text(
+          product.name,
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w900,
+            fontSize: 15,
+            height: 1.25,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: AppSpacing.xs,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.star, color: Color(0xFFF59E0B), size: 15),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(
+                  product.avgRating.toStringAsFixed(1),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xxs),
+                Text(
+                  '(리뷰 ${_formatCount(product.reviewCount)})',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
             ),
+            _DeliveryBadge(label: mockBadgeFor(product)),
+            for (final chip in mockTraitChipsFor(product))
+              _ProductTraitChip(label: chip),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class _ListTileActions extends StatelessWidget {
+  const _ListTileActions({required this.product, required this.compact});
+
+  final SearchResultProduct product;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: compact ? double.infinity : 190,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            _formatPrice(product.price),
+            textAlign: compact ? TextAlign.left : TextAlign.right,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w900,
+              fontSize: 19,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Row(
+            mainAxisAlignment: compact
+                ? MainAxisAlignment.start
+                : MainAxisAlignment.end,
+            children: [
+              _SquareIconButton(icon: Icons.favorite_border, onPressed: () {}),
+              const SizedBox(width: AppSpacing.xs),
+              _SquareIconButton(
+                icon: Icons.shopping_cart_outlined,
+                onPressed: () {},
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          _ProductDetailButton(onPressed: () {}),
+        ],
       ),
     );
   }
