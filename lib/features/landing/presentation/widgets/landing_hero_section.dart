@@ -61,11 +61,11 @@ class LandingHeroSection extends StatelessWidget {
 class _ServiceBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.xxs,
       children: [
         const Icon(Icons.shield, color: AppColors.primary, size: 14),
-        const SizedBox(width: AppSpacing.xxs),
         Text(
           'RE:VIEW TRUST COMMERCE',
           style: AppTextStyles.caption.copyWith(
@@ -133,10 +133,7 @@ class _FeatureChip extends StatelessWidget {
 }
 
 class _CtaRow extends StatelessWidget {
-  const _CtaRow({
-    required this.onStartPressed,
-    required this.onRtiInfoPressed,
-  });
+  const _CtaRow({required this.onStartPressed, required this.onRtiInfoPressed});
 
   final VoidCallback onStartPressed;
   final VoidCallback onRtiInfoPressed;
@@ -149,10 +146,7 @@ class _CtaRow extends StatelessWidget {
       children: [
         SizedBox(
           height: 52,
-          child: AppButton(
-            label: '시작하기',
-            onPressed: onStartPressed,
-          ),
+          child: AppButton(label: '시작하기', onPressed: onStartPressed),
         ),
         SizedBox(
           height: 52,
@@ -170,15 +164,12 @@ class _CtaRow extends StatelessWidget {
 class _CloseHint extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.xxs,
       children: [
         const Icon(Icons.lock_outline, size: 13, color: AppColors.textTertiary),
-        const SizedBox(width: AppSpacing.xxs),
-        Text(
-          '언제든 닫고 홈으로 이동할 수 있어요',
-          style: AppTextStyles.caption,
-        ),
+        Text('언제든 닫고 홈으로 이동할 수 있어요', style: AppTextStyles.caption),
       ],
     );
   }
