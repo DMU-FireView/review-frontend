@@ -51,6 +51,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
             child: HomeHeader(
               navItems: homeNavItems,
               selectedNavItem: '',
+              showCategoryNav: false,
               onLoginPressed: () {},
               onWishPressed: () {},
               onCartPressed: () {},
