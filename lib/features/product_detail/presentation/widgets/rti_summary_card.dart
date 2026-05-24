@@ -23,9 +23,14 @@ class RtiSummaryCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x060F172A),
-            blurRadius: 12,
+            color: Color(0x0F0F172A),
+            blurRadius: 16,
             offset: Offset(0, 4),
+          ),
+          BoxShadow(
+            color: Color(0x060F172A),
+            blurRadius: 4,
+            offset: Offset(0, 1),
           ),
         ],
       ),
