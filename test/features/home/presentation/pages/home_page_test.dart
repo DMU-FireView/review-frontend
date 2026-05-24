@@ -8,6 +8,7 @@ import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_theme.dart';
 import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/result/result.dart';
+import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_summary.dart';
 import 'package:re_view_front/features/home/domain/repositories/home_repository.dart';
 import 'package:re_view_front/features/home/domain/usecases/get_home_dashboard_use_case.dart';
@@ -136,7 +137,96 @@ void main() {
       router.routeInformationProvider.value.uri.queryParameters['q'],
       '크림',
     );
-    expect(find.text('"크림" 검색 결과'), findsOneWidget);
+    expect(find.text('크림'), findsWidgets);
+    expect(find.text('검색 결과'), findsWidgets);
+  });
+
+  testWidgets('shows RTI search panel with two dashboard products on focus', (
+    tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(1440, 1600));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+
+    await tester.pumpWidget(
+      buildSubject(
+        result: const Success(
+          DashboardSummary(
+            recommendedProducts: [
+              DashboardProduct(
+                id: '1',
+                name: '애플 에어팟 프로 2세대',
+                storeName: '애플',
+                price: 279000,
+                imageUrl: '',
+                rating: 4.7,
+                reviewCount: 3842,
+                rtiScore: 92,
+              ),
+              DashboardProduct(
+                id: '2',
+                name: '다이슨 V15 디텍트 컴플리트',
+                storeName: '다이슨',
+                price: 830000,
+                imageUrl: '',
+                rating: 4.6,
+                reviewCount: 1256,
+                rtiScore: 88,
+              ),
+              DashboardProduct(
+                id: '3',
+                name: '추가 상품',
+                storeName: '스토어',
+                price: 12000,
+                imageUrl: '',
+                rtiScore: 82,
+              ),
+            ],
+            trendingKeywords: [],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byType(TextField).first);
+    await tester.pumpAndSettle();
+
+    final firstSuggestion = find.byKey(
+      const ValueKey('search-suggestion-product-0'),
+    );
+    final secondSuggestion = find.byKey(
+      const ValueKey('search-suggestion-product-1'),
+    );
+
+    expect(find.text('인기 검색 추천상품'), findsOneWidget);
+    expect(firstSuggestion, findsOneWidget);
+    expect(secondSuggestion, findsOneWidget);
+    expect(
+      find.descendant(
+        of: firstSuggestion,
+        matching: find.text('애플 에어팟 프로 2세대'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: secondSuggestion,
+        matching: find.text('다이슨 V15 디텍트 컴플리트'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: firstSuggestion, matching: find.text('RTI 92')),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: secondSuggestion, matching: find.text('RTI 88')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('search-suggestion-product-2')),
+      findsNothing,
+    );
   });
 
   testWidgets('renders on mobile width without overflow', (tester) async {
