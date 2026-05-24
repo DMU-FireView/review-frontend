@@ -75,7 +75,9 @@ class _PriceComparisonTableState extends State<PriceComparisonTable> {
             ),
           ),
           const Divider(height: 1, color: AppColors.border),
-          for (final item in widget.comparisons)
+          for (final item in (_expanded
+              ? widget.comparisons
+              : widget.comparisons.take(3).toList()))
             _PriceRow(comparison: item),
           const Divider(height: 1, color: AppColors.border),
           _ExpandButton(
