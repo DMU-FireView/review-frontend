@@ -16,25 +16,7 @@ class RtiSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.medium,
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0F0F172A),
-            blurRadius: 16,
-            offset: Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Color(0x060F172A),
-            blurRadius: 4,
-            offset: Offset(0, 1),
-          ),
-        ],
-      ),
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(AppSpacing.md),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -194,7 +176,6 @@ class RtiSummaryCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
     );
   }
 }
