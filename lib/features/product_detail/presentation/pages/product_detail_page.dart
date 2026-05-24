@@ -132,8 +132,16 @@ class _DetailContent extends StatelessWidget {
             : _DesktopHeroSection(detail: detail),
         const SizedBox(height: AppSpacing.xl),
         isMobile
-            ? _MobileAnalysisSection(detail: detail)
-            : _DesktopAnalysisSection(detail: detail),
+            ? _MobileAnalysisSection(
+                detail: detail,
+                onDetailPressed: () =>
+                    onTabChanged(_ProductDetailTab.review),
+              )
+            : _DesktopAnalysisSection(
+                detail: detail,
+                onDetailPressed: () =>
+                    onTabChanged(_ProductDetailTab.review),
+              ),
         const SizedBox(height: AppSpacing.xl),
         _ProductTabBar(
           detail: detail,
@@ -189,15 +197,33 @@ class _Breadcrumb extends StatelessWidget {
                 color: AppColors.textTertiary,
               ),
             ),
-          Text(
-            breadcrumbs[i],
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: i == breadcrumbs.length - 1
-                  ? AppColors.textPrimary
-                  : AppColors.textSecondary,
-              fontWeight: i == breadcrumbs.length - 1
-                  ? FontWeight.w700
-                  : FontWeight.w500,
+          GestureDetector(
+            onTap: i == breadcrumbs.length - 1
+                ? null
+                : () {
+                    if (i == 0) {
+                      context.goNamed(RouteNames.home);
+                    } else {
+                      context.goNamed(
+                        RouteNames.search,
+                        queryParameters: {'q': breadcrumbs[i]},
+                      );
+                    }
+                  },
+            child: Text(
+              breadcrumbs[i],
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: i == breadcrumbs.length - 1
+                    ? AppColors.textPrimary
+                    : AppColors.textSecondary,
+                fontWeight: i == breadcrumbs.length - 1
+                    ? FontWeight.w700
+                    : FontWeight.w500,
+                decoration: i < breadcrumbs.length - 1
+                    ? TextDecoration.underline
+                    : null,
+                decorationColor: AppColors.textSecondary,
+              ),
             ),
           ),
         ],
@@ -269,9 +295,13 @@ class _MobileHeroSection extends StatelessWidget {
 }
 
 class _DesktopAnalysisSection extends StatelessWidget {
-  const _DesktopAnalysisSection({required this.detail});
+  const _DesktopAnalysisSection({
+    required this.detail,
+    required this.onDetailPressed,
+  });
 
   final ProductDetail detail;
+  final VoidCallback onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -281,7 +311,7 @@ class _DesktopAnalysisSection extends StatelessWidget {
         Expanded(
           child: RtiSummaryCard(
             rtiSummary: detail.rtiSummary,
-            onDetailPressed: () {},
+            onDetailPressed: onDetailPressed,
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -289,7 +319,7 @@ class _DesktopAnalysisSection extends StatelessWidget {
           width: 280,
           child: TrustSignalCard(
             signals: detail.trustSignals,
-            onDetailPressed: () {},
+            onDetailPressed: onDetailPressed,
           ),
         ),
       ],
@@ -298,9 +328,13 @@ class _DesktopAnalysisSection extends StatelessWidget {
 }
 
 class _MobileAnalysisSection extends StatelessWidget {
-  const _MobileAnalysisSection({required this.detail});
+  const _MobileAnalysisSection({
+    required this.detail,
+    required this.onDetailPressed,
+  });
 
   final ProductDetail detail;
+  final VoidCallback onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -308,12 +342,12 @@ class _MobileAnalysisSection extends StatelessWidget {
       children: [
         RtiSummaryCard(
           rtiSummary: detail.rtiSummary,
-          onDetailPressed: () {},
+          onDetailPressed: onDetailPressed,
         ),
         const SizedBox(height: AppSpacing.md),
         TrustSignalCard(
           signals: detail.trustSignals,
-          onDetailPressed: () {},
+          onDetailPressed: onDetailPressed,
         ),
       ],
     );
