@@ -5,6 +5,7 @@ abstract final class RoutePaths {
   static const signup = '/signup';
   static const onboarding = '/onboarding';
   static const dashboard = '/dashboard';
+  static const search = '/search';
   static const oauthCallback = '/auth/callback';
   static const passwordReset = '/password-reset';
 }
@@ -16,6 +17,7 @@ abstract final class RouteNames {
   static const signup = 'signup';
   static const onboarding = 'onboarding';
   static const dashboard = 'dashboard';
+  static const search = 'search';
   static const oauthCallback = 'oauthCallback';
   static const passwordReset = 'passwordReset';
 }

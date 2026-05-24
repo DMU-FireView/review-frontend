@@ -14,6 +14,7 @@ class HomeHeader extends StatelessWidget {
     required this.onWishPressed,
     required this.onCartPressed,
     required this.onNavItemPressed,
+    this.onSearchSubmitted,
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
@@ -26,6 +27,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
+  final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
@@ -55,6 +57,7 @@ class HomeHeader extends StatelessWidget {
                   onLoginPressed: onLoginPressed,
                   onNotificationPressed: onLoginPressed,
                   onCartPressed: onCartPressed,
+                  onSearchSubmitted: onSearchSubmitted,
                   searchFocusNode: searchFocusNode,
                 )
               : _DesktopHeader(
@@ -64,6 +67,7 @@ class HomeHeader extends StatelessWidget {
                   onWishPressed: onWishPressed,
                   onCartPressed: onCartPressed,
                   onNavItemPressed: onNavItemPressed,
+                  onSearchSubmitted: onSearchSubmitted,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
@@ -82,6 +86,7 @@ class _DesktopHeader extends StatelessWidget {
     required this.onWishPressed,
     required this.onCartPressed,
     required this.onNavItemPressed,
+    this.onSearchSubmitted,
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
@@ -93,6 +98,7 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
   final ValueChanged<String> onNavItemPressed;
+  final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
@@ -123,7 +129,10 @@ class _DesktopHeader extends StatelessWidget {
               child: Center(
                 child: SizedBox(
                   width: searchWidth,
-                  child: home.SearchBar(focusNode: searchFocusNode),
+                  child: home.SearchBar(
+                    focusNode: searchFocusNode,
+                    onSubmitted: onSearchSubmitted,
+                  ),
                 ),
               ),
             ),
@@ -242,6 +251,7 @@ class _MobileHeader extends StatelessWidget {
     required this.onLoginPressed,
     required this.onNotificationPressed,
     required this.onCartPressed,
+    this.onSearchSubmitted,
     this.searchFocusNode,
   });
 
@@ -249,6 +259,7 @@ class _MobileHeader extends StatelessWidget {
   final VoidCallback onLoginPressed;
   final VoidCallback onNotificationPressed;
   final VoidCallback onCartPressed;
+  final ValueChanged<String>? onSearchSubmitted;
   final FocusNode? searchFocusNode;
 
   @override
@@ -276,7 +287,10 @@ class _MobileHeader extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
-        home.SearchBar(focusNode: searchFocusNode),
+        home.SearchBar(
+          focusNode: searchFocusNode,
+          onSubmitted: onSearchSubmitted,
+        ),
       ],
     );
   }
