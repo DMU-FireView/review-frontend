@@ -76,7 +76,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               child: AppContentView(
                 maxWidth: 1360,
                 padding: _pagePadding(context),
-                child: context.isMobile
+                child: !context.isDesktop
                     ? Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [

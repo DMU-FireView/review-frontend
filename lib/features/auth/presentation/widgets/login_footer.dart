@@ -19,7 +19,7 @@ class LoginFooter extends StatelessWidget {
       child: AppContentView(
         maxWidth: 1280,
         padding: EdgeInsets.zero,
-        child: context.isMobile
+        child: !context.isDesktop
             ? Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [
