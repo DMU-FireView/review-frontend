@@ -9,6 +9,7 @@ import 'package:re_view_front/features/home/presentation/pages/home_dashboard_pa
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
@@ -50,6 +51,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.search,
         builder: (context, state) =>
             SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+      ),
+      GoRoute(
+        path: RoutePaths.productDetail,
+        name: RouteNames.productDetail,
+        builder: (context, state) {
+          final idStr = state.pathParameters['id'] ?? '0';
+          final id = int.tryParse(idStr) ?? 0;
+          return ProductDetailPage(productId: id);
+        },
       ),
       GoRoute(
         path: RoutePaths.oauthCallback,
