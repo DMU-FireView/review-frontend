@@ -70,6 +70,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               onNavItemPressed: _handleNavItemPressed,
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: _handleSearchSubmitted,
+              searchKeywords: dashboardKeywords,
+              searchRecommendedProducts: dashboardProducts,
               searchFocusNode: _searchFocusNode,
             ),
           ),
