@@ -596,8 +596,8 @@ class _HighlightedReviewContent extends StatelessWidget {
       spans.add(TextSpan(
         text: content.substring(start, end),
         style: baseStyle.copyWith(
-          backgroundColor: hColor.withValues(alpha: 0.12),
-          color: hColor.withValues(alpha: 0.85),
+          backgroundColor: hColor.withValues(alpha: 0.08),
+          color: AppColors.textPrimary,
           fontWeight: FontWeight.w600,
         ),
       ));
@@ -688,7 +688,9 @@ class _SignalBar extends StatelessWidget {
                   value: ratio,
                   minHeight: 7,
                   backgroundColor: AppColors.border,
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.primary,
+                  ),
                 ),
               ),
             ],
@@ -742,10 +744,10 @@ class _JudgmentBasisItem extends StatelessWidget {
   final RtiJudgmentBasis basis;
 
   IconData get _icon => switch (basis.iconType) {
-        'repeat' => Icons.camera_alt_outlined,
-        'context' => Icons.sentiment_satisfied_alt_outlined,
-        'history' => Icons.scatter_plot_outlined,
-        'similarity' => Icons.alarm_outlined,
+        'repeat' => Icons.repeat_outlined,
+        'context' => Icons.description_outlined,
+        'history' => Icons.timeline_outlined,
+        'similarity' => Icons.compare_arrows_outlined,
         _ => Icons.info_outline,
       };
 
