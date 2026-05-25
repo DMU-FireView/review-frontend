@@ -589,13 +589,16 @@ class _HighlightedReviewContent extends StatelessWidget {
         ));
       }
       final hColor = colorFromHex(h.color);
+      final isLight = hColor.computeLuminance() > 0.45;
       spans.add(TextSpan(
         text: content.substring(start, end),
-        style: baseStyle.copyWith(
-          backgroundColor: hColor.withValues(alpha: 0.18),
-          color: hColor,
-          fontWeight: FontWeight.w600,
-        ),
+        style: isLight
+            ? baseStyle.copyWith(
+                backgroundColor: hColor.withValues(alpha: 0.28),
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              )
+            : baseStyle,
       ));
       lastEnd = end;
     }
