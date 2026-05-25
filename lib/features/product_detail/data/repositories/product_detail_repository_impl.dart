@@ -1,12 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/core/network/api_response.dart';
+import 'package:re_view_front/core/network/network_exception.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/product_detail/data/datasources/product_detail_remote_data_source.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
-import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
-import 'package:re_view_front/features/product_detail/domain/entities/similar_product.dart';
 import 'package:re_view_front/features/product_detail/domain/repositories/product_detail_repository.dart';
-import 'package:re_view_front/features/product_detail/presentation/data/mock_product_detail.dart';
 
 class ProductDetailRepositoryImpl implements ProductDetailRepository {
   const ProductDetailRepositoryImpl(this._remoteDataSource);
@@ -18,48 +18,49 @@ class ProductDetailRepositoryImpl implements ProductDetailRepository {
     try {
       final dto = await _remoteDataSource.getProductDetail(productId);
       return Success(dto.toEntity());
-    } catch (_) {
-      return Success(mockProductDetailFor(productId));
-    }
-  }
-
-  @override
-  Future<Result<List<ProductReview>>> getProductReviews(
-    int productId, {
-    int page = 1,
-    int pageSize = 20,
-  }) async {
-    try {
-      final dtos = await _remoteDataSource.getProductReviews(
-        productId,
-        page: page,
-        pageSize: pageSize,
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: '상품 정보를 불러오지 못했습니다.', cause: error),
       );
-      return Success(dtos.map((d) => d.toEntity()).toList());
-    } catch (_) {
-      return Success(mockReviewsFor(productId));
     }
   }
 
   @override
-  Future<Result<ReviewInsight>> getReviewInsight(int productId) async {
+  Future<Result<List<ProductReview>>> getProductReviews(int productId) async {
     try {
-      final dto = await _remoteDataSource.getReviewInsight(productId);
-      return Success(dto.toEntity());
-    } catch (_) {
-      return Success(mockInsightFor(productId));
+      final dtos = await _remoteDataSource.getProductReviews(productId);
+      return Success(dtos.map((d) => d.toEntity()).toList());
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: '리뷰를 불러오지 못했습니다.', cause: error),
+      );
     }
   }
 
   @override
-  Future<Result<List<SimilarProduct>>> getSimilarProducts(
-    int productId,
+  Future<Result<void>> submitReviewFeedback(
+    int reviewId,
+    String feedbackType,
   ) async {
     try {
-      final dtos = await _remoteDataSource.getSimilarProducts(productId);
-      return Success(dtos.map((d) => d.toEntity()).toList());
-    } catch (_) {
-      return Success(mockSimilarProductsFor(productId));
+      await _remoteDataSource.submitReviewFeedback(reviewId, feedbackType);
+      return const Success(null);
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: '피드백 제출에 실패했습니다.', cause: error),
+      );
     }
   }
 }
