@@ -373,14 +373,12 @@ class _SelectedReviewSection extends StatelessWidget {
               height: 60,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
-                itemCount: review.imageUrls.length,
+                itemCount: review.imageUrls.length.clamp(0, 4),
                 separatorBuilder: (_, __) =>
                     const SizedBox(width: AppSpacing.xs),
                 itemBuilder: (_, i) {
-                  final isLast = i == review.imageUrls.length - 1 &&
-                      review.imageUrls.length > 3 &&
-                      i == 3;
-                  if (isLast) {
+                  final showOverlay = i == 3 && review.imageUrls.length > 4;
+                  if (showOverlay) {
                     return Stack(
                       children: [
                         ClipRRect(
@@ -400,7 +398,7 @@ class _SelectedReviewSection extends StatelessWidget {
                             ),
                             alignment: Alignment.center,
                             child: Text(
-                              '+${review.imageUrls.length - 3}',
+                              '+${review.imageUrls.length - 4}',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w800,
@@ -412,7 +410,6 @@ class _SelectedReviewSection extends StatelessWidget {
                       ],
                     );
                   }
-                  if (i > 3) return const SizedBox.shrink();
                   return ClipRRect(
                     borderRadius: AppRadius.small,
                     child: Image.network(
