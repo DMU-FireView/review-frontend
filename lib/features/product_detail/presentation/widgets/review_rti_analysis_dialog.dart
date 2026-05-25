@@ -660,13 +660,13 @@ class _SignalBar extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 28,
-          height: 28,
+          width: 32,
+          height: 32,
           decoration: BoxDecoration(
             color: color.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(_icon, size: 14, color: color),
+          child: Icon(_icon, size: 16, color: color),
         ),
         const SizedBox(width: AppSpacing.xs),
         Expanded(
@@ -686,7 +686,7 @@ class _SignalBar extends StatelessWidget {
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
                   value: ratio,
-                  minHeight: 7,
+                  minHeight: 8,
                   backgroundColor: AppColors.border,
                   valueColor: const AlwaysStoppedAnimation<Color>(
                     AppColors.primary,
@@ -745,11 +745,17 @@ class _JudgmentBasisItem extends StatelessWidget {
 
   IconData get _icon => switch (basis.iconType) {
         'repeat' => Icons.repeat_outlined,
-        'context' => Icons.description_outlined,
-        'history' => Icons.timeline_outlined,
-        'similarity' => Icons.compare_arrows_outlined,
+        'context' => Icons.sentiment_satisfied_alt_outlined,
+        'history' => Icons.scatter_plot_outlined,
+        'similarity' => Icons.alarm_outlined,
         _ => Icons.info_outline,
       };
+
+  Color _percentageColor(Color dataColor) {
+    if (basis.percentage >= 80) return AppColors.success;
+    if (basis.percentage >= 65) return const Color(0xFFD97706);
+    return AppColors.error;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -796,7 +802,7 @@ class _JudgmentBasisItem extends StatelessWidget {
         Text(
           '${basis.percentage}%',
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: color,
+            color: _percentageColor(color),
             fontWeight: FontWeight.w800,
             fontSize: 13,
           ),
