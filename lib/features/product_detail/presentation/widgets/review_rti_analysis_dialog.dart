@@ -640,6 +640,7 @@ class _RtiSignalsSection extends StatelessWidget {
     return _SectionCard(
       title: 'A. RTI 구성 신호',
       showInfo: true,
+      infoTooltip: 'RTI 점수를 구성하는 4가지 신호와 각각의 점수입니다.\n텍스트·행동·패턴·구매 인증을 종합해 산출합니다.',
       child: Column(
         children: signals
             .map((s) => Padding(
@@ -712,12 +713,17 @@ class _SignalBar extends StatelessWidget {
               const SizedBox(height: 4),
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: ratio,
-                  minHeight: 8,
-                  backgroundColor: AppColors.border,
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.primary,
+                child: TweenAnimationBuilder<double>(
+                  tween: Tween(begin: 0, end: ratio),
+                  duration: const Duration(milliseconds: 900),
+                  curve: Curves.easeOutCubic,
+                  builder: (_, v, __) => LinearProgressIndicator(
+                    value: v,
+                    minHeight: 8,
+                    backgroundColor: AppColors.border,
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.primary,
+                    ),
                   ),
                 ),
               ),
@@ -741,6 +747,7 @@ class _JudgmentBasisSection extends StatelessWidget {
     return _SectionCard(
       title: 'B. 판단 근거',
       showInfo: true,
+      infoTooltip: '리뷰 신뢰도를 판단한 구체적인 근거와\n각 근거가 점수에 기여한 비중입니다.',
       child: Column(
         children: bases
             .map((b) => Padding(
@@ -839,6 +846,7 @@ class _SentenceHighlightsSection extends StatelessWidget {
     return _SectionCard(
       title: 'C. 문장 근거 하이라이트',
       showInfo: true,
+      infoTooltip: 'RTI 점수 판단의 근거가 된 핵심 문장과\n각 문장이 의미하는 신호 유형입니다.',
       child: Column(
         children: highlights
             .map((h) => Padding(
@@ -999,11 +1007,13 @@ class _SectionCard extends StatelessWidget {
     required this.title,
     required this.child,
     this.showInfo = false,
+    this.infoTooltip,
   });
 
   final String title;
   final Widget child;
   final bool showInfo;
+  final String? infoTooltip;
 
   @override
   Widget build(BuildContext context) {
@@ -1028,10 +1038,29 @@ class _SectionCard extends StatelessWidget {
               ),
               if (showInfo) ...[
                 const SizedBox(width: AppSpacing.xxs),
-                const Icon(
-                  Icons.info_outline,
-                  size: 14,
-                  color: AppColors.textTertiary,
+                Tooltip(
+                  message: infoTooltip ?? '',
+                  triggerMode: TooltipTriggerMode.tap,
+                  showDuration: const Duration(seconds: 4),
+                  preferBelow: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.textPrimary,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  textStyle: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    height: 1.4,
+                  ),
+                  child: const Icon(
+                    Icons.info_outline,
+                    size: 14,
+                    color: AppColors.textTertiary,
+                  ),
                 ),
               ],
             ],
