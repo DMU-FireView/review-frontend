@@ -596,8 +596,8 @@ class _HighlightedReviewContent extends StatelessWidget {
       spans.add(TextSpan(
         text: content.substring(start, end),
         style: baseStyle.copyWith(
-          backgroundColor: hColor.withValues(alpha: 0.08),
-          color: AppColors.textPrimary,
+          backgroundColor: hColor.withValues(alpha: 0.18),
+          color: hColor,
           fontWeight: FontWeight.w600,
         ),
       ));
@@ -844,10 +844,9 @@ class _SentenceHighlightItem extends StatelessWidget {
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.xs,
       ),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.surfaceMuted,
         borderRadius: AppRadius.small,
-        border: Border(left: BorderSide(color: color, width: 3)),
       ),
       child: Row(
         children: [
