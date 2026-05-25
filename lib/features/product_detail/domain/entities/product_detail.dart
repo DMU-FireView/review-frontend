@@ -3,11 +3,11 @@ class ProductDetail {
     required this.id,
     required this.name,
     required this.brand,
-    required this.sellerName,
+    this.sellerName,
     required this.isOfficialSeller,
     required this.imageUrls,
     required this.price,
-    required this.deliveryInfo,
+    this.deliveryInfo,
     required this.category,
     required this.categoryDisplayName,
     required this.breadcrumbs,
@@ -27,11 +27,11 @@ class ProductDetail {
   final int id;
   final String name;
   final String brand;
-  final String sellerName;
+  final String? sellerName;
   final bool isOfficialSeller;
   final List<String> imageUrls;
   final int price;
-  final String deliveryInfo;
+  final String? deliveryInfo;
   final String category;
   final String categoryDisplayName;
   final List<String> breadcrumbs;
