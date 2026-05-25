@@ -382,56 +382,53 @@ class _SelectedReviewSection extends StatelessWidget {
           if (review.imageUrls.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sm),
             SizedBox(
-              height: 60,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: review.imageUrls.length.clamp(0, 4),
-                separatorBuilder: (_, __) =>
-                    const SizedBox(width: AppSpacing.xs),
-                itemBuilder: (_, i) {
-                  final showOverlay = i == 3 && review.imageUrls.length > 4;
-                  if (showOverlay) {
-                    return Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: AppRadius.small,
-                          child: Image.network(
-                            review.imageUrls[i],
-                            width: 60,
-                            height: 60,
-                            fit: BoxFit.cover,
+              height: 64,
+              child: Builder(
+                builder: (_) {
+                  final total = review.imageUrls.length;
+                  final shown = total.clamp(0, 3);
+                  final hasMore = total > 3;
+                  final itemCount = shown + (hasMore ? 1 : 0);
+                  return ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: itemCount,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(width: AppSpacing.xs),
+                    itemBuilder: (_, i) {
+                      if (i >= shown) {
+                        return Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceMuted,
+                            borderRadius: AppRadius.small,
+                            border: Border.all(color: AppColors.border),
                           ),
-                        ),
-                        Positioned.fill(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.black45,
-                              borderRadius: AppRadius.small,
-                            ),
-                            alignment: Alignment.center,
-                            child: Text(
-                              '+${review.imageUrls.length - 4}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 15,
-                              ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            '+${total - 3}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .labelMedium
+                                ?.copyWith(
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w700,
                             ),
                           ),
+                        );
+                      }
+                      return ClipRRect(
+                        borderRadius: AppRadius.small,
+                        child: Image.network(
+                          review.imageUrls[i],
+                          width: 64,
+                          height: 64,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                              const SizedBox.square(dimension: 64),
                         ),
-                      ],
-                    );
-                  }
-                  return ClipRRect(
-                    borderRadius: AppRadius.small,
-                    child: Image.network(
-                      review.imageUrls[i],
-                      width: 60,
-                      height: 60,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) =>
-                          const SizedBox.square(dimension: 60),
-                    ),
+                      );
+                    },
                   );
                 },
               ),
