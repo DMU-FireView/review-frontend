@@ -152,7 +152,9 @@ class ProductReviewDto {
   }
 
   static List<ProductReviewDto> fromList(List<dynamic> list) =>
-      list.map((e) => fromJson(e as Map<String, dynamic>)).toList();
+      list
+          .map((e) => ProductReviewDto.fromJson(e as Map<String, dynamic>))
+          .toList();
 
   ProductReview toEntity() {
     return ProductReview(
