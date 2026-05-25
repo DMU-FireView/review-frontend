@@ -18,13 +18,14 @@ class ProductInfoSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            Text(
-              detail.sellerName,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w700,
+            if (detail.sellerName != null && detail.sellerName!.isNotEmpty)
+              Text(
+                detail.sellerName!,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
             if (detail.isOfficialSeller) ...[
               const SizedBox(width: AppSpacing.xs),
               _OfficialBadge(),
@@ -217,13 +218,14 @@ class _PriceRow extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.xxs),
-        Text(
-          detail.deliveryInfo,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
+        if (detail.deliveryInfo != null && detail.deliveryInfo!.isNotEmpty)
+          Text(
+            detail.deliveryInfo!,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
       ],
     );
   }

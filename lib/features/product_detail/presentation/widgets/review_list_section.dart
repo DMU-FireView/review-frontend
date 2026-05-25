@@ -265,7 +265,9 @@ class ReviewCard extends StatelessWidget {
                             ),
                           const SizedBox(width: AppSpacing.xs),
                           Text(
-                            '${review.createdAt} · ${review.platform}',
+                            review.platform.isNotEmpty
+                                ? '${review.createdAt} · ${review.platform}'
+                                : review.createdAt,
                             style: Theme.of(context).textTheme.labelSmall
                                 ?.copyWith(
                                   color: AppColors.textSecondary,
