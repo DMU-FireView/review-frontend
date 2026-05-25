@@ -350,17 +350,29 @@ class _SelectedReviewSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           _HighlightedReviewContent(review: review),
           if (review.hashtags.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.xs),
+            const SizedBox(height: AppSpacing.sm),
             Wrap(
               spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xxs,
               children: review.hashtags
                   .map(
-                    (tag) => Text(
-                      '# $tag',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
+                    (tag) => Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryLight,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '# $tag',
+                        style:
+                            Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
                   )
