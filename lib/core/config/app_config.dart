@@ -14,7 +14,10 @@ class AppConfig {
 
   factory AppConfig.fromEnvironment() {
     return const AppConfig(
-      apiBaseUrl: String.fromEnvironment('API_BASE_URL'),
+      apiBaseUrl: String.fromEnvironment(
+        'API_BASE_URL',
+        defaultValue: '',
+      ),
       homeDashboardPath: String.fromEnvironment(
         'HOME_DASHBOARD_PATH',
         defaultValue: '/api/dashboard',
