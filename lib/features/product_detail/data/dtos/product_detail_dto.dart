@@ -1,85 +1,49 @@
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
-import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
-import 'package:re_view_front/features/product_detail/domain/entities/similar_product.dart';
 
 class ProductDetailDto {
   const ProductDetailDto({
     required this.id,
     required this.name,
-    required this.brand,
-    required this.sellerName,
-    required this.isOfficialSeller,
-    required this.imageUrls,
+    required this.imageUrl,
     required this.price,
-    required this.deliveryInfo,
     required this.category,
     required this.categoryDisplayName,
-    required this.breadcrumbs,
-    required this.avgRating,
-    required this.reviewCount,
-    required this.qaCount,
+    required this.platform,
     required this.avgRti,
     required this.rtiGrade,
     required this.rtiColor,
-    required this.specChips,
-    required this.priceComparisons,
-    required this.totalSellerCount,
-    required this.rtiSummary,
-    required this.trustSignals,
+    required this.reviewCount,
+    required this.avgRating,
   });
 
   final int id;
   final String name;
-  final String brand;
-  final String sellerName;
-  final bool isOfficialSeller;
-  final List<String> imageUrls;
+  final String? imageUrl;
   final int price;
-  final String deliveryInfo;
   final String category;
   final String categoryDisplayName;
-  final List<String> breadcrumbs;
-  final double avgRating;
-  final int reviewCount;
-  final int qaCount;
+  final String? platform;
   final double avgRti;
   final String rtiGrade;
   final String rtiColor;
-  final List<Map<String, dynamic>> specChips;
-  final List<Map<String, dynamic>> priceComparisons;
-  final int totalSellerCount;
-  final Map<String, dynamic> rtiSummary;
-  final List<Map<String, dynamic>> trustSignals;
+  final int reviewCount;
+  final double avgRating;
 
   factory ProductDetailDto.fromJson(Map<String, dynamic> json) {
     return ProductDetailDto(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      brand: json['brand'] as String,
-      sellerName: json['sellerName'] as String,
-      isOfficialSeller: json['isOfficialSeller'] as bool,
-      imageUrls: List<String>.from(json['imageUrls'] as List),
-      price: json['price'] as int,
-      deliveryInfo: json['deliveryInfo'] as String,
-      category: json['category'] as String,
-      categoryDisplayName: json['categoryDisplayName'] as String,
-      breadcrumbs: List<String>.from(json['breadcrumbs'] as List),
-      avgRating: (json['avgRating'] as num).toDouble(),
-      reviewCount: json['reviewCount'] as int,
-      qaCount: json['qaCount'] as int,
-      avgRti: (json['avgRti'] as num).toDouble(),
-      rtiGrade: json['rtiGrade'] as String,
-      rtiColor: json['rtiColor'] as String,
-      specChips: List<Map<String, dynamic>>.from(json['specChips'] as List),
-      priceComparisons: List<Map<String, dynamic>>.from(
-        json['priceComparisons'] as List,
-      ),
-      totalSellerCount: json['totalSellerCount'] as int,
-      rtiSummary: json['rtiSummary'] as Map<String, dynamic>,
-      trustSignals: List<Map<String, dynamic>>.from(
-        json['trustSignals'] as List,
-      ),
+      id: (json['id'] as num).toInt(),
+      name: (json['name'] ?? json['title']) as String? ?? '',
+      imageUrl: json['imageUrl'] as String?,
+      price: (json['price'] as num?)?.toInt() ?? 0,
+      category: json['category'] as String? ?? '',
+      categoryDisplayName: json['categoryDisplayName'] as String? ?? '',
+      platform: json['platform'] as String?,
+      avgRti: (json['avgRti'] as num?)?.toDouble() ?? 0.0,
+      rtiGrade: json['rtiGrade'] as String? ?? 'SAFE',
+      rtiColor: json['rtiColor'] as String? ?? '#22C55E',
+      reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+      avgRating: (json['avgRating'] as num?)?.toDouble() ?? 0.0,
     );
   }
 
@@ -87,205 +51,134 @@ class ProductDetailDto {
     return ProductDetail(
       id: id,
       name: name,
-      brand: brand,
-      sellerName: sellerName,
-      isOfficialSeller: isOfficialSeller,
-      imageUrls: imageUrls,
+      brand: '',
+      sellerName: platform,
+      isOfficialSeller: false,
+      imageUrls: imageUrl != null ? [imageUrl!] : [],
       price: price,
-      deliveryInfo: deliveryInfo,
+      deliveryInfo: null,
       category: category,
       categoryDisplayName: categoryDisplayName,
-      breadcrumbs: breadcrumbs,
+      breadcrumbs: _deriveBreadcrumbs(),
       avgRating: avgRating,
       reviewCount: reviewCount,
-      qaCount: qaCount,
+      qaCount: 0,
       avgRti: avgRti,
       rtiGrade: rtiGrade,
       rtiColor: rtiColor,
-      specChips: specChips.map((m) => ProductSpecChip(
-        label: m['label'] as String,
-        subtitle: m['subtitle'] as String,
-        iconData: m['iconData'] as String,
-      )).toList(),
-      priceComparisons: priceComparisons.map((m) => PriceComparison(
-        sellerName: m['sellerName'] as String,
-        sellerLogoTag: m['sellerLogoTag'] as String,
-        price: m['price'] as int,
-        deliveryInfo: m['deliveryInfo'] as String,
-        isLowest: m['isLowest'] as bool,
-        isOfficial: m['isOfficial'] as bool,
-        linkLabel: m['linkLabel'] as String,
-      )).toList(),
-      totalSellerCount: totalSellerCount,
-      rtiSummary: RtiSummary(
-        rtiScore: rtiSummary['rtiScore'] as int,
-        rtiLabel: rtiSummary['rtiLabel'] as String,
-        rtiSubLabel: rtiSummary['rtiSubLabel'] as String,
-        realReviewRatio: (rtiSummary['realReviewRatio'] as num).toDouble(),
-        realReviewLabel: rtiSummary['realReviewLabel'] as String,
-        adSuspicionRatio: (rtiSummary['adSuspicionRatio'] as num).toDouble(),
-        adSuspicionLabel: rtiSummary['adSuspicionLabel'] as String,
-        repetitionRatio: (rtiSummary['repetitionRatio'] as num).toDouble(),
-        repetitionLabel: rtiSummary['repetitionLabel'] as String,
-        summaryMessage: rtiSummary['summaryMessage'] as String,
-        analyzedReviewCount: rtiSummary['analyzedReviewCount'] as int,
-      ),
-      trustSignals: trustSignals.map((m) => TrustSignal(
-        label: m['label'] as String,
-        value: m['value'] as String,
-        isPositive: m['isPositive'] as bool,
-      )).toList(),
+      specChips: const [],
+      priceComparisons: const [],
+      totalSellerCount: 0,
+      rtiSummary: _deriveRtiSummary(),
+      trustSignals: const [],
     );
   }
+
+  List<String> _deriveBreadcrumbs() {
+    return [
+      if (categoryDisplayName.isNotEmpty) categoryDisplayName,
+      if (name.isNotEmpty) name,
+    ];
+  }
+
+  RtiSummary _deriveRtiSummary() {
+    final label = _gradeLabel(rtiGrade);
+    return RtiSummary(
+      rtiScore: avgRti.round(),
+      rtiLabel: label,
+      rtiSubLabel: 'AI 분석 결과',
+      realReviewRatio: 0.0,
+      realReviewLabel: '집계 중',
+      adSuspicionRatio: 0.0,
+      adSuspicionLabel: '집계 중',
+      repetitionRatio: 0.0,
+      repetitionLabel: '집계 중',
+      summaryMessage: '$reviewCount개 리뷰 기반 RTI 분석 결과입니다.',
+      analyzedReviewCount: reviewCount,
+    );
+  }
+
+  static String _gradeLabel(String grade) => switch (grade) {
+    'SAFE' => '안전',
+    'SUSPICIOUS' => '의심',
+    'DANGER' => '위험',
+    _ => grade,
+  };
 }
 
 class ProductReviewDto {
   const ProductReviewDto({
     required this.id,
-    required this.authorName,
-    required this.authorAvatarUrl,
-    required this.rating,
+    required this.reviewerNickname,
     required this.content,
-    required this.createdAt,
-    required this.platform,
-    required this.isVerifiedPurchase,
+    required this.rating,
     required this.rtiScore,
-    required this.rtiColor,
-    required this.rtiLabel,
-    required this.imageUrls,
+    required this.trustGrade,
+    required this.trustGradeLabel,
+    required this.trustGradeColor,
+    required this.reasons,
+    required this.writtenAt,
+    required this.isVerifiedPurchase,
   });
 
   final int id;
-  final String authorName;
-  final String? authorAvatarUrl;
-  final double rating;
+  final String reviewerNickname;
   final String content;
-  final String createdAt;
-  final String platform;
-  final bool isVerifiedPurchase;
+  final double rating;
   final int rtiScore;
-  final String rtiColor;
-  final String rtiLabel;
-  final List<String> imageUrls;
+  final String trustGrade;
+  final String trustGradeLabel;
+  final String trustGradeColor;
+  final List<String> reasons;
+  final String writtenAt;
+  final bool isVerifiedPurchase;
 
   factory ProductReviewDto.fromJson(Map<String, dynamic> json) {
     return ProductReviewDto(
-      id: json['id'] as int,
-      authorName: json['authorName'] as String,
-      authorAvatarUrl: json['authorAvatarUrl'] as String?,
-      rating: (json['rating'] as num).toDouble(),
-      content: json['content'] as String,
-      createdAt: json['createdAt'] as String,
-      platform: json['platform'] as String,
-      isVerifiedPurchase: json['isVerifiedPurchase'] as bool,
-      rtiScore: json['rtiScore'] as int,
-      rtiColor: json['rtiColor'] as String,
-      rtiLabel: json['rtiLabel'] as String,
-      imageUrls: List<String>.from(json['imageUrls'] as List? ?? []),
+      id: (json['id'] as num).toInt(),
+      reviewerNickname:
+          (json['reviewerNickname'] ?? json['authorName']) as String? ?? '',
+      content: json['content'] as String? ?? '',
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      rtiScore:
+          ((json['rtiScore'] as num?)?.toDouble() ?? 0.0).round(),
+      trustGrade: json['trustGrade'] as String? ?? 'SAFE',
+      trustGradeLabel: json['trustGradeLabel'] as String? ?? '',
+      trustGradeColor: json['trustGradeColor'] as String? ?? '#22C55E',
+      reasons: List<String>.from(json['reasons'] as List? ?? []),
+      writtenAt: (json['writtenAt'] ?? json['createdAt']) as String? ?? '',
+      isVerifiedPurchase: json['isVerifiedPurchase'] as bool? ?? false,
     );
   }
+
+  static List<ProductReviewDto> fromList(List<dynamic> list) =>
+      list.map((e) => fromJson(e as Map<String, dynamic>)).toList();
 
   ProductReview toEntity() {
     return ProductReview(
       id: id,
-      authorName: authorName,
-      authorAvatarUrl: authorAvatarUrl,
+      authorName: reviewerNickname,
+      authorAvatarUrl: null,
       rating: rating,
       content: content,
-      createdAt: createdAt,
-      platform: platform,
+      createdAt: _formatDate(writtenAt),
+      platform: '',
       isVerifiedPurchase: isVerifiedPurchase,
       rtiScore: rtiScore,
-      rtiColor: rtiColor,
-      rtiLabel: rtiLabel,
-      imageUrls: imageUrls,
-    );
-  }
-}
-
-class ReviewInsightDto {
-  const ReviewInsightDto({
-    required this.keywords,
-    required this.satisfactionPoints,
-    required this.dissatisfactionPoints,
-  });
-
-  final List<Map<String, dynamic>> keywords;
-  final List<String> satisfactionPoints;
-  final List<String> dissatisfactionPoints;
-
-  factory ReviewInsightDto.fromJson(Map<String, dynamic> json) {
-    return ReviewInsightDto(
-      keywords: List<Map<String, dynamic>>.from(json['keywords'] as List),
-      satisfactionPoints: List<String>.from(
-        json['satisfactionPoints'] as List,
-      ),
-      dissatisfactionPoints: List<String>.from(
-        json['dissatisfactionPoints'] as List,
-      ),
+      rtiColor: trustGradeColor,
+      rtiLabel: trustGradeLabel,
+      imageUrls: const [],
+      reasons: reasons,
     );
   }
 
-  ReviewInsight toEntity() {
-    return ReviewInsight(
-      keywords: keywords.map((m) => ReviewKeyword(
-        label: m['label'] as String,
-        count: m['count'] as int,
-      )).toList(),
-      satisfactionPoints: satisfactionPoints,
-      dissatisfactionPoints: dissatisfactionPoints,
-    );
-  }
-}
-
-class SimilarProductDto {
-  const SimilarProductDto({
-    required this.id,
-    required this.name,
-    required this.brand,
-    required this.imageUrl,
-    required this.price,
-    required this.avgRating,
-    required this.reviewCount,
-    required this.avgRti,
-    required this.rtiColor,
-  });
-
-  final int id;
-  final String name;
-  final String brand;
-  final String imageUrl;
-  final int price;
-  final double avgRating;
-  final int reviewCount;
-  final double avgRti;
-  final String rtiColor;
-
-  factory SimilarProductDto.fromJson(Map<String, dynamic> json) {
-    return SimilarProductDto(
-      id: json['id'] as int,
-      name: json['name'] as String,
-      brand: json['brand'] as String,
-      imageUrl: json['imageUrl'] as String,
-      price: json['price'] as int,
-      avgRating: (json['avgRating'] as num).toDouble(),
-      reviewCount: json['reviewCount'] as int,
-      avgRti: (json['avgRti'] as num).toDouble(),
-      rtiColor: json['rtiColor'] as String,
-    );
-  }
-
-  SimilarProduct toEntity() {
-    return SimilarProduct(
-      id: id,
-      name: name,
-      brand: brand,
-      imageUrl: imageUrl,
-      price: price,
-      avgRating: avgRating,
-      reviewCount: reviewCount,
-      avgRti: avgRti,
-      rtiColor: rtiColor,
-    );
+  static String _formatDate(String raw) {
+    if (raw.isEmpty) return '';
+    try {
+      final dt = DateTime.parse(raw);
+      return '${dt.year}.${dt.month.toString().padLeft(2, '0')}.${dt.day.toString().padLeft(2, '0')}';
+    } catch (_) {
+      return raw;
+    }
   }
 }
