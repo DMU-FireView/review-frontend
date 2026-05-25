@@ -15,6 +15,7 @@ class ProductReview {
     required this.rtiLabel,
     this.imageUrls = const [],
     this.hashtags = const [],
+    this.reasons = const [],
     this.rtiDetail,
   });
 
@@ -31,5 +32,6 @@ class ProductReview {
   final String rtiLabel;
   final List<String> imageUrls;
   final List<String> hashtags;
+  final List<String> reasons;
   final ReviewRtiDetail? rtiDetail;
 }
