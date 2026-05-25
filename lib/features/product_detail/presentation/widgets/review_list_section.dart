@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
+import 'package:re_view_front/features/product_detail/presentation/widgets/review_rti_analysis_dialog.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
@@ -277,10 +278,16 @@ class ReviewCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
-                _RtiBadgeSmall(
-                  score: review.rtiScore,
-                  label: review.rtiLabel,
-                  color: rtiColor,
+                GestureDetector(
+                  onTap: review.rtiDetail != null
+                      ? () => showReviewRtiAnalysisDialog(context, review)
+                      : null,
+                  child: _RtiBadgeSmall(
+                    score: review.rtiScore,
+                    label: review.rtiLabel,
+                    color: rtiColor,
+                    hasDetail: review.rtiDetail != null,
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.xxs),
                 Icon(
@@ -384,11 +391,13 @@ class _RtiBadgeSmall extends StatelessWidget {
     required this.score,
     required this.label,
     required this.color,
+    this.hasDetail = false,
   });
 
   final int score;
   final String label;
   final Color color;
+  final bool hasDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -418,13 +427,22 @@ class _RtiBadgeSmall extends StatelessWidget {
                 ),
               ],
             ),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: color,
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: color,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (hasDetail) ...[
+                  const SizedBox(width: 2),
+                  Icon(Icons.chevron_right, size: 10, color: color),
+                ],
+              ],
             ),
           ],
         ),

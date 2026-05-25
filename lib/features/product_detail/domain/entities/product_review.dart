@@ -1,3 +1,5 @@
+import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
+
 class ProductReview {
   const ProductReview({
     required this.id,
@@ -12,6 +14,8 @@ class ProductReview {
     required this.rtiColor,
     required this.rtiLabel,
     this.imageUrls = const [],
+    this.hashtags = const [],
+    this.rtiDetail,
   });
 
   final int id;
@@ -26,4 +30,6 @@ class ProductReview {
   final String rtiColor;
   final String rtiLabel;
   final List<String> imageUrls;
+  final List<String> hashtags;
+  final ReviewRtiDetail? rtiDetail;
 }
