@@ -142,8 +142,8 @@ class _RtiScoreSection extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.md,
       ),
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -158,32 +158,37 @@ class _RtiScoreSection extends StatelessWidget {
             children: [
               Text(
                 'RTI 점수',
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   color: AppColors.textSecondary,
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: 4),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     '${review.rtiScore}',
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
+                    style: Theme.of(context).textTheme.displayLarge?.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w900,
-                      fontSize: 48,
+                      fontSize: 56,
+                      height: 1,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.xs),
-                  _RtiGradeBadge(label: review.rtiLabel, color: color),
+                  const SizedBox(width: AppSpacing.sm),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: _RtiGradeBadge(
+                      label: review.rtiLabel,
+                      color: color,
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
-          const SizedBox(width: AppSpacing.lg),
-          Container(width: 1, height: 60, color: AppColors.border),
-          const SizedBox(width: AppSpacing.lg),
+          const SizedBox(width: AppSpacing.xl),
           if (detail != null)
             Expanded(
               child: Column(
@@ -655,7 +660,7 @@ class _SignalBar extends StatelessWidget {
   IconData get _icon => switch (signal.iconType) {
         'text' => Icons.person_outline,
         'behavior' => Icons.check_circle_outline,
-        'pattern' => Icons.auto_awesome_outlined,
+        'pattern' => Icons.text_fields_outlined,
         'purchase' => Icons.verified_user_outlined,
         _ => Icons.info_outline,
       };
