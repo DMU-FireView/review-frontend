@@ -443,13 +443,12 @@ class _ReviewAuthorRow extends StatelessWidget {
         CircleAvatar(
           radius: 15,
           backgroundColor: AppColors.primaryLight,
-          child: Text(
-            review.authorName.isNotEmpty ? review.authorName[0].toUpperCase() : '?',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
+          backgroundImage: review.authorAvatarUrl != null
+              ? NetworkImage(review.authorAvatarUrl!)
+              : null,
+          child: review.authorAvatarUrl == null
+              ? const Icon(Icons.person, size: 18, color: AppColors.primary)
+              : null,
         ),
         const SizedBox(width: AppSpacing.xs),
         Expanded(
