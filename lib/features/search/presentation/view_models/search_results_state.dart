@@ -1,17 +1,18 @@
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 
 enum SearchSortOption {
-  accuracy(label: '정확도 순'),
-  rti(label: 'RTI 높은순'),
-  reviewCount(label: '리뷰 많은순'),
-  sales(label: '판매 많은순'),
-  priceLow(label: '최저가순'),
-  priceHigh(label: '높은 가격순'),
-  newest(label: '신상품순');
+  accuracy(label: '정확도 순', serverKey: null),
+  rti(label: 'RTI 높은순', serverKey: 'RTI_DESC'),
+  reviewCount(label: '리뷰 많은순', serverKey: 'REVIEW_COUNT_DESC'),
+  sales(label: '판매 많은순', serverKey: 'SALES_DESC'),
+  priceLow(label: '최저가순', serverKey: 'PRICE_ASC'),
+  priceHigh(label: '높은 가격순', serverKey: 'PRICE_DESC'),
+  newest(label: '신상품순', serverKey: 'NEWEST');
 
-  const SearchSortOption({required this.label});
+  const SearchSortOption({required this.label, required this.serverKey});
 
   final String label;
+  final String? serverKey;
 }
 
 class SearchFilterChipData {
