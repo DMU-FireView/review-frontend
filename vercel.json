@@ -1,6 +1,14 @@
 {
   "rewrites": [
     {
+      "source": "/api/(.*)",
+      "destination": "http://3.39.78.175/api/$1"
+    },
+    {
+      "source": "/oauth2/(.*)",
+      "destination": "http://3.39.78.175/oauth2/$1"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
