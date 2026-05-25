@@ -3,6 +3,8 @@ class AppConfig {
     required this.apiBaseUrl,
     required this.homeDashboardPath,
     required this.searchPath,
+    required this.productPath,
+    required this.reviewFeedbackBasePath,
     required this.loginPath,
     required this.signupPath,
     required this.naverOAuthPath,
@@ -26,6 +28,14 @@ class AppConfig {
       searchPath: String.fromEnvironment(
         'SEARCH_PATH',
         defaultValue: '/api/products',
+      ),
+      productPath: String.fromEnvironment(
+        'PRODUCT_PATH',
+        defaultValue: '/api/products',
+      ),
+      reviewFeedbackBasePath: String.fromEnvironment(
+        'REVIEW_FEEDBACK_BASE_PATH',
+        defaultValue: '/api/reviews',
       ),
       loginPath: String.fromEnvironment(
         'LOGIN_PATH',
@@ -59,6 +69,8 @@ class AppConfig {
   final String apiBaseUrl;
   final String homeDashboardPath;
   final String searchPath;
+  final String productPath;
+  final String reviewFeedbackBasePath;
   final String loginPath;
   final String signupPath;
   final String naverOAuthPath;
