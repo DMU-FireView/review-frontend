@@ -957,8 +957,8 @@ class _DialogFooter extends StatelessWidget {
           OutlinedButton(
             onPressed: () {},
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.borderStrong),
-              foregroundColor: AppColors.textPrimary,
+              side: const BorderSide(color: AppColors.primary),
+              foregroundColor: AppColors.primary,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
                 vertical: AppSpacing.xs,
@@ -968,11 +968,11 @@ class _DialogFooter extends StatelessWidget {
             child: const Text('분석 기준', style: TextStyle(fontSize: 13)),
           ),
           const SizedBox(width: AppSpacing.xs),
-          FilledButton(
+          OutlinedButton(
             onPressed: () {},
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.error,
-              foregroundColor: Colors.white,
+            style: OutlinedButton.styleFrom(
+              side: const BorderSide(color: AppColors.error),
+              foregroundColor: AppColors.error,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
                 vertical: AppSpacing.xs,
