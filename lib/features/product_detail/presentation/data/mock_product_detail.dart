@@ -1,6 +1,7 @@
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
+import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/similar_product.dart';
 
 ProductDetail mockProductDetailFor(int id) {
@@ -259,21 +260,150 @@ const _mockReviews = [
       'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=200&q=60',
       'https://images.unsplash.com/photo-1610438235354-a6ae5528385c?auto=format&fit=crop&w=200&q=60',
     ],
+    hashtags: ['ANC', '통화품질', '배터리'],
+    rtiDetail: ReviewRtiDetail(
+      summaryDescription: '구매 인증과 구체적인 사용 상황이 명확히 확인되어 신뢰도 매우 높은 리뷰로 분석되었어요.',
+      summaryTags: [
+        RtiSummaryTag(label: '구매인증 확인', type: RtiTagType.positive),
+        RtiSummaryTag(label: '실사용 맥락 풍부', type: RtiTagType.positive),
+        RtiSummaryTag(label: '반복 표현 낮음', type: RtiTagType.info),
+      ],
+      signals: [
+        RtiSignal(label: '텍스트 신호', score: 92, iconType: 'text', color: '#3B82F6'),
+        RtiSignal(label: '행동 신호', score: 95, iconType: 'behavior', color: '#22C55E'),
+        RtiSignal(label: '패턴 자연스러움', score: 90, iconType: 'pattern', color: '#8B5CF6'),
+        RtiSignal(label: '구매 인증', score: 100, iconType: 'purchase', color: '#22C55E'),
+      ],
+      judgmentBases: [
+        RtiJudgmentBasis(
+          label: '반복 표현 빈도 낮음',
+          description: '동일 문구/단어 반복 사용이 적어 자연스러운 표현으로 판단됩니다.',
+          percentage: 90,
+          iconType: 'repeat',
+          color: '#0891B2',
+        ),
+        RtiJudgmentBasis(
+          label: '구체적 사용 맥락 포함',
+          description: '사용 환경, 시간, 상황 등 구체적 맥락이 확인됩니다.',
+          percentage: 88,
+          iconType: 'context',
+          color: '#22C55E',
+        ),
+        RtiJudgmentBasis(
+          label: '구매 이력 패턴 자연스러움',
+          description: '최근 구매 패턴과 리뷰 작성 간격이 자연스럽습니다.',
+          percentage: 85,
+          iconType: 'history',
+          color: '#3B82F6',
+        ),
+        RtiJudgmentBasis(
+          label: '유사 리뷰군과 거리 있음',
+          description: '유사도 분석 결과 일반 리뷰와 비교해 자별화된 내용입니다.',
+          percentage: 82,
+          iconType: 'similarity',
+          color: '#F97316',
+        ),
+      ],
+      sentenceHighlights: [
+        RtiSentenceHighlight(
+          sentence: '이 가격에 이 정도 ANC 성능이면 안됩니다.',
+          tag: '사용 맥락',
+          color: '#FBBF24',
+        ),
+        RtiSentenceHighlight(
+          sentence: '지하철 탈 때 확실히 조용해지고, 통화 품질도 좋아요.',
+          tag: '구매 상황',
+          color: '#0891B2',
+        ),
+        RtiSentenceHighlight(
+          sentence: '배터리도 오래가고 케이스도 해쌔서 매일 사용 중입니다.',
+          tag: '제품 특성',
+          color: '#374151',
+        ),
+      ],
+    ),
   ),
   ProductReview(
     id: 2,
-    authorName: 'seyoung_music',
+    authorName: 'soyoung_music',
     authorAvatarUrl: null,
     rating: 4.0,
     content:
-        '사운드 밸런스가 잘 잡혀서 편합니다. 앱 지원도 편하고 멀티디바이스포인트 매끄럽고, 착용감이 좋아 장시간 착용해도 가격 아직도 이상하지 않아요.',
+        '노이즈 캔슬링 성능이 정말 강력해요. 지하철 탈 때 주변 소음이 거의 안 들려서 집중하기 좋아요. 착용감도 가볍고 귀에 잘 맞아서 장시간 사용해도 불편함이 없어요. 배터리도 오래가고 케이스 디자인도 고급스러워 만족합니다.',
     createdAt: '2025.05.22',
     platform: '네이버쇼핑',
     isVerifiedPurchase: true,
-    rtiScore: 93,
+    rtiScore: 86,
     rtiColor: '#22C55E',
     rtiLabel: '신뢰도 높음',
-    imageUrls: [],
+    imageUrls: [
+      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=200&q=60',
+      'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=200&q=60',
+      'https://images.unsplash.com/photo-1606220945770-b5b6c2c55bf1?auto=format&fit=crop&w=200&q=60',
+      'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&w=200&q=60',
+    ],
+    hashtags: ['ANC', '착용감', '배터리'],
+    rtiDetail: ReviewRtiDetail(
+      summaryDescription: '구매 인증 패턴과 구체적인 사용 맥락이 확인되어 신뢰도 높은 리뷰로 분석되었어요.',
+      summaryTags: [
+        RtiSummaryTag(label: '구매인증 확인', type: RtiTagType.positive),
+        RtiSummaryTag(label: '실사용 맥락 풍부', type: RtiTagType.positive),
+        RtiSummaryTag(label: '반복 표현 낮음', type: RtiTagType.info),
+      ],
+      signals: [
+        RtiSignal(label: '텍스트 신호', score: 88, iconType: 'text', color: '#3B82F6'),
+        RtiSignal(label: '행동 신호', score: 82, iconType: 'behavior', color: '#22C55E'),
+        RtiSignal(label: '패턴 자연스러움', score: 84, iconType: 'pattern', color: '#8B5CF6'),
+        RtiSignal(label: '구매 인증', score: 100, iconType: 'purchase', color: '#22C55E'),
+      ],
+      judgmentBases: [
+        RtiJudgmentBasis(
+          label: '반복 표현 빈도 낮음',
+          description: '동일 문구/단어 반복 사용이 적어 자연스러운 표현으로 판단됩니다.',
+          percentage: 85,
+          iconType: 'repeat',
+          color: '#0891B2',
+        ),
+        RtiJudgmentBasis(
+          label: '구체적 사용 맥락 포함',
+          description: '사용 환경, 시간, 상황 등 구체적 맥락이 확인됩니다.',
+          percentage: 82,
+          iconType: 'context',
+          color: '#22C55E',
+        ),
+        RtiJudgmentBasis(
+          label: '구매 이력 패턴 자연스러움',
+          description: '최근 구매 패턴과 리뷰 작성 간격이 자연스럽습니다.',
+          percentage: 78,
+          iconType: 'history',
+          color: '#3B82F6',
+        ),
+        RtiJudgmentBasis(
+          label: '유사 리뷰군과 거리 있음',
+          description: '유사도 분석 결과 일반 리뷰와 비교해 자별화된 내용입니다.',
+          percentage: 76,
+          iconType: 'similarity',
+          color: '#F97316',
+        ),
+      ],
+      sentenceHighlights: [
+        RtiSentenceHighlight(
+          sentence: '노이즈 캔슬링 성능이 정말 강력해요.',
+          tag: '사용 맥락',
+          color: '#FBBF24',
+        ),
+        RtiSentenceHighlight(
+          sentence: '지하철 탈 때 주변 소음이 거의 안 들려서 집중하기 좋아요.',
+          tag: '구매 상황',
+          color: '#0891B2',
+        ),
+        RtiSentenceHighlight(
+          sentence: '배터리도 오래가고 케이스 디자인도 고급스러워 만족합니다.',
+          tag: '제품 특성',
+          color: '#374151',
+        ),
+      ],
+    ),
   ),
   ProductReview(
     id: 3,
@@ -289,6 +419,61 @@ const _mockReviews = [
     rtiColor: '#22C55E',
     rtiLabel: '신뢰도 높음',
     imageUrls: [],
+    rtiDetail: ReviewRtiDetail(
+      summaryDescription: '간결하지만 핵심 사용 경험이 담긴 신뢰도 높은 리뷰로 분석되었어요.',
+      summaryTags: [
+        RtiSummaryTag(label: '실사용 맥락 포함', type: RtiTagType.positive),
+        RtiSummaryTag(label: '반복 표현 낮음', type: RtiTagType.info),
+      ],
+      signals: [
+        RtiSignal(label: '텍스트 신호', score: 85, iconType: 'text', color: '#3B82F6'),
+        RtiSignal(label: '행동 신호', score: 88, iconType: 'behavior', color: '#22C55E'),
+        RtiSignal(label: '패턴 자연스러움', score: 91, iconType: 'pattern', color: '#8B5CF6'),
+        RtiSignal(label: '구매 인증', score: 80, iconType: 'purchase', color: '#22C55E'),
+      ],
+      judgmentBases: [
+        RtiJudgmentBasis(
+          label: '반복 표현 빈도 낮음',
+          description: '동일 문구/단어 반복 사용이 적어 자연스러운 표현으로 판단됩니다.',
+          percentage: 88,
+          iconType: 'repeat',
+          color: '#0891B2',
+        ),
+        RtiJudgmentBasis(
+          label: '구체적 사용 맥락 포함',
+          description: '사용 환경, 시간, 상황 등 구체적 맥락이 확인됩니다.',
+          percentage: 80,
+          iconType: 'context',
+          color: '#22C55E',
+        ),
+        RtiJudgmentBasis(
+          label: '구매 이력 패턴 자연스러움',
+          description: '최근 구매 패턴과 리뷰 작성 간격이 자연스럽습니다.',
+          percentage: 86,
+          iconType: 'history',
+          color: '#3B82F6',
+        ),
+        RtiJudgmentBasis(
+          label: '유사 리뷰군과 거리 있음',
+          description: '유사도 분석 결과 일반 리뷰와 비교해 자별화된 내용입니다.',
+          percentage: 79,
+          iconType: 'similarity',
+          color: '#F97316',
+        ),
+      ],
+      sentenceHighlights: [
+        RtiSentenceHighlight(
+          sentence: '음질 기대 이상이고요, 노이즈도 확실합니다.',
+          tag: '사용 맥락',
+          color: '#FBBF24',
+        ),
+        RtiSentenceHighlight(
+          sentence: '온종일 빼도 안 빠지고 안정적이에요.',
+          tag: '제품 특성',
+          color: '#0891B2',
+        ),
+      ],
+    ),
   ),
 ];
 
