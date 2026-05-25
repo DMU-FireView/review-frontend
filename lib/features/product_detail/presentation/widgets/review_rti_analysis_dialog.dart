@@ -22,9 +22,9 @@ class ReviewRtiAnalysisDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      insetPadding: const EdgeInsets.symmetric(horizontal: 40, vertical: 32),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1060, maxHeight: 800),
+        constraints: const BoxConstraints(maxWidth: 1100, maxHeight: 860),
         child: ClipRRect(
           borderRadius: AppRadius.large,
           child: Material(
@@ -655,6 +655,7 @@ class _SignalBar extends StatelessWidget {
     final ratio = (signal.score / 100).clamp(0.0, 1.0);
 
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
           width: 32,
@@ -670,13 +671,27 @@ class _SignalBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                signal.label,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 12,
-                ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      signal.label,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${signal.score}',
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 4),
               ClipRRect(
@@ -691,19 +706,6 @@ class _SignalBar extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-        const SizedBox(width: AppSpacing.xs),
-        SizedBox(
-          width: 32,
-          child: Text(
-            '${signal.score}',
-            textAlign: TextAlign.right,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-              fontSize: 13,
-            ),
           ),
         ),
       ],
