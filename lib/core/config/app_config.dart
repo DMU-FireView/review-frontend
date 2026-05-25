@@ -2,6 +2,7 @@ class AppConfig {
   const AppConfig({
     required this.apiBaseUrl,
     required this.homeDashboardPath,
+    required this.searchPath,
     required this.loginPath,
     required this.signupPath,
     required this.naverOAuthPath,
@@ -21,6 +22,10 @@ class AppConfig {
       homeDashboardPath: String.fromEnvironment(
         'HOME_DASHBOARD_PATH',
         defaultValue: '/api/dashboard',
+      ),
+      searchPath: String.fromEnvironment(
+        'SEARCH_PATH',
+        defaultValue: '/api/products',
       ),
       loginPath: String.fromEnvironment(
         'LOGIN_PATH',
@@ -53,6 +58,7 @@ class AppConfig {
 
   final String apiBaseUrl;
   final String homeDashboardPath;
+  final String searchPath;
   final String loginPath;
   final String signupPath;
   final String naverOAuthPath;
