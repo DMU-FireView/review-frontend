@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
-import 'package:re_view_front/features/search/presentation/data/mock_search_results.dart';
 import 'package:re_view_front/features/search/presentation/models/search_view_mode.dart';
+import 'package:re_view_front/features/search/presentation/providers/search_providers.dart';
 import 'package:re_view_front/features/search/presentation/view_models/search_results_state.dart';
+import 'package:re_view_front/features/search/presentation/view_models/search_state.dart';
 import 'package:re_view_front/features/search/presentation/widgets/search_header.dart';
 import 'package:re_view_front/features/search/presentation/widgets/search_results_body.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
-class SearchResultsPage extends StatefulWidget {
+class SearchResultsPage extends ConsumerStatefulWidget {
   const SearchResultsPage({required this.query, super.key});
 
   final String query;
 
   @override
-  State<SearchResultsPage> createState() => _SearchResultsPageState();
+  ConsumerState<SearchResultsPage> createState() => _SearchResultsPageState();
 }
 
-class _SearchResultsPageState extends State<SearchResultsPage> {
+class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   final Set<String> _selectedCategories = {'이어폰'};
   final Set<String> _selectedPriceRanges = {};
   final Set<String> _selectedReviewConditions = {'리뷰 50개 이상'};
@@ -44,6 +46,16 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     super.initState();
     _minPriceController = TextEditingController();
     _maxPriceController = TextEditingController();
+    _triggerSearch();
+  }
+
+  @override
+  void didUpdateWidget(SearchResultsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.query != widget.query) {
+      _resetFilters();
+      _triggerSearch();
+    }
   }
 
   @override
@@ -53,11 +65,32 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     super.dispose();
   }
 
+  void _triggerSearch() {
+    Future.microtask(
+      () => ref.read(searchViewModelProvider.notifier).search(widget.query),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = mockSearchResultsFor(widget.query);
-    _syncInitialPriceRange(state.products, state.query);
-    final products = _sortProducts(_filterProducts(state.products));
+    final searchState = ref.watch(searchViewModelProvider);
+    final products = _resolveProducts(searchState);
+    final totalCount = _resolveTotalCount(searchState, products);
+
+    _syncInitialPriceRange(products, widget.query);
+
+    final uiState = SearchResultsState(
+      query: widget.query,
+      products: _sortProducts(_filterProducts(products)),
+      quickFilters: const [],
+      categoryFilters: const [],
+      priceRanges: const [],
+      totalCount: totalCount,
+      isLoading: searchState.isLoading,
+      errorMessage: searchState is SearchFailure
+          ? searchState.failure.message
+          : null,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -65,7 +98,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         slivers: [
           SliverToBoxAdapter(
             child: SearchHeader(
-              query: state.query,
+              query: widget.query,
               onSearchSubmitted: (value) => _goToSearch(context, value),
             ),
           ),
@@ -79,8 +112,8 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
                 AppSpacing.xxxl,
               ),
               child: SearchResultsBody(
-                state: state,
-                products: products,
+                state: uiState,
+                products: uiState.products,
                 selectedQuickFilter: _selectedQuickFilter,
                 selectedCategories: _selectedCategories,
                 selectedPriceRanges: _selectedPriceRanges,
@@ -138,12 +171,23 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     );
   }
 
+  List<SearchResultProduct> _resolveProducts(SearchState state) {
+    return switch (state) {
+      SearchSuccess(:final products) => products,
+      _ => const [],
+    };
+  }
+
+  int? _resolveTotalCount(SearchState state, List<SearchResultProduct> products) {
+    return switch (state) {
+      SearchSuccess(:final totalCount) => totalCount,
+      _ => null,
+    };
+  }
+
   void _goToSearch(BuildContext context, String value) {
     final nextQuery = value.trim();
-    if (nextQuery.isEmpty) {
-      return;
-    }
-
+    if (nextQuery.isEmpty) return;
     context.goNamed(RouteNames.search, queryParameters: {'q': nextQuery});
   }
 
@@ -179,7 +223,7 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         _isPriceFilterActive = false;
         _lastPriceRangeQuery = null;
         _syncInitialPriceRange(
-          mockSearchResultsFor(widget.query).products,
+          _resolveProducts(ref.read(searchViewModelProvider)),
           widget.query,
         );
       } else {
@@ -225,10 +269,6 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       _selectedPriceRanges.clear();
       _isPriceFilterActive = false;
       _lastPriceRangeQuery = null;
-      _syncInitialPriceRange(
-        mockSearchResultsFor(widget.query).products,
-        widget.query,
-      );
       _selectedBrand = null;
       _selectedAttributeFilters.clear();
       _selectedReviewConditions
@@ -244,18 +284,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
     });
   }
 
-  List<SearchResultProduct> _filterProducts(
-    List<SearchResultProduct> products,
-  ) {
+  List<SearchResultProduct> _filterProducts(List<SearchResultProduct> products) {
     return products
         .where((product) {
           if (_selectedCategories.isNotEmpty &&
               !_selectedCategories.contains(product.categoryDisplayName)) {
-            return false;
-          }
-
-          if (_selectedBrand != null &&
-              mockBrandFor(product) != _selectedBrand) {
             return false;
           }
 
@@ -269,22 +302,11 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
           if (_isPriceFilterActive) {
             final minPrice = _parsePrice(_minPriceController.text);
             final maxPrice = _parsePrice(_maxPriceController.text);
-            if (minPrice != null && product.price < minPrice) {
-              return false;
-            }
-            if (maxPrice != null && product.price > maxPrice) {
-              return false;
-            }
+            if (minPrice != null && product.price < minPrice) return false;
+            if (maxPrice != null && product.price > maxPrice) return false;
           }
 
           if (_isRtiFilterActive && product.avgRti < _selectedRtiMinimum) {
-            return false;
-          }
-
-          if (_selectedAttributeFilters.isNotEmpty &&
-              !_selectedAttributeFilters.every(
-                (filter) => _matchesAttributeFilter(product, filter),
-              )) {
             return false;
           }
 
@@ -310,22 +332,16 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
         return sorted;
       case SearchSortOption.rti:
         sorted.sort((a, b) => b.avgRti.compareTo(a.avgRti));
-        break;
       case SearchSortOption.reviewCount:
         sorted.sort((a, b) => b.reviewCount.compareTo(a.reviewCount));
-        break;
       case SearchSortOption.sales:
         sorted.sort((a, b) => b.reviewCount.compareTo(a.reviewCount));
-        break;
       case SearchSortOption.priceLow:
         sorted.sort((a, b) => a.price.compareTo(b.price));
-        break;
       case SearchSortOption.priceHigh:
         sorted.sort((a, b) => b.price.compareTo(a.price));
-        break;
       case SearchSortOption.newest:
         sorted.sort((a, b) => b.id.compareTo(a.id));
-        break;
     }
     return sorted;
   }
@@ -350,20 +366,12 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
 
   int? _parsePrice(String value) {
     final normalized = value.replaceAll(',', '').trim();
-    if (normalized.isEmpty) {
-      return null;
-    }
-
+    if (normalized.isEmpty) return null;
     return int.tryParse(normalized);
   }
 
-  void _syncInitialPriceRange(
-    List<SearchResultProduct> products,
-    String query,
-  ) {
-    if (_isPriceFilterActive || _lastPriceRangeQuery == query) {
-      return;
-    }
+  void _syncInitialPriceRange(List<SearchResultProduct> products, String query) {
+    if (_isPriceFilterActive || _lastPriceRangeQuery == query) return;
 
     _lastPriceRangeQuery = query;
     if (products.isEmpty) {
@@ -372,14 +380,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
       return;
     }
 
-    final prices = products.map((product) => product.price);
-    final minPrice = prices.reduce((value, element) {
-      return value < element ? value : element;
-    });
-    final maxPrice = prices.reduce((value, element) {
-      return value > element ? value : element;
-    });
-
+    final prices = products.map((p) => p.price);
+    final minPrice = prices.reduce((a, b) => a < b ? a : b);
+    final maxPrice = prices.reduce((a, b) => a > b ? a : b);
     _minPriceController.text = '$minPrice';
     _maxPriceController.text = '$maxPrice';
   }
@@ -387,37 +390,9 @@ class _SearchResultsPageState extends State<SearchResultsPage> {
   bool _matchesQuickFilter(SearchResultProduct product, String label) {
     return switch (label) {
       'RTI 80+' => product.avgRti >= 80,
-      '아이폰 추천' => product.name.contains('아이오') || product.avgRti >= 80,
-      '통화 품질 우수' => product.name.contains('통화') || product.avgRating >= 4.7,
-      '무선' => product.name.contains('무선') || product.name.contains('Pods'),
+      '무선' => product.name.contains('무선'),
       '노이즈캔슬링' => product.name.contains('ANC') || product.name.contains('노이즈'),
       '커널형' => product.name.contains('커널'),
-      '오픈형' => product.name.contains('오픈') || product.id == 2,
-      '스포츠/방수' => mockTraitChipsFor(product).contains('생활방수'),
-      '게이밍' => mockTraitChipsFor(product).contains('저지연'),
-      _ => true,
-    };
-  }
-
-  bool _matchesAttributeFilter(SearchResultProduct product, String label) {
-    final traits = mockTraitChipsFor(product);
-    final badge = mockBadgeFor(product);
-
-    return switch (label) {
-      '무선' => product.name.contains('무선') || product.name.contains('Pods'),
-      '커널형' => product.name.contains('커널'),
-      '오픈형' => product.name.contains('오픈') || product.id == 2,
-      '노이즈캔슬링' => product.name.contains('ANC') || product.name.contains('노이즈'),
-      '통화 품질 우수' => product.name.contains('통화') || product.avgRating >= 4.7,
-      '생활방수' => traits.contains('생활방수'),
-      '저지연' => traits.contains('저지연'),
-      '블루투스' => product.name.contains('블루투스') || product.name.contains('Pods'),
-      'USB-C' => product.name.contains('USB-C') || product.id.isEven,
-      '로켓배송/오늘출발' => badge == '오늘출발',
-      '무료배송' => badge == '무료배송',
-      '정기배송 가능' => product.id.isEven,
-      '공식몰' => product.id == 3 || product.id == 4,
-      '스토어' => product.id != 3 && product.id != 4,
       _ => true,
     };
   }
