@@ -23,7 +23,8 @@ class ApiClient {
           handler.next(options);
         },
         onError: (error, handler) {
-          if (error.response?.statusCode == 401) {
+          if (error.response?.statusCode == 401 &&
+              tokenStore?.accessToken != null) {
             tokenStore?.clear();
           }
           handler.next(error);
