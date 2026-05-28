@@ -7,13 +7,17 @@ final appConfigProvider = Provider<AppConfig>((ref) {
   return AppConfig.fromEnvironment();
 });
 
-final authTokenStoreProvider = Provider<AuthTokenStore>((ref) {
-  return AuthTokenStore();
+final authTokenStoreProvider = NotifierProvider<AuthTokenStore, bool>(
+  AuthTokenStore.new,
+);
+
+final isLoggedInProvider = Provider<bool>((ref) {
+  return ref.watch(authTokenStoreProvider);
 });
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
     ref.watch(appConfigProvider),
-    tokenStore: ref.watch(authTokenStoreProvider),
+    tokenStore: ref.read(authTokenStoreProvider.notifier),
   );
 });
