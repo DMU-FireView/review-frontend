@@ -19,13 +19,12 @@ const _authRequiredPaths = {
 };
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final tokenStore = ref.read(authTokenStoreProvider);
   final router = GoRouter(
     initialLocation: RoutePaths.landing,
+    refreshListenable: tokenStore,
     redirect: (context, state) {
-      final isLoggedIn = ref
-          .read(authTokenStoreProvider)
-          .accessToken
-          ?.isNotEmpty ?? false;
+      final isLoggedIn = tokenStore.accessToken?.isNotEmpty ?? false;
       if (!isLoggedIn && _authRequiredPaths.contains(state.matchedLocation)) {
         return RoutePaths.login;
       }
