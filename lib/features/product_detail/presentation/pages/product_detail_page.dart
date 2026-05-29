@@ -102,6 +102,12 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   similarProducts: similarProducts,
                   selectedTab: _selectedTab,
                   onTabChanged: (tab) => setState(() => _selectedTab = tab),
+                  onFeedback: (reviewId, feedbackType) => ref
+                      .read(
+                        productDetailViewModelProvider(widget.productId)
+                            .notifier,
+                      )
+                      .submitFeedback(reviewId, feedbackType),
                 ),
               },
             ),
@@ -120,6 +126,7 @@ class _DetailContent extends StatelessWidget {
     required this.similarProducts,
     required this.selectedTab,
     required this.onTabChanged,
+    this.onFeedback,
   });
 
   final ProductDetail detail;
@@ -128,6 +135,7 @@ class _DetailContent extends StatelessWidget {
   final List<SimilarProduct> similarProducts;
   final _ProductDetailTab selectedTab;
   final ValueChanged<_ProductDetailTab> onTabChanged;
+  final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -169,10 +177,12 @@ class _DetailContent extends StatelessWidget {
               ? _MobileReviewSection(
                   reviews: reviews,
                   insight: reviewInsight,
+                  onFeedback: onFeedback,
                 )
               : _DesktopReviewSection(
                   reviews: reviews,
                   insight: reviewInsight,
+                  onFeedback: onFeedback,
                 )
         else if (selectedTab == _ProductDetailTab.priceComparison)
           PriceComparisonTable(
@@ -465,10 +475,12 @@ class _DesktopReviewSection extends StatelessWidget {
   const _DesktopReviewSection({
     required this.reviews,
     required this.insight,
+    this.onFeedback,
   });
 
   final List<ProductReview> reviews;
   final ReviewInsight insight;
+  final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +489,7 @@ class _DesktopReviewSection extends StatelessWidget {
       children: [
         Expanded(
           flex: 65,
-          child: ReviewListSection(reviews: reviews),
+          child: ReviewListSection(reviews: reviews, onFeedback: onFeedback),
         ),
         const SizedBox(width: AppSpacing.lg),
         SizedBox(
@@ -496,10 +508,12 @@ class _MobileReviewSection extends StatelessWidget {
   const _MobileReviewSection({
     required this.reviews,
     required this.insight,
+    this.onFeedback,
   });
 
   final List<ProductReview> reviews;
   final ReviewInsight insight;
+  final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -507,7 +521,7 @@ class _MobileReviewSection extends StatelessWidget {
       children: [
         ReviewInsightPanel(insight: insight, onMorePressed: () {}),
         const SizedBox(height: AppSpacing.md),
-        ReviewListSection(reviews: reviews),
+        ReviewListSection(reviews: reviews, onFeedback: onFeedback),
       ],
     );
   }

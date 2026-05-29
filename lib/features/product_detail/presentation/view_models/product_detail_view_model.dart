@@ -59,7 +59,8 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
 
   Future<void> refresh() => _load(_productId);
 
-  Future<void> submitFeedback(int reviewId, String feedbackType) async {
-    await _submitFeedback(reviewId, feedbackType);
+  Future<bool> submitFeedback(int reviewId, String feedbackType) async {
+    final result = await _submitFeedback(reviewId, feedbackType);
+    return result.when(success: (_) => true, failure: (_) => false);
   }
 }
