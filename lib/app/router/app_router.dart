@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/password_reset_page.dart';
@@ -12,9 +13,24 @@ import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
+const _authRequiredPaths = {
+  RoutePaths.home,
+  RoutePaths.dashboard,
+};
+
 final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: RoutePaths.landing,
+    redirect: (context, state) {
+      final isLoggedIn = ref
+          .read(authTokenStoreProvider)
+          .accessToken
+          ?.isNotEmpty ?? false;
+      if (!isLoggedIn && _authRequiredPaths.contains(state.matchedLocation)) {
+        return RoutePaths.login;
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: RoutePaths.landing,
