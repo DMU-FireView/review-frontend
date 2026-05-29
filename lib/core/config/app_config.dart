@@ -19,7 +19,7 @@ class AppConfig {
     return const AppConfig(
       apiBaseUrl: String.fromEnvironment(
         'API_BASE_URL',
-        defaultValue: '',
+        defaultValue: 'http://3.39.78.175',
       ),
       homeDashboardPath: String.fromEnvironment(
         'HOME_DASHBOARD_PATH',
