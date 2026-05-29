@@ -3,7 +3,7 @@ import 'package:re_view_front/features/home/domain/usecases/get_home_dashboard_u
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/view_models/home_dashboard_state.dart';
 
-class HomeDashboardViewModel extends Notifier<HomeDashboardState> {
+class HomeDashboardViewModel extends AutoDisposeNotifier<HomeDashboardState> {
   late final GetHomeDashboardUseCase _getHomeDashboardUseCase;
 
   @override
