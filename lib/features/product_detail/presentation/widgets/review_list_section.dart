@@ -8,9 +8,14 @@ import 'package:re_view_front/features/search/presentation/utils/search_formatte
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
 
 class ReviewListSection extends StatefulWidget {
-  const ReviewListSection({super.key, required this.reviews});
+  const ReviewListSection({
+    super.key,
+    required this.reviews,
+    this.onFeedback,
+  });
 
   final List<ProductReview> reviews;
+  final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
   State<ReviewListSection> createState() => _ReviewListSectionState();
@@ -65,7 +70,13 @@ class _ReviewListSectionState extends State<ReviewListSection> {
           ),
         ...reviews.map((review) => Padding(
           padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ReviewCard(review: review),
+          child: ReviewCard(
+            review: review,
+            onFeedback: widget.onFeedback != null
+                ? (feedbackType) =>
+                    widget.onFeedback!(review.id, feedbackType)
+                : null,
+          ),
         )),
         Center(
           child: OutlinedButton(
@@ -210,9 +221,14 @@ class _Divider extends StatelessWidget {
 }
 
 class ReviewCard extends StatelessWidget {
-  const ReviewCard({super.key, required this.review});
+  const ReviewCard({
+    super.key,
+    required this.review,
+    this.onFeedback,
+  });
 
   final ProductReview review;
+  final Future<bool> Function(String feedbackType)? onFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -292,10 +308,40 @@ class ReviewCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xxs),
-                Icon(
-                  Icons.more_vert,
-                  size: 18,
-                  color: AppColors.textTertiary,
+                PopupMenuButton<String>(
+                  icon: Icon(
+                    Icons.more_vert,
+                    size: 18,
+                    color: AppColors.textTertiary,
+                  ),
+                  padding: EdgeInsets.zero,
+                  itemBuilder: (_) => const [
+                    PopupMenuItem(
+                      value: 'HELPFUL',
+                      child: Text('도움이 됐어요'),
+                    ),
+                    PopupMenuItem(
+                      value: 'NOT_HELPFUL',
+                      child: Text('도움이 안 됐어요'),
+                    ),
+                  ],
+                  onSelected: onFeedback == null
+                      ? null
+                      : (value) async {
+                          final success = await onFeedback!(value);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  success
+                                      ? '피드백이 제출됐습니다.'
+                                      : '피드백 제출에 실패했습니다. 다시 시도해주세요.',
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
                 ),
               ],
             ),
