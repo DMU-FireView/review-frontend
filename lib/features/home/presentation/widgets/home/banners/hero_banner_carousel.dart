@@ -69,6 +69,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
       return;
     }
 
+    _autoTimer?.cancel();
     _currentPage = _initialPageFor(widget.items.length);
     _activeIndex = _realIndexFor(_currentPage);
     _controller.dispose();
@@ -76,6 +77,7 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
       viewportFraction: _viewportFraction,
       initialPage: _currentPage,
     );
+    _startAutoTimer();
   }
 
   @override
@@ -163,11 +165,13 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
       _activeIndex = _realIndexFor(next);
     });
     if (_controller.hasClients) {
-      _controller.animateToPage(
-        next,
-        duration: const Duration(milliseconds: 320),
-        curve: Curves.easeOutCubic,
-      );
+      try {
+        _controller.animateToPage(
+          next,
+          duration: const Duration(milliseconds: 320),
+          curve: Curves.easeOutCubic,
+        );
+      } catch (_) {}
     }
   }
 
