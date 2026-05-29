@@ -22,6 +22,12 @@ class ApiClient {
           }
           handler.next(options);
         },
+        onError: (error, handler) {
+          if (error.response?.statusCode == 401) {
+            tokenStore?.clear();
+          }
+          handler.next(error);
+        },
       ),
     );
     dio.interceptors.add(
