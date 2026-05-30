@@ -16,34 +16,29 @@ class SearchProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final rtiColor = colorFromHex(product.rtiColor);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x080F172A),
-            blurRadius: 14,
-            offset: Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xs),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x080F172A),
+              blurRadius: 14,
+              offset: Offset(0, 8),
+            ),
+          ],
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 1 / 1,
+            Expanded(
               child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  Positioned.fill(
-                    child: AppNetworkImage(
-                      url: product.imageUrl,
-                      borderRadius: AppRadius.medium,
-                    ),
-                  ),
+                  AppNetworkImage(url: product.imageUrl),
                   Positioned(
                     top: AppSpacing.xs,
                     right: AppSpacing.xs,
@@ -55,98 +50,99 @@ class SearchProductCard extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              product.platform ?? '',
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w800,
-                fontSize: 11,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              product.name,
-              softWrap: true,
-              maxLines: 2,
-              overflow: TextOverflow.visible,
-              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w900,
-                fontSize: 14,
-                height: 1.22,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.star, color: Color(0xFFF59E0B), size: 15),
-                    const SizedBox(width: AppSpacing.xxs),
-                    Text(
-                      product.avgRating.toStringAsFixed(1),
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 12,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    product.platform ?? '',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 11,
                     ),
-                    const SizedBox(width: AppSpacing.xxs),
-                    Text(
-                      '(리뷰 ${formatSearchCount(product.reviewCount)})',
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.textSecondary,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 11,
-                      ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    product.name,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 13,
+                      height: 1.22,
                     ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xxs),
-            const Spacer(),
-            const SizedBox(height: AppSpacing.xs),
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.star,
+                        color: Color(0xFFF59E0B),
+                        size: 13,
+                      ),
+                      const SizedBox(width: AppSpacing.xxs),
+                      Text(
+                        product.avgRating.toStringAsFixed(1),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xxs),
+                      Flexible(
+                        child: Text(
+                          '(리뷰 ${formatSearchCount(product.reviewCount)})',
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Text(
                     formatSearchPrice(product.price),
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.textPrimary,
                       fontWeight: FontWeight.w900,
-                      fontSize: 18,
+                      fontSize: 17,
                     ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Row(
-              children: [
-                SquareIconButton(icon: Icons.favorite_border, onPressed: () {}),
-                const SizedBox(width: AppSpacing.xs),
-                SquareIconButton(
-                  icon: Icons.shopping_cart_outlined,
-                  onPressed: () {},
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Expanded(
-                  child: ProductDetailButton(
-                    onPressed: () => context.goNamed(
-                      RouteNames.productDetail,
-                      pathParameters: {'id': product.id.toString()},
-                    ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: [
+                      SquareIconButton(
+                        icon: Icons.favorite_border,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      SquareIconButton(
+                        icon: Icons.shopping_cart_outlined,
+                        onPressed: () {},
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: ProductDetailButton(
+                          onPressed: () => context.goNamed(
+                            RouteNames.productDetail,
+                            pathParameters: {'id': product.id.toString()},
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
