@@ -432,7 +432,7 @@ class _UserProfileButtonState extends State<_UserProfileButton> {
             CompositedTransformFollower(
               link: _layerLink,
               showWhenUnlinked: false,
-              offset: const Offset(0, 48),
+              offset: const Offset(0, 8),
               targetAnchor: Alignment.bottomRight,
               followerAnchor: Alignment.topRight,
               child: GestureDetector(
