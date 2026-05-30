@@ -36,6 +36,9 @@ class _SearchBarState extends State<SearchBar> {
   bool _isFocused = false;
   bool _isHovered = false;
   List<String> _recentQueries = const [];
+  final LayerLink _layerLink = LayerLink();
+  final GlobalKey _containerKey = GlobalKey();
+  OverlayEntry? _overlayEntry;
 
   FocusNode get _effectiveFocusNode => widget.focusNode ?? _fallbackFocusNode;
 
@@ -71,10 +74,51 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   void dispose() {
+    _removeOverlay();
     _effectiveFocusNode.removeListener(_syncFocusState);
     _fallbackFocusNode.dispose();
     _controller.dispose();
     super.dispose();
+  }
+
+  void _showOverlay() {
+    _removeOverlay();
+    if (!mounted) return;
+
+    final renderBox =
+        _containerKey.currentContext?.findRenderObject() as RenderBox?;
+    final width = renderBox?.size.width ?? 500.0;
+    final products = widget.recommendedProducts.take(2).toList();
+
+    _overlayEntry = OverlayEntry(
+      builder: (context) => CompositedTransformFollower(
+        link: _layerLink,
+        showWhenUnlinked: false,
+        offset: const Offset(0, 58),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: SizedBox(
+            width: width,
+            child: _SearchSuggestionPanel(
+              keywords: widget.suggestionKeywords,
+              recentQueries: _recentQueries,
+              products: products,
+              onKeywordPressed: _submitQuery,
+              onRecentQueryPressed: _submitQuery,
+              onRecentQueryDeleted: _removeRecentQuery,
+              onRecentQueriesCleared: _clearRecentQueries,
+              onProductPressed: (product) => _submitQuery(product.name),
+            ),
+          ),
+        ),
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
   }
 
   @override
@@ -82,95 +126,77 @@ class _SearchBarState extends State<SearchBar> {
     final backgroundColor = _isHovered || _isFocused
         ? const Color(0xFFF8FAFF)
         : AppColors.surface;
-    final products = widget.recommendedProducts.take(2).toList();
 
     return MouseRegion(
       onEnter: (_) => _setHovered(true),
       onExit: (_) => _setHovered(false),
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 180),
-            curve: Curves.easeOutCubic,
-            height: 50,
-            decoration: BoxDecoration(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: _isFocused || _isHovered
-                    ? AppColors.primary
-                    : AppColors.borderStrong,
-                width: _isFocused ? 1.5 : 1,
-              ),
-              boxShadow: [
-                if (_isFocused)
-                  const BoxShadow(
-                    color: Color(0x1A2563EB),
-                    blurRadius: 18,
-                    offset: Offset(0, 8),
-                  ),
-              ],
+      child: CompositedTransformTarget(
+        link: _layerLink,
+        child: AnimatedContainer(
+          key: _containerKey,
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          height: 50,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isFocused || _isHovered
+                  ? AppColors.primary
+                  : AppColors.borderStrong,
+              width: _isFocused ? 1.5 : 1,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(15),
-              child: ColoredBox(
-                color: backgroundColor,
-                child: TextField(
-                  controller: _controller,
-                  focusNode: _effectiveFocusNode,
-                  textInputAction: TextInputAction.search,
-                  onSubmitted: _submitQuery,
-                  decoration: InputDecoration(
-                    hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
-                    hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textTertiary,
-                    ),
-                    suffixIcon: IconButton(
-                      tooltip: '검색',
-                      icon: const Icon(Icons.search, color: AppColors.primary),
-                      onPressed:
-                          widget.onSubmitted == null &&
-                              widget.onSearchPressed == null
-                          ? null
-                          : () => _submitQuery(_controller.text, byIcon: true),
-                    ),
-                    filled: true,
-                    fillColor: backgroundColor,
-                    hoverColor: backgroundColor,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.md,
-                      vertical: 13,
-                    ),
+            boxShadow: [
+              if (_isFocused)
+                const BoxShadow(
+                  color: Color(0x1A2563EB),
+                  blurRadius: 18,
+                  offset: Offset(0, 8),
+                ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: ColoredBox(
+              color: backgroundColor,
+              child: TextField(
+                controller: _controller,
+                focusNode: _effectiveFocusNode,
+                textInputAction: TextInputAction.search,
+                onSubmitted: _submitQuery,
+                decoration: InputDecoration(
+                  hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textTertiary,
                   ),
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
+                  suffixIcon: IconButton(
+                    tooltip: '검색',
+                    icon: const Icon(Icons.search, color: AppColors.primary),
+                    onPressed:
+                        widget.onSubmitted == null &&
+                            widget.onSearchPressed == null
+                        ? null
+                        : () => _submitQuery(_controller.text, byIcon: true),
                   ),
+                  filled: true,
+                  fillColor: backgroundColor,
+                  hoverColor: backgroundColor,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: 13,
+                  ),
+                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
           ),
-          if (_isFocused)
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 58,
-              child: _SearchSuggestionPanel(
-                keywords: widget.suggestionKeywords,
-                recentQueries: _recentQueries,
-                products: products,
-                onKeywordPressed: _submitQuery,
-                onRecentQueryPressed: _submitQuery,
-                onRecentQueryDeleted: _removeRecentQuery,
-                onRecentQueriesCleared: _clearRecentQueries,
-                onProductPressed: (product) => _submitQuery(product.name),
-              ),
-            ),
-        ],
+        ),
       ),
     );
   }
@@ -268,6 +294,11 @@ class _SearchBarState extends State<SearchBar> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _isFocused != nextValue) {
         setState(() => _isFocused = nextValue);
+        if (nextValue) {
+          _showOverlay();
+        } else {
+          _removeOverlay();
+        }
       }
     });
   }
