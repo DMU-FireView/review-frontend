@@ -25,6 +25,8 @@ class HomeHeader extends StatelessWidget {
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
+    this.onProfileWishPressed,
+    this.onProfileOrderPressed,
     this.onLogoutPressed,
     super.key,
   });
@@ -45,6 +47,8 @@ class HomeHeader extends StatelessWidget {
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
+  final VoidCallback? onProfileWishPressed;
+  final VoidCallback? onProfileOrderPressed;
   final VoidCallback? onLogoutPressed;
 
   @override
@@ -79,6 +83,8 @@ class HomeHeader extends StatelessWidget {
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
+                  onProfileWishPressed: onProfileWishPressed,
+                  onProfileOrderPressed: onProfileOrderPressed,
                   onLogoutPressed: onLogoutPressed,
                 )
               : _DesktopHeader(
@@ -98,6 +104,8 @@ class HomeHeader extends StatelessWidget {
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
+                  onProfileWishPressed: onProfileWishPressed,
+                  onProfileOrderPressed: onProfileOrderPressed,
                   onLogoutPressed: onLogoutPressed,
                 ),
         ),
@@ -124,6 +132,8 @@ class _DesktopHeader extends StatelessWidget {
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
+    this.onProfileWishPressed,
+    this.onProfileOrderPressed,
     this.onLogoutPressed,
   });
 
@@ -143,6 +153,8 @@ class _DesktopHeader extends StatelessWidget {
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
+  final VoidCallback? onProfileWishPressed;
+  final VoidCallback? onProfileOrderPressed;
   final VoidCallback? onLogoutPressed;
 
   @override
@@ -189,6 +201,8 @@ class _DesktopHeader extends StatelessWidget {
                     _UserProfileButton(
                       nickname: nickname,
                       onMyPagePressed: onMyPagePressed,
+                      onProfileWishPressed: onProfileWishPressed,
+                      onProfileOrderPressed: onProfileOrderPressed,
                       onLogoutPressed: onLogoutPressed,
                     ),
                     _HeaderAction(
@@ -325,6 +339,8 @@ class _MobileHeader extends StatelessWidget {
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
+    this.onProfileWishPressed,
+    this.onProfileOrderPressed,
     this.onLogoutPressed,
   });
 
@@ -339,6 +355,8 @@ class _MobileHeader extends StatelessWidget {
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
+  final VoidCallback? onProfileWishPressed;
+  final VoidCallback? onProfileOrderPressed;
   final VoidCallback? onLogoutPressed;
 
   @override
@@ -353,6 +371,8 @@ class _MobileHeader extends StatelessWidget {
               _UserProfileButton(
                 nickname: nickname,
                 onMyPagePressed: onMyPagePressed,
+                onProfileWishPressed: onProfileWishPressed,
+                onProfileOrderPressed: onProfileOrderPressed,
                 onLogoutPressed: onLogoutPressed,
                 compact: true,
               )
@@ -385,12 +405,16 @@ class _UserProfileButton extends StatefulWidget {
   const _UserProfileButton({
     this.nickname,
     this.onMyPagePressed,
+    this.onProfileWishPressed,
+    this.onProfileOrderPressed,
     this.onLogoutPressed,
     this.compact = false,
   });
 
   final String? nickname;
   final VoidCallback? onMyPagePressed;
+  final VoidCallback? onProfileWishPressed;
+  final VoidCallback? onProfileOrderPressed;
   final VoidCallback? onLogoutPressed;
   final bool compact;
 
@@ -442,6 +466,14 @@ class _UserProfileButtonState extends State<_UserProfileButton> {
                   onMyPagePressed: () {
                     _removeOverlay();
                     widget.onMyPagePressed?.call();
+                  },
+                  onProfileWishPressed: () {
+                    _removeOverlay();
+                    widget.onProfileWishPressed?.call();
+                  },
+                  onProfileOrderPressed: () {
+                    _removeOverlay();
+                    widget.onProfileOrderPressed?.call();
                   },
                   onLogoutPressed: () {
                     _removeOverlay();
@@ -533,11 +565,15 @@ class _ProfileDropdown extends StatelessWidget {
   const _ProfileDropdown({
     this.nickname,
     required this.onMyPagePressed,
+    required this.onProfileWishPressed,
+    required this.onProfileOrderPressed,
     required this.onLogoutPressed,
   });
 
   final String? nickname;
   final VoidCallback onMyPagePressed;
+  final VoidCallback onProfileWishPressed;
+  final VoidCallback onProfileOrderPressed;
   final VoidCallback onLogoutPressed;
 
   @override
@@ -618,6 +654,16 @@ class _ProfileDropdown extends StatelessWidget {
               icon: Icons.person_outline,
               label: '마이페이지',
               onTap: onMyPagePressed,
+            ),
+            _DropdownItem(
+              icon: Icons.favorite_border,
+              label: '찜한 상품',
+              onTap: onProfileWishPressed,
+            ),
+            _DropdownItem(
+              icon: Icons.receipt_long_outlined,
+              label: '주문/활동',
+              onTap: onProfileOrderPressed,
             ),
             const Divider(height: 1, color: AppColors.border),
             _DropdownItem(

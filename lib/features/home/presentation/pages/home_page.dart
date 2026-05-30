@@ -79,6 +79,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               isLoggedIn: isLoggedIn,
               nickname: nickname,
               onMyPagePressed: () => context.go(RoutePaths.login),
+              onProfileWishPressed: () => context.go(RoutePaths.login),
+              onProfileOrderPressed: () => context.go(RoutePaths.login),
               onLogoutPressed: _handleLogout,
             ),
           ),
