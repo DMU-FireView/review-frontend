@@ -1,7 +1,7 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/core/storage/web_storage.dart';
 
-class AuthTokenStore extends ChangeNotifier {
+class AuthTokenStore extends Notifier<bool> {
   static const _keyAccessToken = 'review_access_token';
   static const _keyTokenType = 'review_token_type';
 
@@ -11,12 +11,15 @@ class AuthTokenStore extends ChangeNotifier {
   String? get accessToken => _accessToken;
   String? get tokenType => _tokenType;
 
+  @override
+  bool build() => _accessToken != null;
+
   void save({required String accessToken, required String tokenType}) {
     _accessToken = accessToken;
     _tokenType = tokenType;
     WebStorage.write(_keyAccessToken, accessToken);
     WebStorage.write(_keyTokenType, tokenType);
-    notifyListeners();
+    state = true;
   }
 
   void clear() {
@@ -24,6 +27,6 @@ class AuthTokenStore extends ChangeNotifier {
     _tokenType = null;
     WebStorage.remove(_keyAccessToken);
     WebStorage.remove(_keyTokenType);
-    notifyListeners();
+    state = false;
   }
 }
