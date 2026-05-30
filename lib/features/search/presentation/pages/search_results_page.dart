@@ -83,7 +83,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
       query: widget.query,
       products: _sortProducts(_filterProducts(products)),
       quickFilters: const [],
-      categoryFilters: const [],
+      categoryFilters: _buildCategoryFilters(products),
       priceRanges: const [],
       totalCount: totalCount,
       isLoading: searchState.isLoading,
@@ -169,6 +169,18 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
         ],
       ),
     );
+  }
+
+  List<SearchFilterChipData> _buildCategoryFilters(
+    List<SearchResultProduct> products,
+  ) {
+    final counts = <String, int>{};
+    for (final p in products) {
+      counts[p.categoryDisplayName] = (counts[p.categoryDisplayName] ?? 0) + 1;
+    }
+    return counts.entries
+        .map((e) => SearchFilterChipData(label: e.key, count: e.value))
+        .toList();
   }
 
   List<SearchResultProduct> _resolveProducts(SearchState state) {

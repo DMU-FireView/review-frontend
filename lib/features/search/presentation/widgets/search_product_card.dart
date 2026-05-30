@@ -4,7 +4,6 @@ import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
-import 'package:re_view_front/features/search/presentation/data/mock_search_results.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
@@ -58,7 +57,7 @@ class SearchProductCard extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             Text(
-              mockBrandFor(product),
+              product.platform ?? '',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -110,18 +109,9 @@ class SearchProductCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                DeliveryBadge(label: mockBadgeFor(product)),
               ],
             ),
             const SizedBox(height: AppSpacing.xxs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final chip in mockTraitChipsFor(product))
-                  ProductTraitChip(label: chip),
-              ],
-            ),
             const Spacer(),
             const SizedBox(height: AppSpacing.xs),
             Row(
@@ -253,7 +243,7 @@ class ListTileDetails extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          mockBrandFor(product),
+          product.platform ?? '',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -304,9 +294,6 @@ class ListTileDetails extends StatelessWidget {
                 ),
               ],
             ),
-            DeliveryBadge(label: mockBadgeFor(product)),
-            for (final chip in mockTraitChipsFor(product))
-              ProductTraitChip(label: chip),
           ],
         ),
       ],
