@@ -13,20 +13,17 @@ import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
-const _authRequiredPaths = {
-  RoutePaths.home,
-  RoutePaths.dashboard,
-};
-
 final appRouterProvider = Provider<GoRouter>((ref) {
   final tokenStore = ref.read(authTokenStoreProvider);
   final router = GoRouter(
-    initialLocation: RoutePaths.landing,
+    initialLocation: RoutePaths.home,
     refreshListenable: tokenStore,
     redirect: (context, state) {
       final isLoggedIn = tokenStore.accessToken?.isNotEmpty ?? false;
-      if (!isLoggedIn && _authRequiredPaths.contains(state.matchedLocation)) {
-        return RoutePaths.login;
+      // 로그인 후 landing/login/signup 접근 시 홈으로 redirect
+      const authPages = {RoutePaths.landing, RoutePaths.login, RoutePaths.signup};
+      if (isLoggedIn && authPages.contains(state.matchedLocation)) {
+        return RoutePaths.home;
       }
       return null;
     },
