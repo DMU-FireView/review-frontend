@@ -29,7 +29,9 @@ class HomeDashboardViewModel extends Notifier<HomeDashboardState> {
       success: (dashboard) => dashboard.isEmpty
           ? const HomeDashboardEmpty()
           : HomeDashboardSuccess(dashboard),
-      failure: HomeDashboardFailure.new,
+      failure: (failure) => failure.statusCode == 401
+          ? const HomeDashboardEmpty()
+          : HomeDashboardFailure(failure),
     );
   }
 

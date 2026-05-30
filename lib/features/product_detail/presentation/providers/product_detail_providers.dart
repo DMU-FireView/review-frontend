@@ -11,6 +11,7 @@ final productDetailRemoteDataSourceProvider =
     Provider<ProductDetailRemoteDataSource>((ref) {
       return ProductDetailRemoteDataSourceImpl(
         apiClient: ref.watch(apiClientProvider),
+        config: ref.watch(appConfigProvider),
       );
     });
 
@@ -35,16 +36,9 @@ final getProductReviewsUseCaseProvider =
       );
     });
 
-final getReviewInsightUseCaseProvider =
-    Provider<GetReviewInsightUseCase>((ref) {
-      return GetReviewInsightUseCase(
-        ref.watch(productDetailRepositoryProvider),
-      );
-    });
-
-final getSimilarProductsUseCaseProvider =
-    Provider<GetSimilarProductsUseCase>((ref) {
-      return GetSimilarProductsUseCase(
+final submitReviewFeedbackUseCaseProvider =
+    Provider<SubmitReviewFeedbackUseCase>((ref) {
+      return SubmitReviewFeedbackUseCase(
         ref.watch(productDetailRepositoryProvider),
       );
     });
