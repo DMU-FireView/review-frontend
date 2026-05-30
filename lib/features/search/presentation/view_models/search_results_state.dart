@@ -1,8 +1,8 @@
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 
 enum SearchSortOption {
-  accuracy(label: '정확도 순', serverKey: null),
-  rti(label: 'RTI 높은순', serverKey: 'RTI_DESC'),
+  accuracy(label: '추천순', serverKey: null),
+  rti(label: 'RTI순', serverKey: 'RTI_DESC'),
   reviewCount(label: '리뷰 많은순', serverKey: 'REVIEW_COUNT_DESC'),
   sales(label: '판매 많은순', serverKey: 'SALES_DESC'),
   priceLow(label: '최저가순', serverKey: 'PRICE_ASC'),

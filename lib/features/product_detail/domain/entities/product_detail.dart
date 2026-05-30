@@ -69,6 +69,7 @@ class PriceComparison {
     required this.isLowest,
     required this.isOfficial,
     required this.linkLabel,
+    this.url,
   });
 
   final String sellerName;
@@ -78,6 +79,7 @@ class PriceComparison {
   final bool isLowest;
   final bool isOfficial;
   final String linkLabel;
+  final String? url;
 }
 
 class RtiSummary {
