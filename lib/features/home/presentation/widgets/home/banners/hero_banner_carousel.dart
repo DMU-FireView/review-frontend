@@ -155,20 +155,20 @@ class _HeroBannerCarouselState extends State<HeroBannerCarousel> {
   }
 
   void _moveBy(int delta) {
-    if (widget.items.isEmpty) {
-      return;
-    }
+    if (!mounted || widget.items.isEmpty) return;
 
     final next = widget.items.length < 2 ? 0 : _currentPage + delta;
     setState(() {
       _currentPage = next;
       _activeIndex = _realIndexFor(next);
     });
-    _controller.animateToPage(
-      next,
-      duration: const Duration(milliseconds: 320),
-      curve: Curves.easeOutCubic,
-    );
+    if (_controller.hasClients) {
+      _controller.animateToPage(
+        next,
+        duration: const Duration(milliseconds: 320),
+        curve: Curves.easeOutCubic,
+      );
+    }
   }
 
   @override
