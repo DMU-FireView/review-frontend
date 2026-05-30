@@ -3,9 +3,14 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 
 class TrendingKeywordChips extends StatelessWidget {
-  const TrendingKeywordChips({required this.keywords, super.key});
+  const TrendingKeywordChips({
+    required this.keywords,
+    this.onKeywordTap,
+    super.key,
+  });
 
   final List<String> keywords;
+  final ValueChanged<String>? onKeywordTap;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +24,13 @@ class TrendingKeywordChips extends StatelessWidget {
               runSpacing: AppSpacing.sm,
               children: [
                 for (var i = 0; i < keywords.length; i++)
-                  _KeywordChip(rank: i + 1, label: keywords[i]),
+                  _KeywordChip(
+                    rank: i + 1,
+                    label: keywords[i],
+                    onTap: onKeywordTap == null
+                        ? null
+                        : () => onKeywordTap!(keywords[i]),
+                  ),
               ],
             ),
     );
@@ -55,7 +66,26 @@ class _KeywordEmptyState extends StatelessWidget {
 }
 
 class _KeywordChip extends StatelessWidget {
-  const _KeywordChip({required this.rank, required this.label});
+  const _KeywordChip({required this.rank, required this.label, this.onTap});
+
+  final int rank;
+  final String label;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: _ChipContent(rank: rank, label: label),
+      ),
+    );
+  }
+}
+
+class _ChipContent extends StatelessWidget {
+  const _ChipContent({required this.rank, required this.label});
 
   final int rank;
   final String label;

@@ -9,51 +9,60 @@ class ProductRecommendationSection extends StatelessWidget {
   const ProductRecommendationSection({
     required this.products,
     this.onProductTap,
+    this.onViewAll,
+    this.showHeader = true,
     super.key,
   });
 
   final List<HomeProductData> products;
   final ValueChanged<HomeProductData>? onProductTap;
+  final VoidCallback? onViewAll;
+  final bool showHeader;
 
   @override
   Widget build(BuildContext context) {
-    return _SectionShell(
-      title: '에디터가 고른 리뷰 추천',
-      icon: Icons.verified_outlined,
-      child: products.isEmpty
-          ? const _ProductEmptyState()
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final columns = _columnsFor(constraints.maxWidth);
-                final cardWidth = (constraints.maxWidth -
-                        (columns - 1) * AppSpacing.md) /
-                    columns;
-                // text area: padding(32) + name 2-line(34) + gaps+store+price+rating(72)
-                const textAreaHeight = 138.0;
-                final aspectRatio = cardWidth / (cardWidth + textAreaHeight);
+    final grid = products.isEmpty
+        ? const _ProductEmptyState()
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = _columnsFor(constraints.maxWidth);
+              final cardWidth =
+                  (constraints.maxWidth - (columns - 1) * AppSpacing.md) /
+                  columns;
+              const imageAspectRatio = 16.0 / 9.0;
+              final imageHeight = cardWidth / imageAspectRatio;
+              const textAreaHeight = 170.0;
 
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: AppSpacing.md,
-                    crossAxisSpacing: AppSpacing.md,
-                    childAspectRatio: aspectRatio,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductCard(
-                      product: product,
-                      onTap: onProductTap == null
-                          ? null
-                          : () => onProductTap?.call(product),
-                    );
-                  },
-                );
-              },
-            ),
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: AppSpacing.md,
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisExtent: imageHeight + textAreaHeight,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return ProductCard(
+                    product: product,
+                    onTap: onProductTap == null
+                        ? null
+                        : () => onProductTap?.call(product),
+                  );
+                },
+              );
+            },
+          );
+
+    if (!showHeader) return grid;
+
+    return _SectionShell(
+      title: '에디터가 고른 리뷰 기반 추천 상품',
+      icon: Icons.verified_outlined,
+      onViewAll: onViewAll,
+      child: grid,
     );
   }
 }
@@ -117,11 +126,10 @@ class _ProductEmptyState extends StatelessWidget {
 }
 
 int _columnsFor(double width) {
-  if (width < 400) return 2;
-  if (width < 640) return 3;
-  if (width < 900) return 4;
-  if (width < 1200) return 5;
-  return 6;
+  if (width < 480) return 2;
+  if (width < 720) return 3;
+  if (width < 1020) return 4;
+  return 5;
 }
 
 class _SectionShell extends StatelessWidget {
@@ -129,11 +137,13 @@ class _SectionShell extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.child,
+    this.onViewAll,
   });
 
   final String title;
   final IconData icon;
   final Widget child;
+  final VoidCallback? onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +160,33 @@ class _SectionShell extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
+            if (onViewAll != null)
+              TextButton(
+                onPressed: onViewAll,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                    vertical: AppSpacing.xxs,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.textSecondary,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '전체보기',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.chevron_right, size: 16),
+                  ],
+                ),
+              ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
