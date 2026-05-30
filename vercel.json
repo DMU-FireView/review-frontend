@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "https://api.been.kr/api/$1"
+      "destination": "https://api.beens.kr/api/$1"
     },
     {
       "source": "/oauth2/(.*)",
-      "destination": "https://api.been.kr/oauth2/$1"
+      "destination": "https://api.beens.kr/oauth2/$1"
     },
     {
       "source": "/(.*)",
