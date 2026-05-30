@@ -4,6 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/review_rti_analysis_dialog.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
 
@@ -52,41 +53,66 @@ class _ReviewListSectionState extends State<ReviewListSection> {
           onPhotoOnlyChanged: (v) => setState(() => _photoOnly = v),
         ),
         const SizedBox(height: AppSpacing.md),
-        if (reviews.isEmpty)
+        if (widget.reviews.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.rate_review_outlined,
+                    size: 40,
+                    color: AppColors.textTertiary,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    '아직 등록된 리뷰가 없습니다.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (reviews.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             child: Center(
               child: Text(
                 '해당 조건에 맞는 리뷰가 없습니다.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          )
+        else ...[
+          ...reviews.map(
+            (review) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: ReviewCard(
+                review: review,
+                onFeedback: widget.onFeedback != null
+                    ? (feedbackType) =>
+                          widget.onFeedback!(review.id, feedbackType)
+                    : null,
               ),
             ),
           ),
-        ...reviews.map(
-          (review) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: ReviewCard(
-              review: review,
-              onFeedback: widget.onFeedback != null
-                  ? (feedbackType) =>
-                        widget.onFeedback!(review.id, feedbackType)
-                  : null,
+          Center(
+            child: OutlinedButton(
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.borderStrong),
+                shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+                foregroundColor: AppColors.textPrimary,
+              ),
+              child: const Text('리뷰 더보기'),
             ),
           ),
-        ),
-        Center(
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.borderStrong),
-              shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
-              foregroundColor: AppColors.textPrimary,
-            ),
-            child: const Text('리뷰 더보기'),
-          ),
-        ),
+        ],
       ],
     );
   }
@@ -293,14 +319,12 @@ class ReviewCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 GestureDetector(
-                  onTap: review.rtiDetail != null
-                      ? () => showReviewRtiAnalysisDialog(context, review)
-                      : null,
+                  onTap: () => showReviewRtiAnalysisDialog(context, review),
                   child: _RtiBadgeSmall(
                     score: review.rtiScore,
                     label: review.rtiLabel,
                     color: rtiColor,
-                    hasDetail: review.rtiDetail != null,
+                    hasDetail: true,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xxs),
@@ -346,6 +370,16 @@ class ReviewCard extends StatelessWidget {
                 height: 1.6,
               ),
             ),
+            if (review.reasons.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: review.reasons
+                    .map((r) => _ReasonChip(label: r, color: rtiColor))
+                    .toList(),
+              ),
+            ],
             if (review.imageUrls.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               SizedBox(
@@ -360,13 +394,9 @@ class ReviewCard extends StatelessWidget {
                         _showImageDialog(context, review.imageUrls, index),
                     child: ClipRRect(
                       borderRadius: AppRadius.small,
-                      child: Image.network(
-                        review.imageUrls[index],
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) =>
-                            const SizedBox.square(dimension: 80),
+                      child: SizedBox.square(
+                        dimension: 80,
+                        child: AppNetworkImage(url: review.imageUrls[index]),
                       ),
                     ),
                   ),
@@ -456,7 +486,7 @@ class _RtiBadgeSmall extends StatelessWidget {
                 Icon(Icons.verified_user_outlined, size: 11, color: color),
                 const SizedBox(width: 2),
                 Text(
-                  'RTI $score',
+                  score > 0 ? 'RTI $score' : 'RTI -',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: color,
                     fontWeight: FontWeight.w900,
@@ -465,6 +495,7 @@ class _RtiBadgeSmall extends StatelessWidget {
                 ),
               ],
             ),
+            if (label.isNotEmpty)
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -483,6 +514,35 @@ class _RtiBadgeSmall extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReasonChip extends StatelessWidget {
+  const _ReasonChip({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+            fontSize: 11,
+          ),
         ),
       ),
     );
@@ -546,18 +606,9 @@ class _ReviewImageDialogState extends State<_ReviewImageDialog> {
                 Flexible(
                   child: ClipRRect(
                     borderRadius: AppRadius.medium,
-                    child: Image.network(
-                      widget.imageUrls[_current],
+                    child: AppNetworkImage(
+                      url: widget.imageUrls[_current],
                       fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const SizedBox(
-                        width: 300,
-                        height: 300,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 48,
-                          color: Colors.white38,
-                        ),
-                      ),
                     ),
                   ),
                 ),
