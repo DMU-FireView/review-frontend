@@ -1,19 +1,23 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/storage/web_storage.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 
 const _recentSearchStorageKey = 'home_recent_search_queries';
+const _suggestionPanelPlaceholder = '__review_suggestion_panel_placeholder__';
 
 class SearchBar extends StatefulWidget {
   const SearchBar({
     this.focusNode,
     this.initialValue,
-    this.suggestionKeywords = const [],
+    this.popularKeywords = const [],
     this.recommendedProducts = const [],
+    this.onSuggestionsRequested,
     this.onSubmitted,
     this.onSearchPressed,
     super.key,
@@ -21,8 +25,9 @@ class SearchBar extends StatefulWidget {
 
   final FocusNode? focusNode;
   final String? initialValue;
-  final List<String> suggestionKeywords;
+  final List<String> popularKeywords;
   final List<HomeProductData> recommendedProducts;
+  final Future<List<String>> Function(String query)? onSuggestionsRequested;
   final ValueChanged<String>? onSubmitted;
   final ValueChanged<String>? onSearchPressed;
 
@@ -33,14 +38,10 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _controller;
   late final FocusNode _fallbackFocusNode;
-  final _searchBarKey = GlobalKey();
-  OverlayEntry? _suggestionOverlayEntry;
   bool _isFocused = false;
   bool _isHovered = false;
   List<String> _recentQueries = const [];
-  final LayerLink _layerLink = LayerLink();
-  final GlobalKey _containerKey = GlobalKey();
-  OverlayEntry? _overlayEntry;
+  List<String> _relatedKeywords = const [];
 
   FocusNode get _effectiveFocusNode => widget.focusNode ?? _fallbackFocusNode;
 
@@ -76,52 +77,10 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   void dispose() {
-    _hideSuggestionsOverlay();
-    _removeOverlay();
     _effectiveFocusNode.removeListener(_syncFocusState);
     _fallbackFocusNode.dispose();
     _controller.dispose();
     super.dispose();
-  }
-
-  void _showOverlay() {
-    _removeOverlay();
-    if (!mounted) return;
-
-    final renderBox =
-        _containerKey.currentContext?.findRenderObject() as RenderBox?;
-    final width = renderBox?.size.width ?? 500.0;
-    final products = widget.recommendedProducts.take(2).toList();
-
-    _overlayEntry = OverlayEntry(
-      builder: (context) => CompositedTransformFollower(
-        link: _layerLink,
-        showWhenUnlinked: false,
-        offset: const Offset(0, 58),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: SizedBox(
-            width: width,
-            child: _SearchSuggestionPanel(
-              keywords: widget.suggestionKeywords,
-              recentQueries: _recentQueries,
-              products: products,
-              onKeywordPressed: _submitQuery,
-              onRecentQueryPressed: _submitQuery,
-              onRecentQueryDeleted: _removeRecentQuery,
-              onRecentQueriesCleared: _clearRecentQueries,
-              onProductPressed: (product) => _submitQuery(product.name),
-            ),
-          ),
-        ),
-      ),
-    );
-    Overlay.of(context).insert(_overlayEntry!);
-  }
-
-  void _removeOverlay() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
   }
 
   @override
@@ -131,7 +90,6 @@ class _SearchBarState extends State<SearchBar> {
         : AppColors.surface;
 
     return MouseRegion(
-      key: _searchBarKey,
       onEnter: (_) => _setHovered(true),
       onExit: (_) => _setHovered(false),
       child: AnimatedContainer(
@@ -160,39 +118,66 @@ class _SearchBarState extends State<SearchBar> {
           borderRadius: BorderRadius.circular(15),
           child: ColoredBox(
             color: backgroundColor,
-            child: TextField(
+            child: TypeAheadField<String>(
               controller: _controller,
               focusNode: _effectiveFocusNode,
-              textInputAction: TextInputAction.search,
-              onSubmitted: _submitQuery,
-              decoration: InputDecoration(
-                hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
-                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textTertiary,
+              debounceDuration: const Duration(milliseconds: 300),
+              hideOnEmpty: false,
+              hideOnError: false,
+              hideOnLoading: false,
+              retainOnLoading: true,
+              hideOnSelect: true,
+              offset: const Offset(0, 8),
+              constraints: const BoxConstraints(maxHeight: 520),
+              suggestionsCallback: _loadRelatedKeywords,
+              onSelected: _submitQuery,
+              itemBuilder: (context, keyword) {
+                if (keyword == _suggestionPanelPlaceholder) {
+                  return const SizedBox.shrink();
+                }
+
+                return const SizedBox.shrink();
+              },
+              listBuilder: (context, children) => _buildSuggestionPanel(),
+              loadingBuilder: (context) =>
+                  _buildSuggestionPanel(isLoadingRelated: true),
+              emptyBuilder: (context) => _buildSuggestionPanel(),
+              errorBuilder: (context, error) => _buildSuggestionPanel(),
+              decorationBuilder: (context, child) => child,
+              builder: (context, controller, focusNode) => TextField(
+                controller: controller,
+                focusNode: focusNode,
+                textInputAction: TextInputAction.search,
+                onSubmitted: _submitQuery,
+                decoration: InputDecoration(
+                  hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
+                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textTertiary,
+                  ),
+                  suffixIcon: IconButton(
+                    tooltip: '검색',
+                    icon: const Icon(Icons.search, color: AppColors.primary),
+                    onPressed:
+                        widget.onSubmitted == null &&
+                            widget.onSearchPressed == null
+                        ? null
+                        : () => _submitQuery(controller.text, byIcon: true),
+                  ),
+                  filled: true,
+                  fillColor: backgroundColor,
+                  hoverColor: backgroundColor,
+                  border: InputBorder.none,
+                  enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: 13,
+                  ),
                 ),
-                suffixIcon: IconButton(
-                  tooltip: '검색',
-                  icon: const Icon(Icons.search, color: AppColors.primary),
-                  onPressed:
-                      widget.onSubmitted == null &&
-                          widget.onSearchPressed == null
-                      ? null
-                      : () => _submitQuery(_controller.text, byIcon: true),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
                 ),
-                filled: true,
-                fillColor: backgroundColor,
-                hoverColor: backgroundColor,
-                border: InputBorder.none,
-                enabledBorder: InputBorder.none,
-                focusedBorder: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.md,
-                  vertical: 13,
-                ),
-              ),
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -230,7 +215,6 @@ class _SearchBarState extends State<SearchBar> {
     _writeRecentQueries(nextQueries);
     if (mounted) {
       setState(() => _recentQueries = nextQueries);
-      _suggestionOverlayEntry?.markNeedsBuild();
     }
   }
 
@@ -240,13 +224,11 @@ class _SearchBarState extends State<SearchBar> {
         .toList(growable: false);
     _writeRecentQueries(nextQueries);
     setState(() => _recentQueries = nextQueries);
-    _suggestionOverlayEntry?.markNeedsBuild();
   }
 
   void _clearRecentQueries() {
     WebStorage.remove(_recentSearchStorageKey);
     setState(() => _recentQueries = const []);
-    _suggestionOverlayEntry?.markNeedsBuild();
   }
 
   List<String> _readRecentQueries() {
@@ -299,75 +281,53 @@ class _SearchBarState extends State<SearchBar> {
       return;
     }
 
-    if (nextValue) {
-      _showSuggestionsOverlay();
-    } else {
-      _hideSuggestionsOverlay();
-    }
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _isFocused != nextValue) {
         setState(() => _isFocused = nextValue);
-        if (nextValue) {
-          _showOverlay();
-        } else {
-          _removeOverlay();
-        }
       }
     });
   }
 
-  void _showSuggestionsOverlay() {
-    if (_suggestionOverlayEntry != null) {
-      _suggestionOverlayEntry?.markNeedsBuild();
-      return;
+  Future<List<String>> _loadRelatedKeywords(String pattern) async {
+    final query = pattern.trim();
+    if (query.length < 2 || widget.onSuggestionsRequested == null) {
+      if (_relatedKeywords.isNotEmpty && mounted) {
+        setState(() => _relatedKeywords = const []);
+      }
+      return const [_suggestionPanelPlaceholder];
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted ||
-          !_effectiveFocusNode.hasFocus ||
-          _suggestionOverlayEntry != null) {
-        return;
+    try {
+      final keywords = await widget.onSuggestionsRequested!(query);
+      final visibleKeywords = keywords
+          .map((keyword) => keyword.trim())
+          .where((keyword) => keyword.isNotEmpty)
+          .take(6)
+          .toList(growable: false);
+
+      if (mounted && _controller.text.trim() == query) {
+        setState(() => _relatedKeywords = visibleKeywords);
       }
 
-      final overlay = Overlay.maybeOf(context);
-      final renderBox =
-          _searchBarKey.currentContext?.findRenderObject() as RenderBox?;
-      if (overlay == null || renderBox == null || !renderBox.hasSize) {
-        return;
+      if (visibleKeywords.isEmpty) {
+        return const [_suggestionPanelPlaceholder];
       }
-
-      _suggestionOverlayEntry = OverlayEntry(
-        builder: (context) {
-          final renderBox =
-              _searchBarKey.currentContext?.findRenderObject() as RenderBox?;
-          if (renderBox == null || !renderBox.hasSize) {
-            return const SizedBox.shrink();
-          }
-
-          final offset = renderBox.localToGlobal(Offset.zero);
-          return Positioned(
-            left: offset.dx,
-            top: offset.dy + renderBox.size.height + 8,
-            width: renderBox.size.width,
-            child: TextFieldTapRegion(child: _buildSuggestionPanel()),
-          );
-        },
-      );
-      overlay.insert(_suggestionOverlayEntry!);
-    });
+      return visibleKeywords;
+    } catch (_) {
+      if (mounted && _controller.text.trim() == query) {
+        setState(() => _relatedKeywords = const []);
+      }
+      return const [_suggestionPanelPlaceholder];
+    }
   }
 
-  void _hideSuggestionsOverlay() {
-    _suggestionOverlayEntry?.remove();
-    _suggestionOverlayEntry = null;
-  }
-
-  Widget _buildSuggestionPanel() {
+  Widget _buildSuggestionPanel({bool isLoadingRelated = false}) {
     return _SearchSuggestionPanel(
-      keywords: widget.suggestionKeywords,
+      relatedKeywords: _relatedKeywords,
+      popularKeywords: widget.popularKeywords,
       recentQueries: _recentQueries,
       products: widget.recommendedProducts.take(2).toList(),
+      isLoadingRelated: isLoadingRelated,
       onKeywordPressed: _submitQuery,
       onRecentQueryPressed: _submitQuery,
       onRecentQueryDeleted: _removeRecentQuery,
@@ -379,9 +339,11 @@ class _SearchBarState extends State<SearchBar> {
 
 class _SearchSuggestionPanel extends StatelessWidget {
   const _SearchSuggestionPanel({
-    required this.keywords,
+    required this.relatedKeywords,
+    required this.popularKeywords,
     required this.recentQueries,
     required this.products,
+    required this.isLoadingRelated,
     required this.onKeywordPressed,
     required this.onRecentQueryPressed,
     required this.onRecentQueryDeleted,
@@ -389,9 +351,11 @@ class _SearchSuggestionPanel extends StatelessWidget {
     required this.onProductPressed,
   });
 
-  final List<String> keywords;
+  final List<String> relatedKeywords;
+  final List<String> popularKeywords;
   final List<String> recentQueries;
   final List<HomeProductData> products;
+  final bool isLoadingRelated;
   final ValueChanged<String> onKeywordPressed;
   final ValueChanged<String> onRecentQueryPressed;
   final ValueChanged<String> onRecentQueryDeleted;
@@ -400,7 +364,12 @@ class _SearchSuggestionPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final visibleKeywords = keywords
+    final visibleRelatedKeywords = relatedKeywords
+        .map((keyword) => keyword.trim())
+        .where((keyword) => keyword.isNotEmpty)
+        .take(6)
+        .toList();
+    final visiblePopularKeywords = popularKeywords
         .map((keyword) => keyword.trim())
         .where((keyword) => keyword.isNotEmpty)
         .take(6)
@@ -417,7 +386,7 @@ class _SearchSuggestionPanel extends StatelessWidget {
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: AppColors.border),
         ),
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(AppSpacing.md),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -432,19 +401,19 @@ class _SearchSuggestionPanel extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
-              if (visibleKeywords.isEmpty)
-                const _PanelEmptyRow(message: '연관 검색어 API 연결 대기 중')
+              if (isLoadingRelated)
+                visibleRelatedKeywords.isEmpty
+                    ? const _PanelEmptyRow(message: '연관 검색어를 불러오는 중입니다.')
+                    : _KeywordWrap(
+                        keywords: visibleRelatedKeywords,
+                        onKeywordPressed: onKeywordPressed,
+                      )
+              else if (visibleRelatedKeywords.isEmpty)
+                const _PanelEmptyRow(message: '두 글자 이상 입력하면 연관 검색어가 표시됩니다.')
               else
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    for (final keyword in visibleKeywords)
-                      _KeywordChip(
-                        label: keyword,
-                        onPressed: () => onKeywordPressed(keyword),
-                      ),
-                  ],
+                _KeywordWrap(
+                  keywords: visibleRelatedKeywords,
+                  onKeywordPressed: onKeywordPressed,
                 ),
               const SizedBox(height: AppSpacing.md),
               const Divider(height: 1, color: AppColors.border),
@@ -488,7 +457,13 @@ class _SearchSuggestionPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               const _PanelSectionTitle(title: '인기 검색'),
               const SizedBox(height: AppSpacing.sm),
-              const _PanelEmptyRow(message: '인기 검색 API 연결 대기 중'),
+              if (visiblePopularKeywords.isEmpty)
+                const _PanelEmptyRow(message: '인기 검색 API 연결 대기 중')
+              else
+                _KeywordWrap(
+                  keywords: visiblePopularKeywords,
+                  onKeywordPressed: onKeywordPressed,
+                ),
               const SizedBox(height: AppSpacing.md),
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: AppSpacing.md),
@@ -562,6 +537,28 @@ class _PanelEmptyRow extends StatelessWidget {
   }
 }
 
+class _KeywordWrap extends StatelessWidget {
+  const _KeywordWrap({required this.keywords, required this.onKeywordPressed});
+
+  final List<String> keywords;
+  final ValueChanged<String> onKeywordPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppSpacing.xs,
+      runSpacing: AppSpacing.xs,
+      children: [
+        for (final keyword in keywords)
+          _KeywordChip(
+            label: keyword,
+            onPressed: () => onKeywordPressed(keyword),
+          ),
+      ],
+    );
+  }
+}
+
 class _KeywordChip extends StatelessWidget {
   const _KeywordChip({required this.label, required this.onPressed});
 
@@ -570,17 +567,17 @@ class _KeywordChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ActionChip(
-      label: Text(label),
+    return _PlainPanelChip(
       onPressed: onPressed,
-      visualDensity: VisualDensity.standard,
-      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.w600,
+      child: Text(
+        label,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: AppColors.textPrimary,
+          fontWeight: FontWeight.w600,
+        ),
       ),
-      backgroundColor: AppColors.surface,
-      side: const BorderSide(color: AppColors.border),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
     );
   }
 }
@@ -598,25 +595,74 @@ class _RecentSearchChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InputChip(
-      avatar: const Icon(
-        Icons.access_time,
-        size: 14,
-        color: AppColors.textTertiary,
-      ),
-      label: Text(label),
+    return _PlainPanelChip(
       onPressed: onPressed,
-      onDeleted: onDeleted,
-      deleteIcon: const Icon(Icons.close, size: 14),
-      visualDensity: VisualDensity.compact,
-      labelStyle: Theme.of(context).textTheme.labelMedium?.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.w600,
-      ),
       backgroundColor: const Color(0xFFF8FAFC),
-      deleteIconColor: AppColors.textTertiary,
-      side: const BorderSide(color: AppColors.border),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.access_time,
+            size: 14,
+            color: AppColors.textTertiary,
+          ),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
+          InkWell(
+            borderRadius: BorderRadius.circular(999),
+            onTap: onDeleted,
+            child: const Padding(
+              padding: EdgeInsets.all(2),
+              child: Icon(Icons.close, size: 14, color: AppColors.textTertiary),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlainPanelChip extends StatelessWidget {
+  const _PlainPanelChip({
+    required this.child,
+    required this.onPressed,
+    this.backgroundColor = AppColors.surface,
+  });
+
+  final Widget child;
+  final VoidCallback onPressed;
+  final Color backgroundColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 220),
+      child: Material(
+        color: backgroundColor,
+        shape: const StadiumBorder(side: BorderSide(color: AppColors.border)),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onPressed,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: 8,
+            ),
+            child: child,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -635,76 +681,85 @@ class _SuggestedProductTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final rtiLabel = product.rtiLabel.isEmpty ? 'RTI 확인 중' : product.rtiLabel;
 
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onPressed,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-        child: Row(
-          children: [
-            Container(
-              width: 46,
-              height: 46,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: const Color(0xFFF1F5F9),
-                borderRadius: BorderRadius.circular(12),
+    return SizedBox(
+      height: 58,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: onPressed,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+          child: Row(
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.inventory_2_outlined,
+                  color: AppColors.primary,
+                  size: 22,
+                ),
               ),
-              child: const Icon(
-                Icons.inventory_2_outlined,
-                color: AppColors.primary,
-                size: 22,
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      product.label.isEmpty ? '신뢰도 분석 상품' : product.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              const SizedBox(width: AppSpacing.sm),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    product.name,
+                    rtiLabel,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w800,
+                    style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    product.label.isEmpty ? '신뢰도 분석 상품' : product.label,
+                    product.priceLabel,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w800,
                     ),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(width: AppSpacing.sm),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  rtiLabel,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  product.priceLabel,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
