@@ -8,11 +8,7 @@ import 'package:re_view_front/features/search/presentation/utils/search_formatte
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
 
 class ReviewListSection extends StatefulWidget {
-  const ReviewListSection({
-    super.key,
-    required this.reviews,
-    this.onFeedback,
-  });
+  const ReviewListSection({super.key, required this.reviews, this.onFeedback});
 
   final List<ProductReview> reviews;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
@@ -62,22 +58,24 @@ class _ReviewListSectionState extends State<ReviewListSection> {
             child: Center(
               child: Text(
                 '해당 조건에 맞는 리뷰가 없습니다.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
               ),
             ),
           ),
-        ...reviews.map((review) => Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
-          child: ReviewCard(
-            review: review,
-            onFeedback: widget.onFeedback != null
-                ? (feedbackType) =>
-                    widget.onFeedback!(review.id, feedbackType)
-                : null,
+        ...reviews.map(
+          (review) => Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
+            child: ReviewCard(
+              review: review,
+              onFeedback: widget.onFeedback != null
+                  ? (feedbackType) =>
+                        widget.onFeedback!(review.id, feedbackType)
+                  : null,
+            ),
           ),
-        )),
+        ),
         Center(
           child: OutlinedButton(
             onPressed: () {},
@@ -221,11 +219,7 @@ class _Divider extends StatelessWidget {
 }
 
 class ReviewCard extends StatelessWidget {
-  const ReviewCard({
-    super.key,
-    required this.review,
-    this.onFeedback,
-  });
+  const ReviewCard({super.key, required this.review, this.onFeedback});
 
   final ProductReview review;
   final Future<bool> Function(String feedbackType)? onFeedback;
@@ -275,7 +269,9 @@ class ReviewCard extends StatelessWidget {
                         children: [
                           for (var i = 0; i < 5; i++)
                             Icon(
-                              i < review.rating ? Icons.star : Icons.star_border,
+                              i < review.rating
+                                  ? Icons.star
+                                  : Icons.star_border,
                               color: const Color(0xFFF59E0B),
                               size: 13,
                             ),
@@ -316,10 +312,7 @@ class ReviewCard extends StatelessWidget {
                   ),
                   padding: EdgeInsets.zero,
                   itemBuilder: (_) => const [
-                    PopupMenuItem(
-                      value: 'HELPFUL',
-                      child: Text('도움이 됐어요'),
-                    ),
+                    PopupMenuItem(value: 'HELPFUL', child: Text('도움이 됐어요')),
                     PopupMenuItem(
                       value: 'NOT_HELPFUL',
                       child: Text('도움이 안 됐어요'),
@@ -360,14 +353,11 @@ class ReviewCard extends StatelessWidget {
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: review.imageUrls.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(width: AppSpacing.xs),
                   itemBuilder: (context, index) => GestureDetector(
-                    onTap: () => _showImageDialog(
-                      context,
-                      review.imageUrls,
-                      index,
-                    ),
+                    onTap: () =>
+                        _showImageDialog(context, review.imageUrls, index),
                     child: ClipRRect(
                       borderRadius: AppRadius.small,
                       child: Image.network(
@@ -375,7 +365,7 @@ class ReviewCard extends StatelessWidget {
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
+                        errorBuilder: (_, _, _) =>
                             const SizedBox.square(dimension: 80),
                       ),
                     ),
@@ -506,10 +496,8 @@ void _showImageDialog(
 ) {
   showDialog<void>(
     context: context,
-    builder: (_) => _ReviewImageDialog(
-      imageUrls: imageUrls,
-      initialIndex: initialIndex,
-    ),
+    builder: (_) =>
+        _ReviewImageDialog(imageUrls: imageUrls, initialIndex: initialIndex),
   );
 }
 
@@ -561,11 +549,14 @@ class _ReviewImageDialogState extends State<_ReviewImageDialog> {
                     child: Image.network(
                       widget.imageUrls[_current],
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const SizedBox(
+                      errorBuilder: (_, _, _) => const SizedBox(
                         width: 300,
                         height: 300,
-                        child: Icon(Icons.broken_image_outlined,
-                            size: 48, color: Colors.white38),
+                        child: Icon(
+                          Icons.broken_image_outlined,
+                          size: 48,
+                          color: Colors.white38,
+                        ),
                       ),
                     ),
                   ),
