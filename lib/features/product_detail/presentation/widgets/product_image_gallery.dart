@@ -56,11 +56,8 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
           children: [
             GestureDetector(
               onTap: images.isNotEmpty
-                  ? () => _showProductImageDialog(
-                        context,
-                        images,
-                        _selectedIndex,
-                      )
+                  ? () =>
+                        _showProductImageDialog(context, images, _selectedIndex)
                   : null,
               child: AspectRatio(
                 aspectRatio: 1,
@@ -76,7 +73,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                         ? Image.network(
                             images[_selectedIndex],
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
+                            errorBuilder: (_, _, _) =>
                                 const ColoredBox(color: AppColors.surfaceMuted),
                           )
                         : const ColoredBox(color: AppColors.surfaceMuted),
@@ -134,7 +131,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: images.length,
-              separatorBuilder: (_, __) => const SizedBox(width: AppSpacing.xs),
+              separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.xs),
               itemBuilder: (context, index) {
                 final isSelected = index == _selectedIndex;
                 return GestureDetector(
@@ -156,7 +153,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                         child: Image.network(
                           images[index],
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          errorBuilder: (_, _, _) =>
                               const ColoredBox(color: AppColors.surfaceMuted),
                         ),
                       ),
@@ -214,9 +211,7 @@ class _WishlistButtonState extends State<_WishlistButton> {
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.9),
         shape: BoxShape.circle,
-        boxShadow: const [
-          BoxShadow(color: Color(0x1A000000), blurRadius: 8),
-        ],
+        boxShadow: const [BoxShadow(color: Color(0x1A000000), blurRadius: 8)],
       ),
       child: SizedBox.square(
         dimension: 40,
@@ -270,10 +265,8 @@ void _showProductImageDialog(
 ) {
   showDialog<void>(
     context: context,
-    builder: (_) => _ProductImageDialog(
-      imageUrls: imageUrls,
-      initialIndex: initialIndex,
-    ),
+    builder: (_) =>
+        _ProductImageDialog(imageUrls: imageUrls, initialIndex: initialIndex),
   );
 }
 
@@ -325,7 +318,7 @@ class _ProductImageDialogState extends State<_ProductImageDialog> {
                     child: Image.network(
                       widget.imageUrls[_current],
                       fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) => const SizedBox(
+                      errorBuilder: (_, _, _) => const SizedBox(
                         width: 300,
                         height: 300,
                         child: Icon(
