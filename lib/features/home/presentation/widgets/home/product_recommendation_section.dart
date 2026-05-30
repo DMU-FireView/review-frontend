@@ -10,55 +10,59 @@ class ProductRecommendationSection extends StatelessWidget {
     required this.products,
     this.onProductTap,
     this.onViewAll,
+    this.showHeader = true,
     super.key,
   });
 
   final List<HomeProductData> products;
   final ValueChanged<HomeProductData>? onProductTap;
   final VoidCallback? onViewAll;
+  final bool showHeader;
 
   @override
   Widget build(BuildContext context) {
+    final grid = products.isEmpty
+        ? const _ProductEmptyState()
+        : LayoutBuilder(
+            builder: (context, constraints) {
+              final columns = _columnsFor(constraints.maxWidth);
+              final cardWidth =
+                  (constraints.maxWidth - (columns - 1) * AppSpacing.md) /
+                  columns;
+              const imageAspectRatio = 4.0 / 3.0;
+              final imageHeight = cardWidth / imageAspectRatio;
+              const textAreaHeight = 180.0;
+
+              return GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: columns,
+                  mainAxisSpacing: AppSpacing.md,
+                  crossAxisSpacing: AppSpacing.md,
+                  mainAxisExtent: imageHeight + textAreaHeight,
+                ),
+                itemCount: products.length,
+                itemBuilder: (context, index) {
+                  final product = products[index];
+                  return ProductCard(
+                    product: product,
+                    onTap: onProductTap == null
+                        ? null
+                        : () => onProductTap?.call(product),
+                  );
+                },
+              );
+            },
+          );
+
+    if (!showHeader) return grid;
+
     return _SectionShell(
-      title: '에디터가 고른 리뷰 추천',
+      title: '에디터가 고른 리뷰 기반 추천 상품',
       icon: Icons.verified_outlined,
       onViewAll: onViewAll,
-      child: products.isEmpty
-          ? const _ProductEmptyState()
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final columns = _columnsFor(constraints.maxWidth);
-                final cardWidth = (constraints.maxWidth -
-                        (columns - 1) * AppSpacing.md) /
-                    columns;
-                const imageAspectRatio = 4.0 / 3.0;
-                final imageHeight = cardWidth / imageAspectRatio;
-                // padding(32) + name 2-line(40) + gaps(24) + store(17) + price(24) + rating(17)
-                const textAreaHeight = 154.0;
-                final aspectRatio = cardWidth / (imageHeight + textAreaHeight);
-
-                return GridView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: columns,
-                    mainAxisSpacing: AppSpacing.md,
-                    crossAxisSpacing: AppSpacing.md,
-                    childAspectRatio: aspectRatio,
-                  ),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return ProductCard(
-                      product: product,
-                      onTap: onProductTap == null
-                          ? null
-                          : () => onProductTap?.call(product),
-                    );
-                  },
-                );
-              },
-            ),
+      child: grid,
     );
   }
 }
