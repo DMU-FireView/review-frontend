@@ -424,10 +424,10 @@ class _HomeTabPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.sizeOf(context).height * 0.6,
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.xxxl),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(Icons.construction_outlined, size: 48, color: AppColors.textTertiary),
           const SizedBox(height: AppSpacing.md),
