@@ -16,7 +16,7 @@ import 'package:re_view_front/features/search/presentation/pages/search_results_
 final appRouterProvider = Provider<GoRouter>((ref) {
   final tokenStore = ref.read(authTokenStoreProvider);
   final router = GoRouter(
-    initialLocation: RoutePaths.home,
+    initialLocation: RoutePaths.landing,
     refreshListenable: tokenStore,
     redirect: (context, state) {
       final isLoggedIn = tokenStore.accessToken?.isNotEmpty ?? false;
