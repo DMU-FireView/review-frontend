@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
-import 'package:re_view_front/features/search/presentation/data/mock_search_results.dart';
 import 'package:re_view_front/features/search/presentation/view_models/search_results_state.dart';
 
 class FilterPanel extends StatelessWidget {
@@ -154,42 +153,7 @@ class FilterPanel extends StatelessWidget {
                 ),
               ],
             ),
-            const Divider(height: AppSpacing.lg),
-            ExpandableFilterSection(
-              title: '형태',
-              children: [
-                for (final label in const ['무선', '커널형', '오픈형'])
-                  CheckboxRow(
-                    label: label,
-                    selected: selectedAttributeFilters.contains(label),
-                    onChanged: () => onAttributeToggled(label),
-                  ),
-              ],
-            ),
-            const Divider(height: AppSpacing.lg),
-            ExpandableFilterSection(
-              title: '주요 기능',
-              children: [
-                for (final label in const ['노이즈캔슬링', '통화 품질 우수', '생활방수', '저지연'])
-                  CheckboxRow(
-                    label: label,
-                    selected: selectedAttributeFilters.contains(label),
-                    onChanged: () => onAttributeToggled(label),
-                  ),
-              ],
-            ),
-            const Divider(height: AppSpacing.lg),
-            ExpandableFilterSection(
-              title: '연결 방식',
-              children: [
-                for (final label in const ['블루투스', 'USB-C'])
-                  CheckboxRow(
-                    label: label,
-                    selected: selectedAttributeFilters.contains(label),
-                    onChanged: () => onAttributeToggled(label),
-                  ),
-              ],
-            ),
+
             const Divider(height: AppSpacing.lg),
             ExpandableFilterSection(
               title: '브랜드',
@@ -197,6 +161,11 @@ class FilterPanel extends StatelessWidget {
                 SelectBox(
                   label: selectedBrand ?? '브랜드를 선택하세요',
                   selectedBrand: selectedBrand,
+                  brands: state.products
+                      .map((p) => p.platform)
+                      .whereType<String>()
+                      .toSet()
+                      .toList(),
                   onSelected: onBrandSelected,
                 ),
               ],
@@ -629,14 +598,14 @@ class PriceRangeSlider extends StatelessWidget {
     );
 
     return SizedBox(
-      height: 38,
+      height: 48,
       child: Stack(
         alignment: Alignment.bottomCenter,
         children: [
           Positioned(
             left: 8,
             right: 8,
-            bottom: 13,
+            bottom: 24,
             child: KeyedSubtree(
               key: const ValueKey('price-histogram-bars'),
               child: Row(
@@ -664,7 +633,7 @@ class PriceRangeSlider extends StatelessWidget {
           Positioned(
             left: 8,
             right: 8,
-            bottom: 9,
+            bottom: 22,
             child: Row(
               children: [
                 for (var index = 0; index < bins.length; index++)
@@ -732,7 +701,7 @@ class PriceRangeSlider extends StatelessWidget {
     const binCount = 18;
     final bins = List<int>.filled(binCount, 0);
     if (products.isEmpty) {
-      return [1, 1, 2, 2, 4, 5, 7, 5, 4, 3, 3, 2, 2, 1, 1, 1, 1, 1];
+      return bins;
     }
 
     final span = (bounds.$2 - bounds.$1).clamp(1, 1 << 31);
@@ -821,11 +790,13 @@ class SelectBox extends StatelessWidget {
     super.key,
     required this.label,
     required this.selectedBrand,
+    required this.brands,
     required this.onSelected,
   });
 
   final String label;
   final String? selectedBrand;
+  final List<String> brands;
   final ValueChanged<String?> onSelected;
 
   @override
@@ -851,7 +822,7 @@ class SelectBox extends StatelessWidget {
             selected: selectedBrand == null,
           ),
         ),
-        for (final brand in mockSearchBrands)
+        for (final brand in brands)
           PopupMenuItem<String?>(
             value: brand,
             height: 36,
