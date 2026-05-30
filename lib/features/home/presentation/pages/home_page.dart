@@ -196,41 +196,34 @@ class _HomePageState extends ConsumerState<HomePage> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 13,
+                        const Expanded(
                           child: _FadeUp(
-                            key: _popularCategoryKey,
-                            delay: 360,
-                            child: PopularCategorySection(
-                              items: popularCategories,
-                              onCategoryPressed: _handleCategoryPressed,
-                            ),
+                            delay: 240,
+                            child: ReviewTrustInfoCard(),
                           ),
                         ),
                         const SizedBox(width: 20),
                         Expanded(
-                          flex: 9,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              const _FadeUp(
-                                delay: 240,
-                                child: ReviewTrustInfoCard(),
-                              ),
-                              const SizedBox(height: 20),
-                              _FadeUp(
-                                key: _benefitKey,
-                                delay: 300,
-                                child: BenefitCTA(
-                                  items: benefitItems,
-                                  onBenefitPressed: () =>
-                                      context.go(RoutePaths.login),
-                                ),
-                              ),
-                            ],
+                          child: _FadeUp(
+                            key: _benefitKey,
+                            delay: 300,
+                            child: BenefitCTA(
+                              items: benefitItems,
+                              onBenefitPressed: () =>
+                                  context.go(RoutePaths.login),
+                            ),
                           ),
                         ),
                       ],
+                    ),
+                    const SizedBox(height: 20),
+                    _FadeUp(
+                      key: _popularCategoryKey,
+                      delay: 360,
+                      child: PopularCategorySection(
+                        items: popularCategories,
+                        onCategoryPressed: _handleCategoryPressed,
+                      ),
                     ),
                   ]
                   else ...[
