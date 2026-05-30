@@ -347,6 +347,16 @@ class ReviewCard extends StatelessWidget {
                 height: 1.6,
               ),
             ),
+            if (review.reasons.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: review.reasons
+                    .map((r) => _ReasonChip(label: r, color: rtiColor))
+                    .toList(),
+              ),
+            ],
             if (review.imageUrls.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sm),
               SizedBox(
@@ -480,6 +490,35 @@ class _RtiBadgeSmall extends StatelessWidget {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReasonChip extends StatelessWidget {
+  const _ReasonChip({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(999),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: color,
+            fontWeight: FontWeight.w700,
+            fontSize: 11,
+          ),
         ),
       ),
     );

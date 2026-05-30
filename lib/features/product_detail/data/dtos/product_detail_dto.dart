@@ -141,7 +141,10 @@ class ProductReviewDto {
       content: json['content'] as String? ?? '',
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
       rtiScore:
-          ((json['rtiScore'] as num?)?.toDouble() ?? 0.0).round(),
+          (((json['rtiScore'] ?? json['rti'] ?? json['rtiScoreValue']) as num?)
+                  ?.toDouble() ??
+              0.0)
+              .round(),
       trustGrade: json['trustGrade'] as String? ?? 'SAFE',
       trustGradeLabel: json['trustGradeLabel'] as String? ?? '',
       trustGradeColor: json['trustGradeColor'] as String? ?? '#22C55E',
