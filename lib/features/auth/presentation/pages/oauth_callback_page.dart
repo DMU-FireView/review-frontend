@@ -33,7 +33,7 @@ class _OAuthCallbackPageState extends ConsumerState<OAuthCallbackPage> {
       if (next.status == OAuthCallbackStatus.success) {
         context.go(
           next.onboardingCompleted
-              ? RoutePaths.dashboard
+              ? RoutePaths.home
               : RoutePaths.onboarding,
         );
       }
