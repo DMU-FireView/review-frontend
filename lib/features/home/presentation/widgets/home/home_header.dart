@@ -23,6 +23,7 @@ class HomeHeader extends StatelessWidget {
     this.searchFocusNode,
     this.cartCount,
     this.isLoggedIn = false,
+    this.nickname,
     this.onMyPagePressed,
     this.onLogoutPressed,
     super.key,
@@ -42,6 +43,7 @@ class HomeHeader extends StatelessWidget {
   final FocusNode? searchFocusNode;
   final int? cartCount;
   final bool isLoggedIn;
+  final String? nickname;
   final VoidCallback? onMyPagePressed;
   final VoidCallback? onLogoutPressed;
 
@@ -75,6 +77,7 @@ class HomeHeader extends StatelessWidget {
                   searchRecommendedProducts: searchRecommendedProducts,
                   searchFocusNode: searchFocusNode,
                   isLoggedIn: isLoggedIn,
+                  nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
                   onLogoutPressed: onLogoutPressed,
                 )
@@ -93,6 +96,7 @@ class HomeHeader extends StatelessWidget {
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
                   isLoggedIn: isLoggedIn,
+                  nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
                   onLogoutPressed: onLogoutPressed,
                 ),
@@ -118,6 +122,7 @@ class _DesktopHeader extends StatelessWidget {
     this.searchFocusNode,
     this.cartCount,
     this.isLoggedIn = false,
+    this.nickname,
     this.onMyPagePressed,
     this.onLogoutPressed,
   });
@@ -136,6 +141,7 @@ class _DesktopHeader extends StatelessWidget {
   final FocusNode? searchFocusNode;
   final int? cartCount;
   final bool isLoggedIn;
+  final String? nickname;
   final VoidCallback? onMyPagePressed;
   final VoidCallback? onLogoutPressed;
 
@@ -158,10 +164,6 @@ class _DesktopHeader extends StatelessWidget {
                   _TopLink(label: '판매자 입점', onTap: onLoginPressed),
                   const SizedBox(width: AppSpacing.lg),
                   _TopLink(label: '앱 다운로드', onTap: onLoginPressed),
-                  if (isLoggedIn) ...[
-                    const SizedBox(width: AppSpacing.lg),
-                    _TopLink(label: '로그아웃', onTap: onLogoutPressed ?? () {}),
-                  ],
                 ],
               ),
             ),
@@ -184,10 +186,10 @@ class _DesktopHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (isLoggedIn) ...[
-                    _HeaderAction(
-                      icon: Icons.person,
-                      label: '마이페이지',
-                      onTap: onMyPagePressed ?? onLoginPressed,
+                    _UserProfileButton(
+                      nickname: nickname,
+                      onMyPagePressed: onMyPagePressed,
+                      onLogoutPressed: onLogoutPressed,
                     ),
                     _HeaderAction(
                       icon: Icons.favorite_border,
@@ -321,6 +323,7 @@ class _MobileHeader extends StatelessWidget {
     this.searchRecommendedProducts = const [],
     this.searchFocusNode,
     this.isLoggedIn = false,
+    this.nickname,
     this.onMyPagePressed,
     this.onLogoutPressed,
   });
@@ -334,6 +337,7 @@ class _MobileHeader extends StatelessWidget {
   final List<HomeProductData> searchRecommendedProducts;
   final FocusNode? searchFocusNode;
   final bool isLoggedIn;
+  final String? nickname;
   final VoidCallback? onMyPagePressed;
   final VoidCallback? onLogoutPressed;
 
@@ -345,33 +349,12 @@ class _MobileHeader extends StatelessWidget {
           children: [
             HomeLogo(onTap: onLogoPressed),
             const Spacer(),
-            if (!context.isMobile) ...[
-              if (isLoggedIn) ...[
-                TextButton(
-                  onPressed: onMyPagePressed ?? onLoginPressed,
-                  child: const Text('마이페이지'),
-                ),
-                TextButton(
-                  onPressed: onLogoutPressed,
-                  child: const Text('로그아웃'),
-                ),
-              ] else
-                TextButton(
-                  onPressed: onLoginPressed,
-                  child: const Text('로그인'),
-                ),
-              const SizedBox(width: AppSpacing.xs),
-            ],
-            IconButton(
-              tooltip: '알림',
-              onPressed: onNotificationPressed,
-              icon: const Icon(Icons.notifications_none),
-            ),
             if (isLoggedIn)
-              IconButton(
-                tooltip: '마이페이지',
-                onPressed: onMyPagePressed ?? onLoginPressed,
-                icon: const Icon(Icons.person),
+              _UserProfileButton(
+                nickname: nickname,
+                onMyPagePressed: onMyPagePressed,
+                onLogoutPressed: onLogoutPressed,
+                compact: true,
               )
             else
               IconButton(
@@ -394,6 +377,296 @@ class _MobileHeader extends StatelessWidget {
           onSubmitted: onSearchSubmitted,
         ),
       ],
+    );
+  }
+}
+
+class _UserProfileButton extends StatefulWidget {
+  const _UserProfileButton({
+    this.nickname,
+    this.onMyPagePressed,
+    this.onLogoutPressed,
+    this.compact = false,
+  });
+
+  final String? nickname;
+  final VoidCallback? onMyPagePressed;
+  final VoidCallback? onLogoutPressed;
+  final bool compact;
+
+  @override
+  State<_UserProfileButton> createState() => _UserProfileButtonState();
+}
+
+class _UserProfileButtonState extends State<_UserProfileButton> {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+  bool _isOpen = false;
+
+  @override
+  void dispose() {
+    _removeOverlay();
+    super.dispose();
+  }
+
+  String _maskName(String name) {
+    if (name.length <= 1) return name;
+    return name[0] + '*' * (name.length - 1);
+  }
+
+  void _toggle() {
+    if (_isOpen) {
+      _removeOverlay();
+    } else {
+      _showOverlay();
+    }
+  }
+
+  void _showOverlay() {
+    _overlayEntry = OverlayEntry(
+      builder: (context) => GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: _removeOverlay,
+        child: Stack(
+          children: [
+            CompositedTransformFollower(
+              link: _layerLink,
+              showWhenUnlinked: false,
+              offset: const Offset(0, 48),
+              targetAnchor: Alignment.bottomRight,
+              followerAnchor: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () {},
+                child: _ProfileDropdown(
+                  nickname: widget.nickname,
+                  onMyPagePressed: () {
+                    _removeOverlay();
+                    widget.onMyPagePressed?.call();
+                  },
+                  onLogoutPressed: () {
+                    _removeOverlay();
+                    widget.onLogoutPressed?.call();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    Overlay.of(context).insert(_overlayEntry!);
+    setState(() => _isOpen = true);
+  }
+
+  void _removeOverlay() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+    if (mounted) setState(() => _isOpen = false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = widget.nickname != null && widget.nickname!.isNotEmpty
+        ? _maskName(widget.nickname!)
+        : '내 계정';
+
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(10),
+        onTap: _toggle,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
+          child: widget.compact
+              ? Icon(
+                  Icons.person,
+                  size: 24,
+                  color: _isOpen ? AppColors.primary : AppColors.textPrimary,
+                )
+              : Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.person,
+                      size: 24,
+                      color:
+                          _isOpen ? AppColors.primary : AppColors.textPrimary,
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          displayName,
+                          style:
+                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                                color: _isOpen
+                                    ? AppColors.primary
+                                    : AppColors.textPrimary,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(width: 2),
+                        Icon(
+                          _isOpen
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          size: 14,
+                          color: _isOpen
+                              ? AppColors.primary
+                              : AppColors.textSecondary,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProfileDropdown extends StatelessWidget {
+  const _ProfileDropdown({
+    this.nickname,
+    required this.onMyPagePressed,
+    required this.onLogoutPressed,
+  });
+
+  final String? nickname;
+  final VoidCallback onMyPagePressed;
+  final VoidCallback onLogoutPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName =
+        nickname != null && nickname!.isNotEmpty ? nickname! : '회원';
+
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        width: 220,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x1A0F172A),
+              blurRadius: 24,
+              offset: Offset(0, 8),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        displayName.isNotEmpty ? displayName[0] : '?',
+                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$displayName님',
+                          style:
+                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: AppColors.textPrimary,
+                                fontWeight: FontWeight.w800,
+                              ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Re:view 멤버',
+                          style:
+                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1, color: AppColors.border),
+            _DropdownItem(
+              icon: Icons.person_outline,
+              label: '마이페이지',
+              onTap: onMyPagePressed,
+            ),
+            const Divider(height: 1, color: AppColors.border),
+            _DropdownItem(
+              icon: Icons.logout,
+              label: '로그아웃',
+              onTap: onLogoutPressed,
+              isDestructive: true,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _DropdownItem extends StatelessWidget {
+  const _DropdownItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.isDestructive = false,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isDestructive;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = isDestructive ? AppColors.error : AppColors.textPrimary;
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, size: 18, color: color),
+            const SizedBox(width: 10),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
