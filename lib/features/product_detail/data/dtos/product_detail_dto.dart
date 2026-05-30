@@ -140,14 +140,15 @@ class ProductReviewDto {
           (json['reviewerNickname'] ?? json['authorName']) as String? ?? '',
       content: json['content'] as String? ?? '',
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      rtiScore:
-          (((json['rtiScore'] ?? json['rti'] ?? json['rtiScoreValue']) as num?)
+      rtiScore: (((json['reviewerAtiScore'] ??
+                      json['rtiScore'] ??
+                      json['rti']) as num?)
                   ?.toDouble() ??
               0.0)
-              .round(),
-      trustGrade: json['trustGrade'] as String? ?? 'SAFE',
+          .round(),
+      trustGrade: json['trustGrade'] as String? ?? '',
       trustGradeLabel: json['trustGradeLabel'] as String? ?? '',
-      trustGradeColor: json['trustGradeColor'] as String? ?? '#22C55E',
+      trustGradeColor: json['trustGradeColor'] as String? ?? '',
       reasons: List<String>.from(json['reasons'] as List? ?? []),
       writtenAt: (json['writtenAt'] ?? json['createdAt']) as String? ?? '',
       isVerifiedPurchase: json['isVerifiedPurchase'] as bool? ?? false,
