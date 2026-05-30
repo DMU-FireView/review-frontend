@@ -187,15 +187,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
+                    ProductRecommendationSection(
+                      showHeader: false,
+                      products: dashboardProducts,
+                      onProductTap: _handleProductPressed,
+                    ),
+                    const SizedBox(height: 20),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           flex: 13,
-                          child: ProductRecommendationSection(
-                            showHeader: false,
-                            products: dashboardProducts,
-                            onProductTap: _handleProductPressed,
+                          child: _FadeUp(
+                            key: _popularCategoryKey,
+                            delay: 360,
+                            child: PopularCategorySection(
+                              items: popularCategories,
+                              onCategoryPressed: _handleCategoryPressed,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 20),
@@ -222,15 +231,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                       ],
-                    ),
-                    const SizedBox(height: 20),
-                    _FadeUp(
-                      key: _popularCategoryKey,
-                      delay: 360,
-                      child: PopularCategorySection(
-                        items: popularCategories,
-                        onCategoryPressed: _handleCategoryPressed,
-                      ),
                     ),
                   ]
                   else ...[
