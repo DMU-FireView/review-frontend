@@ -153,6 +153,7 @@ class QuickCategoryData {
 
 class HomeProductData {
   const HomeProductData({
+    required this.productId,
     required this.name,
     required this.storeName,
     required this.priceLabel,
@@ -163,6 +164,7 @@ class HomeProductData {
     required this.label,
   });
 
+  final String productId;
   final String name;
   final String storeName;
   final String priceLabel;
