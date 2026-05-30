@@ -15,6 +15,11 @@ final isLoggedInProvider = Provider<bool>((ref) {
   return ref.watch(authTokenStoreProvider);
 });
 
+final nicknameProvider = Provider<String?>((ref) {
+  ref.watch(authTokenStoreProvider);
+  return ref.read(authTokenStoreProvider.notifier).nickname;
+});
+
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
     ref.watch(appConfigProvider),
