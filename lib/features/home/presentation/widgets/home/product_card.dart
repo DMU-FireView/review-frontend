@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class ProductCard extends StatelessWidget {
   const ProductCard({required this.product, this.onTap, super.key});
@@ -40,16 +41,7 @@ class ProductCard extends StatelessWidget {
                   child: Stack(
                     children: [
                       Positioned.fill(
-                        child: product.imageUrl.isEmpty
-                            ? const ColoredBox(color: AppColors.surfaceMuted)
-                            : Image.network(
-                                product.imageUrl,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const ColoredBox(
-                                      color: AppColors.surfaceMuted,
-                                    ),
-                              ),
+                        child: AppNetworkImage(url: product.imageUrl),
                       ),
                       Positioned(
                         top: AppSpacing.sm,
