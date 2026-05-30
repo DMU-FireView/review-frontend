@@ -3,6 +3,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PriceComparisonTable extends StatefulWidget {
   const PriceComparisonTable({
@@ -240,9 +241,16 @@ class _BuyButton extends StatelessWidget {
     const padding = EdgeInsets.symmetric(horizontal: AppSpacing.sm);
     const tapTarget = MaterialTapTargetSize.shrinkWrap;
 
+    void openUrl() {
+      final url = comparison.url;
+      if (url != null && url.isNotEmpty) {
+        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      }
+    }
+
     if (comparison.isLowest) {
       return FilledButton(
-        onPressed: () {},
+        onPressed: openUrl,
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.onPrimary,
@@ -265,7 +273,7 @@ class _BuyButton extends StatelessWidget {
     }
 
     return OutlinedButton(
-      onPressed: () {},
+      onPressed: openUrl,
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
         side: const BorderSide(color: AppColors.primary),
