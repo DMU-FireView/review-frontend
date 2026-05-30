@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/password_reset_page.dart';
@@ -13,8 +14,19 @@ import 'package:re_view_front/features/product_detail/presentation/pages/product
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final tokenStore = ref.read(authTokenStoreProvider);
   final router = GoRouter(
     initialLocation: RoutePaths.landing,
+    refreshListenable: tokenStore,
+    redirect: (context, state) {
+      final isLoggedIn = tokenStore.accessToken?.isNotEmpty ?? false;
+      // 로그인 후 landing/login/signup 접근 시 홈으로 redirect
+      const authPages = {RoutePaths.landing, RoutePaths.login, RoutePaths.signup};
+      if (isLoggedIn && authPages.contains(state.matchedLocation)) {
+        return RoutePaths.home;
+      }
+      return null;
+    },
     routes: [
       GoRoute(
         path: RoutePaths.landing,

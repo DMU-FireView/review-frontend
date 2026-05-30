@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:re_view_front/core/storage/web_storage.dart';
 
-class AuthTokenStore {
+class AuthTokenStore extends ChangeNotifier {
   static const _keyAccessToken = 'review_access_token';
   static const _keyTokenType = 'review_token_type';
 
@@ -15,6 +16,7 @@ class AuthTokenStore {
     _tokenType = tokenType;
     WebStorage.write(_keyAccessToken, accessToken);
     WebStorage.write(_keyTokenType, tokenType);
+    notifyListeners();
   }
 
   void clear() {
@@ -22,5 +24,6 @@ class AuthTokenStore {
     _tokenType = null;
     WebStorage.remove(_keyAccessToken);
     WebStorage.remove(_keyTokenType);
+    notifyListeners();
   }
 }
