@@ -151,6 +151,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 delay: 180,
                                 child: ProductRecommendationSection(
                                   products: dashboardProducts,
+                                  onProductTap: _handleProductPressed,
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -196,6 +197,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                       delay: 180,
                       child: ProductRecommendationSection(
                         products: dashboardProducts,
+                        onProductTap: _handleProductPressed,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
@@ -302,6 +304,10 @@ class _HomePageState extends ConsumerState<HomePage> {
     context.go(RoutePaths.landing);
   }
 
+  void _handleProductPressed(HomeProductData product) {
+    context.go('/product/${product.productId}');
+  }
+
   void _handleSearchSubmitted(String value) {
     final query = value.trim();
     if (query.isEmpty) {
@@ -348,6 +354,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   HomeProductData _toHomeProductData(DashboardProduct product) {
     return HomeProductData(
+      productId: product.id,
       name: product.name,
       storeName: product.storeName,
       priceLabel: _formatPrice(product.price),
