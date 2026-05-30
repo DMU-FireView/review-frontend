@@ -54,6 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     final useWideCommerceGrid = context.viewportSize.width >= 1120;
     final isLoggedIn = ref.watch(isLoggedInProvider);
+    final nickname = ref.watch(nicknameProvider);
     final dashboardState = ref.watch(homeDashboardViewModelProvider);
     final dashboardProducts = _recommendedProductsFrom(dashboardState);
     final dashboardKeywords = _trendingKeywordsFrom(dashboardState);
@@ -76,6 +77,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               searchRecommendedProducts: dashboardProducts,
               searchFocusNode: _searchFocusNode,
               isLoggedIn: isLoggedIn,
+              nickname: nickname,
               onMyPagePressed: () => context.go(RoutePaths.login),
               onLogoutPressed: _handleLogout,
             ),
