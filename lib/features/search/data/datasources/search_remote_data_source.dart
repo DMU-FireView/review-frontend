@@ -36,8 +36,18 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
       if (body is List<dynamic>) {
         return SearchResponseDto.fromList(body);
       }
+
+      if (body is Map<String, dynamic>) {
+        final productsList = body['products'] ?? body['data'] ?? body['items'];
+        if (productsList is List<dynamic>) {
+          return SearchResponseDto.fromListWithTotal(
+            productsList,
+            body['totalCount'] as int? ?? body['total'] as int?,
+          );
+        }
+      }
     }
 
-    return const SearchResponseDto(products: []);
+    return const SearchResponseDto(products: [], totalCount: null);
   }
 }
