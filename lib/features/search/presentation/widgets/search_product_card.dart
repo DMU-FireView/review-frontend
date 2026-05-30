@@ -35,7 +35,7 @@ class SearchProductCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AspectRatio(
-              aspectRatio: 16 / 8,
+              aspectRatio: 1 / 1,
               child: Stack(
                 children: [
                   Positioned.fill(
@@ -494,7 +494,7 @@ class ProductDetailButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
         ),
         child: Text(
-          '상품 상세 보기',
+          '최저가 보기',
           style: Theme.of(
             context,
           ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),

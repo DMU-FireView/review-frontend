@@ -111,6 +111,7 @@ class ReviewComparisonBanner extends StatelessWidget {
                             icon: Icons.favorite_border,
                             label: '평균 RTI',
                             value: '${avgRti.round()}%',
+                            subtitle: _rtiLabel(avgRti),
                           ),
                         ],
                       ),
@@ -166,6 +167,13 @@ class ReviewComparisonBanner extends StatelessWidget {
     );
   }
 
+  String _rtiLabel(double rti) {
+    if (rti >= 90) return '매우 신뢰 높음';
+    if (rti >= 75) return '신뢰 높음';
+    if (rti >= 60) return '보통';
+    return '낮음';
+  }
+
   SearchResultProduct _representativeProduct(
     List<SearchResultProduct> products,
   ) {
@@ -189,11 +197,13 @@ class BannerMetric extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.value,
+    this.subtitle,
   });
 
   final IconData icon;
   final String label;
   final String value;
+  final String? subtitle;
 
   @override
   Widget build(BuildContext context) {
@@ -231,6 +241,17 @@ class BannerMetric extends StatelessWidget {
                 height: 1,
               ),
             ),
+            if (subtitle != null) ...[
+              const SizedBox(height: 2),
+              Text(
+                subtitle!,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                ),
+              ),
+            ],
           ],
         ),
       ],
