@@ -52,7 +52,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (next.status == LoginSubmissionStatus.success) {
         context.go(
           next.onboardingCompleted
-              ? RoutePaths.dashboard
+              ? RoutePaths.home
               : RoutePaths.onboarding,
         );
       }
