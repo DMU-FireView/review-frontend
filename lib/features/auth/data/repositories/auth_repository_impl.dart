@@ -42,6 +42,7 @@ class AuthRepositoryImpl implements AuthRepository {
           accessToken: token,
           tokenType: entity.tokenType ?? 'Bearer',
           onboardingCompleted: entity.onboardingCompleted,
+          nickname: entity.name,
         );
       }
 
