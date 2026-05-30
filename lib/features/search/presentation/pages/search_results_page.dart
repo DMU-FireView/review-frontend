@@ -24,9 +24,9 @@ class SearchResultsPage extends ConsumerStatefulWidget {
 }
 
 class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
-  final Set<String> _selectedCategories = {'이어폰'};
+  final Set<String> _selectedCategories = {};
   final Set<String> _selectedPriceRanges = {};
-  final Set<String> _selectedReviewConditions = {'리뷰 50개 이상'};
+  final Set<String> _selectedReviewConditions = {};
   final Set<String> _selectedAttributeFilters = {};
   late final TextEditingController _minPriceController;
   late final TextEditingController _maxPriceController;
@@ -263,17 +263,13 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
 
   void _resetFilters() {
     setState(() {
-      _selectedCategories
-        ..clear()
-        ..add('이어폰');
+      _selectedCategories.clear();
       _selectedPriceRanges.clear();
       _isPriceFilterActive = false;
       _lastPriceRangeQuery = null;
       _selectedBrand = null;
       _selectedAttributeFilters.clear();
-      _selectedReviewConditions
-        ..clear()
-        ..add('리뷰 50개 이상');
+      _selectedReviewConditions.clear();
       _selectedQuickFilter = '전체';
       _sortOption = SearchSortOption.accuracy;
       _viewMode = SearchViewMode.grid;
