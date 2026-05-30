@@ -9,6 +9,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/home/domain/entities/trending_keyword.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/view_models/home_dashboard_state.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/benefit_cta.dart';
@@ -52,6 +53,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final useWideCommerceGrid = context.viewportSize.width >= 1120;
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final nickname = ref.watch(userNicknameProvider).value;
     final dashboardState = ref.watch(homeDashboardViewModelProvider);
     final dashboardProducts = _recommendedProductsFrom(dashboardState);
     final dashboardKeywords = _trendingKeywordsFrom(dashboardState);
@@ -73,6 +76,10 @@ class _HomePageState extends ConsumerState<HomePage> {
               searchKeywords: dashboardKeywords,
               searchRecommendedProducts: dashboardProducts,
               searchFocusNode: _searchFocusNode,
+              isLoggedIn: isLoggedIn,
+              nickname: nickname,
+              onMyPagePressed: () => context.go(RoutePaths.login),
+              onLogoutPressed: _handleLogout,
             ),
           ),
           SliverToBoxAdapter(
@@ -286,6 +293,11 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _handleBannerPressed(HomeBannerData banner) {
     _scrollTo(_recommendationKey);
+  }
+
+  void _handleLogout() {
+    ref.read(authTokenStoreProvider.notifier).clear();
+    context.go(RoutePaths.landing);
   }
 
   void _handleSearchSubmitted(String value) {
