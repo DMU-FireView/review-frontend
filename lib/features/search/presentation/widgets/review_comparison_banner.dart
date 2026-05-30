@@ -14,6 +14,9 @@ class ReviewComparisonBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final representative = _representativeProduct(products);
+    final totalReviews = products.fold(0, (sum, p) => sum + p.reviewCount);
+    final avgRti =
+        products.fold(0.0, (sum, p) => sum + p.avgRti) / products.length;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(14),
@@ -24,7 +27,7 @@ class ReviewComparisonBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
         ),
         child: SizedBox(
-          height: context.isMobile ? 260 : 206,
+          height: context.isMobile ? 280 : 232,
           child: Stack(
             children: [
               Positioned.fill(
@@ -80,19 +83,20 @@ class ReviewComparisonBanner extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        '멀티 스토어 통합 검색',
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
                       Wrap(
-                        spacing: AppSpacing.lg,
+                        spacing: AppSpacing.md,
                         runSpacing: AppSpacing.sm,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Text(
-                            '멀티 스토어 통합 검색',
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
                           BannerMetric(
                             icon: Icons.shopping_bag_outlined,
                             label: '비교 상품',
@@ -101,13 +105,12 @@ class ReviewComparisonBanner extends StatelessWidget {
                           BannerMetric(
                             icon: Icons.chat_bubble_outline,
                             label: '수집 리뷰',
-                            value:
-                                '${formatSearchCount(representative.reviewCount)}건',
+                            value: '${formatSearchCount(totalReviews)}건',
                           ),
                           BannerMetric(
                             icon: Icons.favorite_border,
                             label: '평균 RTI',
-                            value: '${representative.avgRti.round()}%',
+                            value: '${avgRti.round()}%',
                           ),
                         ],
                       ),
@@ -203,7 +206,7 @@ class BannerMetric extends StatelessWidget {
             shape: BoxShape.circle,
           ),
           child: SizedBox.square(
-            dimension: 46,
+            dimension: 36,
             child: Icon(icon, size: 24, color: AppColors.textPrimary),
           ),
         ),
