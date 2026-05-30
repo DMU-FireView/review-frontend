@@ -143,7 +143,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          flex: 13,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
@@ -153,6 +152,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 child: ProductRecommendationSection(
                                   products: dashboardProducts,
                                   onProductTap: _handleProductPressed,
+                                  onViewAll: () {},
                                 ),
                               ),
                               const SizedBox(height: 20),
@@ -168,8 +168,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                         const SizedBox(width: 20),
-                        Expanded(
-                          flex: 9,
+                        SizedBox(
+                          width: 300,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
