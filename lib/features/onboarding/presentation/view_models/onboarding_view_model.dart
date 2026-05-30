@@ -1,4 +1,6 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/onboarding/domain/entities/interest_category.dart';
 import 'package:re_view_front/features/onboarding/domain/entities/notification_channel.dart';
 import 'package:re_view_front/features/onboarding/presentation/view_models/onboarding_state.dart';
@@ -65,18 +67,52 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
       clearFailureMessage: true,
     );
 
-    // TODO: call API when spec is confirmed
-    // final result = await _repository.savePreferences(
-    //   categories: state.selectedCategories,
-    //   lowTrustReviewAlert: state.lowTrustReviewAlert,
-    //   riskSurgeAlert: state.riskSurgeAlert,
-    //   analysisCompleteAlert: state.analysisCompleteAlert,
-    //   weeklyReportAlert: state.weeklyReportAlert,
-    //   marketingAlert: state.marketingAlert,
-    //   channels: state.selectedChannels,
-    // );
+    try {
+      final apiClient = ref.read(apiClientProvider);
+      final categories = state.selectedCategories
+          .map(_toApiCategory)
+          .whereType<String>()
+          .toList();
+
+      await apiClient.post(
+        '/api/onboarding/preferences',
+        data: {
+          'preferredCategories': categories,
+          'minTrustScore': 60,
+        },
+      );
+
+      ref.read(authTokenStoreProvider.notifier).completeOnboarding();
+    } on DioException catch (e) {
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        status: OnboardingSubmitStatus.failure,
+        failureMessage: e.response?.data?['message'] ?? '온보딩 저장에 실패했습니다.',
+      );
+      return;
+    } on Object {
+      if (!ref.mounted) return;
+      state = state.copyWith(
+        status: OnboardingSubmitStatus.failure,
+        failureMessage: '온보딩 저장에 실패했습니다.',
+      );
+      return;
+    }
 
     if (!ref.mounted) return;
     state = state.copyWith(status: OnboardingSubmitStatus.success);
+  }
+
+  String? _toApiCategory(InterestCategory category) {
+    return switch (category) {
+      InterestCategory.digital => 'ELECTRONICS',
+      InterestCategory.fashion => 'FASHION',
+      InterestCategory.beauty => 'COSMETICS',
+      InterestCategory.food => 'FOOD',
+      InterestCategory.living => 'HOME_APPLIANCE',
+      InterestCategory.pet => 'PET',
+      InterestCategory.travel => 'ETC',
+      InterestCategory.kids => 'BABY',
+    };
   }
 }
