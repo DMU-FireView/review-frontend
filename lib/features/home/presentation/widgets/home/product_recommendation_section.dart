@@ -29,9 +29,9 @@ class ProductRecommendationSection extends StatelessWidget {
               final cardWidth =
                   (constraints.maxWidth - (columns - 1) * AppSpacing.md) /
                   columns;
-              const imageAspectRatio = 4.0 / 3.0;
+              const imageAspectRatio = 16.0 / 9.0;
               final imageHeight = cardWidth / imageAspectRatio;
-              const textAreaHeight = 180.0;
+              const textAreaHeight = 170.0;
 
               return GridView.builder(
                 shrinkWrap: true,
@@ -126,11 +126,10 @@ class _ProductEmptyState extends StatelessWidget {
 }
 
 int _columnsFor(double width) {
-  if (width < 400) return 2;
-  if (width < 640) return 3;
-  if (width < 900) return 4;
-  if (width < 1200) return 5;
-  return 6;
+  if (width < 480) return 2;
+  if (width < 720) return 3;
+  if (width < 1020) return 4;
+  return 5;
 }
 
 class _SectionShell extends StatelessWidget {
