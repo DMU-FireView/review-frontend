@@ -28,7 +28,7 @@ class AppConfig {
       ),
       searchPath: String.fromEnvironment(
         'SEARCH_PATH',
-        defaultValue: '/api/search',
+        defaultValue: '/api/products',
       ),
       productPath: String.fromEnvironment(
         'PRODUCT_PATH',
