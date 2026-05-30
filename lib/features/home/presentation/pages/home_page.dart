@@ -84,59 +84,60 @@ class _HomePageState extends ConsumerState<HomePage> {
               onLogoutPressed: _handleLogout,
             ),
           ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
-              child: _FadeUp(
-                key: _heroKey,
-                delay: 0,
-                child: HeroBannerCarousel(
-                  items: banners,
-                  onBannerPressed: _handleBannerPressed,
+          if (_selectedNavItem == '홈') ...[
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
+                child: _FadeUp(
+                  key: _heroKey,
+                  delay: 0,
+                  child: HeroBannerCarousel(
+                    items: banners,
+                    onBannerPressed: _handleBannerPressed,
+                  ),
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: AppContentView(
-              maxWidth: 1440,
-              padding: _homeContentPadding(context),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _FadeUp(
-                    key: _categoryKey,
-                    delay: 60,
-                    child: QuickCategoryRow(
-                      items: quickCategories,
-                      onCategoryPressed: _handleCategoryPressed,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xl),
-                  if (dashboardState is HomeDashboardLoading) ...[
-                    const SizedBox(
-                      height: 240,
-                      child: AppLoadingView(message: '홈 데이터를 불러오는 중입니다.'),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                  ] else if (dashboardState is HomeDashboardFailure) ...[
-                    SizedBox(
-                      height: 280,
-                      child: AppErrorView(
-                        message: dashboardState.failure.message,
-                        onRetry: () => ref
-                            .read(homeDashboardViewModelProvider.notifier)
-                            .refresh(),
+            SliverToBoxAdapter(
+              child: AppContentView(
+                maxWidth: 1440,
+                padding: _homeContentPadding(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _FadeUp(
+                      key: _categoryKey,
+                      delay: 60,
+                      child: QuickCategoryRow(
+                        items: quickCategories,
+                        onCategoryPressed: _handleCategoryPressed,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                  ] else ...[
-                    _FadeUp(
-                      delay: 120,
-                      child: TrendingKeywordChips(keywords: dashboardKeywords),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                  ],
+                    if (dashboardState is HomeDashboardLoading) ...[
+                      const SizedBox(
+                        height: 240,
+                        child: AppLoadingView(message: '홈 데이터를 불러오는 중입니다.'),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                    ] else if (dashboardState is HomeDashboardFailure) ...[
+                      SizedBox(
+                        height: 280,
+                        child: AppErrorView(
+                          message: dashboardState.failure.message,
+                          onRetry: () => ref
+                              .read(homeDashboardViewModelProvider.notifier)
+                              .refresh(),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                    ] else ...[
+                      _FadeUp(
+                        delay: 120,
+                        child: TrendingKeywordChips(keywords: dashboardKeywords),
+                      ),
+                      const SizedBox(height: AppSpacing.xl),
+                    ],
                   if (useWideCommerceGrid)
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -228,6 +229,11 @@ class _HomePageState extends ConsumerState<HomePage> {
               ),
             ),
           ),
+          ] else ...[
+            SliverToBoxAdapter(
+              child: _HomeTabPlaceholder(tab: _selectedNavItem),
+            ),
+          ],
           const SliverToBoxAdapter(child: HomeFooter()),
         ],
       ),
@@ -259,30 +265,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _handleNavItemPressed(String item) {
     setState(() => _selectedNavItem = item);
-
-    switch (item) {
-      case '홈':
-        _scrollController.animateTo(
-          0,
-          duration: const Duration(milliseconds: 320),
-          curve: Curves.easeOutCubic,
-        );
-      case '브랜드데이':
-      case '타임딜':
-      case '선물하기':
-        _scrollTo(_benefitKey);
-      case '베스트':
-      case '신상품':
-      case '리뷰 LIVE':
-      case '리뷰랭킹':
-      case '기획전':
-        _scrollTo(_recommendationKey);
-      case '반려동물':
-      case '여행/레저':
-        _scrollTo(_popularCategoryKey);
-      default:
-        _scrollTo(_categoryKey);
-    }
+    _scrollController.jumpTo(0);
   }
 
   void _handleCategoryPressed(String label) {
@@ -430,6 +413,40 @@ class _FadeUpState extends State<_FadeUp> with SingleTickerProviderStateMixin {
     return FadeTransition(
       opacity: _opacity,
       child: SlideTransition(position: _offset, child: widget.child),
+    );
+  }
+}
+
+class _HomeTabPlaceholder extends StatelessWidget {
+  const _HomeTabPlaceholder({required this.tab});
+
+  final String tab;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.sizeOf(context).height * 0.6,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.construction_outlined, size: 48, color: AppColors.textTertiary),
+          const SizedBox(height: AppSpacing.md),
+          Text(
+            tab,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '준비 중인 콘텐츠입니다.',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
