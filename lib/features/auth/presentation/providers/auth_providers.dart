@@ -29,7 +29,7 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepositoryImpl(
     config: ref.watch(appConfigProvider),
     remoteDataSource: ref.watch(authRemoteDataSourceProvider),
-    tokenStore: ref.watch(authTokenStoreProvider),
+    tokenStore: ref.read(authTokenStoreProvider.notifier),
   );
 });
 
