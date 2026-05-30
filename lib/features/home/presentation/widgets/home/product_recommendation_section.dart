@@ -22,25 +22,35 @@ class ProductRecommendationSection extends StatelessWidget {
       icon: Icons.verified_outlined,
       child: products.isEmpty
           ? const _ProductEmptyState()
-          : GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: context.isMobile
-                    ? 2
-                    : (context.isTablet ? 3 : 5),
-                mainAxisSpacing: AppSpacing.md,
-                crossAxisSpacing: AppSpacing.md,
-                childAspectRatio: context.isMobile ? 0.64 : 0.68,
-              ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                final product = products[index];
-                return ProductCard(
-                  product: product,
-                  onTap: onProductTap == null
-                      ? null
-                      : () => onProductTap?.call(product),
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final columns = _columnsFor(constraints.maxWidth);
+                final cardWidth = (constraints.maxWidth -
+                        (columns - 1) * AppSpacing.md) /
+                    columns;
+                // text area: padding(32) + name 2-line(34) + gaps+store+price+rating(72)
+                const textAreaHeight = 138.0;
+                final aspectRatio = cardWidth / (cardWidth + textAreaHeight);
+
+                return GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    mainAxisSpacing: AppSpacing.md,
+                    crossAxisSpacing: AppSpacing.md,
+                    childAspectRatio: aspectRatio,
+                  ),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    final product = products[index];
+                    return ProductCard(
+                      product: product,
+                      onTap: onProductTap == null
+                          ? null
+                          : () => onProductTap?.call(product),
+                    );
+                  },
                 );
               },
             ),
@@ -104,6 +114,14 @@ class _ProductEmptyState extends StatelessWidget {
       ),
     );
   }
+}
+
+int _columnsFor(double width) {
+  if (width < 400) return 2;
+  if (width < 640) return 3;
+  if (width < 900) return 4;
+  if (width < 1200) return 5;
+  return 6;
 }
 
 class _SectionShell extends StatelessWidget {
