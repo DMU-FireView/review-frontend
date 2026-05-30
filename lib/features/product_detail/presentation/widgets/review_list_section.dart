@@ -4,6 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/review_rti_analysis_dialog.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
 
@@ -360,13 +361,9 @@ class ReviewCard extends StatelessWidget {
                         _showImageDialog(context, review.imageUrls, index),
                     child: ClipRRect(
                       borderRadius: AppRadius.small,
-                      child: Image.network(
-                        review.imageUrls[index],
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) =>
-                            const SizedBox.square(dimension: 80),
+                      child: SizedBox.square(
+                        dimension: 80,
+                        child: AppNetworkImage(url: review.imageUrls[index]),
                       ),
                     ),
                   ),
@@ -546,18 +543,9 @@ class _ReviewImageDialogState extends State<_ReviewImageDialog> {
                 Flexible(
                   child: ClipRRect(
                     borderRadius: AppRadius.medium,
-                    child: Image.network(
-                      widget.imageUrls[_current],
+                    child: AppNetworkImage(
+                      url: widget.imageUrls[_current],
                       fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const SizedBox(
-                        width: 300,
-                        height: 300,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 48,
-                          color: Colors.white38,
-                        ),
-                      ),
                     ),
                   ),
                 ),
