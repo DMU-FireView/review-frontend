@@ -53,41 +53,66 @@ class _ReviewListSectionState extends State<ReviewListSection> {
           onPhotoOnlyChanged: (v) => setState(() => _photoOnly = v),
         ),
         const SizedBox(height: AppSpacing.md),
-        if (reviews.isEmpty)
+        if (widget.reviews.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.rate_review_outlined,
+                    size: 40,
+                    color: AppColors.textTertiary,
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Text(
+                    '아직 등록된 리뷰가 없습니다.',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else if (reviews.isEmpty)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xl),
             child: Center(
               child: Text(
                 '해당 조건에 맞는 리뷰가 없습니다.',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: AppColors.textSecondary,
+                ),
+              ),
+            ),
+          )
+        else ...[
+          ...reviews.map(
+            (review) => Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: ReviewCard(
+                review: review,
+                onFeedback: widget.onFeedback != null
+                    ? (feedbackType) =>
+                          widget.onFeedback!(review.id, feedbackType)
+                    : null,
               ),
             ),
           ),
-        ...reviews.map(
-          (review) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: ReviewCard(
-              review: review,
-              onFeedback: widget.onFeedback != null
-                  ? (feedbackType) =>
-                        widget.onFeedback!(review.id, feedbackType)
-                  : null,
+          Center(
+            child: OutlinedButton(
+              onPressed: () {},
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.borderStrong),
+                shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+                foregroundColor: AppColors.textPrimary,
+              ),
+              child: const Text('리뷰 더보기'),
             ),
           ),
-        ),
-        Center(
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.borderStrong),
-              shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
-              foregroundColor: AppColors.textPrimary,
-            ),
-            child: const Text('리뷰 더보기'),
-          ),
-        ),
+        ],
       ],
     );
   }
@@ -463,7 +488,7 @@ class _RtiBadgeSmall extends StatelessWidget {
                 Icon(Icons.verified_user_outlined, size: 11, color: color),
                 const SizedBox(width: 2),
                 Text(
-                  'RTI $score',
+                  score > 0 ? 'RTI $score' : 'RTI -',
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: color,
                     fontWeight: FontWeight.w900,
@@ -472,6 +497,7 @@ class _RtiBadgeSmall extends StatelessWidget {
                 ),
               ],
             ),
+            if (label.isNotEmpty)
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
