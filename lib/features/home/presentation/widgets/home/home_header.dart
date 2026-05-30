@@ -22,6 +22,9 @@ class HomeHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.isLoggedIn = false,
+    this.onMyPagePressed,
+    this.onLogoutPressed,
     super.key,
   });
 
@@ -38,6 +41,9 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final bool isLoggedIn;
+  final VoidCallback? onMyPagePressed;
+  final VoidCallback? onLogoutPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +74,9 @@ class HomeHeader extends StatelessWidget {
                   searchKeywords: searchKeywords,
                   searchRecommendedProducts: searchRecommendedProducts,
                   searchFocusNode: searchFocusNode,
+                  isLoggedIn: isLoggedIn,
+                  onMyPagePressed: onMyPagePressed,
+                  onLogoutPressed: onLogoutPressed,
                 )
               : _DesktopHeader(
                   navItems: navItems,
@@ -83,6 +92,9 @@ class HomeHeader extends StatelessWidget {
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
+                  isLoggedIn: isLoggedIn,
+                  onMyPagePressed: onMyPagePressed,
+                  onLogoutPressed: onLogoutPressed,
                 ),
         ),
       ),
@@ -105,6 +117,9 @@ class _DesktopHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.isLoggedIn = false,
+    this.onMyPagePressed,
+    this.onLogoutPressed,
   });
 
   final List<String> navItems;
@@ -120,6 +135,9 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final bool isLoggedIn;
+  final VoidCallback? onMyPagePressed;
+  final VoidCallback? onLogoutPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -161,24 +179,50 @@ class _DesktopHeader extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _HeaderAction(
-                    icon: Icons.person_outline,
-                    label: '로그인',
-                    onTap: onLoginPressed,
-                  ),
-                  _HeaderAction(
-                    icon: Icons.favorite_border,
-                    label: '찜',
-                    onTap: onWishPressed,
-                  ),
-                  _HeaderAction(
-                    icon: Icons.shopping_cart_outlined,
-                    label: '장바구니',
-                    onTap: onCartPressed,
-                    badge: cartCount == null || cartCount == 0
-                        ? null
-                        : '$cartCount',
-                  ),
+                  if (isLoggedIn) ...[
+                    _HeaderAction(
+                      icon: Icons.person,
+                      label: '마이페이지',
+                      onTap: onMyPagePressed ?? onLoginPressed,
+                    ),
+                    _HeaderAction(
+                      icon: Icons.favorite_border,
+                      label: '찜',
+                      onTap: onWishPressed,
+                    ),
+                    _HeaderAction(
+                      icon: Icons.shopping_cart_outlined,
+                      label: '장바구니',
+                      onTap: onCartPressed,
+                      badge: cartCount == null || cartCount == 0
+                          ? null
+                          : '$cartCount',
+                    ),
+                    _HeaderAction(
+                      icon: Icons.logout,
+                      label: '로그아웃',
+                      onTap: onLogoutPressed,
+                    ),
+                  ] else ...[
+                    _HeaderAction(
+                      icon: Icons.person_outline,
+                      label: '로그인',
+                      onTap: onLoginPressed,
+                    ),
+                    _HeaderAction(
+                      icon: Icons.favorite_border,
+                      label: '찜',
+                      onTap: onWishPressed,
+                    ),
+                    _HeaderAction(
+                      icon: Icons.shopping_cart_outlined,
+                      label: '장바구니',
+                      onTap: onCartPressed,
+                      badge: cartCount == null || cartCount == 0
+                          ? null
+                          : '$cartCount',
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -277,6 +321,9 @@ class _MobileHeader extends StatelessWidget {
     this.searchKeywords = const [],
     this.searchRecommendedProducts = const [],
     this.searchFocusNode,
+    this.isLoggedIn = false,
+    this.onMyPagePressed,
+    this.onLogoutPressed,
   });
 
   final VoidCallback? onLogoPressed;
@@ -287,6 +334,9 @@ class _MobileHeader extends StatelessWidget {
   final List<String> searchKeywords;
   final List<HomeProductData> searchRecommendedProducts;
   final FocusNode? searchFocusNode;
+  final bool isLoggedIn;
+  final VoidCallback? onMyPagePressed;
+  final VoidCallback? onLogoutPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -297,7 +347,20 @@ class _MobileHeader extends StatelessWidget {
             HomeLogo(onTap: onLogoPressed),
             const Spacer(),
             if (!context.isMobile) ...[
-              TextButton(onPressed: onLoginPressed, child: const Text('로그인')),
+              if (isLoggedIn) ...[
+                TextButton(
+                  onPressed: onMyPagePressed ?? onLoginPressed,
+                  child: const Text('마이페이지'),
+                ),
+                TextButton(
+                  onPressed: onLogoutPressed,
+                  child: const Text('로그아웃'),
+                ),
+              ] else
+                TextButton(
+                  onPressed: onLoginPressed,
+                  child: const Text('로그인'),
+                ),
               const SizedBox(width: AppSpacing.xs),
             ],
             IconButton(
@@ -305,6 +368,18 @@ class _MobileHeader extends StatelessWidget {
               onPressed: onNotificationPressed,
               icon: const Icon(Icons.notifications_none),
             ),
+            if (isLoggedIn)
+              IconButton(
+                tooltip: '마이페이지',
+                onPressed: onMyPagePressed ?? onLoginPressed,
+                icon: const Icon(Icons.person),
+              )
+            else
+              IconButton(
+                tooltip: '로그인',
+                onPressed: onLoginPressed,
+                icon: const Icon(Icons.person_outline),
+              ),
             IconButton(
               tooltip: '장바구니',
               onPressed: onCartPressed,
