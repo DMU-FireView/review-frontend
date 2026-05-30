@@ -20,7 +20,7 @@ class AppConfig {
     return const AppConfig(
       apiBaseUrl: String.fromEnvironment(
         'API_BASE_URL',
-        defaultValue: 'http://3.39.78.175',
+        defaultValue: 'https://api.beens.kr',
       ),
       homeDashboardPath: String.fromEnvironment(
         'HOME_DASHBOARD_PATH',
