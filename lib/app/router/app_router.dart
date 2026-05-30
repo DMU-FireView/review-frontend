@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
@@ -38,58 +38,69 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.landing,
         name: RouteNames.landing,
-        builder: (context, state) => const LandingPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const LandingPage()),
       ),
       GoRoute(
         path: RoutePaths.home,
         name: RouteNames.home,
-        builder: (context, state) => const HomePage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const HomePage()),
       ),
       GoRoute(
         path: RoutePaths.login,
         name: RouteNames.login,
-        builder: (context, state) => const LoginPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const LoginPage()),
       ),
       GoRoute(
         path: RoutePaths.signup,
         name: RouteNames.signup,
-        builder: (context, state) => const SignupPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const SignupPage()),
       ),
       GoRoute(
         path: RoutePaths.onboarding,
         name: RouteNames.onboarding,
-        builder: (context, state) => const OnboardingPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const OnboardingPage()),
       ),
       GoRoute(
         path: RoutePaths.dashboard,
         name: RouteNames.dashboard,
-        builder: (context, state) => const HomeDashboardPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const HomeDashboardPage()),
       ),
       GoRoute(
         path: RoutePaths.search,
         name: RouteNames.search,
-        builder: (context, state) =>
-            SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+        ),
       ),
       GoRoute(
         path: RoutePaths.productDetail,
         name: RouteNames.productDetail,
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final idStr = state.pathParameters['id'] ?? '0';
           final id = int.tryParse(idStr) ?? 0;
-          return ProductDetailPage(productId: id);
+          return _buildTransitionPage(state, ProductDetailPage(productId: id));
         },
       ),
       GoRoute(
         path: RoutePaths.oauthCallback,
         name: RouteNames.oauthCallback,
-        builder: (context, state) =>
-            OAuthCallbackPage(queryParams: state.uri.queryParameters),
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          OAuthCallbackPage(queryParams: state.uri.queryParameters),
+        ),
       ),
       GoRoute(
         path: RoutePaths.passwordReset,
         name: RouteNames.passwordReset,
-        builder: (context, state) => const PasswordResetPage(),
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const PasswordResetPage()),
       ),
     ],
   );
@@ -101,3 +112,38 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
   return router;
 });
+
+CustomTransitionPage<void> _buildTransitionPage(
+  GoRouterState state,
+  Widget child,
+) {
+  return CustomTransitionPage<void>(
+    key: state.pageKey,
+    transitionDuration: const Duration(milliseconds: 280),
+    child: child,
+    transitionsBuilder: _buildTransition,
+  );
+}
+
+Widget _buildTransition(
+  BuildContext context,
+  Animation<double> animation,
+  Animation<double> secondaryAnimation,
+  Widget child,
+) {
+  final curvedAnimation = CurvedAnimation(
+    parent: animation,
+    curve: Curves.easeOutCubic,
+  );
+
+  return FadeTransition(
+    opacity: curvedAnimation,
+    child: SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, -0.04),
+        end: Offset.zero,
+      ).animate(curvedAnimation),
+      child: child,
+    ),
+  );
+}
