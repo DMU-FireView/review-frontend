@@ -11,6 +11,7 @@ class AppConfig {
     required this.googleOAuthPath,
     required this.passwordResetRequestPath,
     required this.passwordResetPath,
+    required this.userMePath,
     required this.connectTimeout,
     required this.receiveTimeout,
   });
@@ -61,6 +62,10 @@ class AppConfig {
         'PASSWORD_RESET_PATH',
         defaultValue: '/api/auth/password/reset',
       ),
+      userMePath: String.fromEnvironment(
+        'USER_ME_PATH',
+        defaultValue: '/api/users/me',
+      ),
       connectTimeout: Duration(seconds: 10),
       receiveTimeout: Duration(seconds: 15),
     );
@@ -77,6 +82,7 @@ class AppConfig {
   final String googleOAuthPath;
   final String passwordResetRequestPath;
   final String passwordResetPath;
+  final String userMePath;
   final Duration connectTimeout;
   final Duration receiveTimeout;
 }
