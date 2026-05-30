@@ -4,139 +4,143 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({required this.product, super.key});
+  const ProductCard({required this.product, this.onTap, super.key});
 
   final HomeProductData product;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       cursor: SystemMouseCursors.click,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColors.border),
-          boxShadow: const [
-            BoxShadow(
-              color: Color(0x0F0F172A),
-              blurRadius: 18,
-              offset: Offset(0, 8),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: product.imageUrl.isEmpty
-                          ? const ColoredBox(color: AppColors.surfaceMuted)
-                          : Image.network(
-                              product.imageUrl,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const ColoredBox(
-                                    color: AppColors.surfaceMuted,
-                                  ),
-                            ),
-                    ),
-                    Positioned(
-                      top: AppSpacing.sm,
-                      left: AppSpacing.sm,
-                      child: _Label(label: product.label),
-                    ),
-                    Positioned(
-                      top: AppSpacing.sm,
-                      right: AppSpacing.sm,
-                      child: Container(
-                        width: 34,
-                        height: 34,
-                        alignment: Alignment.center,
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.favorite_border,
-                          size: 20,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    Text(
-                      product.storeName,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Text(
-                      product.priceLabel,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.textPrimary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Row(
-                      children: [
-                        const Icon(
-                          Icons.star,
-                          color: Color(0xFFF59E0B),
-                          size: 16,
-                        ),
-                        const SizedBox(width: AppSpacing.xxs),
-                        Expanded(
-                          child: Text(
-                            '${product.ratingLabel} (${product.reviewCountLabel})',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelMedium,
-                          ),
-                        ),
-                        if (product.rtiLabel.isNotEmpty)
-                          Text(
-                            product.rtiLabel,
-                            style: Theme.of(context).textTheme.labelMedium
-                                ?.copyWith(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                          ),
-                      ],
-                    ),
-                  ],
-                ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x0F0F172A),
+                blurRadius: 18,
+                offset: Offset(0, 8),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: product.imageUrl.isEmpty
+                            ? const ColoredBox(color: AppColors.surfaceMuted)
+                            : Image.network(
+                                product.imageUrl,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const ColoredBox(
+                                      color: AppColors.surfaceMuted,
+                                    ),
+                              ),
+                      ),
+                      Positioned(
+                        top: AppSpacing.sm,
+                        left: AppSpacing.sm,
+                        child: _Label(label: product.label),
+                      ),
+                      Positioned(
+                        top: AppSpacing.sm,
+                        right: AppSpacing.sm,
+                        child: Container(
+                          width: 34,
+                          height: 34,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.favorite_border,
+                            size: 20,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        product.name,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xxs),
+                      Text(
+                        product.storeName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(color: AppColors.textSecondary),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(
+                        product.priceLabel,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w900,
+                            ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Color(0xFFF59E0B),
+                            size: 16,
+                          ),
+                          const SizedBox(width: AppSpacing.xxs),
+                          Expanded(
+                            child: Text(
+                              '${product.ratingLabel} (${product.reviewCountLabel})',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                          ),
+                          if (product.rtiLabel.isNotEmpty)
+                            Text(
+                              product.rtiLabel,
+                              style: Theme.of(context).textTheme.labelMedium
+                                  ?.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                            ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -33,6 +33,8 @@ class SearchBar extends StatefulWidget {
 class _SearchBarState extends State<SearchBar> {
   late final TextEditingController _controller;
   late final FocusNode _fallbackFocusNode;
+  final _searchBarKey = GlobalKey();
+  OverlayEntry? _suggestionOverlayEntry;
   bool _isFocused = false;
   bool _isHovered = false;
   List<String> _recentQueries = const [];
@@ -74,6 +76,7 @@ class _SearchBarState extends State<SearchBar> {
 
   @override
   void dispose() {
+    _hideSuggestionsOverlay();
     _removeOverlay();
     _effectiveFocusNode.removeListener(_syncFocusState);
     _fallbackFocusNode.dispose();
@@ -128,71 +131,68 @@ class _SearchBarState extends State<SearchBar> {
         : AppColors.surface;
 
     return MouseRegion(
+      key: _searchBarKey,
       onEnter: (_) => _setHovered(true),
       onExit: (_) => _setHovered(false),
-      child: CompositedTransformTarget(
-        link: _layerLink,
-        child: AnimatedContainer(
-          key: _containerKey,
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOutCubic,
-          height: 50,
-          decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: _isFocused || _isHovered
-                  ? AppColors.primary
-                  : AppColors.borderStrong,
-              width: _isFocused ? 1.5 : 1,
-            ),
-            boxShadow: [
-              if (_isFocused)
-                const BoxShadow(
-                  color: Color(0x1A2563EB),
-                  blurRadius: 18,
-                  offset: Offset(0, 8),
-                ),
-            ],
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOutCubic,
+        height: 50,
+        decoration: BoxDecoration(
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: _isFocused || _isHovered
+                ? AppColors.primary
+                : AppColors.borderStrong,
+            width: _isFocused ? 1.5 : 1,
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(15),
-            child: ColoredBox(
-              color: backgroundColor,
-              child: TextField(
-                controller: _controller,
-                focusNode: _effectiveFocusNode,
-                textInputAction: TextInputAction.search,
-                onSubmitted: _submitQuery,
-                decoration: InputDecoration(
-                  hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
-                  hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textTertiary,
-                  ),
-                  suffixIcon: IconButton(
-                    tooltip: '검색',
-                    icon: const Icon(Icons.search, color: AppColors.primary),
-                    onPressed:
-                        widget.onSubmitted == null &&
-                            widget.onSearchPressed == null
-                        ? null
-                        : () => _submitQuery(_controller.text, byIcon: true),
-                  ),
-                  filled: true,
-                  fillColor: backgroundColor,
-                  hoverColor: backgroundColor,
-                  border: InputBorder.none,
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: 13,
-                  ),
+          boxShadow: [
+            if (_isFocused)
+              const BoxShadow(
+                color: Color(0x1A2563EB),
+                blurRadius: 18,
+                offset: Offset(0, 8),
+              ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15),
+          child: ColoredBox(
+            color: backgroundColor,
+            child: TextField(
+              controller: _controller,
+              focusNode: _effectiveFocusNode,
+              textInputAction: TextInputAction.search,
+              onSubmitted: _submitQuery,
+              decoration: InputDecoration(
+                hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
+                hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textTertiary,
                 ),
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w600,
+                suffixIcon: IconButton(
+                  tooltip: '검색',
+                  icon: const Icon(Icons.search, color: AppColors.primary),
+                  onPressed:
+                      widget.onSubmitted == null &&
+                          widget.onSearchPressed == null
+                      ? null
+                      : () => _submitQuery(_controller.text, byIcon: true),
                 ),
+                filled: true,
+                fillColor: backgroundColor,
+                hoverColor: backgroundColor,
+                border: InputBorder.none,
+                enabledBorder: InputBorder.none,
+                focusedBorder: InputBorder.none,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.md,
+                  vertical: 13,
+                ),
+              ),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -207,6 +207,11 @@ class _SearchBarState extends State<SearchBar> {
       return;
     }
 
+    if (_controller.text != query) {
+      _controller.text = query;
+      _controller.selection = TextSelection.collapsed(offset: query.length);
+    }
+    _effectiveFocusNode.unfocus();
     _saveRecentQuery(query);
     if (byIcon && widget.onSearchPressed != null) {
       widget.onSearchPressed!(query);
@@ -225,6 +230,7 @@ class _SearchBarState extends State<SearchBar> {
     _writeRecentQueries(nextQueries);
     if (mounted) {
       setState(() => _recentQueries = nextQueries);
+      _suggestionOverlayEntry?.markNeedsBuild();
     }
   }
 
@@ -234,11 +240,13 @@ class _SearchBarState extends State<SearchBar> {
         .toList(growable: false);
     _writeRecentQueries(nextQueries);
     setState(() => _recentQueries = nextQueries);
+    _suggestionOverlayEntry?.markNeedsBuild();
   }
 
   void _clearRecentQueries() {
     WebStorage.remove(_recentSearchStorageKey);
     setState(() => _recentQueries = const []);
+    _suggestionOverlayEntry?.markNeedsBuild();
   }
 
   List<String> _readRecentQueries() {
@@ -291,6 +299,12 @@ class _SearchBarState extends State<SearchBar> {
       return;
     }
 
+    if (nextValue) {
+      _showSuggestionsOverlay();
+    } else {
+      _hideSuggestionsOverlay();
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && _isFocused != nextValue) {
         setState(() => _isFocused = nextValue);
@@ -301,6 +315,65 @@ class _SearchBarState extends State<SearchBar> {
         }
       }
     });
+  }
+
+  void _showSuggestionsOverlay() {
+    if (_suggestionOverlayEntry != null) {
+      _suggestionOverlayEntry?.markNeedsBuild();
+      return;
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          !_effectiveFocusNode.hasFocus ||
+          _suggestionOverlayEntry != null) {
+        return;
+      }
+
+      final overlay = Overlay.maybeOf(context);
+      final renderBox =
+          _searchBarKey.currentContext?.findRenderObject() as RenderBox?;
+      if (overlay == null || renderBox == null || !renderBox.hasSize) {
+        return;
+      }
+
+      _suggestionOverlayEntry = OverlayEntry(
+        builder: (context) {
+          final renderBox =
+              _searchBarKey.currentContext?.findRenderObject() as RenderBox?;
+          if (renderBox == null || !renderBox.hasSize) {
+            return const SizedBox.shrink();
+          }
+
+          final offset = renderBox.localToGlobal(Offset.zero);
+          return Positioned(
+            left: offset.dx,
+            top: offset.dy + renderBox.size.height + 8,
+            width: renderBox.size.width,
+            child: TextFieldTapRegion(child: _buildSuggestionPanel()),
+          );
+        },
+      );
+      overlay.insert(_suggestionOverlayEntry!);
+    });
+  }
+
+  void _hideSuggestionsOverlay() {
+    _suggestionOverlayEntry?.remove();
+    _suggestionOverlayEntry = null;
+  }
+
+  Widget _buildSuggestionPanel() {
+    return _SearchSuggestionPanel(
+      keywords: widget.suggestionKeywords,
+      recentQueries: _recentQueries,
+      products: widget.recommendedProducts.take(2).toList(),
+      onKeywordPressed: _submitQuery,
+      onRecentQueryPressed: _submitQuery,
+      onRecentQueryDeleted: _removeRecentQuery,
+      onRecentQueriesCleared: _clearRecentQueries,
+      onProductPressed: (product) => _submitQuery(product.name),
+    );
   }
 }
 
