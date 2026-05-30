@@ -15,6 +15,9 @@ class ProductDetailDto {
     required this.rtiColor,
     required this.reviewCount,
     required this.avgRating,
+    required this.lowestPrice,
+    required this.lowestPlatform,
+    required this.platforms,
   });
 
   final int id;
@@ -29,13 +32,17 @@ class ProductDetailDto {
   final String rtiColor;
   final int reviewCount;
   final double avgRating;
+  final int? lowestPrice;
+  final String? lowestPlatform;
+  final List<_PlatformEntry> platforms;
 
   factory ProductDetailDto.fromJson(Map<String, dynamic> json) {
+    final rawPlatforms = json['platforms'] as List? ?? [];
     return ProductDetailDto(
       id: (json['id'] as num).toInt(),
       name: (json['name'] ?? json['title']) as String? ?? '',
       imageUrl: json['imageUrl'] as String?,
-      price: (json['price'] as num?)?.toInt() ?? 0,
+      price: (json['price'] ?? json['lowestPrice'] as num?)?.toInt() ?? 0,
       category: json['category'] as String? ?? '',
       categoryDisplayName: json['categoryDisplayName'] as String? ?? '',
       platform: json['platform'] as String?,
@@ -44,10 +51,16 @@ class ProductDetailDto {
       rtiColor: json['rtiColor'] as String? ?? '#22C55E',
       reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
       avgRating: (json['avgRating'] as num?)?.toDouble() ?? 0.0,
+      lowestPrice: (json['lowestPrice'] as num?)?.toInt(),
+      lowestPlatform: json['lowestPlatform'] as String?,
+      platforms: rawPlatforms
+          .map((e) => _PlatformEntry.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
   ProductDetail toEntity() {
+    final comparisons = _buildPriceComparisons();
     return ProductDetail(
       id: id,
       name: name,
@@ -55,7 +68,7 @@ class ProductDetailDto {
       sellerName: platform,
       isOfficialSeller: false,
       imageUrls: imageUrl != null ? [imageUrl!] : [],
-      price: price,
+      price: lowestPrice ?? price,
       deliveryInfo: null,
       category: category,
       categoryDisplayName: categoryDisplayName,
@@ -67,12 +80,55 @@ class ProductDetailDto {
       rtiGrade: rtiGrade,
       rtiColor: rtiColor,
       specChips: const [],
-      priceComparisons: const [],
-      totalSellerCount: 0,
+      priceComparisons: comparisons,
+      totalSellerCount: comparisons.length,
       rtiSummary: _deriveRtiSummary(),
       trustSignals: const [],
     );
   }
+
+  List<PriceComparison> _buildPriceComparisons() {
+    if (platforms.isEmpty) return const [];
+    final sorted = [...platforms]..sort((a, b) => a.price.compareTo(b.price));
+    return sorted.map((p) {
+      final tag = p.platform.toLowerCase().replaceAll(' ', '');
+      return PriceComparison(
+        sellerName: _platformDisplayName(p.platform),
+        sellerLogoTag: tag,
+        price: p.price,
+        deliveryInfo: _deliveryInfo(p.platform),
+        isLowest: lowestPlatform != null
+            ? p.platform.toUpperCase() == lowestPlatform!.toUpperCase()
+            : p.price == sorted.first.price,
+        isOfficial: false,
+        linkLabel: '구매하기',
+        url: p.url,
+      );
+    }).toList();
+  }
+
+  static String _platformDisplayName(String platform) => switch (
+    platform.toUpperCase()
+  ) {
+    'NAVER' => '네이버',
+    'COUPANG' => '쿠팡',
+    '11ST' => '11번가',
+    'GMARKET' => 'G마켓',
+    'AUCTION' => '옥션',
+    'LOTTE' => '롯데온',
+    'SSG' => 'SSG닷컴',
+    'KAKAO' => '카카오',
+    _ => platform,
+  };
+
+  static String _deliveryInfo(String platform) => switch (
+    platform.toUpperCase()
+  ) {
+    'COUPANG' => '로켓배송',
+    'NAVER' => '네이버배송',
+    '11ST' => '일반배송',
+    _ => '배송정보 확인',
+  };
 
   List<String> _deriveBreadcrumbs() {
     return [
@@ -104,6 +160,26 @@ class ProductDetailDto {
     'DANGER' => '위험',
     _ => grade,
   };
+}
+
+class _PlatformEntry {
+  const _PlatformEntry({
+    required this.platform,
+    required this.price,
+    required this.url,
+  });
+
+  final String platform;
+  final int price;
+  final String url;
+
+  factory _PlatformEntry.fromJson(Map<String, dynamic> json) {
+    return _PlatformEntry(
+      platform: json['platform'] as String? ?? '',
+      price: (json['price'] as num?)?.toInt() ?? 0,
+      url: json['url'] as String? ?? '',
+    );
+  }
 }
 
 class ProductReviewDto {
