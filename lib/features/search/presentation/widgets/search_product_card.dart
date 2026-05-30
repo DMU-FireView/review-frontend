@@ -6,6 +6,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 import 'package:re_view_front/features/search/presentation/data/mock_search_results.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class SearchProductCard extends StatelessWidget {
   const SearchProductCard({super.key, required this.product});
@@ -39,21 +40,9 @@ class SearchProductCard extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFAFBFF),
-                        borderRadius: AppRadius.medium,
-                      ),
-                      child: ClipRRect(
-                        borderRadius: AppRadius.medium,
-                        child: Image.network(
-                          product.imageUrl,
-                          fit: BoxFit.cover,
-                          alignment: Alignment.center,
-                          errorBuilder: (context, error, stackTrace) =>
-                              const ColoredBox(color: AppColors.surfaceMuted),
-                        ),
-                      ),
+                    child: AppNetworkImage(
+                      url: product.imageUrl,
+                      borderRadius: AppRadius.medium,
                     ),
                   ),
                   Positioned(
@@ -191,15 +180,9 @@ class SearchProductListTile extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: ClipRRect(
+            child: AppNetworkImage(
+              url: product.imageUrl,
               borderRadius: AppRadius.medium,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                alignment: Alignment.center,
-                errorBuilder: (context, error, stackTrace) =>
-                    const ColoredBox(color: AppColors.surfaceMuted),
-              ),
             ),
           ),
           Positioned(

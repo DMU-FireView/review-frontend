@@ -5,6 +5,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/similar_product.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class SimilarProductsSection extends StatefulWidget {
   const SimilarProductsSection({super.key, required this.products});
@@ -185,17 +186,9 @@ class _SimilarProductCard extends StatelessWidget {
                   children: [
                     AspectRatio(
                       aspectRatio: 1,
-                      child: ClipRRect(
+                      child: AppNetworkImage(
+                        url: product.imageUrl,
                         borderRadius: AppRadius.small,
-                        child: ColoredBox(
-                          color: const Color(0xFFF5F7FB),
-                          child: Image.network(
-                            product.imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
-                                const ColoredBox(color: AppColors.surfaceMuted),
-                          ),
-                        ),
                       ),
                     ),
                     Positioned(
