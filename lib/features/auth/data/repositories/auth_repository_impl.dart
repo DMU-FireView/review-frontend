@@ -41,6 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
         _tokenStore.save(
           accessToken: token,
           tokenType: entity.tokenType ?? 'Bearer',
+          onboardingCompleted: entity.onboardingCompleted,
         );
       }
 
