@@ -179,10 +179,7 @@ class _RtiScoreSection extends StatelessWidget {
                   const SizedBox(width: AppSpacing.sm),
                   Padding(
                     padding: const EdgeInsets.only(bottom: 8),
-                    child: _RtiGradeBadge(
-                      label: review.rtiLabel,
-                      color: color,
-                    ),
+                    child: _RtiGradeBadge(label: review.rtiLabel, color: color),
                   ),
                 ],
               ),
@@ -372,8 +369,7 @@ class _SelectedReviewSection extends StatelessWidget {
                       ),
                       child: Text(
                         '# $tag',
-                        style:
-                            Theme.of(context).textTheme.labelSmall?.copyWith(
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                           fontSize: 11,
@@ -397,7 +393,7 @@ class _SelectedReviewSection extends StatelessWidget {
                   return ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: itemCount,
-                    separatorBuilder: (_, __) =>
+                    separatorBuilder: (_, _) =>
                         const SizedBox(width: AppSpacing.xs),
                     itemBuilder: (_, i) {
                       if (i >= shown) {
@@ -412,13 +408,11 @@ class _SelectedReviewSection extends StatelessWidget {
                           alignment: Alignment.center,
                           child: Text(
                             '+${total - 3}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelMedium
+                            style: Theme.of(context).textTheme.labelMedium
                                 ?.copyWith(
-                              color: AppColors.textSecondary,
-                              fontWeight: FontWeight.w700,
-                            ),
+                                  color: AppColors.textSecondary,
+                                  fontWeight: FontWeight.w700,
+                                ),
                           ),
                         );
                       }
@@ -429,7 +423,7 @@ class _SelectedReviewSection extends StatelessWidget {
                           width: 64,
                           height: 64,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) =>
+                          errorBuilder: (_, _, _) =>
                               const SizedBox.square(dimension: 64),
                         ),
                       );
@@ -572,7 +566,8 @@ class _HighlightedReviewContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final detail = review.rtiDetail;
-    final baseStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+    final baseStyle =
+        Theme.of(context).textTheme.bodySmall?.copyWith(
           color: AppColors.textPrimary,
           height: 1.65,
         ) ??
@@ -597,31 +592,29 @@ class _HighlightedReviewContent extends StatelessWidget {
 
     for (final (start, end, h) in segments) {
       if (start > lastEnd) {
-        spans.add(TextSpan(
-          text: content.substring(lastEnd, start),
-          style: baseStyle,
-        ));
+        spans.add(
+          TextSpan(text: content.substring(lastEnd, start), style: baseStyle),
+        );
       }
       final hColor = colorFromHex(h.color);
       final isLight = hColor.computeLuminance() > 0.45;
-      spans.add(TextSpan(
-        text: content.substring(start, end),
-        style: isLight
-            ? baseStyle.copyWith(
-                backgroundColor: hColor.withValues(alpha: 0.28),
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              )
-            : baseStyle,
-      ));
+      spans.add(
+        TextSpan(
+          text: content.substring(start, end),
+          style: isLight
+              ? baseStyle.copyWith(
+                  backgroundColor: hColor.withValues(alpha: 0.28),
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w600,
+                )
+              : baseStyle,
+        ),
+      );
       lastEnd = end;
     }
 
     if (lastEnd < content.length) {
-      spans.add(TextSpan(
-        text: content.substring(lastEnd),
-        style: baseStyle,
-      ));
+      spans.add(TextSpan(text: content.substring(lastEnd), style: baseStyle));
     }
 
     return RichText(text: TextSpan(children: spans));
@@ -640,13 +633,16 @@ class _RtiSignalsSection extends StatelessWidget {
     return _SectionCard(
       title: 'A. RTI 구성 신호',
       showInfo: true,
-      infoTooltip: 'RTI 점수를 구성하는 4가지 신호와 각각의 점수입니다.\n텍스트·행동·패턴·구매 인증을 종합해 산출합니다.',
+      infoTooltip:
+          'RTI 점수를 구성하는 4가지 신호와 각각의 점수입니다.\n텍스트·행동·패턴·구매 인증을 종합해 산출합니다.',
       child: Column(
         children: signals
-            .map((s) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                  child: _SignalBar(signal: s),
-                ))
+            .map(
+              (s) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: _SignalBar(signal: s),
+              ),
+            )
             .toList(),
       ),
     );
@@ -659,12 +655,12 @@ class _SignalBar extends StatelessWidget {
   final RtiSignal signal;
 
   IconData get _icon => switch (signal.iconType) {
-        'text' => Icons.person_outline,
-        'behavior' => Icons.check_circle_outline,
-        'pattern' => Icons.text_fields_outlined,
-        'purchase' => Icons.verified_user_outlined,
-        _ => Icons.info_outline,
-      };
+    'text' => Icons.person_outline,
+    'behavior' => Icons.check_circle_outline,
+    'pattern' => Icons.text_fields_outlined,
+    'purchase' => Icons.verified_user_outlined,
+    _ => Icons.info_outline,
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -717,7 +713,7 @@ class _SignalBar extends StatelessWidget {
                   tween: Tween(begin: 0, end: ratio),
                   duration: const Duration(milliseconds: 900),
                   curve: Curves.easeOutCubic,
-                  builder: (_, v, __) => LinearProgressIndicator(
+                  builder: (_, v, _) => LinearProgressIndicator(
                     value: v,
                     minHeight: 8,
                     backgroundColor: AppColors.border,
@@ -750,10 +746,12 @@ class _JudgmentBasisSection extends StatelessWidget {
       infoTooltip: '리뷰 신뢰도를 판단한 구체적인 근거와\n각 근거가 점수에 기여한 비중입니다.',
       child: Column(
         children: bases
-            .map((b) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                  child: _JudgmentBasisItem(basis: b),
-                ))
+            .map(
+              (b) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: _JudgmentBasisItem(basis: b),
+              ),
+            )
             .toList(),
       ),
     );
@@ -766,12 +764,12 @@ class _JudgmentBasisItem extends StatelessWidget {
   final RtiJudgmentBasis basis;
 
   IconData get _icon => switch (basis.iconType) {
-        'repeat' => Icons.repeat_outlined,
-        'context' => Icons.sentiment_satisfied_alt_outlined,
-        'history' => Icons.scatter_plot_outlined,
-        'similarity' => Icons.alarm_outlined,
-        _ => Icons.info_outline,
-      };
+    'repeat' => Icons.repeat_outlined,
+    'context' => Icons.sentiment_satisfied_alt_outlined,
+    'history' => Icons.scatter_plot_outlined,
+    'similarity' => Icons.alarm_outlined,
+    _ => Icons.info_outline,
+  };
 
   Color _percentageColor(Color dataColor) {
     if (basis.percentage >= 80) return AppColors.success;
@@ -849,10 +847,12 @@ class _SentenceHighlightsSection extends StatelessWidget {
       infoTooltip: 'RTI 점수 판단의 근거가 된 핵심 문장과\n각 문장이 의미하는 신호 유형입니다.',
       child: Column(
         children: highlights
-            .map((h) => Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                  child: _SentenceHighlightItem(highlight: h),
-                ))
+            .map(
+              (h) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: _SentenceHighlightItem(highlight: h),
+              ),
+            )
             .toList(),
       ),
     );
@@ -941,7 +941,11 @@ class _DialogFooter extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(Icons.info_outline, size: 13, color: AppColors.textTertiary),
+          const Icon(
+            Icons.info_outline,
+            size: 13,
+            color: AppColors.textTertiary,
+          ),
           const SizedBox(width: 4),
           Expanded(
             child: Text(
