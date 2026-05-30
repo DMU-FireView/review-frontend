@@ -42,6 +42,11 @@ class AuthTokenStore extends Notifier<bool> {
     state = true;
   }
 
+  void saveNickname(String nickname) {
+    _nickname = nickname;
+    WebStorage.write(_keyNickname, nickname);
+  }
+
   void completeOnboarding() {
     _onboardingCompleted = true;
     WebStorage.write(_keyOnboardingCompleted, 'true');
