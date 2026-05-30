@@ -9,17 +9,20 @@ class ProductRecommendationSection extends StatelessWidget {
   const ProductRecommendationSection({
     required this.products,
     this.onProductTap,
+    this.onViewAll,
     super.key,
   });
 
   final List<HomeProductData> products;
   final ValueChanged<HomeProductData>? onProductTap;
+  final VoidCallback? onViewAll;
 
   @override
   Widget build(BuildContext context) {
     return _SectionShell(
       title: '에디터가 고른 리뷰 추천',
       icon: Icons.verified_outlined,
+      onViewAll: onViewAll,
       child: products.isEmpty
           ? const _ProductEmptyState()
           : LayoutBuilder(
@@ -28,9 +31,11 @@ class ProductRecommendationSection extends StatelessWidget {
                 final cardWidth = (constraints.maxWidth -
                         (columns - 1) * AppSpacing.md) /
                     columns;
-                // text area: padding(32) + name 2-line(34) + gaps+store+price+rating(72)
-                const textAreaHeight = 138.0;
-                final aspectRatio = cardWidth / (cardWidth + textAreaHeight);
+                const imageAspectRatio = 4.0 / 3.0;
+                final imageHeight = cardWidth / imageAspectRatio;
+                // padding(32) + name 2-line(40) + gaps(24) + store(17) + price(24) + rating(17)
+                const textAreaHeight = 154.0;
+                final aspectRatio = cardWidth / (imageHeight + textAreaHeight);
 
                 return GridView.builder(
                   shrinkWrap: true,
@@ -129,11 +134,13 @@ class _SectionShell extends StatelessWidget {
     required this.title,
     required this.icon,
     required this.child,
+    this.onViewAll,
   });
 
   final String title;
   final IconData icon;
   final Widget child;
+  final VoidCallback? onViewAll;
 
   @override
   Widget build(BuildContext context) {
@@ -150,6 +157,33 @@ class _SectionShell extends StatelessWidget {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
+            if (onViewAll != null)
+              TextButton(
+                onPressed: onViewAll,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                    vertical: AppSpacing.xxs,
+                  ),
+                  minimumSize: Size.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  foregroundColor: AppColors.textSecondary,
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      '전체보기',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    const Icon(Icons.chevron_right, size: 16),
+                  ],
+                ),
+              ),
           ],
         ),
         const SizedBox(height: AppSpacing.md),
