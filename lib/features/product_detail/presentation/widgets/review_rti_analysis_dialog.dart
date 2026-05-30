@@ -4,6 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 void showReviewRtiAnalysisDialog(BuildContext context, ProductReview review) {
   showDialog<void>(
@@ -418,13 +419,9 @@ class _SelectedReviewSection extends StatelessWidget {
                       }
                       return ClipRRect(
                         borderRadius: AppRadius.small,
-                        child: Image.network(
-                          review.imageUrls[i],
-                          width: 64,
-                          height: 64,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const SizedBox.square(dimension: 64),
+                        child: SizedBox.square(
+                          dimension: 64,
+                          child: AppNetworkImage(url: review.imageUrls[i]),
                         ),
                       );
                     },
