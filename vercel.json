@@ -2,15 +2,16 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "http://3.39.78.175/api/$1"
+      "destination": "https://api.been.kr/api/$1"
     },
     {
       "source": "/oauth2/(.*)",
-      "destination": "http://3.39.78.175/oauth2/$1"
+      "destination": "https://api.been.kr/oauth2/$1"
     },
     {
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "buildCommand": "flutter build web --release --dart-define=API_BASE_URL="
 }
