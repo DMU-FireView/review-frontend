@@ -142,78 +142,16 @@ class _HomePageState extends ConsumerState<HomePage> {
                     _FadeUp(
                       key: _recommendationKey,
                       delay: 180,
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.verified_outlined,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Expanded(
-                            child: Text(
-                              '에디터가 고른 리뷰 기반 추천 상품',
-                              style: Theme.of(context).textTheme.titleMedium,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.xs,
-                                vertical: AppSpacing.xxs,
-                              ),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: AppColors.textSecondary,
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '전체보기',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.labelMedium?.copyWith(
-                                    color: AppColors.textSecondary,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(width: 2),
-                                const Icon(Icons.chevron_right, size: 16),
-                              ],
-                            ),
-                          ),
-                        ],
+                      child: ProductRecommendationSection(
+                        products: dashboardProducts,
+                        onProductTap: _handleProductPressed,
+                        onViewAll: () {},
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    const SizedBox(height: 20),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Expanded(
-                          flex: 13,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              ProductRecommendationSection(
-                                showHeader: false,
-                                products: dashboardProducts,
-                                onProductTap: _handleProductPressed,
-                              ),
-                              const SizedBox(height: 20),
-                              _FadeUp(
-                                key: _popularCategoryKey,
-                                delay: 360,
-                                child: PopularCategorySection(
-                                  items: popularCategories,
-                                  onCategoryPressed: _handleCategoryPressed,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 20),
                         Expanded(
                           flex: 9,
                           child: Column(
@@ -234,6 +172,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 ),
                               ),
                             ],
+                          ),
+                        ),
+                        const SizedBox(width: 20),
+                        Expanded(
+                          flex: 13,
+                          child: _FadeUp(
+                            key: _popularCategoryKey,
+                            delay: 360,
+                            child: PopularCategorySection(
+                              items: popularCategories,
+                              onCategoryPressed: _handleCategoryPressed,
+                            ),
                           ),
                         ),
                       ],
