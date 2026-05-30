@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
@@ -6,6 +8,10 @@ import 'package:re_view_front/features/home/presentation/widgets/home/brand/home
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
+
+typedef SearchSuggestionsRequested = Future<List<String>> Function(
+  String query,
+);
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({
@@ -18,6 +24,7 @@ class HomeHeader extends StatelessWidget {
     this.showCategoryNav = true,
     this.searchKeywords = const [],
     this.searchRecommendedProducts = const [],
+    this.onSearchSuggestionsRequested,
     this.onSearchSubmitted,
     this.onLogoPressed,
     this.searchFocusNode,
@@ -40,6 +47,7 @@ class HomeHeader extends StatelessWidget {
   final bool showCategoryNav;
   final List<String> searchKeywords;
   final List<HomeProductData> searchRecommendedProducts;
+  final SearchSuggestionsRequested? onSearchSuggestionsRequested;
   final ValueChanged<String>? onSearchSubmitted;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
@@ -79,6 +87,7 @@ class HomeHeader extends StatelessWidget {
                   onSearchSubmitted: onSearchSubmitted,
                   searchKeywords: searchKeywords,
                   searchRecommendedProducts: searchRecommendedProducts,
+                  onSearchSuggestionsRequested: onSearchSuggestionsRequested,
                   searchFocusNode: searchFocusNode,
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
@@ -98,6 +107,7 @@ class HomeHeader extends StatelessWidget {
                   onSearchSubmitted: onSearchSubmitted,
                   searchKeywords: searchKeywords,
                   searchRecommendedProducts: searchRecommendedProducts,
+                  onSearchSuggestionsRequested: onSearchSuggestionsRequested,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
                   cartCount: cartCount,
@@ -126,6 +136,7 @@ class _DesktopHeader extends StatelessWidget {
     this.onSearchSubmitted,
     this.searchKeywords = const [],
     this.searchRecommendedProducts = const [],
+    this.onSearchSuggestionsRequested,
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
@@ -147,6 +158,7 @@ class _DesktopHeader extends StatelessWidget {
   final ValueChanged<String>? onSearchSubmitted;
   final List<String> searchKeywords;
   final List<HomeProductData> searchRecommendedProducts;
+  final SearchSuggestionsRequested? onSearchSuggestionsRequested;
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
@@ -185,8 +197,9 @@ class _DesktopHeader extends StatelessWidget {
                   width: searchWidth,
                   child: home.SearchBar(
                     focusNode: searchFocusNode,
-                    suggestionKeywords: searchKeywords,
+                    popularKeywords: searchKeywords,
                     recommendedProducts: searchRecommendedProducts,
+                    onSuggestionsRequested: onSearchSuggestionsRequested,
                     onSubmitted: onSearchSubmitted,
                   ),
                 ),
@@ -335,6 +348,7 @@ class _MobileHeader extends StatelessWidget {
     this.onSearchSubmitted,
     this.searchKeywords = const [],
     this.searchRecommendedProducts = const [],
+    this.onSearchSuggestionsRequested,
     this.searchFocusNode,
     this.isLoggedIn = false,
     this.nickname,
@@ -351,6 +365,7 @@ class _MobileHeader extends StatelessWidget {
   final ValueChanged<String>? onSearchSubmitted;
   final List<String> searchKeywords;
   final List<HomeProductData> searchRecommendedProducts;
+  final SearchSuggestionsRequested? onSearchSuggestionsRequested;
   final FocusNode? searchFocusNode;
   final bool isLoggedIn;
   final String? nickname;
@@ -392,8 +407,9 @@ class _MobileHeader extends StatelessWidget {
         const SizedBox(height: AppSpacing.sm),
         home.SearchBar(
           focusNode: searchFocusNode,
-          suggestionKeywords: searchKeywords,
+          popularKeywords: searchKeywords,
           recommendedProducts: searchRecommendedProducts,
+          onSuggestionsRequested: onSearchSuggestionsRequested,
           onSubmitted: onSearchSubmitted,
         ),
       ],
