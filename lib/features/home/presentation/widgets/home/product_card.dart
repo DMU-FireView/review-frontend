@@ -37,7 +37,7 @@ class ProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AspectRatio(
-                  aspectRatio: 4 / 3,
+                  aspectRatio: 16 / 9,
                   child: Stack(
                     children: [
                       Positioned.fill(
