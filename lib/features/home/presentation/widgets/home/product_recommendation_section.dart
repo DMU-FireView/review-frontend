@@ -6,9 +6,14 @@ import 'package:re_view_front/features/home/presentation/widgets/home/product_ca
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 class ProductRecommendationSection extends StatelessWidget {
-  const ProductRecommendationSection({required this.products, super.key});
+  const ProductRecommendationSection({
+    required this.products,
+    this.onProductTap,
+    super.key,
+  });
 
   final List<HomeProductData> products;
+  final ValueChanged<HomeProductData>? onProductTap;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +35,13 @@ class ProductRecommendationSection extends StatelessWidget {
               ),
               itemCount: products.length,
               itemBuilder: (context, index) {
-                return ProductCard(product: products[index]);
+                final product = products[index];
+                return ProductCard(
+                  product: product,
+                  onTap: onProductTap == null
+                      ? null
+                      : () => onProductTap?.call(product),
+                );
               },
             ),
     );

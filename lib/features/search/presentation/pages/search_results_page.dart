@@ -178,7 +178,10 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     };
   }
 
-  int? _resolveTotalCount(SearchState state, List<SearchResultProduct> products) {
+  int? _resolveTotalCount(
+    SearchState state,
+    List<SearchResultProduct> products,
+  ) {
     return switch (state) {
       SearchSuccess(:final totalCount) => totalCount,
       _ => null,
@@ -188,6 +191,12 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   void _goToSearch(BuildContext context, String value) {
     final nextQuery = value.trim();
     if (nextQuery.isEmpty) return;
+    if (nextQuery == widget.query.trim()) {
+      _resetFilters();
+      _triggerSearch();
+      return;
+    }
+
     context.goNamed(RouteNames.search, queryParameters: {'q': nextQuery});
   }
 
@@ -280,7 +289,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     });
   }
 
-  List<SearchResultProduct> _filterProducts(List<SearchResultProduct> products) {
+  List<SearchResultProduct> _filterProducts(
+    List<SearchResultProduct> products,
+  ) {
     return products
         .where((product) {
           if (_selectedCategories.isNotEmpty &&
@@ -366,7 +377,10 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     return int.tryParse(normalized);
   }
 
-  void _syncInitialPriceRange(List<SearchResultProduct> products, String query) {
+  void _syncInitialPriceRange(
+    List<SearchResultProduct> products,
+    String query,
+  ) {
     if (_isPriceFilterActive || _lastPriceRangeQuery == query) return;
 
     _lastPriceRangeQuery = query;
