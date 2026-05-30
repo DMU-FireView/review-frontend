@@ -82,9 +82,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     final uiState = SearchResultsState(
       query: widget.query,
       products: _sortProducts(_filterProducts(products)),
-      quickFilters: const [],
+      quickFilters: _buildQuickFilters(products, totalCount ?? products.length),
       categoryFilters: _buildCategoryFilters(products),
-      priceRanges: const [],
+      priceRanges: _buildPriceRanges(products),
       totalCount: totalCount,
       isLoading: searchState.isLoading,
       errorMessage: searchState is SearchFailure
@@ -169,6 +169,40 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
         ],
       ),
     );
+  }
+
+  List<SearchFilterChipData> _buildQuickFilters(
+    List<SearchResultProduct> products,
+    int totalCount,
+  ) {
+    final categorySet = <String>{};
+    for (final p in products) {
+      if (p.categoryDisplayName.isNotEmpty) {
+        categorySet.add(p.categoryDisplayName);
+      }
+    }
+    return [
+      SearchFilterChipData(label: '전체', count: totalCount),
+      const SearchFilterChipData(label: 'RTI 80+', count: 0),
+      for (final cat in categorySet)
+        SearchFilterChipData(
+          label: cat,
+          count: products
+              .where((p) => p.categoryDisplayName == cat)
+              .length,
+        ),
+    ];
+  }
+
+  List<SearchFilterChipData> _buildPriceRanges(
+    List<SearchResultProduct> products,
+  ) {
+    if (products.isEmpty) return const [];
+    return const [
+      SearchFilterChipData(label: '1만원 이하', count: 0),
+      SearchFilterChipData(label: '10~30만원', count: 0),
+      SearchFilterChipData(label: '30만원 이상', count: 0),
+    ];
   }
 
   List<SearchFilterChipData> _buildCategoryFilters(
