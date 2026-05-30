@@ -134,7 +134,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ] else ...[
                       _FadeUp(
                         delay: 120,
-                        child: TrendingKeywordChips(keywords: dashboardKeywords),
+                        child: TrendingKeywordChips(
+                          keywords: dashboardKeywords,
+                          onKeywordTap: _handleKeywordSearch,
+                        ),
                       ),
                       const SizedBox(height: AppSpacing.xl),
                     ],
@@ -323,6 +326,10 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _handleProductPressed(HomeProductData product) {
     context.go('/product/${product.productId}');
+  }
+
+  void _handleKeywordSearch(String keyword) {
+    context.goNamed(RouteNames.search, queryParameters: {'q': keyword});
   }
 
   void _handleSearchSubmitted(String value) {
