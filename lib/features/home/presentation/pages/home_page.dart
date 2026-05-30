@@ -75,6 +75,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               onSearchSubmitted: _handleSearchSubmitted,
               searchKeywords: dashboardKeywords,
               searchRecommendedProducts: dashboardProducts,
+              onSearchSuggestionsRequested: _handleSearchSuggestionsRequested,
               searchFocusNode: _searchFocusNode,
               isLoggedIn: isLoggedIn,
               nickname: nickname,
@@ -326,6 +327,12 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   void _handleProductPressed(HomeProductData product) {
     context.go('/product/${product.productId}');
+  }
+
+  Future<List<String>> _handleSearchSuggestionsRequested(String query) {
+    return ref
+        .read(searchAutocompleteRemoteDataSourceProvider)
+        .fetchSuggestions(query);
   }
 
   void _handleKeywordSearch(String keyword) {
