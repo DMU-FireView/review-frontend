@@ -4,6 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class ReviewComparisonBanner extends StatelessWidget {
   const ReviewComparisonBanner({super.key, required this.products});
@@ -49,13 +50,7 @@ class ReviewComparisonBanner extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(
-                      representative.imageUrl,
-                      fit: BoxFit.cover,
-                      alignment: Alignment.center,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const ColoredBox(color: AppColors.surfaceMuted),
-                    ),
+                    AppNetworkImage(url: representative.imageUrl),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
