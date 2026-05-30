@@ -29,10 +29,12 @@ String formatSearchCount(int count) {
 
 Color colorFromHex(String hex) {
   final normalized = hex.replaceFirst('#', '');
-  final value = int.tryParse('FF$normalized', radix: 16);
-  if (value == null) {
-    return AppColors.primary;
+  if (normalized.length == 6) {
+    final value = int.tryParse('FF$normalized', radix: 16);
+    if (value != null) return Color(value);
+  } else if (normalized.length == 8) {
+    final value = int.tryParse(normalized, radix: 16);
+    if (value != null) return Color(value);
   }
-
-  return Color(value);
+  return AppColors.primary;
 }
