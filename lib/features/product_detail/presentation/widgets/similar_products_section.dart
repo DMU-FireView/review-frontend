@@ -7,10 +7,7 @@ import 'package:re_view_front/features/product_detail/domain/entities/similar_pr
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 
 class SimilarProductsSection extends StatefulWidget {
-  const SimilarProductsSection({
-    super.key,
-    required this.products,
-  });
+  const SimilarProductsSection({super.key, required this.products});
 
   final List<SimilarProduct> products;
 
@@ -84,7 +81,7 @@ class _SimilarProductsSectionState extends State<SimilarProductsSection> {
                       : 0,
                 ),
                 itemCount: widget.products.length,
-                separatorBuilder: (_, __) =>
+                separatorBuilder: (_, _) =>
                     const SizedBox(width: AppSpacing.md),
                 itemBuilder: (context, index) => _SimilarProductCard(
                   product: widget.products[index],
@@ -121,10 +118,7 @@ class _SimilarProductsSectionState extends State<SimilarProductsSection> {
 }
 
 class _ScrollArrowButton extends StatelessWidget {
-  const _ScrollArrowButton({
-    required this.icon,
-    required this.onPressed,
-  });
+  const _ScrollArrowButton({required this.icon, required this.onPressed});
 
   final IconData icon;
   final VoidCallback onPressed;
@@ -156,10 +150,7 @@ class _ScrollArrowButton extends StatelessWidget {
 }
 
 class _SimilarProductCard extends StatelessWidget {
-  const _SimilarProductCard({
-    required this.product,
-    required this.onTap,
-  });
+  const _SimilarProductCard({required this.product, required this.onTap});
 
   final SimilarProduct product;
   final VoidCallback onTap;
@@ -201,7 +192,7 @@ class _SimilarProductCard extends StatelessWidget {
                           child: Image.network(
                             product.imageUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) =>
+                            errorBuilder: (_, _, _) =>
                                 const ColoredBox(color: AppColors.surfaceMuted),
                           ),
                         ),
