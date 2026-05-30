@@ -158,6 +158,10 @@ class _DesktopHeader extends StatelessWidget {
                   _TopLink(label: '판매자 입점', onTap: onLoginPressed),
                   const SizedBox(width: AppSpacing.lg),
                   _TopLink(label: '앱 다운로드', onTap: onLoginPressed),
+                  if (isLoggedIn) ...[
+                    const SizedBox(width: AppSpacing.lg),
+                    _TopLink(label: '로그아웃', onTap: onLogoutPressed ?? () {}),
+                  ],
                 ],
               ),
             ),
@@ -197,11 +201,6 @@ class _DesktopHeader extends StatelessWidget {
                       badge: cartCount == null || cartCount == 0
                           ? null
                           : '$cartCount',
-                    ),
-                    _HeaderAction(
-                      icon: Icons.logout,
-                      label: '로그아웃',
-                      onTap: onLogoutPressed,
                     ),
                   ] else ...[
                     _HeaderAction(
