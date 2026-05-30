@@ -53,7 +53,10 @@ class ReviewComparisonBanner extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    AppNetworkImage(url: representative.imageUrl),
+                    AppNetworkImage(
+                      url: representative.imageUrl,
+                      fit: BoxFit.contain,
+                    ),
                     DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
