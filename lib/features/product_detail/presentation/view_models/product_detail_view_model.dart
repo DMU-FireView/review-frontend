@@ -12,15 +12,13 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
 
   late final GetProductDetailUseCase _getDetail;
   late final GetProductReviewsUseCase _getReviews;
-  late final GetReviewInsightUseCase _getInsight;
-  late final GetSimilarProductsUseCase _getSimilar;
+  late final SubmitReviewFeedbackUseCase _submitFeedback;
 
   @override
   ProductDetailState build() {
     _getDetail = ref.watch(getProductDetailUseCaseProvider);
     _getReviews = ref.watch(getProductReviewsUseCaseProvider);
-    _getInsight = ref.watch(getReviewInsightUseCaseProvider);
-    _getSimilar = ref.watch(getSimilarProductsUseCaseProvider);
+    _submitFeedback = ref.watch(submitReviewFeedbackUseCaseProvider);
     Future.microtask(() => _load(_productId));
     return const ProductDetailLoading();
   }
@@ -45,27 +43,24 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
     }
 
     final reviewsResult = await _getReviews(productId);
-    final insightResult = await _getInsight(productId);
-    final similarResult = await _getSimilar(productId);
     if (!ref.mounted) return;
 
     state = ProductDetailSuccess(
       detail: detail,
       reviews: reviewsResult.when(success: (r) => r, failure: (_) => const []),
-      reviewInsight: insightResult.when(
-        success: (i) => i,
-        failure: (_) => const ReviewInsight(
-          keywords: [],
-          satisfactionPoints: [],
-          dissatisfactionPoints: [],
-        ),
+      reviewInsight: const ReviewInsight(
+        keywords: [],
+        satisfactionPoints: [],
+        dissatisfactionPoints: [],
       ),
-      similarProducts: similarResult.when(
-        success: (s) => s,
-        failure: (_) => const [],
-      ),
+      similarProducts: const [],
     );
   }
 
   Future<void> refresh() => _load(_productId);
+
+  Future<bool> submitFeedback(int reviewId, String feedbackType) async {
+    final result = await _submitFeedback(reviewId, feedbackType);
+    return result.when(success: (_) => true, failure: (_) => false);
+  }
 }

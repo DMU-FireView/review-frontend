@@ -25,6 +25,6 @@ final getHomeDashboardUseCaseProvider = Provider<GetHomeDashboardUseCase>((
 });
 
 final homeDashboardViewModelProvider =
-    NotifierProvider<HomeDashboardViewModel, HomeDashboardState>(
+    NotifierProvider.autoDispose<HomeDashboardViewModel, HomeDashboardState>(
       HomeDashboardViewModel.new,
     );
