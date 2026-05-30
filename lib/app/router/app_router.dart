@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
@@ -13,14 +14,20 @@ import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 
+class _AuthNotifier extends ChangeNotifier {
+  _AuthNotifier(Ref ref) {
+    ref.listen<bool>(isLoggedInProvider, (_, __) => notifyListeners());
+  }
+}
+
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final tokenStore = ref.read(authTokenStoreProvider);
+  final authNotifier = _AuthNotifier(ref);
+
   final router = GoRouter(
     initialLocation: RoutePaths.landing,
-    refreshListenable: tokenStore,
+    refreshListenable: authNotifier,
     redirect: (context, state) {
-      final isLoggedIn = tokenStore.accessToken?.isNotEmpty ?? false;
-      // 로그인 후 landing/login/signup 접근 시 홈으로 redirect
+      final isLoggedIn = ref.read(isLoggedInProvider);
       const authPages = {RoutePaths.landing, RoutePaths.login, RoutePaths.signup};
       if (isLoggedIn && authPages.contains(state.matchedLocation)) {
         return RoutePaths.home;
@@ -87,7 +94,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 
-  ref.onDispose(router.dispose);
+  ref.onDispose(() {
+    authNotifier.dispose();
+    router.dispose();
+  });
 
   return router;
 });
