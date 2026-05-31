@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/responsive/breakpoints.dart';
@@ -31,60 +30,21 @@ class LandingPage extends StatelessWidget {
   }
 }
 
-// StatefulWidget으로 분리해야 함:
-// HtmlElementView.fromTagName은 호출마다 내부 _nextId를 증가시켜 새 viewType을 생성함.
-// build()에서 호출하면 리빌드마다 새 platformView가 만들어져 DOM 위치/스타일이 불안정해짐.
-// initState에서 한 번만 생성하고 인스턴스를 재사용해서 안정적인 backdrop을 유지함.
-class _Backdrop extends StatefulWidget {
+class _Backdrop extends StatelessWidget {
   const _Backdrop({required this.onDismiss});
 
   final VoidCallback onDismiss;
 
   @override
-  State<_Backdrop> createState() => _BackdropState();
-}
-
-class _BackdropState extends State<_Backdrop> {
-  Widget? _backdropView;
-
-  @override
-  void initState() {
-    super.initState();
-    if (kIsWeb) {
-      _backdropView = HtmlElementView.fromTagName(
-        tagName: 'div',
-        onElementCreated: (Object element) {
-          final el = element as dynamic;
-          el.style.position = 'absolute';
-          el.style.top = '0';
-          el.style.left = '0';
-          el.style.width = '100%';
-          el.style.height = '100%';
-          el.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
-          el.style.backdropFilter = 'blur(2px)';
-          el.style.webkitBackdropFilter = 'blur(2px)';
-          el.style.pointerEvents = 'none';
-        },
-      );
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if (kIsWeb) {
-      return GestureDetector(
-        onTap: widget.onDismiss,
-        behavior: HitTestBehavior.opaque,
-        child: Stack(
-          children: [
-            const SizedBox.expand(),
-            if (_backdropView != null) _backdropView!,
-          ],
-        ),
-      );
-    }
+    // HtmlElementView 기반 div는 Chrome Mac(Metal GPU 백엔드)에서
+    // WebGL canvas 합성 순서 차이로 인해 보이지 않음.
+    // BackdropFilter는 Flutter 캔버스 레이어에서 동작하므로 모든 브라우저/플랫폼에서 일관적.
+    // HTML 이미지(AppNetworkImage)는 Flutter 캔버스 위 HTML 레이어라 블러 미적용되나
+    // Container의 반투명 오버레이는 canvas 위에 정상 렌더링됨.
     return GestureDetector(
-      onTap: widget.onDismiss,
+      onTap: onDismiss,
+      behavior: HitTestBehavior.opaque,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: Container(color: const Color(0x330F172A)),
