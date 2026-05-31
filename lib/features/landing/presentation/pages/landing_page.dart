@@ -52,14 +52,17 @@ class _Backdrop extends StatelessWidget {
               tagName: 'div',
               onElementCreated: (Object element) {
                 final el = element as dynamic;
-                el.style.width = '100%';
-                el.style.height = '100%';
-                el.style.position = 'absolute';
+                // position: fixed + 100vw/100vh로 뷰포트 전체 커버
+                // (position: absolute + 100%는 Flutter HtmlElementView 컨테이너 기준이라
+                // 하단 플랫폼뷰 이미지들이 범위 밖으로 빠져 블러가 적용되지 않음)
+                el.style.position = 'fixed';
                 el.style.top = '0';
                 el.style.left = '0';
-                el.style.backgroundColor = 'rgba(15, 23, 42, 0.4)';
-                el.style.backdropFilter = 'blur(3px)';
-                el.style.webkitBackdropFilter = 'blur(3px)';
+                el.style.width = '100vw';
+                el.style.height = '100vh';
+                el.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
+                el.style.backdropFilter = 'blur(2px)';
+                el.style.webkitBackdropFilter = 'blur(2px)';
                 el.style.pointerEvents = 'none';
               },
             ),
@@ -70,8 +73,8 @@ class _Backdrop extends StatelessWidget {
     return GestureDetector(
       onTap: onDismiss,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-        child: Container(color: const Color(0x660F172A)),
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: Container(color: const Color(0x330F172A)),
       ),
     );
   }
