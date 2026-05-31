@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/responsive/breakpoints.dart';
@@ -37,12 +38,16 @@ class _Backdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 웹에서는 HtmlElementView 이미지가 BackdropFilter 블러를 우회하므로
+    // 불투명도가 높은 단색 오버레이로 대체
     return GestureDetector(
       onTap: onDismiss,
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-        child: Container(color: const Color(0x660F172A)),
-      ),
+      child: kIsWeb
+          ? Container(color: const Color(0xCC0F172A))
+          : BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+              child: Container(color: const Color(0x660F172A)),
+            ),
     );
   }
 }
