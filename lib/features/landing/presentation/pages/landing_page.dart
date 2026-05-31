@@ -128,18 +128,15 @@ class _LandingCard extends StatelessWidget {
                       padding: isMobile
                           ? const EdgeInsets.all(AppSpacing.lg)
                           : const EdgeInsets.all(AppSpacing.xxl),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: cardHeight),
-                        child: isMobile
-                            ? _MobileContent(
-                                onStartPressed: onStartPressed,
-                                onRtiInfoPressed: onRtiInfoPressed,
-                              )
-                            : _DesktopContent(
-                                onStartPressed: onStartPressed,
-                                onRtiInfoPressed: onRtiInfoPressed,
-                              ),
-                      ),
+                      child: isMobile
+                          ? _MobileContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            )
+                          : _DesktopContent(
+                              onStartPressed: onStartPressed,
+                              onRtiInfoPressed: onRtiInfoPressed,
+                            ),
                     ),
                     Positioned(
                       top: AppSpacing.md,
@@ -169,7 +166,7 @@ class _DesktopContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
           flex: 5,
