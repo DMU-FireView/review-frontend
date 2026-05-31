@@ -122,11 +122,11 @@ class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cardHeight = switch (columns) {
-      1 => 460.0,
-      2 => 410.0,
-      3 => 388.0,
-      4 => 372.0,
-      _ => 360.0,
+      1 => 520.0,
+      2 => 490.0,
+      3 => 465.0,
+      4 => 445.0,
+      _ => 425.0,
     };
 
     return GridView.builder(
