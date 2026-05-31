@@ -30,9 +30,7 @@ class _CartPageState extends ConsumerState<CartPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => ref.read(cartViewModelProvider.notifier).load(),
-    );
+    Future.microtask(() => ref.read(cartViewModelProvider.notifier).load());
   }
 
   @override
@@ -62,7 +60,10 @@ class _CartPageState extends ConsumerState<CartPage> {
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {
-                  context.goNamed(RouteNames.search, queryParameters: {'q': q.trim()});
+                  context.goNamed(
+                    RouteNames.search,
+                    queryParameters: {'q': q.trim()},
+                  );
                 }
               },
               searchKeywords: keywords,
@@ -87,20 +88,21 @@ class _CartPageState extends ConsumerState<CartPage> {
               ),
               child: switch (cartState) {
                 CartLoading() || CartInitial() => const SizedBox(
-                    height: 320,
-                    child: AppLoadingView(message: '장바구니를 불러오는 중입니다.'),
-                  ),
+                  height: 320,
+                  child: AppLoadingView(message: '장바구니를 불러오는 중입니다.'),
+                ),
                 CartFailure(:final failure) => SizedBox(
-                    height: 320,
-                    child: AppErrorView(
-                      message: failure.message,
-                      onRetry: () => ref.read(cartViewModelProvider.notifier).load(),
-                    ),
+                  height: 320,
+                  child: AppErrorView(
+                    message: failure.message,
+                    onRetry: () =>
+                        ref.read(cartViewModelProvider.notifier).load(),
                   ),
+                ),
                 CartEmpty() => _CartEmptyBody(
-                    onGoHome: () => context.go(RoutePaths.home),
-                  ),
-                CartSuccess() => _CartBody(cartState: cartState as CartSuccess),
+                  onGoHome: () => context.go(RoutePaths.home),
+                ),
+                CartSuccess() => _CartBody(cartState: cartState),
               },
             ),
           ),
@@ -119,21 +121,22 @@ class _CartPageState extends ConsumerState<CartPage> {
 
   List<HomeProductData> _productsFrom(HomeDashboardState state) {
     return switch (state) {
-      HomeDashboardSuccess(:final dashboard) => dashboard.recommendedProducts
-          .map(
-            (p) => HomeProductData(
-              productId: p.id,
-              name: p.name,
-              storeName: p.storeName,
-              priceLabel: '${p.price}원',
-              ratingLabel: p.rating?.toStringAsFixed(1) ?? '-',
-              reviewCountLabel: p.reviewCount?.toString() ?? '-',
-              rtiLabel: p.rtiScore == null ? '' : 'RTI ${p.rtiScore}',
-              imageUrl: p.imageUrl,
-              label: p.label ?? '',
-            ),
-          )
-          .toList(),
+      HomeDashboardSuccess(:final dashboard) =>
+        dashboard.recommendedProducts
+            .map(
+              (p) => HomeProductData(
+                productId: p.id,
+                name: p.name,
+                storeName: p.storeName,
+                priceLabel: '${p.price}원',
+                ratingLabel: p.rating?.toStringAsFixed(1) ?? '-',
+                reviewCountLabel: p.reviewCount?.toString() ?? '-',
+                rtiLabel: p.rtiScore == null ? '' : 'RTI ${p.rtiScore}',
+                imageUrl: p.imageUrl,
+                label: p.label ?? '',
+              ),
+            )
+            .toList(),
       _ => const [],
     };
   }
@@ -177,9 +180,12 @@ class _CartBody extends ConsumerWidget {
                 CartItemCard(
                   item: item,
                   isSelected: cartState.selectedIds.contains(item.productId),
-                  isUpdating: cartState.updatingProductIds.contains(item.productId),
+                  isUpdating: cartState.updatingProductIds.contains(
+                    item.productId,
+                  ),
                   onToggleSelect: () => vm.toggleSelectItem(item.productId),
-                  onQuantityChanged: (qty) => vm.updateQuantity(item.productId, qty),
+                  onQuantityChanged: (qty) =>
+                      vm.updateQuantity(item.productId, qty),
                   onRemove: () => vm.removeItem(item.productId),
                   onMoveToWishlist: () {},
                   onSaveForLater: () {},
@@ -290,7 +296,11 @@ class _RtiCheckBanner extends StatelessWidget {
               ),
               child: const Padding(
                 padding: EdgeInsets.all(AppSpacing.xs),
-                child: Icon(Icons.verified_user_outlined, color: AppColors.primary, size: 20),
+                child: Icon(
+                  Icons.verified_user_outlined,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -335,7 +345,11 @@ class _CartEmptyBody extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.shopping_cart_outlined, size: 56, color: AppColors.textTertiary),
+          const Icon(
+            Icons.shopping_cart_outlined,
+            size: 56,
+            color: AppColors.textTertiary,
+          ),
           const SizedBox(height: AppSpacing.md),
           Text(
             '장바구니가 비어 있습니다',
@@ -347,15 +361,12 @@ class _CartEmptyBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             '마음에 드는 상품을 담아보세요.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.lg),
-          OutlinedButton(
-            onPressed: onGoHome,
-            child: const Text('쇼핑 계속하기'),
-          ),
+          OutlinedButton(onPressed: onGoHome, child: const Text('쇼핑 계속하기')),
         ],
       ),
     );
