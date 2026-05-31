@@ -602,12 +602,15 @@ class _CartSquareButtonState extends ConsumerState<_CartSquareButton> {
     setState(() => _loading = false);
 
     result.when(
-      success: (_) => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('장바구니에 담겼습니다.'),
-          duration: Duration(seconds: 2),
-        ),
-      ),
+      success: (_) {
+        ref.invalidate(cartItemCountProvider);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('장바구니에 담겼습니다.'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      },
       failure: (_) => ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('장바구니 담기에 실패했습니다.'),
