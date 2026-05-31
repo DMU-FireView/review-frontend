@@ -27,7 +27,7 @@ class ReviewComparisonBanner extends StatelessWidget {
           borderRadius: BorderRadius.circular(14),
         ),
         child: SizedBox(
-          height: context.isMobile ? 280 : 232,
+          height: context.isMobile ? 320 : 268,
           child: Stack(
             children: [
               Positioned.fill(

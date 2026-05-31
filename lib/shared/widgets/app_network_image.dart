@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 
@@ -19,12 +20,35 @@ class AppNetworkImage extends StatelessWidget {
   final double iconSize;
   final BorderRadius? borderRadius;
 
+  String get _objectFit => switch (fit) {
+    BoxFit.contain => 'contain',
+    BoxFit.fill => 'fill',
+    BoxFit.fitWidth => 'cover',
+    BoxFit.fitHeight => 'contain',
+    BoxFit.none => 'none',
+    _ => 'cover',
+  };
+
   @override
   Widget build(BuildContext context) {
     Widget child;
 
     if (url.isEmpty) {
       child = _Placeholder(icon: placeholderIcon, iconSize: iconSize);
+    } else if (kIsWeb) {
+      // HtmlElementView로 <img> 태그 직접 렌더링 → 외부 CDN 이미지 CORS 우회
+      final objectFit = _objectFit;
+      child = HtmlElementView.fromTagName(
+        tagName: 'img',
+        onElementCreated: (Object element) {
+          final img = element as dynamic;
+          img.src = url;
+          img.style.width = '100%';
+          img.style.height = '100%';
+          img.style.objectFit = objectFit;
+          img.style.display = 'block';
+        },
+      );
     } else {
       child = Image.network(
         url,

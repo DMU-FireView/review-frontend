@@ -104,8 +104,16 @@ class FilterPanel extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    RangeEndpoint(label: '${minPriceController.text}원'),
-                    RangeEndpoint(label: '${maxPriceController.text}원'),
+                    RangeEndpoint(
+                      label: minPriceController.text.isNotEmpty
+                          ? '${minPriceController.text}원'
+                          : '-',
+                    ),
+                    RangeEndpoint(
+                      label: maxPriceController.text.isNotEmpty
+                          ? '${maxPriceController.text}원'
+                          : '-',
+                    ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
