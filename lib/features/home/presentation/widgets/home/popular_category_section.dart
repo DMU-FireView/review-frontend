@@ -69,26 +69,11 @@ class PopularCategorySection extends StatelessWidget {
                               color: const Color(0xFFF1F5F9),
                               borderRadius: BorderRadius.circular(16),
                             ),
-                            child: item.imageAssetPath == null
-                                ? Icon(
-                                    item.icon,
-                                    color: AppColors.textSecondary,
-                                    size: 34,
-                                  )
-                                : Padding(
-                                    padding: const EdgeInsets.all(
-                                      AppSpacing.xs,
-                                    ),
-                                    child: Image.asset(
-                                      item.imageAssetPath!,
-                                      fit: BoxFit.contain,
-                                      errorBuilder: (_, __, ___) => Icon(
-                                        item.icon,
-                                        color: AppColors.textSecondary,
-                                        size: 34,
-                                      ),
-                                    ),
-                                  ),
+                            child: Icon(
+                              item.icon,
+                              color: AppColors.textSecondary,
+                              size: 34,
+                            ),
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
