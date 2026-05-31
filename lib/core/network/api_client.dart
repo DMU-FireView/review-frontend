@@ -52,7 +52,26 @@ class ApiClient {
     return dio.get(path, queryParameters: queryParameters);
   }
 
-  Future<Response<dynamic>> post(String path, {Object? data}) {
-    return dio.post(path, data: data);
+  Future<Response<dynamic>> post(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return dio.post(path, data: data, queryParameters: queryParameters);
+  }
+
+  Future<Response<dynamic>> put(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return dio.put(path, data: data, queryParameters: queryParameters);
+  }
+
+  Future<Response<dynamic>> delete(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return dio.delete(path, queryParameters: queryParameters);
   }
 }
