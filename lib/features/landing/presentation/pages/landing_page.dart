@@ -97,6 +97,9 @@ class _LandingCard extends StatelessWidget {
       builder: (context, screenSize) {
         final isMobile = screenSize == AppScreenSize.mobile;
         final viewportHeight = MediaQuery.sizeOf(context).height;
+        final verticalPadding =
+            isMobile ? AppSpacing.md * 2 : AppSpacing.lg * 2;
+        final cardHeight = viewportHeight - verticalPadding;
 
         return Center(
           child: Padding(
@@ -112,7 +115,8 @@ class _LandingCard extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: AppBreakpoints.wideContentMaxWidth,
-                maxHeight: viewportHeight - AppSpacing.lg * 2,
+                minHeight: cardHeight,
+                maxHeight: cardHeight,
               ),
               child: Material(
                 color: AppColors.surface,
@@ -124,15 +128,18 @@ class _LandingCard extends StatelessWidget {
                       padding: isMobile
                           ? const EdgeInsets.all(AppSpacing.lg)
                           : const EdgeInsets.all(AppSpacing.xxl),
-                      child: isMobile
-                          ? _MobileContent(
-                              onStartPressed: onStartPressed,
-                              onRtiInfoPressed: onRtiInfoPressed,
-                            )
-                          : _DesktopContent(
-                              onStartPressed: onStartPressed,
-                              onRtiInfoPressed: onRtiInfoPressed,
-                            ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: cardHeight),
+                        child: isMobile
+                            ? _MobileContent(
+                                onStartPressed: onStartPressed,
+                                onRtiInfoPressed: onRtiInfoPressed,
+                              )
+                            : _DesktopContent(
+                                onStartPressed: onStartPressed,
+                                onRtiInfoPressed: onRtiInfoPressed,
+                              ),
+                      ),
                     ),
                     Positioned(
                       top: AppSpacing.md,
@@ -162,7 +169,7 @@ class _DesktopContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           flex: 5,
