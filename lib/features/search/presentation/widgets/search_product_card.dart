@@ -103,11 +103,12 @@ class SearchProductCard extends StatelessWidget {
                         child: Text(
                           '(리뷰 ${formatSearchCount(product.reviewCount)})',
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 11,
+                              ),
                         ),
                       ),
                     ],
@@ -535,13 +536,18 @@ class _WishlistSquareButton extends ConsumerWidget {
       child: OutlinedButton(
         onPressed: asyncStatus.isLoading
             ? null
-            : () => ref
-                .read(wishlistButtonProvider(productId).notifier)
-                .toggle(),
+            : () =>
+                  ref.read(wishlistButtonProvider(productId).notifier).toggle(),
         style: _wishlistButtonStyle(liked),
-        child: Icon(
-          liked ? Icons.favorite : Icons.favorite_border,
-          size: 18,
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 180),
+          transitionBuilder: (child, animation) =>
+              ScaleTransition(scale: animation, child: child),
+          child: Icon(
+            liked ? Icons.favorite : Icons.favorite_border,
+            key: ValueKey(liked),
+            size: 18,
+          ),
         ),
       ),
     );
@@ -567,8 +573,8 @@ class _WishlistSquareButton extends ConsumerWidget {
           color: liked
               ? const Color(0xFFEF4444)
               : states.contains(WidgetState.hovered)
-                  ? AppColors.primary
-                  : AppColors.borderStrong,
+              ? AppColors.primary
+              : AppColors.borderStrong,
         );
       }),
       shape: WidgetStateProperty.all(
@@ -592,47 +598,84 @@ class _CartSquareButtonState extends ConsumerState<_CartSquareButton> {
 
   Future<void> _addToCart() async {
     if (_loading) return;
+    final alreadyInCart =
+        ref.read(cartButtonProvider(widget.productId)).value ?? false;
+    if (alreadyInCart) return;
+
     setState(() => _loading = true);
 
-    final result = await ref
-        .read(updateCartUseCaseProvider)
-        .add(widget.productId);
+    await ref.read(cartButtonProvider(widget.productId).notifier).add();
 
     if (!mounted) return;
     setState(() => _loading = false);
 
-    result.when(
-      success: (_) {
-        ref.invalidate(cartItemCountProvider);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('장바구니에 담겼습니다.'),
-            duration: Duration(seconds: 2),
-          ),
-        );
-      },
-      failure: (_) => ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('장바구니 담기에 실패했습니다.'),
-          duration: Duration(seconds: 2),
-        ),
+    final inCart =
+        ref.read(cartButtonProvider(widget.productId)).value ?? false;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(inCart ? '장바구니에 담겼습니다.' : '장바구니 담기에 실패했습니다.'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final asyncStatus = ref.watch(cartButtonProvider(widget.productId));
+    final inCart = asyncStatus.value ?? false;
+
     return SizedBox.square(
       dimension: 36,
       child: OutlinedButton(
-        onPressed: _loading ? null : _addToCart,
-        style: outlineHoverButtonStyle(padding: EdgeInsets.zero),
-        child: _loading
+        onPressed: _loading || inCart || asyncStatus.isLoading
+            ? null
+            : _addToCart,
+        style: _cartButtonStyle(inCart),
+        child: _loading || asyncStatus.isLoading
             ? const SizedBox.square(
                 dimension: 14,
                 child: CircularProgressIndicator(strokeWidth: 2),
               )
-            : const Icon(Icons.shopping_cart_outlined, size: 18),
+            : AnimatedSwitcher(
+                duration: const Duration(milliseconds: 180),
+                transitionBuilder: (child, animation) =>
+                    ScaleTransition(scale: animation, child: child),
+                child: Icon(
+                  inCart ? Icons.shopping_cart : Icons.shopping_cart_outlined,
+                  key: ValueKey(inCart),
+                  size: 18,
+                ),
+              ),
+      ),
+    );
+  }
+
+  ButtonStyle _cartButtonStyle(bool inCart) {
+    return ButtonStyle(
+      padding: WidgetStateProperty.all(EdgeInsets.zero),
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (inCart) return AppColors.primaryLight;
+        return states.contains(WidgetState.hovered)
+            ? AppColors.primaryLight
+            : AppColors.surface;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (inCart) return AppColors.primary;
+        return states.contains(WidgetState.hovered)
+            ? AppColors.primary
+            : AppColors.textPrimary;
+      }),
+      side: WidgetStateProperty.resolveWith((states) {
+        return BorderSide(
+          color: inCart
+              ? AppColors.primary
+              : states.contains(WidgetState.hovered)
+              ? AppColors.primary
+              : AppColors.borderStrong,
+        );
+      }),
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(borderRadius: AppRadius.small),
       ),
     );
   }

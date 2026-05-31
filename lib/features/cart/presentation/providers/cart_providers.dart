@@ -24,15 +24,61 @@ final updateCartUseCaseProvider = Provider<UpdateCartUseCase>((ref) {
   return UpdateCartUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final cartViewModelProvider =
-    NotifierProvider<CartViewModel, CartState>(CartViewModel.new);
+final cartViewModelProvider = NotifierProvider<CartViewModel, CartState>(
+  CartViewModel.new,
+);
 
 final cartItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return 0;
   final result = await ref.read(getCartUseCaseProvider)();
+  return result.when(success: (data) => data.items.length, failure: (_) => 0);
+});
+
+final cartProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
+  ref,
+) async {
+  final isLoggedIn = ref.watch(isLoggedInProvider);
+  if (!isLoggedIn) return <int>{};
+  final result = await ref.read(getCartUseCaseProvider)();
   return result.when(
-    success: (data) => data.items.length,
-    failure: (_) => 0,
+    success: (data) => data.items.map((item) => item.productId).toSet(),
+    failure: (_) => <int>{},
   );
 });
+
+final cartButtonProvider =
+    AsyncNotifierProvider.family<CartButtonNotifier, bool, int>(
+      CartButtonNotifier.new,
+    );
+
+class CartButtonNotifier extends AsyncNotifier<bool> {
+  CartButtonNotifier(this._productId);
+
+  final int _productId;
+  bool _isAdding = false;
+
+  @override
+  Future<bool> build() async {
+    final productIds = await ref.watch(cartProductIdsProvider.future);
+    return productIds.contains(_productId);
+  }
+
+  Future<void> add() async {
+    if (_isAdding || state.value == true) return;
+
+    _isAdding = true;
+    final result = await ref.read(updateCartUseCaseProvider).add(_productId);
+
+    if (!ref.mounted) return;
+    _isAdding = false;
+    result.when(
+      success: (_) {
+        state = const AsyncData(true);
+        ref.invalidate(cartItemCountProvider);
+        ref.invalidate(cartProductIdsProvider);
+      },
+      failure: (_) => state = const AsyncData(false),
+    );
+  }
+}

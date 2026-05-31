@@ -50,6 +50,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
   WishlistButtonNotifier(this._productId);
 
   final int _productId;
+  bool _isToggling = false;
 
   @override
   Future<bool> build() async {
@@ -58,8 +59,10 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
   }
 
   Future<void> toggle() async {
+    if (_isToggling) return;
+
     final current = state.value ?? false;
-    state = const AsyncLoading<bool>();
+    _isToggling = true;
 
     final toggleUseCase = ref.read(toggleWishlistUseCaseProvider);
     final result = current
@@ -67,6 +70,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
         : await toggleUseCase.add(_productId);
 
     if (!ref.mounted) return;
+    _isToggling = false;
     result.when(
       success: (_) {
         state = AsyncData(!current);
