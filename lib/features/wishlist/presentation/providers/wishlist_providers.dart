@@ -44,6 +44,7 @@ final wishlistItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
 final wishlistProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
   ref,
 ) async {
+  ref.keepAlive();
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return <int>{};
   final result = await ref.read(getWishlistUseCaseProvider)();
