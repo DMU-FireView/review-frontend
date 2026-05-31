@@ -5,6 +5,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/landing/presentation/providers/landing_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class LoginValuePanel extends ConsumerWidget {
   const LoginValuePanel({super.key});
@@ -224,20 +225,15 @@ class _ProductThumbnail extends StatelessWidget {
       return const _SkeletonBox(width: 150, height: 150, radius: 22);
     }
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(22),
-      child: SizedBox(
-        width: 150,
-        height: 150,
-        child: Image.network(
-          imageUrl,
-          fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const _SkeletonBox(
-            width: 150,
-            height: 150,
-            radius: 22,
-          ),
-        ),
+    return SizedBox(
+      width: 150,
+      height: 150,
+      child: AppNetworkImage(
+        url: imageUrl,
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(22),
+        placeholderIcon: Icons.inventory_2_outlined,
+        iconSize: 42,
       ),
     );
   }
