@@ -1,11 +1,11 @@
 {
-    "name": "re_view_front",
-    "short_name": "re_view_front",
+    "name": "Re:view",
+    "short_name": "Re:view",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#FFFFFF",
+    "theme_color": "#0B5CFF",
+    "description": "리뷰를 믿고, 현명하게 쇼핑하다.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
