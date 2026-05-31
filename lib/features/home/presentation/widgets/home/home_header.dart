@@ -419,11 +419,30 @@ class _CategoryMenuButton extends StatefulWidget {
   State<_CategoryMenuButton> createState() => _CategoryMenuButtonState();
 }
 
-class _CategoryMenuButtonState extends State<_CategoryMenuButton> {
+class _CategoryMenuButtonState extends State<_CategoryMenuButton>
+    with SingleTickerProviderStateMixin {
   OverlayEntry? _overlayEntry;
+  late final AnimationController _controller;
+  late final Animation<double> _fadeAnim;
+  late final Animation<Offset> _slideAnim;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
+    _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    _slideAnim = Tween<Offset>(
+      begin: const Offset(0, -0.06),
+      end: Offset.zero,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+  }
 
   @override
   void dispose() {
+    _controller.dispose();
     _overlayEntry?.remove();
     _overlayEntry = null;
     super.dispose();
@@ -441,18 +460,14 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton> {
     final overlay = Overlay.of(context);
     final buttonBox = context.findRenderObject() as RenderBox?;
     final overlayBox = overlay.context.findRenderObject() as RenderBox?;
-    if (buttonBox == null || overlayBox == null) {
-      return;
-    }
+    if (buttonBox == null || overlayBox == null) return;
 
     final buttonOffset = buttonBox.localToGlobal(
       Offset.zero,
       ancestor: overlayBox,
     );
     final overlayWidth = overlayBox.size.width;
-    final panelWidth = overlayWidth < 1488 ? overlayWidth - 32 : 1440.0;
-    final panelLeft = (overlayWidth - panelWidth) / 2;
-    final panelTop = buttonOffset.dy + buttonBox.size.height + 12;
+    final panelTop = buttonOffset.dy + buttonBox.size.height + 1;
 
     _overlayEntry = OverlayEntry(
       builder: (context) {
@@ -466,14 +481,20 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton> {
               ),
             ),
             Positioned(
-              left: panelLeft,
+              left: 0,
               top: panelTop,
-              width: panelWidth,
-              child: _CategoryMegaMenuPanel(
-                onCategorySelected: (label) {
-                  widget.onCategorySelected(label);
-                  _closeMenu();
-                },
+              width: overlayWidth,
+              child: FadeTransition(
+                opacity: _fadeAnim,
+                child: SlideTransition(
+                  position: _slideAnim,
+                  child: _CategoryMegaMenuPanel(
+                    onCategorySelected: (label) {
+                      widget.onCategorySelected(label);
+                      _closeMenu();
+                    },
+                  ),
+                ),
               ),
             ),
           ],
@@ -481,15 +502,16 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton> {
       },
     );
     overlay.insert(_overlayEntry!);
+    _controller.forward(from: 0);
     setState(() {});
   }
 
   void _closeMenu() {
-    _overlayEntry?.remove();
-    _overlayEntry = null;
-    if (mounted) {
-      setState(() {});
-    }
+    _controller.reverse().then((_) {
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -536,47 +558,51 @@ class _CategoryMegaMenuPanelState extends State<_CategoryMegaMenuPanel> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.transparent,
+      color: AppColors.surface,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
-          boxShadow: const [
+        decoration: const BoxDecoration(
+          border: Border(
+            top: BorderSide(color: AppColors.border),
+            bottom: BorderSide(color: AppColors.border),
+          ),
+          boxShadow: [
             BoxShadow(
               color: AppColors.shadow,
-              blurRadius: 22,
-              offset: Offset(0, 12),
+              blurRadius: 24,
+              offset: Offset(0, 8),
             ),
           ],
         ),
-        child: SizedBox(
-          height: 480,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _CategorySideNav(
-                selectedCategory: _selectedCategory,
-                onAllPressed: () => setState(() => _selectedCategory = null),
-                onCategoryPressed: (category) {
-                  setState(() => _selectedCategory = category);
-                },
-              ),
-              const VerticalDivider(width: 1, color: AppColors.border),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
-                  child: _selectedCategory == null
-                      ? _AllCategoryOverview(
-                          onCategorySelected: widget.onCategorySelected,
-                        )
-                      : _SelectedCategoryView(
-                          category: _selectedCategory!,
-                          onCategorySelected: widget.onCategorySelected,
-                        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          child: SizedBox(
+            height: 480,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _CategorySideNav(
+                  selectedCategory: _selectedCategory,
+                  onAllPressed: () => setState(() => _selectedCategory = null),
+                  onCategoryPressed: (category) {
+                    setState(() => _selectedCategory = category);
+                  },
                 ),
-              ),
-            ],
+                const VerticalDivider(width: 1, color: AppColors.border),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
+                    child: _selectedCategory == null
+                        ? _AllCategoryOverview(
+                            onCategorySelected: widget.onCategorySelected,
+                          )
+                        : _SelectedCategoryView(
+                            category: _selectedCategory!,
+                            onCategorySelected: widget.onCategorySelected,
+                          ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -624,7 +650,7 @@ class _CategorySideNav extends StatelessWidget {
   }
 }
 
-class _CategorySideNavItem extends StatelessWidget {
+class _CategorySideNavItem extends StatefulWidget {
   const _CategorySideNavItem({
     required this.label,
     required this.isSelected,
@@ -636,26 +662,43 @@ class _CategorySideNavItem extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
+  State<_CategorySideNavItem> createState() => _CategorySideNavItemState();
+}
+
+class _CategorySideNavItemState extends State<_CategorySideNavItem> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(8),
-      onTap: onTap,
-      child: Container(
-        height: 24,
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primaryLight : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-          border: isSelected ? Border.all(color: AppColors.primary) : null,
-        ),
-        child: Text(
-          label,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: isSelected ? AppColors.primary : AppColors.textPrimary,
-            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+    final active = widget.isSelected || _hovered;
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          height: 28,
+          alignment: Alignment.centerLeft,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+          decoration: BoxDecoration(
+            color: active ? AppColors.primaryLight : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+            border: widget.isSelected
+                ? Border.all(color: AppColors.primary)
+                : _hovered
+                    ? Border.all(color: AppColors.primary.withValues(alpha: 0.35))
+                    : null,
+          ),
+          child: Text(
+            widget.label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: active ? AppColors.primary : AppColors.textPrimary,
+              fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+            ),
           ),
         ),
       ),
@@ -868,18 +911,16 @@ class _CategoryOverviewTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final imgW = constraints.maxWidth.clamp(0.0, 108.0);
-                    final imgH = constraints.maxHeight.clamp(0.0, 88.0);
-                    return Center(
-                      child: _CategoryAssetImage(
-                        assetPath: _categoryAssetPath(category.id),
-                        width: imgW,
-                        height: imgH,
-                      ),
-                    );
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: _CategoryAssetImage(
+                      assetPath: _categoryAssetPath(category.id),
+                      width: 96,
+                      height: 80,
+                    ),
+                  ),
                 ),
               ),
               Text(
