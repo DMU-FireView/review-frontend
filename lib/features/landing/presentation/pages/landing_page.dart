@@ -38,16 +38,41 @@ class _Backdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 웹에서는 HtmlElementView 이미지가 BackdropFilter 블러를 우회하므로
-    // 불투명도가 높은 단색 오버레이로 대체
+    if (kIsWeb) {
+      // HtmlElementView 이미지들은 Flutter 캔버스 위 HTML 레이어에 렌더링되므로
+      // BackdropFilter가 적용되지 않음. 동일한 HTML 레이어에 div를 올려 시각적으로 덮음.
+      // pointer-events: none 으로 터치 이벤트는 아래 GestureDetector로 통과시킴.
+      return GestureDetector(
+        onTap: onDismiss,
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            Container(color: Colors.transparent),
+            HtmlElementView.fromTagName(
+              tagName: 'div',
+              onElementCreated: (Object element) {
+                final el = element as dynamic;
+                el.style.width = '100%';
+                el.style.height = '100%';
+                el.style.position = 'absolute';
+                el.style.top = '0';
+                el.style.left = '0';
+                el.style.backgroundColor = 'rgba(15, 23, 42, 0.4)';
+                el.style.backdropFilter = 'blur(3px)';
+                el.style.webkitBackdropFilter = 'blur(3px)';
+                el.style.pointerEvents = 'none';
+              },
+            ),
+          ],
+        ),
+      );
+    }
     return GestureDetector(
       onTap: onDismiss,
-      child: kIsWeb
-          ? Container(color: const Color(0xCC0F172A))
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              child: Container(color: const Color(0x660F172A)),
-            ),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+        child: Container(color: const Color(0x660F172A)),
+      ),
     );
   }
 }
