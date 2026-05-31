@@ -14,6 +14,7 @@ import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
+import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
 
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(Ref ref) {
@@ -102,6 +103,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.passwordReset,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const PasswordResetPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.wishlist,
+        name: RouteNames.wishlist,
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const WishlistPage()),
       ),
       GoRoute(
         path: RoutePaths.cart,
