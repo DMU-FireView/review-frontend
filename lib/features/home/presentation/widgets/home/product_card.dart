@@ -187,7 +187,7 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
   @override
   Widget build(BuildContext context) {
     final asyncStatus = ref.watch(wishlistButtonProvider(widget.productId));
-    final liked = asyncStatus.valueOrNull ?? false;
+    final liked = asyncStatus.value ?? false;
 
     return GestureDetector(
       onTap: asyncStatus.isLoading ? null : _toggle,

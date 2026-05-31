@@ -528,7 +528,7 @@ class _WishlistSquareButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncStatus = ref.watch(wishlistButtonProvider(productId));
-    final liked = asyncStatus.valueOrNull ?? false;
+    final liked = asyncStatus.value ?? false;
 
     return SizedBox.square(
       dimension: 36,
