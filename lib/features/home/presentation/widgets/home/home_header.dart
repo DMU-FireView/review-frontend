@@ -1,19 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
-typedef SearchSuggestionsRequested = Future<List<String>> Function(
-  String query,
-);
+typedef SearchSuggestionsRequested =
+    Future<List<String>> Function(String query);
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends ConsumerWidget {
   const HomeHeader({
     required this.navItems,
     required this.selectedNavItem,
@@ -29,6 +31,7 @@ class HomeHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.wishlistCount,
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
@@ -52,6 +55,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final int? wishlistCount;
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
@@ -60,9 +64,13 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoutPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final useCompactHeader =
         context.isMobile || context.viewportSize.width < 1100;
+    final effectiveCartCount =
+        cartCount ?? ref.watch(cartItemCountProvider).value ?? 0;
+    final effectiveWishlistCount =
+        wishlistCount ?? ref.watch(wishlistItemCountProvider).value ?? 0;
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -110,7 +118,8 @@ class HomeHeader extends StatelessWidget {
                   onSearchSuggestionsRequested: onSearchSuggestionsRequested,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
-                  cartCount: cartCount,
+                  cartCount: effectiveCartCount,
+                  wishlistCount: effectiveWishlistCount,
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
@@ -140,6 +149,7 @@ class _DesktopHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.wishlistCount,
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
@@ -162,6 +172,7 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final int? wishlistCount;
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
@@ -211,7 +222,7 @@ class _DesktopHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (isLoggedIn) ...[
-                    _UserProfileButton(
+                    HeaderUserProfileButton(
                       nickname: nickname,
                       onMyPagePressed: onMyPagePressed,
                       onProfileWishPressed: onProfileWishPressed,
@@ -222,6 +233,9 @@ class _DesktopHeader extends StatelessWidget {
                       icon: Icons.favorite_border,
                       label: '찜',
                       onTap: onWishPressed,
+                      badge: wishlistCount == null || wishlistCount == 0
+                          ? null
+                          : '$wishlistCount',
                     ),
                     _HeaderAction(
                       icon: Icons.shopping_cart_outlined,
@@ -241,6 +255,9 @@ class _DesktopHeader extends StatelessWidget {
                       icon: Icons.favorite_border,
                       label: '찜',
                       onTap: onWishPressed,
+                      badge: wishlistCount == null || wishlistCount == 0
+                          ? null
+                          : '$wishlistCount',
                     ),
                     _HeaderAction(
                       icon: Icons.shopping_cart_outlined,
@@ -383,7 +400,7 @@ class _MobileHeader extends StatelessWidget {
             HomeLogo(onTap: onLogoPressed),
             const Spacer(),
             if (isLoggedIn)
-              _UserProfileButton(
+              HeaderUserProfileButton(
                 nickname: nickname,
                 onMyPagePressed: onMyPagePressed,
                 onProfileWishPressed: onProfileWishPressed,
@@ -417,8 +434,9 @@ class _MobileHeader extends StatelessWidget {
   }
 }
 
-class _UserProfileButton extends StatefulWidget {
-  const _UserProfileButton({
+class HeaderUserProfileButton extends StatefulWidget {
+  const HeaderUserProfileButton({
+    super.key,
     this.nickname,
     this.onMyPagePressed,
     this.onProfileWishPressed,
@@ -435,10 +453,11 @@ class _UserProfileButton extends StatefulWidget {
   final bool compact;
 
   @override
-  State<_UserProfileButton> createState() => _UserProfileButtonState();
+  State<HeaderUserProfileButton> createState() =>
+      _HeaderUserProfileButtonState();
 }
 
-class _UserProfileButtonState extends State<_UserProfileButton> {
+class _HeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
@@ -540,8 +559,9 @@ class _UserProfileButtonState extends State<_UserProfileButton> {
                     Icon(
                       Icons.person,
                       size: 24,
-                      color:
-                          _isOpen ? AppColors.primary : AppColors.textPrimary,
+                      color: _isOpen
+                          ? AppColors.primary
+                          : AppColors.textPrimary,
                     ),
                     const SizedBox(height: 2),
                     Row(
@@ -549,8 +569,8 @@ class _UserProfileButtonState extends State<_UserProfileButton> {
                       children: [
                         Text(
                           displayName,
-                          style:
-                              Theme.of(context).textTheme.labelMedium?.copyWith(
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
                                 color: _isOpen
                                     ? AppColors.primary
                                     : AppColors.textPrimary,
@@ -594,8 +614,9 @@ class _ProfileDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayName =
-        nickname != null && nickname!.isNotEmpty ? nickname! : '회원';
+    final displayName = nickname != null && nickname!.isNotEmpty
+        ? nickname!
+        : '회원';
 
     return Material(
       color: Colors.transparent,
@@ -624,16 +645,17 @@ class _ProfileDropdown extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         displayName.isNotEmpty ? displayName[0] : '?',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w800,
-                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.w800,
+                            ),
                       ),
                     ),
                   ),
@@ -644,8 +666,8 @@ class _ProfileDropdown extends StatelessWidget {
                       children: [
                         Text(
                           '$displayName님',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
                                 color: AppColors.textPrimary,
                                 fontWeight: FontWeight.w800,
                               ),
@@ -653,8 +675,8 @@ class _ProfileDropdown extends StatelessWidget {
                         const SizedBox(height: 2),
                         Text(
                           'Re:view 멤버',
-                          style:
-                              Theme.of(context).textTheme.labelSmall?.copyWith(
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.w600,
                               ),
