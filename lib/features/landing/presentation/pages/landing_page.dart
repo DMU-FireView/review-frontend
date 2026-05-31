@@ -52,13 +52,11 @@ class _Backdrop extends StatelessWidget {
               tagName: 'div',
               onElementCreated: (Object element) {
                 final el = element as dynamic;
-                // position: absolute + viewport 단위로 뷰포트 전체 커버
-                // fixed는 CanvasKit의 transform 컨텍스트에서 동작하지 않음
                 el.style.position = 'absolute';
                 el.style.top = '0';
                 el.style.left = '0';
-                el.style.width = '100vw';
-                el.style.height = '100vh';
+                el.style.width = '100%';
+                el.style.height = '100%';
                 el.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
                 el.style.backdropFilter = 'blur(2px)';
                 el.style.webkitBackdropFilter = 'blur(2px)';
