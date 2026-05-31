@@ -31,44 +31,60 @@ class LandingPage extends StatelessWidget {
   }
 }
 
-class _Backdrop extends StatelessWidget {
+// StatefulWidget으로 분리해야 함:
+// HtmlElementView.fromTagName은 호출마다 내부 _nextId를 증가시켜 새 viewType을 생성함.
+// build()에서 호출하면 리빌드마다 새 platformView가 만들어져 DOM 위치/스타일이 불안정해짐.
+// initState에서 한 번만 생성하고 인스턴스를 재사용해서 안정적인 backdrop을 유지함.
+class _Backdrop extends StatefulWidget {
   const _Backdrop({required this.onDismiss});
 
   final VoidCallback onDismiss;
 
   @override
+  State<_Backdrop> createState() => _BackdropState();
+}
+
+class _BackdropState extends State<_Backdrop> {
+  Widget? _backdropView;
+
+  @override
+  void initState() {
+    super.initState();
+    if (kIsWeb) {
+      _backdropView = HtmlElementView.fromTagName(
+        tagName: 'div',
+        onElementCreated: (Object element) {
+          final el = element as dynamic;
+          el.style.position = 'absolute';
+          el.style.top = '0';
+          el.style.left = '0';
+          el.style.width = '100%';
+          el.style.height = '100%';
+          el.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
+          el.style.backdropFilter = 'blur(2px)';
+          el.style.webkitBackdropFilter = 'blur(2px)';
+          el.style.pointerEvents = 'none';
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     if (kIsWeb) {
-      // HtmlElementView 이미지들은 Flutter 캔버스 위 HTML 레이어에 렌더링되므로
-      // BackdropFilter가 적용되지 않음. 동일한 HTML 레이어에 div를 올려 시각적으로 덮음.
-      // pointer-events: none 으로 터치 이벤트는 아래 GestureDetector로 통과시킴.
       return GestureDetector(
-        onTap: onDismiss,
+        onTap: widget.onDismiss,
         behavior: HitTestBehavior.opaque,
         child: Stack(
           children: [
-            Container(color: Colors.transparent),
-            HtmlElementView.fromTagName(
-              tagName: 'div',
-              onElementCreated: (Object element) {
-                final el = element as dynamic;
-                el.style.position = 'absolute';
-                el.style.top = '0';
-                el.style.left = '0';
-                el.style.width = '100%';
-                el.style.height = '100%';
-                el.style.backgroundColor = 'rgba(15, 23, 42, 0.2)';
-                el.style.backdropFilter = 'blur(2px)';
-                el.style.webkitBackdropFilter = 'blur(2px)';
-                el.style.pointerEvents = 'none';
-              },
-            ),
+            const SizedBox.expand(),
+            if (_backdropView != null) _backdropView!,
           ],
         ),
       );
     }
     return GestureDetector(
-      onTap: onDismiss,
+      onTap: widget.onDismiss,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
         child: Container(color: const Color(0x330F172A)),
