@@ -25,7 +25,7 @@ class LandingRtiDemoCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _TrustBadgeRow(
-            product: productAsync.valueOrNull,
+            product: productAsync.value,
           ),
           const SizedBox(height: AppSpacing.md),
           productAsync.when(

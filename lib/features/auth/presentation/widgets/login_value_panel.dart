@@ -12,7 +12,7 @@ class LoginValuePanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final productAsync = ref.watch(featuredProductProvider);
-    final product = productAsync.valueOrNull;
+    final product = productAsync.value;
 
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 760),
