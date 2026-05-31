@@ -118,28 +118,8 @@ final popularCategories = [
     PopularCategoryData(
       label: category.label,
       icon: _popularCategoryIcons[category.id] ?? Icons.category_outlined,
-      imageAssetPath: _popularCategoryImageAssets[category.id],
     ),
 ];
-
-const _categoryImageBasePath = 'assets/images/categories/category_images';
-
-const _popularCategoryImageAssets = {
-  'digital-appliance': '$_categoryImageBasePath/popular_digital.png',
-  'fashion-clothing': '$_categoryImageBasePath/popular_fashion.png',
-  'fashion-accessory': '$_categoryImageBasePath/cat_bag_wallet.png',
-  'beauty': '$_categoryImageBasePath/popular_beauty.png',
-  'food': '$_categoryImageBasePath/popular_food.png',
-  'living-kitchen': '$_categoryImageBasePath/popular_living.png',
-  'furniture-interior': '$_categoryImageBasePath/cat_furniture_interior.png',
-  'sports-leisure': '$_categoryImageBasePath/sports_fitness_yoga.png',
-  'car-tools': '$_categoryImageBasePath/auto_supplies.png',
-  'baby-kids': '$_categoryImageBasePath/cat_baby_kids.png',
-  'pet': '$_categoryImageBasePath/cat_pet_supplies.png',
-  'book-stationery-hobby': '$_categoryImageBasePath/books.png',
-  'travel-service': '$_categoryImageBasePath/travel_supplies.png',
-  'luxury-brand': '$_categoryImageBasePath/luxury_wallet_watch.png',
-};
 
 const _popularCategoryIcons = {
   'digital-appliance': Icons.devices_other_outlined,
@@ -220,15 +200,10 @@ class HomeProductData {
 }
 
 class PopularCategoryData {
-  const PopularCategoryData({
-    required this.label,
-    required this.icon,
-    this.imageAssetPath,
-  });
+  const PopularCategoryData({required this.label, required this.icon});
 
   final String label;
   final IconData icon;
-  final String? imageAssetPath;
 }
 
 class BenefitData {
