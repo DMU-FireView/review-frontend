@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class SearchProductCard extends StatelessWidget {
@@ -121,15 +124,9 @@ class SearchProductCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xs),
                   Row(
                     children: [
-                      SquareIconButton(
-                        icon: Icons.favorite_border,
-                        onPressed: () {},
-                      ),
+                      _WishlistSquareButton(productId: product.id),
                       const SizedBox(width: AppSpacing.xs),
-                      SquareIconButton(
-                        icon: Icons.shopping_cart_outlined,
-                        onPressed: () {},
-                      ),
+                      _CartSquareButton(productId: product.id),
                       const SizedBox(width: AppSpacing.xs),
                       Expanded(
                         child: ProductDetailButton(
@@ -329,12 +326,9 @@ class ListTileActions extends StatelessWidget {
                 ? MainAxisAlignment.start
                 : MainAxisAlignment.end,
             children: [
-              SquareIconButton(icon: Icons.favorite_border, onPressed: () {}),
+              _WishlistSquareButton(productId: product.id),
               const SizedBox(width: AppSpacing.xs),
-              SquareIconButton(
-                icon: Icons.shopping_cart_outlined,
-                onPressed: () {},
-              ),
+              _CartSquareButton(productId: product.id),
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
@@ -524,4 +518,119 @@ ButtonStyle outlineHoverButtonStyle({required EdgeInsetsGeometry padding}) {
       RoundedRectangleBorder(borderRadius: AppRadius.small),
     ),
   );
+}
+
+class _WishlistSquareButton extends ConsumerWidget {
+  const _WishlistSquareButton({required this.productId});
+
+  final int productId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncStatus = ref.watch(wishlistButtonProvider(productId));
+    final liked = asyncStatus.valueOrNull ?? false;
+
+    return SizedBox.square(
+      dimension: 36,
+      child: OutlinedButton(
+        onPressed: asyncStatus.isLoading
+            ? null
+            : () => ref
+                .read(wishlistButtonProvider(productId).notifier)
+                .toggle(),
+        style: _wishlistButtonStyle(liked),
+        child: Icon(
+          liked ? Icons.favorite : Icons.favorite_border,
+          size: 18,
+        ),
+      ),
+    );
+  }
+
+  ButtonStyle _wishlistButtonStyle(bool liked) {
+    return ButtonStyle(
+      padding: WidgetStateProperty.all(EdgeInsets.zero),
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (liked) return const Color(0xFFFFF0F0);
+        return states.contains(WidgetState.hovered)
+            ? AppColors.primaryLight
+            : AppColors.surface;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith((states) {
+        if (liked) return const Color(0xFFEF4444);
+        return states.contains(WidgetState.hovered)
+            ? AppColors.primary
+            : AppColors.textPrimary;
+      }),
+      side: WidgetStateProperty.resolveWith((states) {
+        return BorderSide(
+          color: liked
+              ? const Color(0xFFEF4444)
+              : states.contains(WidgetState.hovered)
+                  ? AppColors.primary
+                  : AppColors.borderStrong,
+        );
+      }),
+      shape: WidgetStateProperty.all(
+        RoundedRectangleBorder(borderRadius: AppRadius.small),
+      ),
+    );
+  }
+}
+
+class _CartSquareButton extends ConsumerStatefulWidget {
+  const _CartSquareButton({required this.productId});
+
+  final int productId;
+
+  @override
+  ConsumerState<_CartSquareButton> createState() => _CartSquareButtonState();
+}
+
+class _CartSquareButtonState extends ConsumerState<_CartSquareButton> {
+  bool _loading = false;
+
+  Future<void> _addToCart() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+
+    final result = await ref
+        .read(updateCartUseCaseProvider)
+        .add(widget.productId);
+
+    if (!mounted) return;
+    setState(() => _loading = false);
+
+    result.when(
+      success: (_) => ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('장바구니에 담겼습니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      ),
+      failure: (_) => ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('장바구니 담기에 실패했습니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox.square(
+      dimension: 36,
+      child: OutlinedButton(
+        onPressed: _loading ? null : _addToCart,
+        style: outlineHoverButtonStyle(padding: EdgeInsets.zero),
+        child: _loading
+            ? const SizedBox.square(
+                dimension: 14,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+            : const Icon(Icons.shopping_cart_outlined, size: 18),
+      ),
+    );
+  }
 }
