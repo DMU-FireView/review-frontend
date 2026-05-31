@@ -75,11 +75,4 @@ class ApiClient {
     return dio.delete(path, queryParameters: queryParameters);
   }
 
-  Future<Response<dynamic>> put(String path, {Object? data}) {
-    return dio.put(path, data: data);
-  }
-
-  Future<Response<dynamic>> delete(String path) {
-    return dio.delete(path);
-  }
 }
