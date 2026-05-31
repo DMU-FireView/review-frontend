@@ -551,7 +551,7 @@ class _CategoryMegaMenuPanelState extends State<_CategoryMegaMenuPanel> {
           ],
         ),
         child: SizedBox(
-          height: 392,
+          height: 480,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -601,21 +601,23 @@ class _CategorySideNav extends StatelessWidget {
       width: 190,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _CategorySideNavItem(
-              label: '전체보기',
-              isSelected: selectedCategory == null,
-              onTap: onAllPressed,
-            ),
-            for (final category in productCategoryTree)
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
               _CategorySideNavItem(
-                label: category.label,
-                isSelected: selectedCategory?.id == category.id,
-                onTap: () => onCategoryPressed(category),
+                label: '전체보기',
+                isSelected: selectedCategory == null,
+                onTap: onAllPressed,
               ),
-          ],
+              for (final category in productCategoryTree)
+                _CategorySideNavItem(
+                  label: category.label,
+                  isSelected: selectedCategory?.id == category.id,
+                  onTap: () => onCategoryPressed(category),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -905,6 +907,7 @@ class _PopularCategoryPreview extends StatelessWidget {
     final categories = productCategoryTree.take(5).toList(growable: false);
 
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
@@ -954,92 +957,7 @@ class _PopularCategoryPreview extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: AppSpacing.xl),
-        Text(
-          '카테고리 추천 PICK',
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        Expanded(
-          child: GridView.count(
-            physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 1.28,
-            children: [
-              for (final category in categories.take(4))
-                _CategoryPickCard(
-                  category: category,
-                  onTap: () => onCategorySelected(category.label),
-                ),
-            ],
-          ),
-        ),
       ],
-    );
-  }
-}
-
-class _CategoryPickCard extends StatelessWidget {
-  const _CategoryPickCard({required this.category, required this.onTap});
-
-  final ProductCategory category;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: onTap,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surfaceMuted,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sm),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      category.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      category.children.first.label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              _CategoryAssetImage(
-                assetPath: _categoryAssetPath(category.id),
-                width: 52,
-                height: 52,
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
