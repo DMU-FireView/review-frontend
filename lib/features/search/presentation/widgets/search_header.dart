@@ -110,7 +110,6 @@ class DesktopSearchHeader extends StatelessWidget {
               HeaderAction(
                 icon: Icons.shopping_cart_outlined,
                 label: '장바구니',
-                badge: '2',
               ),
             ],
           ),

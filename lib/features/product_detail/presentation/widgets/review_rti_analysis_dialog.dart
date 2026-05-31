@@ -4,6 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 void showReviewRtiAnalysisDialog(BuildContext context, ProductReview review) {
   showDialog<void>(
@@ -35,21 +36,8 @@ class ReviewRtiAnalysisDialog extends StatelessWidget {
                 _DialogHeader(onClose: () => Navigator.of(context).pop()),
                 Flexible(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.md,
-                      AppSpacing.sm,
-                      AppSpacing.md,
-                      0,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _RtiScoreSection(review: review),
-                        const SizedBox(height: AppSpacing.sm),
-                        _DialogBody(review: review),
-                        const SizedBox(height: AppSpacing.sm),
-                      ],
-                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    child: _DialogBody(review: review),
                   ),
                 ),
                 _DialogFooter(onClose: () => Navigator.of(context).pop()),
@@ -104,7 +92,7 @@ class _DialogHeader extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xxs),
                 Text(
-                  '선택한 리뷰의 문장 패턴, 작성 맥락, 네트워크 신호를 종합해 RTI 점수와 판단 근거를 설명합니다.',
+                  'RTI는 구매 인증, 텍스트 신뢰도, 반복 표현, 시점 패턴 등 다양한 신호를 종합해 리뷰를 분석합니다.',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),
@@ -140,78 +128,69 @@ class _RtiScoreSection extends StatelessWidget {
     final color = colorFromHex(review.rtiColor);
     final detail = review.rtiDetail;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.medium,
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Column(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _SectionCard(
+          title: 'RTI 신뢰도 점수',
+          showInfo: true,
+          infoTooltip:
+              'RTI 신뢰도 점수는 구매 인증, 텍스트 신뢰도,\n반복 표현, 시점 패턴 등을 종합해 산출됩니다.',
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'RTI 점수',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                  color: AppColors.textSecondary,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${review.rtiScore}',
+                    review.rtiScore > 0 ? 'RTI ${review.rtiScore}' : 'RTI -',
                     style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                      color: AppColors.textPrimary,
+                      color: color,
                       fontWeight: FontWeight.w900,
-                      fontSize: 56,
+                      fontSize: 52,
                       height: 1,
                     ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 8),
-                    child: _RtiGradeBadge(label: review.rtiLabel, color: color),
-                  ),
+                  if (review.rtiLabel.isNotEmpty) ...[
+                    const SizedBox(width: AppSpacing.sm),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _RtiGradeBadge(
+                        label: review.rtiLabel,
+                        color: color,
+                      ),
+                    ),
+                  ],
                 ],
               ),
+              if (detail != null && detail.signals.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.sm),
+                const Divider(color: AppColors.border),
+                const SizedBox(height: AppSpacing.xs),
+                ...detail.signals.map(
+                  (s) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                    child: _SignalBar(signal: s),
+                  ),
+                ),
+              ],
             ],
           ),
-          const SizedBox(width: AppSpacing.xl),
-          if (detail != null)
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    detail.summaryDescription,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w500,
-                      height: 1.5,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    runSpacing: AppSpacing.xxs,
-                    children: detail.summaryTags
-                        .map((t) => _SummaryTagChip(tag: t))
-                        .toList(),
-                  ),
-                ],
-              ),
-            ),
+        ),
+        if (detail != null) ...[
+          if (detail.judgmentBases.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            _JudgmentBasisSection(bases: detail.judgmentBases),
+          ],
+          if (detail.sentenceHighlights.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            _SentenceHighlightsSection(highlights: detail.sentenceHighlights),
+          ],
+        ] else if (review.reasons.isNotEmpty) ...[
+          const SizedBox(height: AppSpacing.sm),
+          _ReasonsSection(reasons: review.reasons, color: color),
         ],
-      ),
+      ],
     );
   }
 }
@@ -308,27 +287,15 @@ class _DialogBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _SelectedReviewSection(review: review),
-              if (detail != null && detail.sentenceHighlights.isNotEmpty) ...[
+              if (detail != null && detail.signals.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.sm),
-                _SentenceHighlightsSection(
-                  highlights: detail.sentenceHighlights,
-                ),
+                _SignalCardsGrid(signals: detail.signals),
               ],
             ],
           ),
         ),
         const SizedBox(width: AppSpacing.md),
-        if (detail != null)
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _RtiSignalsSection(signals: detail.signals),
-                const SizedBox(height: AppSpacing.sm),
-                _JudgmentBasisSection(bases: detail.judgmentBases),
-              ],
-            ),
-          ),
+        Expanded(child: _RtiScoreSection(review: review)),
       ],
     );
   }
@@ -418,13 +385,9 @@ class _SelectedReviewSection extends StatelessWidget {
                       }
                       return ClipRRect(
                         borderRadius: AppRadius.small,
-                        child: Image.network(
-                          review.imageUrls[i],
-                          width: 64,
-                          height: 64,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const SizedBox.square(dimension: 64),
+                        child: SizedBox.square(
+                          dimension: 64,
+                          child: AppNetworkImage(url: review.imageUrls[i]),
                         ),
                       );
                     },
@@ -999,6 +962,125 @@ class _DialogFooter extends StatelessWidget {
             child: const Text('리뷰 신고', style: TextStyle(fontSize: 13)),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Reasons Section (fallback when no rtiDetail) ────────────────────────────
+
+class _ReasonsSection extends StatelessWidget {
+  const _ReasonsSection({required this.reasons, required this.color});
+
+  final List<String> reasons;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SectionCard(
+      title: '판단 근거',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: reasons
+            .map(
+              (r) => Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Icon(Icons.circle, size: 5, color: color),
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: Text(
+                        r,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          height: 1.55,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+            .toList(),
+      ),
+    );
+  }
+}
+
+// ─── Signal Cards Grid (포착된 포인트) ────────────────────────────────────────
+
+class _SignalCardsGrid extends StatelessWidget {
+  const _SignalCardsGrid({required this.signals});
+
+  final List<RtiSignal> signals;
+
+  @override
+  Widget build(BuildContext context) {
+    return _SectionCard(
+      title: '이 리뷰에서 포착된 포인트',
+      showInfo: true,
+      infoTooltip: 'RTI 점수 산출에 영향을 준 리뷰의 주요 특성입니다.',
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: AppSpacing.xs,
+        crossAxisSpacing: AppSpacing.xs,
+        childAspectRatio: 2.8,
+        children: signals.map((s) => _SignalCard(signal: s)).toList(),
+      ),
+    );
+  }
+}
+
+class _SignalCard extends StatelessWidget {
+  const _SignalCard({required this.signal});
+
+  final RtiSignal signal;
+
+  IconData get _icon => switch (signal.iconType) {
+    'text' => Icons.person_outline,
+    'behavior' => Icons.check_circle_outline,
+    'pattern' => Icons.text_fields_outlined,
+    'purchase' => Icons.verified_user_outlined,
+    _ => Icons.info_outline,
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final color = colorFromHex(signal.color);
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: AppRadius.small,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.xs),
+        child: Row(
+          children: [
+            Icon(_icon, size: 18, color: color),
+            const SizedBox(width: AppSpacing.xs),
+            Expanded(
+              child: Text(
+                signal.label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 11,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
