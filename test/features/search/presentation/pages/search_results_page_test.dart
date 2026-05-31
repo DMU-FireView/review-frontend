@@ -81,24 +81,23 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.scrollUntilVisible(
-      find.text('60개씩 보기'),
+      find.text('30개씩 보기'),
       800,
       scrollable: find.byType(Scrollable).first,
     );
     await tester.pumpAndSettle();
 
+    expect(find.text('30개씩 보기'), findsOneWidget);
+
+    await tester.tap(find.text('30개씩 보기'));
+    await tester.pumpAndSettle();
+
     expect(find.text('60개씩 보기'), findsOneWidget);
 
-    await tester.tap(find.text('60개씩 보기'));
+    await tester.tap(find.text('60개씩 보기').last);
     await tester.pumpAndSettle();
 
-    expect(find.text('30개씩 보기'), findsOneWidget);
-    expect(find.text('120개씩 보기'), findsOneWidget);
-
-    await tester.tap(find.text('30개씩 보기').last);
-    await tester.pumpAndSettle();
-
-    expect(find.text('30개씩 보기'), findsOneWidget);
+    expect(find.text('60개씩 보기'), findsOneWidget);
   });
 
   testWidgets('renders price histogram bars behind the price range control', (
