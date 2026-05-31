@@ -423,21 +423,16 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _overlayEntry;
   late final AnimationController _controller;
-  late final Animation<double> _fadeAnim;
-  late final Animation<Offset> _slideAnim;
+  late final Animation<double> _sizeAnim;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 220),
     );
-    _fadeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, -0.06),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
+    _sizeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
   }
 
   @override
@@ -484,10 +479,10 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
               left: 0,
               top: panelTop,
               width: overlayWidth,
-              child: FadeTransition(
-                opacity: _fadeAnim,
-                child: SlideTransition(
-                  position: _slideAnim,
+              child: ClipRect(
+                child: SizeTransition(
+                  sizeFactor: _sizeAnim,
+                  axisAlignment: -1.0,
                   child: _CategoryMegaMenuPanel(
                     onCategorySelected: (label) {
                       widget.onCategorySelected(label);
@@ -651,7 +646,7 @@ class _CategorySideNav extends StatelessWidget {
   }
 }
 
-class _CategorySideNavItem extends StatefulWidget {
+class _CategorySideNavItem extends StatelessWidget {
   const _CategorySideNavItem({
     required this.label,
     required this.isSelected,
@@ -663,43 +658,27 @@ class _CategorySideNavItem extends StatefulWidget {
   final VoidCallback onTap;
 
   @override
-  State<_CategorySideNavItem> createState() => _CategorySideNavItemState();
-}
-
-class _CategorySideNavItemState extends State<_CategorySideNavItem> {
-  bool _hovered = false;
-
-  @override
   Widget build(BuildContext context) {
-    final active = widget.isSelected || _hovered;
-    return MouseRegion(
-      cursor: SystemMouseCursors.click,
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 140),
-          height: 28,
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-          decoration: BoxDecoration(
-            color: active ? AppColors.primaryLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(8),
-            border: widget.isSelected
-                ? Border.all(color: AppColors.primary)
-                : _hovered
-                    ? Border.all(color: AppColors.primary.withValues(alpha: 0.35))
-                    : null,
-          ),
-          child: Text(
-            widget.label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: active ? AppColors.primary : AppColors.textPrimary,
-              fontWeight: active ? FontWeight.w800 : FontWeight.w600,
-            ),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 140),
+        height: 28,
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryLight : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: isSelected ? Border.all(color: AppColors.primary) : null,
+        ),
+        child: Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: isSelected ? AppColors.primary : AppColors.textPrimary,
+            fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
           ),
         ),
       ),
@@ -747,7 +726,7 @@ class _AllCategoryOverview extends StatelessWidget {
                     crossAxisCount: 5,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 0.88,
+                    mainAxisExtent: 155,
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
@@ -853,19 +832,10 @@ class _MiddleCategoryColumn extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             SizedBox(
-              height: 120,
+              height: 110,
               width: double.infinity,
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final imgW = constraints.maxWidth.clamp(0.0, 160.0);
-                  return Center(
-                    child: _CategoryAssetImage(
-                      assetPath: _categoryAssetPath(category.id),
-                      width: imgW,
-                      height: 120,
-                    ),
-                  );
-                },
+              child: _CategoryAssetImage(
+                assetPath: _categoryAssetPath(category.id),
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -907,17 +877,19 @@ class _CategoryOverviewTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 4),
-                  child: LayoutBuilder(
-                    builder: (context, constraints) => _CategoryAssetImage(
-                      assetPath: _categoryAssetPath(category.id),
-                      width: constraints.maxWidth,
-                      height: constraints.maxHeight,
-                    ),
+                child: Container(
+                  width: double.infinity,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF1F5F9),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: _CategoryAssetImage(
+                    assetPath: _categoryAssetPath(category.id),
                   ),
                 ),
               ),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 category.label,
                 maxLines: 1,
@@ -1112,13 +1084,13 @@ class _CategoryBenefitStrip extends StatelessWidget {
 class _CategoryAssetImage extends StatelessWidget {
   const _CategoryAssetImage({
     required this.assetPath,
-    required this.width,
-    required this.height,
+    this.width,
+    this.height,
   });
 
   final String? assetPath;
-  final double width;
-  final double height;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
@@ -1126,7 +1098,7 @@ class _CategoryAssetImage extends StatelessWidget {
       return Icon(
         Icons.category_outlined,
         color: AppColors.textTertiary,
-        size: height * 0.48,
+        size: (height ?? 48) * 0.48,
       );
     }
 
@@ -1138,7 +1110,7 @@ class _CategoryAssetImage extends StatelessWidget {
       errorBuilder: (_, __, ___) => Icon(
         Icons.category_outlined,
         color: AppColors.textTertiary,
-        size: height * 0.48,
+        size: (height ?? 48) * 0.48,
       ),
     );
   }
