@@ -37,22 +37,25 @@ final wishlistButtonProvider =
   WishlistButtonNotifier.new,
 );
 
-class WishlistButtonNotifier extends FamilyAsyncNotifier<bool, int> {
+class WishlistButtonNotifier extends AsyncNotifier<bool> {
+  WishlistButtonNotifier(this._productId);
+
+  final int _productId;
+
   @override
-  Future<bool> build(int arg) async {
-    final result = await ref.read(checkWishlistUseCaseProvider)(arg);
+  Future<bool> build() async {
+    final result = await ref.read(checkWishlistUseCaseProvider)(_productId);
     return result.when(success: (v) => v, failure: (_) => false);
   }
 
   Future<void> toggle() async {
-    final productId = arg;
     final current = state.valueOrNull ?? false;
     state = AsyncData(!current);
 
     final toggleUseCase = ref.read(toggleWishlistUseCaseProvider);
     final result = current
-        ? await toggleUseCase.remove(productId)
-        : await toggleUseCase.add(productId);
+        ? await toggleUseCase.remove(_productId)
+        : await toggleUseCase.add(_productId);
 
     if (!ref.mounted) return;
     result.when(
