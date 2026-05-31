@@ -52,10 +52,9 @@ class _Backdrop extends StatelessWidget {
               tagName: 'div',
               onElementCreated: (Object element) {
                 final el = element as dynamic;
-                // position: fixed + 100vw/100vh로 뷰포트 전체 커버
-                // (position: absolute + 100%는 Flutter HtmlElementView 컨테이너 기준이라
-                // 하단 플랫폼뷰 이미지들이 범위 밖으로 빠져 블러가 적용되지 않음)
-                el.style.position = 'fixed';
+                // position: absolute + viewport 단위로 뷰포트 전체 커버
+                // fixed는 CanvasKit의 transform 컨텍스트에서 동작하지 않음
+                el.style.position = 'absolute';
                 el.style.top = '0';
                 el.style.left = '0';
                 el.style.width = '100vw';
@@ -97,9 +96,6 @@ class _LandingCard extends StatelessWidget {
       builder: (context, screenSize) {
         final isMobile = screenSize == AppScreenSize.mobile;
         final viewportHeight = MediaQuery.sizeOf(context).height;
-        final verticalPadding =
-            isMobile ? AppSpacing.md * 2 : AppSpacing.lg * 2;
-        final cardHeight = viewportHeight - verticalPadding;
 
         return Center(
           child: Padding(
@@ -115,8 +111,7 @@ class _LandingCard extends StatelessWidget {
             child: ConstrainedBox(
               constraints: BoxConstraints(
                 maxWidth: AppBreakpoints.wideContentMaxWidth,
-                minHeight: cardHeight,
-                maxHeight: cardHeight,
+                maxHeight: viewportHeight - AppSpacing.lg * 2,
               ),
               child: Material(
                 color: AppColors.surface,
