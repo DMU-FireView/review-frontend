@@ -319,14 +319,12 @@ class ReviewCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 GestureDetector(
-                  onTap: review.rtiDetail != null
-                      ? () => showReviewRtiAnalysisDialog(context, review)
-                      : null,
+                  onTap: () => showReviewRtiAnalysisDialog(context, review),
                   child: _RtiBadgeSmall(
                     score: review.rtiScore,
                     label: review.rtiLabel,
                     color: rtiColor,
-                    hasDetail: review.rtiDetail != null,
+                    hasDetail: true,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xxs),
