@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
+import 'package:re_view_front/features/landing/presentation/providers/landing_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
-class LoginValuePanel extends StatelessWidget {
+class LoginValuePanel extends ConsumerWidget {
   const LoginValuePanel({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productAsync = ref.watch(featuredProductProvider);
+    final product = productAsync.valueOrNull;
+
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 760),
       child: Column(
@@ -33,7 +39,7 @@ class LoginValuePanel extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 36),
-          const _TrustSummaryCard(),
+          _TrustSummaryCard(product: product),
           const SizedBox(height: AppSpacing.lg),
           const _LoginBenefitGrid(),
         ],
@@ -71,7 +77,9 @@ class _LoginBadge extends StatelessWidget {
 }
 
 class _TrustSummaryCard extends StatelessWidget {
-  const _TrustSummaryCard();
+  const _TrustSummaryCard({required this.product});
+
+  final DashboardProduct? product;
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +128,7 @@ class _TrustSummaryCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: AppSpacing.xl),
-            const _SavedProductSkeleton(),
+            _FeaturedProductSection(product: product),
           ],
         ),
       ),
@@ -156,8 +164,10 @@ class _TrackingBadge extends StatelessWidget {
   }
 }
 
-class _SavedProductSkeleton extends StatelessWidget {
-  const _SavedProductSkeleton();
+class _FeaturedProductSection extends StatelessWidget {
+  const _FeaturedProductSection({required this.product});
+
+  final DashboardProduct? product;
 
   @override
   Widget build(BuildContext context) {
@@ -166,12 +176,16 @@ class _SavedProductSkeleton extends StatelessWidget {
         final useHorizontal = constraints.maxWidth >= 560;
         final thumbnail = Stack(
           clipBehavior: Clip.none,
-          children: const [
-            _SkeletonBox(width: 150, height: 150, radius: 22),
-            Positioned(right: -10, top: 16, child: _ScoreSkeleton()),
+          children: [
+            _ProductThumbnail(product: product),
+            Positioned(
+              right: -10,
+              top: 16,
+              child: _RtiScoreBadge(score: product?.rtiScore),
+            ),
           ],
         );
-        final details = const _ProductDetailSkeleton();
+        final details = _ProductDetails(product: product);
 
         if (!useHorizontal) {
           return Column(
@@ -197,23 +211,133 @@ class _SavedProductSkeleton extends StatelessWidget {
   }
 }
 
-class _ProductDetailSkeleton extends StatelessWidget {
-  const _ProductDetailSkeleton();
+class _ProductThumbnail extends StatelessWidget {
+  const _ProductThumbnail({required this.product});
+
+  final DashboardProduct? product;
 
   @override
   Widget build(BuildContext context) {
+    final imageUrl = product?.imageUrl;
+
+    if (imageUrl == null || imageUrl.isEmpty) {
+      return const _SkeletonBox(width: 150, height: 150, radius: 22);
+    }
+
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(22),
+      child: SizedBox(
+        width: 150,
+        height: 150,
+        child: Image.network(
+          imageUrl,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => const _SkeletonBox(
+            width: 150,
+            height: 150,
+            radius: 22,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _RtiScoreBadge extends StatelessWidget {
+  const _RtiScoreBadge({required this.score});
+
+  final int? score;
+
+  Color get _color {
+    if (score == null) return AppColors.primary;
+    if (score! >= 80) return AppColors.success;
+    if (score! >= 50) return AppColors.warning;
+    return AppColors.error;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        shape: BoxShape.circle,
+        border: Border.all(color: _color, width: 2),
+      ),
+      child: SizedBox(
+        width: 44,
+        height: 44,
+        child: Center(
+          child: score != null
+              ? Text(
+                  '$score',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: _color,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 11,
+                  ),
+                )
+              : const _SkeletonBox(width: 20, height: 12, radius: 6),
+        ),
+      ),
+    );
+  }
+}
+
+class _ProductDetails extends StatelessWidget {
+  const _ProductDetails({required this.product});
+
+  final DashboardProduct? product;
+
+  @override
+  Widget build(BuildContext context) {
+    if (product == null) {
+      return const Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SkeletonBox(width: 300, height: 20, radius: 8),
+          SizedBox(height: AppSpacing.sm),
+          _SkeletonBox(width: 230, height: 14, radius: 7),
+          SizedBox(height: AppSpacing.lg),
+          _SkeletonMetricRow(label: '텍스트', widthFactor: 0.64),
+          SizedBox(height: AppSpacing.sm),
+          _SkeletonMetricRow(label: '행동', widthFactor: 0.78),
+          SizedBox(height: AppSpacing.sm),
+          _SkeletonMetricRow(label: '구매맥락', widthFactor: 0.86),
+        ],
+      );
+    }
+
+    final rti = (product!.rtiScore ?? 0).clamp(0, 100);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        _SkeletonBox(width: 300, height: 20, radius: 8),
-        SizedBox(height: AppSpacing.sm),
-        _SkeletonBox(width: 230, height: 14, radius: 7),
-        SizedBox(height: AppSpacing.lg),
-        _SkeletonMetricRow(label: '텍스트', widthFactor: 0.64),
-        SizedBox(height: AppSpacing.sm),
-        _SkeletonMetricRow(label: '행동', widthFactor: 0.78),
-        SizedBox(height: AppSpacing.sm),
-        _SkeletonMetricRow(label: '구매맥락', widthFactor: 0.86),
+      children: [
+        Text(
+          product!.name,
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+            fontWeight: FontWeight.w800,
+          ),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          product!.storeName.isNotEmpty ? product!.storeName : '카테고리 미분류',
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: AppColors.textSecondary,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        _SkeletonMetricRow(
+          label: '텍스트',
+          widthFactor: (rti * 0.90).clamp(0, 100) / 100,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        _SkeletonMetricRow(
+          label: '행동',
+          widthFactor: (rti * 1.05).clamp(0, 100) / 100,
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        _SkeletonMetricRow(label: '구매맥락', widthFactor: rti / 100),
       ],
     );
   }
@@ -264,26 +388,6 @@ class _SkeletonMetricRow extends StatelessWidget {
         const SizedBox(width: AppSpacing.md),
         const _SkeletonBox(width: 28, height: 12, radius: 6),
       ],
-    );
-  }
-}
-
-class _ScoreSkeleton extends StatelessWidget {
-  const _ScoreSkeleton();
-
-  @override
-  Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        shape: BoxShape.circle,
-        border: Border.all(color: AppColors.primary),
-      ),
-      child: const SizedBox(
-        width: 44,
-        height: 44,
-        child: Center(child: _SkeletonBox(width: 20, height: 12, radius: 6)),
-      ),
     );
   }
 }
