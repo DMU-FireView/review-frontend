@@ -1,59 +1,77 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_summary.dart';
 import 'package:re_view_front/features/wishlist/domain/repositories/wishlist_repository.dart';
-import 'package:re_view_front/features/wishlist/domain/usecases/check_wishlist_use_case.dart';
-import 'package:re_view_front/features/wishlist/domain/usecases/get_wishlist_use_case.dart';
-import 'package:re_view_front/features/wishlist/domain/usecases/toggle_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 
 void main() {
-  test(
-    'wishlist buttons reuse the bulk wishlist ids without per-card checks',
-    () async {
-      final repository = _WishlistRepositoryFake(
-        items: [_wishlistItem(1), _wishlistItem(3)],
-      );
-      final container = ProviderContainer(
-        overrides: [
-          isLoggedInProvider.overrideWithValue(true),
-          getWishlistUseCaseProvider.overrideWithValue(
-            GetWishlistUseCase(repository),
-          ),
-          checkWishlistUseCaseProvider.overrideWithValue(
-            CheckWishlistUseCase(repository),
-          ),
-          toggleWishlistUseCaseProvider.overrideWithValue(
-            ToggleWishlistUseCase(repository),
-          ),
-        ],
-      );
-      addTearDown(container.dispose);
+  test('returns false without calling wishlist APIs when logged out', () async {
+    final repository = _FakeWishlistRepository();
+    final container = _buildContainer(
+      repository: repository,
+      isLoggedIn: false,
+    );
+    addTearDown(container.dispose);
 
-      expect(await container.read(wishlistButtonProvider(1).future), isTrue);
-      expect(await container.read(wishlistButtonProvider(2).future), isFalse);
-      expect(await container.read(wishlistButtonProvider(3).future), isTrue);
+    final isWishlisted = await container.read(wishlistButtonProvider(8).future);
 
-      expect(repository.getWishlistCalls, 1);
-      expect(repository.checkWishlistCalls, isEmpty);
-    },
+    expect(isWishlisted, isFalse);
+    expect(repository.getWishlistCalls, 0);
+    expect(repository.checkWishlistCalls, 0);
+  });
+
+  test('uses cached wishlist ids instead of per-product check calls', () async {
+    final repository = _FakeWishlistRepository(
+      items: [_wishlistItem(productId: 8)],
+    );
+    final container = _buildContainer(repository: repository, isLoggedIn: true);
+    addTearDown(container.dispose);
+    final wishlistIdsSubscription = container.listen(
+      wishlistProductIdsProvider,
+      (_, _) {},
+      fireImmediately: true,
+    );
+    addTearDown(wishlistIdsSubscription.close);
+
+    final savedProduct = await container.read(wishlistButtonProvider(8).future);
+    final unsavedProduct = await container.read(
+      wishlistButtonProvider(18).future,
+    );
+
+    expect(savedProduct, isTrue);
+    expect(unsavedProduct, isFalse);
+    expect(repository.getWishlistCalls, 1);
+    expect(repository.checkWishlistCalls, 0);
+  });
+}
+
+ProviderContainer _buildContainer({
+  required _FakeWishlistRepository repository,
+  required bool isLoggedIn,
+}) {
+  return ProviderContainer(
+    overrides: [
+      isLoggedInProvider.overrideWithValue(isLoggedIn),
+      wishlistRepositoryProvider.overrideWithValue(repository),
+    ],
   );
 }
 
-WishlistItem _wishlistItem(int productId) {
+WishlistItem _wishlistItem({required int productId}) {
   return WishlistItem(
     productId: productId,
-    name: 'Product $productId',
-    imageUrl: '',
-    price: 10000,
-    category: 'category',
-    categoryDisplayName: 'Category',
+    name: '상품',
+    imageUrl: 'https://example.com/product.png',
+    price: 1000,
+    category: 'general',
+    categoryDisplayName: '일반',
     avgRti: 80,
     rtiGrade: 'A',
-    rtiColor: '#10B981',
+    rtiColor: '#2563EB',
     reviewCount: 10,
     avgRating: 4.5,
     isPriceDrop: false,
@@ -61,12 +79,12 @@ WishlistItem _wishlistItem(int productId) {
   );
 }
 
-class _WishlistRepositoryFake implements WishlistRepository {
-  _WishlistRepositoryFake({required this.items});
+class _FakeWishlistRepository implements WishlistRepository {
+  _FakeWishlistRepository({this.items = const []});
 
   final List<WishlistItem> items;
   int getWishlistCalls = 0;
-  final List<int> checkWishlistCalls = [];
+  int checkWishlistCalls = 0;
 
   @override
   Future<Result<({List<WishlistItem> items, WishlistSummary summary})>>
@@ -83,12 +101,6 @@ class _WishlistRepositoryFake implements WishlistRepository {
   }
 
   @override
-  Future<Result<bool>> checkWishlist(int productId) async {
-    checkWishlistCalls.add(productId);
-    return Success(items.any((item) => item.productId == productId));
-  }
-
-  @override
   Future<Result<void>> addWishlist(int productId) async {
     return const Success(null);
   }
@@ -96,5 +108,11 @@ class _WishlistRepositoryFake implements WishlistRepository {
   @override
   Future<Result<void>> removeWishlist(int productId) async {
     return const Success(null);
+  }
+
+  @override
+  Future<Result<bool>> checkWishlist(int productId) async {
+    checkWishlistCalls += 1;
+    return const FailureResult(Failure(message: 'unexpected check call'));
   }
 }
