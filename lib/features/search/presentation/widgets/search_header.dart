@@ -7,6 +7,8 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart'
+    show HeaderUserProfileButton;
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
@@ -67,6 +69,14 @@ class SearchHeader extends ConsumerWidget {
                       onLoginPressed: () => context.go(RoutePaths.login),
                       onWishPressed: () => context.go(RoutePaths.wishlist),
                       onCartPressed: () => context.go(RoutePaths.cart),
+                      onMyPagePressed: () => context.go(RoutePaths.login),
+                      onProfileWishPressed: () =>
+                          context.go(RoutePaths.wishlist),
+                      onProfileOrderPressed: () => context.go(RoutePaths.cart),
+                      onLogoutPressed: () {
+                        ref.read(authTokenStoreProvider.notifier).clear();
+                        context.go(RoutePaths.home);
+                      },
                     ),
             );
           },
@@ -87,6 +97,10 @@ class DesktopSearchHeader extends StatelessWidget {
     required this.onLoginPressed,
     required this.onWishPressed,
     required this.onCartPressed,
+    required this.onMyPagePressed,
+    required this.onProfileWishPressed,
+    required this.onProfileOrderPressed,
+    required this.onLogoutPressed,
     this.nickname,
   });
 
@@ -99,13 +113,13 @@ class DesktopSearchHeader extends StatelessWidget {
   final VoidCallback onLoginPressed;
   final VoidCallback onWishPressed;
   final VoidCallback onCartPressed;
+  final VoidCallback onMyPagePressed;
+  final VoidCallback onProfileWishPressed;
+  final VoidCallback onProfileOrderPressed;
+  final VoidCallback onLogoutPressed;
 
   @override
   Widget build(BuildContext context) {
-    final displayName = isLoggedIn
-        ? (nickname?.isNotEmpty == true ? nickname![0] + '***' : '내 계정')
-        : null;
-
     return Row(
       children: [
         SizedBox(
@@ -143,21 +157,25 @@ class DesktopSearchHeader extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              if (isLoggedIn)
+                HeaderUserProfileButton(
+                  nickname: nickname,
+                  onMyPagePressed: onMyPagePressed,
+                  onProfileWishPressed: onProfileWishPressed,
+                  onProfileOrderPressed: onProfileOrderPressed,
+                  onLogoutPressed: onLogoutPressed,
+                )
+              else
+                HeaderAction(
+                  icon: Icons.person_outline,
+                  label: '로그인',
+                  onTap: onLoginPressed,
+                ),
               HeaderAction(
-                icon: isLoggedIn ? Icons.person : Icons.person_outline,
-                label: isLoggedIn ? (displayName ?? '내 계정') : '로그인',
-                onTap: onLoginPressed,
-                active: isLoggedIn,
-              ),
-              HeaderAction(
-                icon: wishlistCount > 0
-                    ? Icons.favorite
-                    : Icons.favorite_border,
+                icon: Icons.favorite_border,
                 label: '찜',
                 onTap: onWishPressed,
                 badge: wishlistCount > 0 ? '$wishlistCount' : null,
-                active: wishlistCount > 0,
-                activeColor: const Color(0xFFEF4444),
               ),
               HeaderAction(
                 icon: Icons.shopping_cart_outlined,
@@ -202,9 +220,7 @@ class MobileSearchHeader extends StatelessWidget {
             IconButton(
               tooltip: isLoggedIn ? '내 계정' : '로그인',
               onPressed: onLoginPressed,
-              icon: Icon(
-                isLoggedIn ? Icons.person : Icons.person_outline,
-              ),
+              icon: Icon(isLoggedIn ? Icons.person : Icons.person_outline),
             ),
             Stack(
               clipBehavior: Clip.none,
