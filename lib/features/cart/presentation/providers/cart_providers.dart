@@ -38,6 +38,7 @@ final cartItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
 final cartProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
   ref,
 ) async {
+  ref.keepAlive();
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return <int>{};
   final result = await ref.read(getCartUseCaseProvider)();
