@@ -10,6 +10,7 @@ import 'package:re_view_front/features/home/domain/entities/dashboard_product.da
 import 'package:re_view_front/features/home/domain/entities/trending_keyword.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/view_models/home_dashboard_state.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/benefit_cta.dart';
@@ -21,6 +22,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/product_re
 import 'package:re_view_front/features/home/presentation/widgets/home/quick_category_row.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/review_trust_info_card.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/trending_keyword_chips.dart';
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
@@ -55,6 +57,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final useWideCommerceGrid = context.viewportSize.width >= 1120;
     final isLoggedIn = ref.watch(isLoggedInProvider);
     final nickname = ref.watch(userNicknameProvider).value;
+    final cartCount = ref.watch(cartItemCountProvider).value ?? 0;
+    final wishlistCount = ref.watch(wishlistItemCountProvider).value ?? 0;
     final dashboardState = ref.watch(homeDashboardViewModelProvider);
     final dashboardProducts = _recommendedProductsFrom(dashboardState);
     final dashboardKeywords = _trendingKeywordsFrom(dashboardState);
@@ -77,6 +81,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               searchRecommendedProducts: dashboardProducts,
               onSearchSuggestionsRequested: _handleSearchSuggestionsRequested,
               searchFocusNode: _searchFocusNode,
+              cartCount: cartCount,
+              wishlistCount: wishlistCount,
               isLoggedIn: isLoggedIn,
               nickname: nickname,
               onMyPagePressed: () => context.go(RoutePaths.login),
@@ -142,131 +148,132 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ),
                       const SizedBox(height: AppSpacing.xl),
                     ],
-                  if (useWideCommerceGrid) ...[
-                    _FadeUp(
-                      key: _recommendationKey,
-                      delay: 180,
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.verified_outlined,
-                            color: AppColors.primary,
-                            size: 22,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          Expanded(
-                            child: Text(
-                              '에디터가 고른 리뷰 기반 추천 상품',
-                              style: Theme.of(context).textTheme.titleMedium,
+                    if (useWideCommerceGrid) ...[
+                      _FadeUp(
+                        key: _recommendationKey,
+                        delay: 180,
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.verified_outlined,
+                              color: AppColors.primary,
+                              size: 22,
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () {},
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.xs,
-                                vertical: AppSpacing.xxs,
+                            const SizedBox(width: AppSpacing.xs),
+                            Expanded(
+                              child: Text(
+                                '에디터가 고른 리뷰 기반 추천 상품',
+                                style: Theme.of(context).textTheme.titleMedium,
                               ),
-                              minimumSize: Size.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              foregroundColor: AppColors.textSecondary,
                             ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '전체보기',
-                                  style: Theme.of(context).textTheme.labelMedium
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                            TextButton(
+                              onPressed: () {},
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.xs,
+                                  vertical: AppSpacing.xxs,
                                 ),
-                                const SizedBox(width: 2),
-                                const Icon(Icons.chevron_right, size: 16),
-                              ],
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                foregroundColor: AppColors.textSecondary,
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '전체보기',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelMedium
+                                        ?.copyWith(
+                                          color: AppColors.textSecondary,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  const SizedBox(width: 2),
+                                  const Icon(Icons.chevron_right, size: 16),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      ProductRecommendationSection(
+                        showHeader: false,
+                        products: dashboardProducts,
+                        onProductTap: _handleProductPressed,
+                      ),
+                      const SizedBox(height: 20),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Expanded(
+                            child: _FadeUp(
+                              delay: 240,
+                              child: ReviewTrustInfoCard(),
+                            ),
+                          ),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: _FadeUp(
+                              key: _benefitKey,
+                              delay: 300,
+                              child: BenefitCTA(
+                                items: benefitItems,
+                                onBenefitPressed: () =>
+                                    context.go(RoutePaths.login),
+                              ),
                             ),
                           ),
                         ],
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    ProductRecommendationSection(
-                      showHeader: false,
-                      products: dashboardProducts,
-                      onProductTap: _handleProductPressed,
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Expanded(
-                          child: _FadeUp(
-                            delay: 240,
-                            child: ReviewTrustInfoCard(),
-                          ),
+                      const SizedBox(height: 20),
+                      _FadeUp(
+                        key: _popularCategoryKey,
+                        delay: 360,
+                        child: PopularCategorySection(
+                          items: popularCategories,
+                          onCategoryPressed: _handleCategoryPressed,
                         ),
-                        const SizedBox(width: 20),
-                        Expanded(
-                          child: _FadeUp(
-                            key: _benefitKey,
-                            delay: 300,
-                            child: BenefitCTA(
-                              items: benefitItems,
-                              onBenefitPressed: () =>
-                                  context.go(RoutePaths.login),
-                            ),
-                          ),
+                      ),
+                    ] else ...[
+                      _FadeUp(
+                        key: _recommendationKey,
+                        delay: 180,
+                        child: ProductRecommendationSection(
+                          products: dashboardProducts,
+                          onProductTap: _handleProductPressed,
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    _FadeUp(
-                      key: _popularCategoryKey,
-                      delay: 360,
-                      child: PopularCategorySection(
-                        items: popularCategories,
-                        onCategoryPressed: _handleCategoryPressed,
                       ),
-                    ),
-                  ]
-                  else ...[
-                    _FadeUp(
-                      key: _recommendationKey,
-                      delay: 180,
-                      child: ProductRecommendationSection(
-                        products: dashboardProducts,
-                        onProductTap: _handleProductPressed,
+                      const SizedBox(height: AppSpacing.xl),
+                      const _FadeUp(delay: 240, child: ReviewTrustInfoCard()),
+                      const SizedBox(height: AppSpacing.xl),
+                      _FadeUp(
+                        key: _benefitKey,
+                        delay: 300,
+                        child: BenefitCTA(
+                          items: benefitItems,
+                          onBenefitPressed: () => context.go(RoutePaths.login),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.xl),
-                    const _FadeUp(delay: 240, child: ReviewTrustInfoCard()),
-                    const SizedBox(height: AppSpacing.xl),
-                    _FadeUp(
-                      key: _benefitKey,
-                      delay: 300,
-                      child: BenefitCTA(
-                        items: benefitItems,
-                        onBenefitPressed: () => context.go(RoutePaths.login),
+                    ],
+                    if (!useWideCommerceGrid) ...[
+                      const SizedBox(height: AppSpacing.xl),
+                      _FadeUp(
+                        key: _popularCategoryKey,
+                        delay: 360,
+                        child: PopularCategorySection(
+                          items: popularCategories,
+                          onCategoryPressed: _handleCategoryPressed,
+                        ),
                       ),
-                    ),
+                    ],
+                    SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
                   ],
-                  if (!useWideCommerceGrid) ...[
-                    const SizedBox(height: AppSpacing.xl),
-                    _FadeUp(
-                      key: _popularCategoryKey,
-                      delay: 360,
-                      child: PopularCategorySection(
-                        items: popularCategories,
-                        onCategoryPressed: _handleCategoryPressed,
-                      ),
-                    ),
-                  ],
-                  SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
-                ],
+                ),
               ),
             ),
-          ),
           ] else ...[
             SliverToBoxAdapter(
               child: _HomeTabPlaceholder(tab: _selectedNavItem),
@@ -477,7 +484,11 @@ class _HomeTabPlaceholder extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.construction_outlined, size: 48, color: AppColors.textTertiary),
+          Icon(
+            Icons.construction_outlined,
+            size: 48,
+            color: AppColors.textTertiary,
+          ),
           const SizedBox(height: AppSpacing.md),
           Text(
             tab,
@@ -489,9 +500,9 @@ class _HomeTabPlaceholder extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             '준비 중인 콘텐츠입니다.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
         ],
       ),
