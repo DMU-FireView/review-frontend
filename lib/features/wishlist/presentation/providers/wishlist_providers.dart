@@ -49,7 +49,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
   }
 
   Future<void> toggle() async {
-    final current = state.valueOrNull ?? false;
+    final current = state.value ?? false;
     state = AsyncData(!current);
 
     final toggleUseCase = ref.read(toggleWishlistUseCaseProvider);
