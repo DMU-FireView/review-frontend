@@ -280,7 +280,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               onHomePressed: () => _handleNavItemPressed('홈'),
               onCategoryPressed: () => _scrollTo(_categoryKey),
               onSearchPressed: () => _searchFocusNode.requestFocus(),
-              onWishPressed: () => _handleNavItemPressed('베스트'),
+              onWishPressed: () => context.go(RoutePaths.wishlist),
               onMyPressed: () => context.go(RoutePaths.login),
             )
           : null,
