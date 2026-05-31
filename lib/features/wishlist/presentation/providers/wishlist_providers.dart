@@ -9,7 +9,9 @@ import 'package:re_view_front/features/wishlist/domain/usecases/toggle_wishlist_
 import 'package:re_view_front/features/wishlist/presentation/view_models/wishlist_state.dart';
 import 'package:re_view_front/features/wishlist/presentation/view_models/wishlist_view_model.dart';
 
-final wishlistRemoteDataSourceProvider = Provider<WishlistRemoteDataSource>((ref) {
+final wishlistRemoteDataSourceProvider = Provider<WishlistRemoteDataSource>((
+  ref,
+) {
   return WishlistRemoteDataSourceImpl(apiClient: ref.watch(apiClientProvider));
 });
 
@@ -36,16 +38,13 @@ final wishlistItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return 0;
   final result = await ref.read(getWishlistUseCaseProvider)();
-  return result.when(
-    success: (data) => data.items.length,
-    failure: (_) => 0,
-  );
+  return result.when(success: (data) => data.items.length, failure: (_) => 0);
 });
 
 final wishlistButtonProvider =
     AsyncNotifierProvider.family<WishlistButtonNotifier, bool, int>(
-  WishlistButtonNotifier.new,
-);
+      WishlistButtonNotifier.new,
+    );
 
 class WishlistButtonNotifier extends AsyncNotifier<bool> {
   WishlistButtonNotifier(this._productId);
@@ -60,7 +59,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
 
   Future<void> toggle() async {
     final current = state.value ?? false;
-    state = AsyncData(!current);
+    state = const AsyncLoading<bool>();
 
     final toggleUseCase = ref.read(toggleWishlistUseCaseProvider);
     final result = current
@@ -69,7 +68,10 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
 
     if (!ref.mounted) return;
     result.when(
-      success: (_) => ref.invalidate(wishlistItemCountProvider),
+      success: (_) {
+        state = AsyncData(!current);
+        ref.invalidate(wishlistItemCountProvider);
+      },
       failure: (_) => state = AsyncData(current),
     );
   }
