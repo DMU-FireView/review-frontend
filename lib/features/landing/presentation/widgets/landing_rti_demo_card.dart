@@ -5,6 +5,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/app/theme/app_text_styles.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/landing/presentation/providers/landing_providers.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class LandingRtiDemoCard extends ConsumerWidget {
   const LandingRtiDemoCard({super.key});
@@ -177,34 +178,15 @@ class _ProductThumbnail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(AppRadius.sm),
-      child: SizedBox(
-        width: 80,
-        height: 80,
-        child: imageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const _ImagePlaceholder(),
-              )
-            : const _ImagePlaceholder(),
-      ),
-    );
-  }
-}
-
-class _ImagePlaceholder extends StatelessWidget {
-  const _ImagePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.surfaceMuted,
-      child: const Icon(
-        Icons.inventory_2_outlined,
-        color: AppColors.textTertiary,
-        size: 32,
+    return SizedBox(
+      width: 80,
+      height: 80,
+      child: AppNetworkImage(
+        url: imageUrl,
+        fit: BoxFit.cover,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+        placeholderIcon: Icons.inventory_2_outlined,
+        iconSize: 32,
       ),
     );
   }
