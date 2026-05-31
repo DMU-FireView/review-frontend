@@ -66,15 +66,19 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
 
   @override
   Future<bool> build() async {
-    final productIds = await ref.watch(wishlistProductIdsProvider.future);
-    if (productIds.contains(_productId)) return true;
+    if (_productId <= 0) return false;
 
-    final result = await ref.read(checkWishlistUseCaseProvider)(_productId);
-    return result.when(success: (v) => v, failure: (_) => false);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    if (!isLoggedIn) return false;
+
+    final productIds = await ref.watch(wishlistProductIdsProvider.future);
+    return productIds.contains(_productId);
   }
 
   Future<void> toggle() async {
     if (_isToggling) return;
+    if (_productId <= 0) return;
+    if (!ref.read(isLoggedInProvider)) return;
 
     final current = state.value ?? false;
     _isToggling = true;
