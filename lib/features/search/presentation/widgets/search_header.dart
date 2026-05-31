@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
-class SearchHeader extends StatelessWidget {
+class SearchHeader extends ConsumerWidget {
   const SearchHeader({
     super.key,
     required this.query,
@@ -19,7 +23,12 @@ class SearchHeader extends StatelessWidget {
   final ValueChanged<String> onSearchSubmitted;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final nickname = ref.watch(userNicknameProvider).value;
+    final cartCount = ref.watch(cartItemCountProvider).value ?? 0;
+    final wishlistCount = ref.watch(wishlistItemCountProvider).value ?? 0;
+
     return DecoratedBox(
       decoration: const BoxDecoration(
         color: AppColors.surface,
@@ -43,10 +52,21 @@ class SearchHeader extends StatelessWidget {
                   ? MobileSearchHeader(
                       query: query,
                       onSearchSubmitted: onSearchSubmitted,
+                      isLoggedIn: isLoggedIn,
+                      cartCount: cartCount,
+                      onLoginPressed: () => context.go(RoutePaths.login),
+                      onCartPressed: () => context.go(RoutePaths.cart),
                     )
                   : DesktopSearchHeader(
                       query: query,
                       onSearchSubmitted: onSearchSubmitted,
+                      isLoggedIn: isLoggedIn,
+                      nickname: nickname,
+                      cartCount: cartCount,
+                      wishlistCount: wishlistCount,
+                      onLoginPressed: () => context.go(RoutePaths.login),
+                      onWishPressed: () => context.go(RoutePaths.wishlist),
+                      onCartPressed: () => context.go(RoutePaths.cart),
                     ),
             );
           },
@@ -61,13 +81,31 @@ class DesktopSearchHeader extends StatelessWidget {
     super.key,
     required this.query,
     required this.onSearchSubmitted,
+    required this.isLoggedIn,
+    required this.cartCount,
+    required this.wishlistCount,
+    required this.onLoginPressed,
+    required this.onWishPressed,
+    required this.onCartPressed,
+    this.nickname,
   });
 
   final String query;
   final ValueChanged<String> onSearchSubmitted;
+  final bool isLoggedIn;
+  final String? nickname;
+  final int cartCount;
+  final int wishlistCount;
+  final VoidCallback onLoginPressed;
+  final VoidCallback onWishPressed;
+  final VoidCallback onCartPressed;
 
   @override
   Widget build(BuildContext context) {
+    final displayName = isLoggedIn
+        ? (nickname?.isNotEmpty == true ? nickname![0] + '***' : '내 계정')
+        : null;
+
     return Row(
       children: [
         SizedBox(
@@ -76,15 +114,15 @@ class DesktopSearchHeader extends StatelessWidget {
             children: [
               HomeLogo(onTap: () => context.go(RoutePaths.home)),
               const SizedBox(width: AppSpacing.lg),
-              HeaderLink(label: '카테고리'),
+              const HeaderLink(label: '카테고리'),
               const SizedBox(width: AppSpacing.md),
-              HeaderLink(label: '랭킹'),
+              const HeaderLink(label: '랭킹'),
               const SizedBox(width: AppSpacing.md),
-              HeaderLink(label: '기획전'),
+              const HeaderLink(label: '기획전'),
               const SizedBox(width: AppSpacing.md),
-              HeaderLink(label: '브랜드'),
+              const HeaderLink(label: '브랜드'),
               const SizedBox(width: AppSpacing.md),
-              HeaderLink(label: '리뷰 인사이트'),
+              const HeaderLink(label: '리뷰 인사이트'),
             ],
           ),
         ),
@@ -104,12 +142,28 @@ class DesktopSearchHeader extends StatelessWidget {
           width: 240,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
-            children: const [
-              HeaderAction(icon: Icons.person_outline, label: '로그인'),
-              HeaderAction(icon: Icons.favorite_border, label: '찜'),
+            children: [
+              HeaderAction(
+                icon: isLoggedIn ? Icons.person : Icons.person_outline,
+                label: isLoggedIn ? (displayName ?? '내 계정') : '로그인',
+                onTap: onLoginPressed,
+                active: isLoggedIn,
+              ),
+              HeaderAction(
+                icon: wishlistCount > 0
+                    ? Icons.favorite
+                    : Icons.favorite_border,
+                label: '찜',
+                onTap: onWishPressed,
+                badge: wishlistCount > 0 ? '$wishlistCount' : null,
+                active: wishlistCount > 0,
+                activeColor: const Color(0xFFEF4444),
+              ),
               HeaderAction(
                 icon: Icons.shopping_cart_outlined,
                 label: '장바구니',
+                onTap: onCartPressed,
+                badge: cartCount > 0 ? '$cartCount' : null,
               ),
             ],
           ),
@@ -124,10 +178,18 @@ class MobileSearchHeader extends StatelessWidget {
     super.key,
     required this.query,
     required this.onSearchSubmitted,
+    required this.isLoggedIn,
+    required this.cartCount,
+    required this.onLoginPressed,
+    required this.onCartPressed,
   });
 
   final String query;
   final ValueChanged<String> onSearchSubmitted;
+  final bool isLoggedIn;
+  final int cartCount;
+  final VoidCallback onLoginPressed;
+  final VoidCallback onCartPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -138,9 +200,27 @@ class MobileSearchHeader extends StatelessWidget {
             HomeLogo(onTap: () => context.go(RoutePaths.home)),
             const Spacer(),
             IconButton(
-              tooltip: '홈',
-              onPressed: () => context.go(RoutePaths.home),
-              icon: const Icon(Icons.home_outlined),
+              tooltip: isLoggedIn ? '내 계정' : '로그인',
+              onPressed: onLoginPressed,
+              icon: Icon(
+                isLoggedIn ? Icons.person : Icons.person_outline,
+              ),
+            ),
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  tooltip: '장바구니',
+                  onPressed: onCartPressed,
+                  icon: const Icon(Icons.shopping_cart_outlined),
+                ),
+                if (cartCount > 0)
+                  Positioned(
+                    top: 6,
+                    right: 6,
+                    child: Badge(label: Text('$cartCount')),
+                  ),
+              ],
             ),
           ],
         ),
@@ -177,35 +257,48 @@ class HeaderAction extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
+    this.onTap,
     this.badge,
+    this.active = false,
+    this.activeColor,
   });
 
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
   final String? badge;
+  final bool active;
+  final Color? activeColor;
 
   @override
   Widget build(BuildContext context) {
-    final iconWidget = Icon(icon, size: 22, color: AppColors.textPrimary);
+    final color = active
+        ? (activeColor ?? AppColors.primary)
+        : AppColors.textPrimary;
+    final iconWidget = Icon(icon, size: 22, color: color);
 
-    return Padding(
-      padding: const EdgeInsets.only(left: AppSpacing.md),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          badge == null
-              ? iconWidget
-              : Badge(label: Text(badge!), child: iconWidget),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-              fontSize: 12,
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.only(left: AppSpacing.md),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            badge == null
+                ? iconWidget
+                : Badge(label: Text(badge!), child: iconWidget),
+            const SizedBox(height: AppSpacing.xxs),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: color,
+                fontWeight: FontWeight.w700,
+                fontSize: 12,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
