@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class ProductImageGallery extends StatefulWidget {
   const ProductImageGallery({super.key, required this.imageUrls});
@@ -70,12 +71,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                   child: ClipRRect(
                     borderRadius: AppRadius.large,
                     child: _selectedIndex < images.length
-                        ? Image.network(
-                            images[_selectedIndex],
-                            fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) =>
-                                const ColoredBox(color: AppColors.surfaceMuted),
-                          )
+                        ? AppNetworkImage(url: images[_selectedIndex])
                         : const ColoredBox(color: AppColors.surfaceMuted),
                   ),
                 ),
@@ -150,12 +146,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
                       borderRadius: AppRadius.small,
                       child: SizedBox.square(
                         dimension: 66,
-                        child: Image.network(
-                          images[index],
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, _, _) =>
-                              const ColoredBox(color: AppColors.surfaceMuted),
-                        ),
+                        child: AppNetworkImage(url: images[index]),
                       ),
                     ),
                   ),
@@ -315,18 +306,9 @@ class _ProductImageDialogState extends State<_ProductImageDialog> {
                 Flexible(
                   child: ClipRRect(
                     borderRadius: AppRadius.medium,
-                    child: Image.network(
-                      widget.imageUrls[_current],
+                    child: AppNetworkImage(
+                      url: widget.imageUrls[_current],
                       fit: BoxFit.contain,
-                      errorBuilder: (_, _, _) => const SizedBox(
-                        width: 300,
-                        height: 300,
-                        child: Icon(
-                          Icons.broken_image_outlined,
-                          size: 48,
-                          color: Colors.white38,
-                        ),
-                      ),
                     ),
                   ),
                 ),
