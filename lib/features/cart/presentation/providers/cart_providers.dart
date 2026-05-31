@@ -26,3 +26,13 @@ final updateCartUseCaseProvider = Provider<UpdateCartUseCase>((ref) {
 
 final cartViewModelProvider =
     NotifierProvider<CartViewModel, CartState>(CartViewModel.new);
+
+final cartItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
+  final isLoggedIn = ref.watch(isLoggedInProvider);
+  if (!isLoggedIn) return 0;
+  final result = await ref.read(getCartUseCaseProvider)();
+  return result.when(
+    success: (data) => data.items.length,
+    failure: (_) => 0,
+  );
+});

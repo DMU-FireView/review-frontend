@@ -32,6 +32,16 @@ final checkWishlistUseCaseProvider = Provider<CheckWishlistUseCase>((ref) {
 final wishlistViewModelProvider =
     NotifierProvider<WishlistViewModel, WishlistState>(WishlistViewModel.new);
 
+final wishlistItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
+  final isLoggedIn = ref.watch(isLoggedInProvider);
+  if (!isLoggedIn) return 0;
+  final result = await ref.read(getWishlistUseCaseProvider)();
+  return result.when(
+    success: (data) => data.items.length,
+    failure: (_) => 0,
+  );
+});
+
 final wishlistButtonProvider =
     AsyncNotifierProvider.family<WishlistButtonNotifier, bool, int>(
   WishlistButtonNotifier.new,
@@ -59,7 +69,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
 
     if (!ref.mounted) return;
     result.when(
-      success: (_) {},
+      success: (_) => ref.invalidate(wishlistItemCountProvider),
       failure: (_) => state = AsyncData(current),
     );
   }
