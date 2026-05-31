@@ -703,7 +703,7 @@ class _AllCategoryOverview extends StatelessWidget {
                     crossAxisCount: 5,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 1.22,
+                    childAspectRatio: 0.88,
                   ),
                   itemBuilder: (context, index) {
                     final category = categories[index];
@@ -807,16 +807,21 @@ class _MiddleCategoryColumn extends StatelessWidget {
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const SizedBox(height: AppSpacing.xs),
             SizedBox(
-              height: 84,
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: _CategoryAssetImage(
-                  assetPath: _categoryAssetPath(category.id),
-                  width: 128,
-                  height: 84,
-                ),
+              height: 120,
+              width: double.infinity,
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final imgW = constraints.maxWidth.clamp(0.0, 160.0);
+                  return Center(
+                    child: _CategoryAssetImage(
+                      assetPath: _categoryAssetPath(category.id),
+                      width: imgW,
+                      height: 120,
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: AppSpacing.sm),
@@ -863,12 +868,18 @@ class _CategoryOverviewTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                child: Center(
-                  child: _CategoryAssetImage(
-                    assetPath: _categoryAssetPath(category.id),
-                    width: 108,
-                    height: 82,
-                  ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final imgW = constraints.maxWidth.clamp(0.0, 108.0);
+                    final imgH = constraints.maxHeight.clamp(0.0, 88.0);
+                    return Center(
+                      child: _CategoryAssetImage(
+                        assetPath: _categoryAssetPath(category.id),
+                        width: imgW,
+                        height: imgH,
+                      ),
+                    );
+                  },
                 ),
               ),
               Text(
