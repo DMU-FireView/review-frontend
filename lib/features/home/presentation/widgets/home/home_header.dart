@@ -558,9 +558,10 @@ class _CategoryMegaMenuPanelState extends State<_CategoryMegaMenuPanel> {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: Colors.transparent,
       child: DecoratedBox(
         decoration: const BoxDecoration(
+          color: AppColors.surface,
           border: Border(
             top: BorderSide(color: AppColors.border),
             bottom: BorderSide(color: AppColors.border),
@@ -871,14 +872,9 @@ class _MiddleCategoryColumn extends StatelessWidget {
             for (final item in category.children.take(5))
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
-                child: Text(
-                  item.label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: _SubCategoryItem(
+                  label: item.label,
+                  onTap: () => onCategorySelected(item.label),
                 ),
               ),
           ],
@@ -913,12 +909,11 @@ class _CategoryOverviewTile extends StatelessWidget {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: _CategoryAssetImage(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => _CategoryAssetImage(
                       assetPath: _categoryAssetPath(category.id),
-                      width: 96,
-                      height: 80,
+                      width: constraints.maxWidth,
+                      height: constraints.maxHeight,
                     ),
                   ),
                 ),
@@ -1010,6 +1005,43 @@ class _PopularCategoryPreview extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _SubCategoryItem extends StatefulWidget {
+  const _SubCategoryItem({required this.label, required this.onTap});
+
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  State<_SubCategoryItem> createState() => _SubCategoryItemState();
+}
+
+class _SubCategoryItemState extends State<_SubCategoryItem> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: Text(
+          widget.label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: _hovered ? AppColors.primary : AppColors.textPrimary,
+            fontWeight: FontWeight.w600,
+            decoration: _hovered ? TextDecoration.underline : TextDecoration.none,
+            decorationColor: AppColors.primary,
+          ),
+        ),
+      ),
     );
   }
 }
