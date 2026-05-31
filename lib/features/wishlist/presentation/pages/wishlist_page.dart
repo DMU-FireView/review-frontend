@@ -35,9 +35,7 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(
-      () => ref.read(wishlistViewModelProvider.notifier).load(),
-    );
+    Future.microtask(() => ref.read(wishlistViewModelProvider.notifier).load());
   }
 
   @override
@@ -67,7 +65,10 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {
-                  context.goNamed(RouteNames.search, queryParameters: {'q': q.trim()});
+                  context.goNamed(
+                    RouteNames.search,
+                    queryParameters: {'q': q.trim()},
+                  );
                 }
               },
               searchKeywords: keywords,
@@ -92,30 +93,37 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
               ),
               child: switch (wishlistState) {
                 WishlistLoading() || WishlistInitial() => const SizedBox(
-                    height: 320,
-                    child: AppLoadingView(message: '찜 목록을 불러오는 중입니다.'),
-                  ),
+                  height: 320,
+                  child: AppLoadingView(message: '찜 목록을 불러오는 중입니다.'),
+                ),
                 WishlistFailure(:final failure) => SizedBox(
-                    height: 320,
-                    child: AppErrorView(
-                      message: failure.message,
-                      onRetry: () => ref.read(wishlistViewModelProvider.notifier).load(),
-                    ),
+                  height: 320,
+                  child: AppErrorView(
+                    message: failure.message,
+                    onRetry: () =>
+                        ref.read(wishlistViewModelProvider.notifier).load(),
                   ),
+                ),
                 WishlistEmpty() => _WishlistEmptyBody(
-                    onGoHome: () => context.go(RoutePaths.home),
-                  ),
-                WishlistSuccess(:final items, :final summary, :final togglingProductIds) =>
+                  onGoHome: () => context.go(RoutePaths.home),
+                ),
+                WishlistSuccess(
+                  :final items,
+                  :final summary,
+                  :final togglingProductIds,
+                ) =>
                   _WishlistBody(
                     items: items,
                     summary: summary,
                     togglingProductIds: togglingProductIds,
                     selectedFilter: _selectedFilter,
                     sortOption: _sortOption,
-                    onFilterSelected: (f) => setState(() => _selectedFilter = f),
+                    onFilterSelected: (f) =>
+                        setState(() => _selectedFilter = f),
                     onSortChanged: (s) => setState(() => _sortOption = s),
-                    onRemove: (productId) =>
-                        ref.read(wishlistViewModelProvider.notifier).removeItem(productId),
+                    onRemove: (productId) => ref
+                        .read(wishlistViewModelProvider.notifier)
+                        .removeItem(productId),
                   ),
               },
             ),
@@ -135,21 +143,22 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
 
   List<HomeProductData> _productsFrom(HomeDashboardState state) {
     return switch (state) {
-      HomeDashboardSuccess(:final dashboard) => dashboard.recommendedProducts
-          .map(
-            (p) => HomeProductData(
-              productId: p.id,
-              name: p.name,
-              storeName: p.storeName,
-              priceLabel: '${p.price}원',
-              ratingLabel: p.rating?.toStringAsFixed(1) ?? '-',
-              reviewCountLabel: p.reviewCount?.toString() ?? '-',
-              rtiLabel: p.rtiScore == null ? '' : 'RTI ${p.rtiScore}',
-              imageUrl: p.imageUrl,
-              label: p.label ?? '',
-            ),
-          )
-          .toList(),
+      HomeDashboardSuccess(:final dashboard) =>
+        dashboard.recommendedProducts
+            .map(
+              (p) => HomeProductData(
+                productId: p.id,
+                name: p.name,
+                storeName: p.storeName,
+                priceLabel: '${p.price}원',
+                ratingLabel: p.rating?.toStringAsFixed(1) ?? '-',
+                reviewCountLabel: p.reviewCount?.toString() ?? '-',
+                rtiLabel: p.rtiScore == null ? '' : 'RTI ${p.rtiScore}',
+                imageUrl: p.imageUrl,
+                label: p.label ?? '',
+              ),
+            )
+            .toList(),
       _ => const [],
     };
   }
@@ -179,16 +188,24 @@ class _WishlistBody extends StatelessWidget {
   List<WishlistItem> get _filtered {
     var result = switch (selectedFilter) {
       WishlistFilterOption.all => [...items],
-      WishlistFilterOption.priceDrop => items.where((i) => i.isPriceDrop).toList(),
-      WishlistFilterOption.rti => [...items]..sort((a, b) => b.avgRti.compareTo(a.avgRti)),
-      WishlistFilterOption.lowestPrice => [...items]..sort((a, b) => a.price.compareTo(b.price)),
+      WishlistFilterOption.priceDrop =>
+        items.where((i) => i.isPriceDrop).toList(),
+      WishlistFilterOption.rti => [
+        ...items,
+      ]..sort((a, b) => b.avgRti.compareTo(a.avgRti)),
+      WishlistFilterOption.lowestPrice => [
+        ...items,
+      ]..sort((a, b) => a.price.compareTo(b.price)),
       WishlistFilterOption.brand => [...items],
       WishlistFilterOption.category => [...items],
     };
 
     switch (sortOption) {
       case WishlistSortOption.recent:
-        result.sort((a, b) => (b.savedAt ?? DateTime(0)).compareTo(a.savedAt ?? DateTime(0)));
+        result.sort(
+          (a, b) =>
+              (b.savedAt ?? DateTime(0)).compareTo(a.savedAt ?? DateTime(0)),
+        );
       case WishlistSortOption.priceLow:
         result.sort((a, b) => a.price.compareTo(b.price));
       case WishlistSortOption.priceHigh:
@@ -314,9 +331,9 @@ class _WishlistPageHeader extends StatelessWidget {
         const SizedBox(height: AppSpacing.xxs),
         Text(
           '저장된 상품을 한눈에 보고 가격과 리뷰 신뢰도를 확인해보세요.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
         ),
         const SizedBox(height: AppSpacing.xs),
         Row(
@@ -324,7 +341,7 @@ class _WishlistPageHeader extends StatelessWidget {
             const Icon(Icons.favorite, size: 14, color: AppColors.error),
             const SizedBox(width: AppSpacing.xxs),
             Text(
-              '찜한 상품 ${totalCount}개',
+              '찜한 상품 $totalCount개',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w700,
@@ -349,7 +366,11 @@ class _WishlistEmptyBody extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.favorite_border, size: 56, color: AppColors.textTertiary),
+          const Icon(
+            Icons.favorite_border,
+            size: 56,
+            color: AppColors.textTertiary,
+          ),
           const SizedBox(height: AppSpacing.md),
           Text(
             '찜한 상품이 없습니다',
@@ -361,15 +382,12 @@ class _WishlistEmptyBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             '상품 카드의 하트를 눌러 찜 목록에 추가해보세요.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.lg),
-          OutlinedButton(
-            onPressed: onGoHome,
-            child: const Text('상품 탐색하러 가기'),
-          ),
+          OutlinedButton(onPressed: onGoHome, child: const Text('상품 탐색하러 가기')),
         ],
       ),
     );

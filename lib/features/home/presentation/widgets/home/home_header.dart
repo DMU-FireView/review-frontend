@@ -1,18 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
 typedef SearchSuggestionsRequested =
     Future<List<String>> Function(String query);
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends ConsumerWidget {
   const HomeHeader({
     required this.navItems,
     required this.selectedNavItem,
@@ -61,9 +64,13 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoutPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final useCompactHeader =
         context.isMobile || context.viewportSize.width < 1100;
+    final effectiveCartCount =
+        cartCount ?? ref.watch(cartItemCountProvider).value ?? 0;
+    final effectiveWishlistCount =
+        wishlistCount ?? ref.watch(wishlistItemCountProvider).value ?? 0;
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -111,8 +118,8 @@ class HomeHeader extends StatelessWidget {
                   onSearchSuggestionsRequested: onSearchSuggestionsRequested,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
-                  cartCount: cartCount,
-                  wishlistCount: wishlistCount,
+                  cartCount: effectiveCartCount,
+                  wishlistCount: effectiveWishlistCount,
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
