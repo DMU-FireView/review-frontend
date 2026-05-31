@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/app/theme/app_text_styles.dart';
+import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
+import 'package:re_view_front/features/landing/presentation/providers/landing_providers.dart';
 
-class LandingRtiDemoCard extends StatelessWidget {
+class LandingRtiDemoCard extends ConsumerWidget {
   const LandingRtiDemoCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final productAsync = ref.watch(featuredProductProvider);
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.surfaceMuted,
@@ -15,17 +20,23 @@ class LandingRtiDemoCard extends StatelessWidget {
         border: Border.all(color: AppColors.border),
       ),
       padding: const EdgeInsets.all(AppSpacing.lg),
-      child: const Column(
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _TrustBadgeRow(),
-          SizedBox(height: AppSpacing.md),
-          _ProductSkeleton(),
-          SizedBox(height: AppSpacing.md),
-          _RtiSummarySkeleton(),
-          SizedBox(height: AppSpacing.md),
-          _RtiDisclaimer(),
+          _TrustBadgeRow(
+            product: productAsync.valueOrNull,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          productAsync.when(
+            data: (product) => _ProductCard(product: product),
+            loading: () => const _ProductCardSkeleton(),
+            error: (_, __) => const _ProductCardSkeleton(),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const _RtiSummarySection(),
+          const SizedBox(height: AppSpacing.md),
+          const _RtiDisclaimer(),
         ],
       ),
     );
@@ -33,17 +44,36 @@ class LandingRtiDemoCard extends StatelessWidget {
 }
 
 class _TrustBadgeRow extends StatelessWidget {
-  const _TrustBadgeRow();
+  const _TrustBadgeRow({required this.product});
+
+  final DashboardProduct? product;
+
+  String get _gradeLabel {
+    final score = product?.rtiScore;
+    if (score == null) return '신뢰 높음';
+    if (score >= 80) return '신뢰 높음';
+    if (score >= 50) return '의심';
+    return '위험';
+  }
+
+  Color get _gradeColor {
+    final score = product?.rtiScore;
+    if (score == null) return AppColors.primary;
+    if (score >= 80) return AppColors.success;
+    if (score >= 50) return AppColors.warning;
+    return AppColors.error;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final score = product?.rtiScore;
     return Row(
       children: [
-        const Icon(Icons.shield, color: AppColors.primary, size: 16),
+        Icon(Icons.shield, color: _gradeColor, size: 16),
         const SizedBox(width: AppSpacing.xxs),
         Text(
-          '신뢰 높음',
-          style: AppTextStyles.labelLarge.copyWith(color: AppColors.primary),
+          _gradeLabel,
+          style: AppTextStyles.labelLarge.copyWith(color: _gradeColor),
         ),
         const SizedBox(width: AppSpacing.xs),
         Container(
@@ -52,13 +82,13 @@ class _TrustBadgeRow extends StatelessWidget {
             vertical: 2,
           ),
           decoration: BoxDecoration(
-            color: AppColors.primaryLight,
+            color: _gradeColor.withValues(alpha: 0.12),
             borderRadius: BorderRadius.circular(AppRadius.xs),
           ),
           child: Text(
-            'RTI 신뢰도 92%',
+            score != null ? 'RTI 신뢰도 $score%' : 'RTI 신뢰도 분석 중',
             style: AppTextStyles.caption.copyWith(
-              color: AppColors.primary,
+              color: _gradeColor,
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -68,8 +98,120 @@ class _TrustBadgeRow extends StatelessWidget {
   }
 }
 
-class _ProductSkeleton extends StatelessWidget {
-  const _ProductSkeleton();
+class _ProductCard extends StatelessWidget {
+  const _ProductCard({required this.product});
+
+  final DashboardProduct? product;
+
+  @override
+  Widget build(BuildContext context) {
+    if (product == null) return const _ProductCardSkeleton();
+
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppRadius.md),
+        border: Border.all(color: AppColors.border),
+      ),
+      padding: const EdgeInsets.all(AppSpacing.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ProductThumbnail(imageUrl: product!.imageUrl),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product!.name,
+                  style: AppTextStyles.labelLarge,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                if (product!.storeName.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    product!.storeName,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: AppSpacing.xs),
+                Text(
+                  '${_formatPrice(product!.price)}원',
+                  style: AppTextStyles.bodyMedium.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                if (product!.reviewCount != null) ...[
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    '리뷰 ${product!.reviewCount}개',
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.textTertiary,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatPrice(int price) {
+    return price.toString().replaceAllMapped(
+      RegExp(r'(\d)(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]},',
+    );
+  }
+}
+
+class _ProductThumbnail extends StatelessWidget {
+  const _ProductThumbnail({required this.imageUrl});
+
+  final String imageUrl;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(AppRadius.sm),
+      child: SizedBox(
+        width: 80,
+        height: 80,
+        child: imageUrl.isNotEmpty
+            ? Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => const _ImagePlaceholder(),
+              )
+            : const _ImagePlaceholder(),
+      ),
+    );
+  }
+}
+
+class _ImagePlaceholder extends StatelessWidget {
+  const _ImagePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.surfaceMuted,
+      child: const Icon(
+        Icons.inventory_2_outlined,
+        color: AppColors.textTertiary,
+        size: 32,
+      ),
+    );
+  }
+}
+
+class _ProductCardSkeleton extends StatelessWidget {
+  const _ProductCardSkeleton();
 
   @override
   Widget build(BuildContext context) {
@@ -105,8 +247,8 @@ class _ProductSkeleton extends StatelessWidget {
   }
 }
 
-class _RtiSummarySkeleton extends StatelessWidget {
-  const _RtiSummarySkeleton();
+class _RtiSummarySection extends StatelessWidget {
+  const _RtiSummarySection();
 
   static const _labels = ['신뢰 높음', '광고 패턴 낮음', '반복 문구 적음', '이상 징후 없음'];
   static const _icons = [
@@ -163,8 +305,6 @@ class _RtiSummarySkeleton extends StatelessWidget {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: AppSpacing.xxs),
-                      const _SkeletonBox(width: 36, height: 10, radius: AppRadius.xs),
                     ],
                   ),
                 ),
