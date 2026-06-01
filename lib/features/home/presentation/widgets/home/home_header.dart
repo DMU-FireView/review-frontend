@@ -1,15 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/category/domain/entities/product_category.dart';
 import 'package:re_view_front/features/category/domain/entities/product_category_master.dart';
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/search_bar.dart'
     as home;
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 typedef SearchSuggestionsRequested =
     Future<List<String>> Function(String query);
@@ -17,77 +22,108 @@ typedef SearchSuggestionsRequested =
 const _categoryImageBasePath = 'assets/images/categories/category_images';
 
 const _categoryImageAssets = {
-  'digital-appliance': '$_categoryImageBasePath/cat_digital_camera.png',
-  'fashion-clothing': '$_categoryImageBasePath/cat_fashion_clothing.png',
-  'fashion-accessory': '$_categoryImageBasePath/cat_bag_wallet.png',
-  'beauty': '$_categoryImageBasePath/cat_beauty_cosmetic.png',
-  'food': '$_categoryImageBasePath/cat_food_fresh.png',
-  'living-kitchen': '$_categoryImageBasePath/cat_living_kitchen.png',
-  'furniture-interior': '$_categoryImageBasePath/cat_furniture_interior.png',
-  'sports-leisure': '$_categoryImageBasePath/sports_fitness_yoga.png',
-  'car-tools': '$_categoryImageBasePath/auto_supplies.png',
-  'baby-kids': '$_categoryImageBasePath/cat_baby_kids.png',
-  'pet': '$_categoryImageBasePath/cat_pet_supplies.png',
-  'book-stationery-hobby': '$_categoryImageBasePath/books.png',
-  'travel-service': '$_categoryImageBasePath/travel_supplies.png',
-  'luxury-brand': '$_categoryImageBasePath/luxury_wallet_watch.png',
-  'mobile-tablet': '$_categoryImageBasePath/digital_mobile_tablet.png',
-  'pc-peripheral': '$_categoryImageBasePath/digital_pc_laptop.png',
-  'video-audio': '$_categoryImageBasePath/digital_video_audio.png',
-  'living-appliance': '$_categoryImageBasePath/digital_life_appliance.png',
-  'kitchen-appliance': '$_categoryImageBasePath/digital_kitchen_appliance.png',
-  'women-clothing': '$_categoryImageBasePath/fashion_womens_clothing.png',
-  'men-clothing': '$_categoryImageBasePath/fashion_mens_clothing.png',
+  'digital-appliance':
+      '$_categoryImageBasePath/58_digital_mobile_tablet_camera.png',
+  'fashion-clothing':
+      '$_categoryImageBasePath/59_fashion_womens_clothing_jacket.png',
+  'fashion-accessory': '$_categoryImageBasePath/60_fashion_bag_handbag.png',
+  'beauty': '$_categoryImageBasePath/61_beauty_skincare_cosmetics.png',
+  'food': '$_categoryImageBasePath/62_food_fresh_fruits.png',
+  'living-kitchen':
+      '$_categoryImageBasePath/63_living_kitchen_supplies_cookware.png',
+  'furniture-interior': '$_categoryImageBasePath/64_home_furniture_chair.png',
+  'sports-leisure':
+      '$_categoryImageBasePath/65_sports_camping_hiking_character.png',
+  'car-tools': '$_categoryImageBasePath/35_car_accessories_cleaning_tools.png',
+  'baby-kids': '$_categoryImageBasePath/66_baby_clothing_baby.png',
+  'pet': '$_categoryImageBasePath/67_pet_dog_supplies_retriever.png',
+  'book-stationery-hobby':
+      '$_categoryImageBasePath/08_books_stack_open_book.png',
+  'travel-service':
+      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.png',
+  'luxury-brand': '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.png',
+  'mobile-tablet':
+      '$_categoryImageBasePath/41_digital_mobile_tablet_smartphone.png',
+  'pc-peripheral':
+      '$_categoryImageBasePath/42_digital_pc_laptop_keyboard_mouse.png',
+  'video-audio': '$_categoryImageBasePath/43_digital_video_audio_tv.png',
+  'living-appliance':
+      '$_categoryImageBasePath/44_digital_life_appliance_air_purifier.png',
+  'kitchen-appliance':
+      '$_categoryImageBasePath/45_digital_kitchen_appliance_air_fryer.png',
+  'women-clothing':
+      '$_categoryImageBasePath/46_fashion_womens_clothing_jacket.png',
+  'men-clothing': '$_categoryImageBasePath/47_fashion_mens_clothing_jacket.png',
   'underwear-homewear':
-      '$_categoryImageBasePath/fashion_underwear_loungewear.png',
-  'sports-clothing': '$_categoryImageBasePath/fashion_sportswear.png',
-  'shoes': '$_categoryImageBasePath/fashion_sneakers_shoes.png',
-  'bags': '$_categoryImageBasePath/fashion_bag.png',
-  'wallet-belt': '$_categoryImageBasePath/fashion_wallet_belt.png',
-  'accessory': '$_categoryImageBasePath/fashion_watch_accessory.png',
-  'skincare': '$_categoryImageBasePath/beauty_skincare.png',
-  'makeup': '$_categoryImageBasePath/beauty_makeup.png',
-  'cleansing': '$_categoryImageBasePath/beauty_cleansing.png',
-  'haircare': '$_categoryImageBasePath/beauty_haircare.png',
-  'bodycare': '$_categoryImageBasePath/beauty_bodycare.png',
-  'fresh-food': '$_categoryImageBasePath/food_fresh.png',
-  'processed-food': '$_categoryImageBasePath/food_processed.png',
-  'snack-dessert': '$_categoryImageBasePath/food_snacks_dessert.png',
-  'beverage': '$_categoryImageBasePath/food_drinks.png',
-  'health-food': '$_categoryImageBasePath/food_health.png',
-  'daily-supplies': '$_categoryImageBasePath/living_daily_supplies.png',
-  'kitchenware': '$_categoryImageBasePath/living_kitchen_supplies.png',
+      '$_categoryImageBasePath/48_fashion_underwear_loungewear_camisole.png',
+  'sports-clothing':
+      '$_categoryImageBasePath/49_fashion_sportswear_training_jacket.png',
+  'shoes': '$_categoryImageBasePath/50_fashion_sneakers_shoes_white.png',
+  'bags': '$_categoryImageBasePath/51_fashion_bag_shoulder.png',
+  'wallet-belt': '$_categoryImageBasePath/52_fashion_wallet_belt_black.png',
+  'accessory': '$_categoryImageBasePath/53_fashion_watch_accessory_silver.png',
+  'skincare': '$_categoryImageBasePath/39_beauty_skincare_set.png',
+  'makeup': '$_categoryImageBasePath/54_beauty_makeup_lipstick_blush.png',
+  'cleansing': '$_categoryImageBasePath/55_beauty_cleansing_oil_water.png',
+  'haircare':
+      '$_categoryImageBasePath/56_beauty_haircare_shampoo_treatment.png',
+  'bodycare': '$_categoryImageBasePath/57_beauty_bodycare_wash_lotion.png',
+  'fresh-food': '$_categoryImageBasePath/18_fresh_food_meat_fish_eggs_milk.png',
+  'processed-food': '$_categoryImageBasePath/69_food_processed_ramen.png',
+  'snack-dessert':
+      '$_categoryImageBasePath/19_processed_food_snacks_dessert.png',
+  'beverage': '$_categoryImageBasePath/20_beverages_health_products.png',
+  'health-food': '$_categoryImageBasePath/20_beverages_health_products.png',
+  'daily-supplies': '$_categoryImageBasePath/70_living_daily_supplies_mop.png',
+  'kitchenware': '$_categoryImageBasePath/22_kitchen_essentials_set.png',
   'storage-organization':
-      '$_categoryImageBasePath/living_storage_organizing.png',
-  'safety-tools': '$_categoryImageBasePath/living_safety_tools.png',
-  'furniture': '$_categoryImageBasePath/home_furniture.png',
-  'bedding': '$_categoryImageBasePath/home_bedding.png',
-  'home-deco': '$_categoryImageBasePath/home_decor.png',
-  'diy-construction': '$_categoryImageBasePath/home_diy.png',
-  'health-yoga': '$_categoryImageBasePath/sports_fitness_yoga.png',
-  'hiking-camping': '$_categoryImageBasePath/sports_camping_hiking.png',
-  'bicycle-board': '$_categoryImageBasePath/sports_bicycle_board.png',
-  'golf': '$_categoryImageBasePath/sports_golf.png',
-  'car-supplies': '$_categoryImageBasePath/auto_supplies.png',
-  'motorcycle-supplies': '$_categoryImageBasePath/motorcycle_supplies.png',
-  'industrial-tools': '$_categoryImageBasePath/tools_industrial_supplies.png',
-  'birth-childcare': '$_categoryImageBasePath/baby_outing.png',
-  'baby-supplies': '$_categoryImageBasePath/baby_food_tableware.png',
-  'kids-clothing': '$_categoryImageBasePath/baby_clothing.png',
-  'toys-education': '$_categoryImageBasePath/kids_toys_education.png',
-  'dog-supplies': '$_categoryImageBasePath/pet_dog_supplies.png',
-  'cat-supplies': '$_categoryImageBasePath/pet_cat_supplies.png',
-  'small-pet-aquarium': '$_categoryImageBasePath/pet_small_animals_fish.png',
-  'book': '$_categoryImageBasePath/books.png',
-  'stationery-office': '$_categoryImageBasePath/stationery_office.png',
-  'hobby': '$_categoryImageBasePath/hobby_musical_instrument.png',
-  'ticket-goods': '$_categoryImageBasePath/tickets_goods.png',
-  'travel-supplies': '$_categoryImageBasePath/travel_supplies.png',
-  'accommodation-ticket': '$_categoryImageBasePath/hotel_ticket.png',
-  'rental-subscription': '$_categoryImageBasePath/rental_subscription.png',
-  'luxury-accessory': '$_categoryImageBasePath/luxury_wallet_watch.png',
-  'brand-fashion': '$_categoryImageBasePath/brand_fashion.png',
-  'premium-beauty': '$_categoryImageBasePath/premium_beauty.png',
+      '$_categoryImageBasePath/23_storage_organization_items.png',
+  'safety-tools': '$_categoryImageBasePath/24_safety_tools_items.png',
+  'furniture': '$_categoryImageBasePath/25_modern_furniture_set.png',
+  'bedding': '$_categoryImageBasePath/26_bedding_linen_collection.png',
+  'home-deco': '$_categoryImageBasePath/27_home_decor_items.png',
+  'diy-construction':
+      '$_categoryImageBasePath/28_diy_home_improvement_items.png',
+  'health-yoga': '$_categoryImageBasePath/29_fitness_yoga_items.png',
+  'hiking-camping': '$_categoryImageBasePath/30_camping_hiking_gear.png',
+  'bicycle-board': '$_categoryImageBasePath/37_bicycle_scooter_safety_gear.png',
+  'golf': '$_categoryImageBasePath/36_golf_sports_equipment.png',
+  'car-supplies':
+      '$_categoryImageBasePath/35_car_accessories_cleaning_tools.png',
+  'motorcycle-supplies':
+      '$_categoryImageBasePath/34_motorcycle_riding_gear_accessories.png',
+  'industrial-tools':
+      '$_categoryImageBasePath/33_work_tools_uniform_equipment.png',
+  'birth-childcare':
+      '$_categoryImageBasePath/01_baby_outing_stroller_diapers.png',
+  'baby-supplies':
+      '$_categoryImageBasePath/02_baby_feeding_bowl_lotion_duck_towel.png',
+  'kids-clothing':
+      '$_categoryImageBasePath/03_baby_clothing_cardigan_denim_jacket.png',
+  'toys-education':
+      '$_categoryImageBasePath/04_kids_toys_teddy_blocks_puzzle.png',
+  'dog-supplies': '$_categoryImageBasePath/05_dog_supplies_puppy_food_bowl.png',
+  'cat-supplies': '$_categoryImageBasePath/06_cat_supplies_cat_litter_tree.png',
+  'small-pet-aquarium':
+      '$_categoryImageBasePath/07_small_pet_bird_aquarium_set.png',
+  'book': '$_categoryImageBasePath/08_books_stack_open_book.png',
+  'stationery-office':
+      '$_categoryImageBasePath/09_stationery_pens_notebook_calculator.png',
+  'hobby': '$_categoryImageBasePath/10_hobby_guitar_paintbrush_robot.png',
+  'ticket-goods':
+      '$_categoryImageBasePath/14_ticket_goods_concert_mug_keyring.png',
+  'travel-supplies':
+      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.png',
+  'accommodation-ticket':
+      '$_categoryImageBasePath/12_hotel_resort_photo_and_travel_cards.png',
+  'rental-subscription':
+      '$_categoryImageBasePath/13_rental_subscription_box_appliance.png',
+  'luxury-accessory':
+      '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.png',
+  'brand-fashion':
+      '$_categoryImageBasePath/16_brand_fashion_trench_sneakers_sunglasses.png',
+  'premium-beauty':
+      '$_categoryImageBasePath/17_premium_beauty_bottle_perfume_device.png',
 };
 
 const _defaultBenefitLabels = [
@@ -117,7 +153,7 @@ const _categoryBenefitLabels = {
 String? _categoryAssetPath(String categoryId) =>
     _categoryImageAssets[categoryId];
 
-class HomeHeader extends StatelessWidget {
+class HomeHeader extends ConsumerWidget {
   const HomeHeader({
     required this.navItems,
     required this.selectedNavItem,
@@ -133,6 +169,7 @@ class HomeHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.wishlistCount,
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
@@ -156,6 +193,7 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final int? wishlistCount;
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
@@ -164,9 +202,13 @@ class HomeHeader extends StatelessWidget {
   final VoidCallback? onLogoutPressed;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final useCompactHeader =
         context.isMobile || context.viewportSize.width < 1100;
+    final effectiveCartCount =
+        cartCount ?? ref.watch(cartItemCountProvider).value ?? 0;
+    final effectiveWishlistCount =
+        wishlistCount ?? ref.watch(wishlistItemCountProvider).value ?? 0;
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -214,7 +256,8 @@ class HomeHeader extends StatelessWidget {
                   onSearchSuggestionsRequested: onSearchSuggestionsRequested,
                   onLogoPressed: onLogoPressed,
                   searchFocusNode: searchFocusNode,
-                  cartCount: cartCount,
+                  cartCount: effectiveCartCount,
+                  wishlistCount: effectiveWishlistCount,
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
@@ -244,6 +287,7 @@ class _DesktopHeader extends StatelessWidget {
     this.onLogoPressed,
     this.searchFocusNode,
     this.cartCount,
+    this.wishlistCount,
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
@@ -266,6 +310,7 @@ class _DesktopHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final FocusNode? searchFocusNode;
   final int? cartCount;
+  final int? wishlistCount;
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
@@ -315,7 +360,7 @@ class _DesktopHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (isLoggedIn) ...[
-                    _UserProfileButton(
+                    HeaderUserProfileButton(
                       nickname: nickname,
                       onMyPagePressed: onMyPagePressed,
                       onProfileWishPressed: onProfileWishPressed,
@@ -326,6 +371,9 @@ class _DesktopHeader extends StatelessWidget {
                       icon: Icons.favorite_border,
                       label: '찜',
                       onTap: onWishPressed,
+                      badge: wishlistCount == null || wishlistCount == 0
+                          ? null
+                          : '$wishlistCount',
                     ),
                     _HeaderAction(
                       icon: Icons.shopping_cart_outlined,
@@ -345,6 +393,9 @@ class _DesktopHeader extends StatelessWidget {
                       icon: Icons.favorite_border,
                       label: '찜',
                       onTap: onWishPressed,
+                      badge: wishlistCount == null || wishlistCount == 0
+                          ? null
+                          : '$wishlistCount',
                     ),
                     _HeaderAction(
                       icon: Icons.shopping_cart_outlined,
@@ -364,7 +415,10 @@ class _DesktopHeader extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
-              _CategoryMenuButton(onCategorySelected: onNavItemPressed),
+              _CategoryMenuButton(
+                products: searchRecommendedProducts,
+                onCategorySelected: onNavItemPressed,
+              ),
               const SizedBox(width: AppSpacing.xxl),
               Expanded(
                 child: SingleChildScrollView(
@@ -411,8 +465,12 @@ class _DesktopHeader extends StatelessWidget {
 }
 
 class _CategoryMenuButton extends StatefulWidget {
-  const _CategoryMenuButton({required this.onCategorySelected});
+  const _CategoryMenuButton({
+    required this.products,
+    required this.onCategorySelected,
+  });
 
+  final List<HomeProductData> products;
   final ValueChanged<String> onCategorySelected;
 
   @override
@@ -422,25 +480,58 @@ class _CategoryMenuButton extends StatefulWidget {
 class _CategoryMenuButtonState extends State<_CategoryMenuButton>
     with SingleTickerProviderStateMixin {
   OverlayEntry? _overlayEntry;
+  ScrollPosition? _scrollPosition;
   late final AnimationController _controller;
-  late final Animation<double> _sizeAnim;
+  late final Animation<double> _revealAnim;
+  late final Animation<double> _fadeAnim;
+  late final Animation<double> _scaleAnim;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 220),
+      duration: const Duration(milliseconds: 180),
+      reverseDuration: const Duration(milliseconds: 120),
     );
-    _sizeAnim = CurvedAnimation(parent: _controller, curve: Curves.easeOut);
+    final revealCurve = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    _revealAnim = revealCurve;
+    _fadeAnim = CurvedAnimation(
+      parent: _controller,
+      curve: const Interval(0, 0.72, curve: Curves.easeOut),
+      reverseCurve: Curves.easeIn,
+    );
+    _scaleAnim = Tween<double>(begin: 0.985, end: 1).animate(revealCurve);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final nextPosition = Scrollable.maybeOf(context)?.position;
+    if (_scrollPosition == nextPosition) return;
+
+    _scrollPosition?.isScrollingNotifier.removeListener(_handleScrollActivity);
+    _scrollPosition = nextPosition;
+    _scrollPosition?.isScrollingNotifier.addListener(_handleScrollActivity);
   }
 
   @override
   void dispose() {
+    _scrollPosition?.isScrollingNotifier.removeListener(_handleScrollActivity);
     _controller.dispose();
     _overlayEntry?.remove();
     _overlayEntry = null;
     super.dispose();
+  }
+
+  void _handleScrollActivity() {
+    if (_scrollPosition?.isScrollingNotifier.value ?? false) {
+      _closeMenu(animate: false);
+    }
   }
 
   void _toggleMenu() {
@@ -452,6 +543,8 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
   }
 
   void _openMenu() {
+    if (_overlayEntry != null) return;
+
     final overlay = Overlay.of(context);
     final buttonBox = context.findRenderObject() as RenderBox?;
     final overlayBox = overlay.context.findRenderObject() as RenderBox?;
@@ -479,15 +572,29 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
               left: 0,
               top: panelTop,
               width: overlayWidth,
-              child: ClipRect(
-                child: SizeTransition(
-                  sizeFactor: _sizeAnim,
-                  axisAlignment: -1.0,
-                  child: _CategoryMegaMenuPanel(
-                    onCategorySelected: (label) {
-                      widget.onCategorySelected(label);
-                      _closeMenu();
-                    },
+              child: AnimatedBuilder(
+                animation: _revealAnim,
+                builder: (context, child) {
+                  return ClipRect(
+                    child: Align(
+                      alignment: Alignment.topCenter,
+                      heightFactor: _revealAnim.value,
+                      child: child,
+                    ),
+                  );
+                },
+                child: FadeTransition(
+                  opacity: _fadeAnim,
+                  child: ScaleTransition(
+                    scale: _scaleAnim,
+                    alignment: Alignment.topCenter,
+                    child: _CategoryMegaMenuPanel(
+                      products: widget.products,
+                      onCategorySelected: (label) {
+                        widget.onCategorySelected(label);
+                        _closeMenu();
+                      },
+                    ),
                   ),
                 ),
               ),
@@ -501,7 +608,17 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
     setState(() {});
   }
 
-  void _closeMenu() {
+  void _closeMenu({bool animate = true}) {
+    if (_overlayEntry == null) return;
+
+    if (!animate) {
+      _controller.stop();
+      _overlayEntry?.remove();
+      _overlayEntry = null;
+      if (mounted) setState(() {});
+      return;
+    }
+
     _controller.reverse().then((_) {
       _overlayEntry?.remove();
       _overlayEntry = null;
@@ -539,8 +656,12 @@ class _CategoryMenuButtonState extends State<_CategoryMenuButton>
 }
 
 class _CategoryMegaMenuPanel extends StatefulWidget {
-  const _CategoryMegaMenuPanel({required this.onCategorySelected});
+  const _CategoryMegaMenuPanel({
+    required this.products,
+    required this.onCategorySelected,
+  });
 
+  final List<HomeProductData> products;
   final ValueChanged<String> onCategorySelected;
 
   @override
@@ -589,6 +710,7 @@ class _CategoryMegaMenuPanelState extends State<_CategoryMegaMenuPanel> {
                     padding: const EdgeInsets.fromLTRB(32, 28, 32, 24),
                     child: _selectedCategory == null
                         ? _AllCategoryOverview(
+                            products: widget.products,
                             onCategorySelected: widget.onCategorySelected,
                           )
                         : _SelectedCategoryView(
@@ -687,8 +809,12 @@ class _CategorySideNavItem extends StatelessWidget {
 }
 
 class _AllCategoryOverview extends StatelessWidget {
-  const _AllCategoryOverview({required this.onCategorySelected});
+  const _AllCategoryOverview({
+    required this.products,
+    required this.onCategorySelected,
+  });
 
+  final List<HomeProductData> products;
   final ValueChanged<String> onCategorySelected;
 
   @override
@@ -743,7 +869,8 @@ class _AllCategoryOverview extends StatelessWidget {
         const SizedBox(width: 32),
         Expanded(
           flex: 3,
-          child: _PopularCategoryPreview(
+          child: _PopularCategoryAndPickPreview(
+            products: products,
             onCategorySelected: onCategorySelected,
           ),
         ),
@@ -763,22 +890,24 @@ class _SelectedCategoryView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final columns = category.children.take(5).toList(growable: false);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              for (final child in category.children) ...[
+              for (final child in columns) ...[
                 Expanded(
                   child: _MiddleCategoryColumn(
                     category: child,
                     onCategorySelected: onCategorySelected,
                   ),
                 ),
-                if (child != category.children.last)
-                  const VerticalDivider(width: 28, color: AppColors.border),
+                if (child != columns.last)
+                  const VerticalDivider(width: 1, color: AppColors.border),
               ],
             ],
           ),
@@ -814,39 +943,53 @@ class _MiddleCategoryColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(12),
       onTap: () => onCategorySelected(category.label),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              category.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.xs),
             SizedBox(
-              height: 110,
-              width: double.infinity,
-              child: _CategoryAssetImage(
-                assetPath: _categoryAssetPath(category.id),
+              width: 96,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    category.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: AppColors.textPrimary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  for (final item in category.children.take(6))
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: _SubCategoryItem(
+                        label: item.label,
+                        onTap: () => onCategorySelected(item.label),
+                      ),
+                    ),
+                ],
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            for (final item in category.children.take(5))
-              Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: _SubCategoryItem(
-                  label: item.label,
-                  onTap: () => onCategorySelected(item.label),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: ClipRect(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: _CategoryAssetImage(
+                    assetPath: _categoryAssetPath(category.id),
+                    height: 210,
+                    scale: 1.45,
+                  ),
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -879,13 +1022,15 @@ class _CategoryOverviewTile extends StatelessWidget {
               Expanded(
                 child: Container(
                   width: double.infinity,
+                  alignment: Alignment.center,
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF1F5F9),
+                    color: const Color(0xFFF4F7FB),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: _CategoryAssetImage(
                     assetPath: _categoryAssetPath(category.id),
+                    scale: 1.55,
                   ),
                 ),
               ),
@@ -916,9 +1061,13 @@ class _CategoryOverviewTile extends StatelessWidget {
   }
 }
 
-class _PopularCategoryPreview extends StatelessWidget {
-  const _PopularCategoryPreview({required this.onCategorySelected});
+class _PopularCategoryAndPickPreview extends StatelessWidget {
+  const _PopularCategoryAndPickPreview({
+    required this.products,
+    required this.onCategorySelected,
+  });
 
+  final List<HomeProductData> products;
   final ValueChanged<String> onCategorySelected;
 
   @override
@@ -958,6 +1107,7 @@ class _PopularCategoryPreview extends StatelessWidget {
                           assetPath: _categoryAssetPath(category.id),
                           width: 46,
                           height: 46,
+                          scale: 1.25,
                         ),
                       ),
                       const SizedBox(height: AppSpacing.xs),
@@ -976,9 +1126,258 @@ class _PopularCategoryPreview extends StatelessWidget {
               ),
           ],
         ),
+        const SizedBox(height: AppSpacing.xl),
+        Row(
+          children: [
+            Text(
+              '카테고리 추천 PICK',
+              style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+            const Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: AppColors.textSecondary,
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sm),
+        SizedBox(
+          height: 150,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final item in _pickItems.take(4)) ...[
+                Expanded(
+                  child: _CategoryPickCard(
+                    item: item,
+                    onTap: () => onCategorySelected(item.searchLabel),
+                  ),
+                ),
+                if (item != _pickItems.take(4).last)
+                  const SizedBox(width: AppSpacing.xs),
+              ],
+            ],
+          ),
+        ),
       ],
     );
   }
+
+  List<_CategoryPickItem> get _pickItems {
+    if (products.isNotEmpty) {
+      return [
+        for (final product in products.take(4))
+          _CategoryPickItem.product(product),
+      ];
+    }
+
+    return const [
+      _CategoryPickItem.fallback(
+        title: '애플 에어팟 프로 2세대',
+        categoryLabel: '디지털/가전',
+        assetPath:
+            'assets/images/categories/category_images/68_digital_video_audio_earphones.png',
+        priceLabel: '359,000원',
+        ratingLabel: '4.8',
+        rtiLabel: 'RTI 91',
+      ),
+      _CategoryPickItem.fallback(
+        title: '딥티 미스트 토너',
+        categoryLabel: '뷰티',
+        assetPath:
+            'assets/images/categories/category_images/54_beauty_makeup_lipstick_blush.png',
+        priceLabel: '28,000원',
+        ratingLabel: '4.9',
+        rtiLabel: 'RTI 89',
+      ),
+      _CategoryPickItem.fallback(
+        title: '동원참치 150g 10캔',
+        categoryLabel: '식품',
+        assetPath:
+            'assets/images/categories/category_images/69_food_processed_ramen.png',
+        priceLabel: '28,000원',
+        ratingLabel: '4.7',
+        rtiLabel: 'RTI 90',
+      ),
+      _CategoryPickItem.fallback(
+        title: '다이슨 V15 청소기',
+        categoryLabel: '생활/주방',
+        assetPath:
+            'assets/images/categories/category_images/44_digital_life_appliance_air_purifier.png',
+        priceLabel: '159,000원',
+        ratingLabel: '4.6',
+        rtiLabel: 'RTI 92',
+      ),
+    ];
+  }
+}
+
+class _CategoryPickCard extends StatelessWidget {
+  const _CategoryPickCard({required this.item, required this.onTap});
+
+  final _CategoryPickItem item;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.xs),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                item.categoryLabel,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.primary,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 10,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xxs),
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Center(
+                    child: item.usesNetworkImage
+                        ? AppNetworkImage(
+                            url: item.imageUrl,
+                            fit: BoxFit.contain,
+                            placeholderIcon: Icons.inventory_2_outlined,
+                            iconSize: 26,
+                          )
+                        : _CategoryAssetImage(
+                            assetPath: item.imageUrl,
+                            scale: 1.25,
+                          ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.xxs),
+              Text(
+                item.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Color(0xFFF59E0B), size: 12),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: Text(
+                      item.ratingLabel,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    item.rtiLabel,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 10,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _CategoryPickItem {
+  const _CategoryPickItem({
+    required this.title,
+    required this.categoryLabel,
+    required this.imageUrl,
+    required this.priceLabel,
+    required this.ratingLabel,
+    required this.rtiLabel,
+    required this.searchLabel,
+  });
+
+  factory _CategoryPickItem.product(HomeProductData product) {
+    return _CategoryPickItem(
+      title: product.name,
+      categoryLabel: product.label.isEmpty ? '추천' : product.label,
+      imageUrl: product.imageUrl.isEmpty
+          ? _fallbackAssetPathForProduct(product)
+          : product.imageUrl,
+      priceLabel: product.priceLabel,
+      ratingLabel: product.ratingLabel,
+      rtiLabel: product.rtiLabel,
+      searchLabel: product.name,
+    );
+  }
+
+  const factory _CategoryPickItem.fallback({
+    required String title,
+    required String categoryLabel,
+    required String assetPath,
+    required String priceLabel,
+    required String ratingLabel,
+    required String rtiLabel,
+  }) = _FallbackCategoryPickItem;
+
+  final String title;
+  final String categoryLabel;
+  final String imageUrl;
+  final String priceLabel;
+  final String ratingLabel;
+  final String rtiLabel;
+  final String searchLabel;
+
+  bool get usesNetworkImage =>
+      imageUrl.startsWith('http://') || imageUrl.startsWith('https://');
+}
+
+class _FallbackCategoryPickItem extends _CategoryPickItem {
+  const _FallbackCategoryPickItem({
+    required super.title,
+    required super.categoryLabel,
+    required String assetPath,
+    required super.priceLabel,
+    required super.ratingLabel,
+    required super.rtiLabel,
+  }) : super(imageUrl: assetPath, searchLabel: title);
+}
+
+String _fallbackAssetPathForProduct(HomeProductData product) {
+  final resolved = resolveProductCategory(
+    product.label,
+    displayName: product.label,
+    productName: product.name,
+  );
+  return _categoryAssetPath(resolved?.id ?? '') ??
+      'assets/images/categories/category_images/58_digital_mobile_tablet_camera.png';
 }
 
 class _SubCategoryItem extends StatefulWidget {
@@ -1009,7 +1408,9 @@ class _SubCategoryItemState extends State<_SubCategoryItem> {
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: _hovered ? AppColors.primary : AppColors.textPrimary,
             fontWeight: FontWeight.w600,
-            decoration: _hovered ? TextDecoration.underline : TextDecoration.none,
+            decoration: _hovered
+                ? TextDecoration.underline
+                : TextDecoration.none,
             decorationColor: AppColors.primary,
           ),
         ),
@@ -1086,11 +1487,13 @@ class _CategoryAssetImage extends StatelessWidget {
     required this.assetPath,
     this.width,
     this.height,
+    this.scale = 1,
   });
 
   final String? assetPath;
   final double? width;
   final double? height;
+  final double scale;
 
   @override
   Widget build(BuildContext context) {
@@ -1102,15 +1505,19 @@ class _CategoryAssetImage extends StatelessWidget {
       );
     }
 
-    return Image.asset(
-      assetPath!,
-      width: width,
-      height: height,
-      fit: BoxFit.contain,
-      errorBuilder: (_, __, ___) => Icon(
-        Icons.category_outlined,
-        color: AppColors.textTertiary,
-        size: (height ?? 48) * 0.48,
+    return Transform.scale(
+      scale: scale,
+      child: Image.asset(
+        assetPath!,
+        width: width,
+        height: height,
+        fit: BoxFit.contain,
+        filterQuality: FilterQuality.high,
+        errorBuilder: (_, _, _) => Icon(
+          Icons.category_outlined,
+          color: AppColors.textTertiary,
+          size: (height ?? 48) * 0.48,
+        ),
       ),
     );
   }
@@ -1185,7 +1592,7 @@ class _MobileHeader extends StatelessWidget {
             HomeLogo(onTap: onLogoPressed),
             const Spacer(),
             if (isLoggedIn)
-              _UserProfileButton(
+              HeaderUserProfileButton(
                 nickname: nickname,
                 onMyPagePressed: onMyPagePressed,
                 onProfileWishPressed: onProfileWishPressed,
@@ -1219,8 +1626,9 @@ class _MobileHeader extends StatelessWidget {
   }
 }
 
-class _UserProfileButton extends StatefulWidget {
-  const _UserProfileButton({
+class HeaderUserProfileButton extends StatefulWidget {
+  const HeaderUserProfileButton({
+    super.key,
     this.nickname,
     this.onMyPagePressed,
     this.onProfileWishPressed,
@@ -1237,10 +1645,11 @@ class _UserProfileButton extends StatefulWidget {
   final bool compact;
 
   @override
-  State<_UserProfileButton> createState() => _UserProfileButtonState();
+  State<HeaderUserProfileButton> createState() =>
+      _HeaderUserProfileButtonState();
 }
 
-class _UserProfileButtonState extends State<_UserProfileButton> {
+class _HeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
   final LayerLink _layerLink = LayerLink();
   OverlayEntry? _overlayEntry;
   bool _isOpen = false;
@@ -1428,7 +1837,7 @@ class _ProfileDropdown extends StatelessWidget {
                     width: 44,
                     height: 44,
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.1),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Center(

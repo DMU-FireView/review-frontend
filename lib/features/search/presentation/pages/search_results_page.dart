@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 import 'package:re_view_front/features/search/presentation/models/search_view_mode.dart';
 import 'package:re_view_front/features/search/presentation/providers/search_providers.dart';
@@ -15,9 +16,16 @@ import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
 class SearchResultsPage extends ConsumerStatefulWidget {
-  const SearchResultsPage({required this.query, super.key});
+  const SearchResultsPage({
+    required this.query,
+    this.categoryId,
+    this.categoryLabel,
+    super.key,
+  });
 
   final String query;
+  final String? categoryId;
+  final String? categoryLabel;
 
   @override
   ConsumerState<SearchResultsPage> createState() => _SearchResultsPageState();
@@ -52,7 +60,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   @override
   void didUpdateWidget(SearchResultsPage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.query != widget.query) {
+    if (oldWidget.query != widget.query ||
+        oldWidget.categoryId != widget.categoryId ||
+        oldWidget.categoryLabel != widget.categoryLabel) {
       _resetFilters();
       _triggerSearch();
     }
@@ -67,7 +77,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
 
   void _triggerSearch() {
     Future.microtask(
-      () => ref.read(searchViewModelProvider.notifier).search(widget.query),
+      () => ref
+          .read(searchViewModelProvider.notifier)
+          .search(_effectiveSearchQuery, allowEmpty: widget.categoryId != null),
     );
   }
 
@@ -76,16 +88,25 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     final searchState = ref.watch(searchViewModelProvider);
     final products = _resolveProducts(searchState);
     final totalCount = _resolveTotalCount(searchState, products);
+    final filteredProducts = _sortProducts(_filterProducts(products));
+    final effectiveTotalCount = widget.categoryId == null
+        ? totalCount
+        : filteredProducts.length;
 
-    _syncInitialPriceRange(products, widget.query);
+    _syncInitialPriceRange(products, _effectiveSearchQuery);
 
     final uiState = SearchResultsState(
-      query: widget.query,
-      products: _sortProducts(_filterProducts(products)),
-      quickFilters: _buildQuickFilters(products, totalCount ?? products.length),
-      categoryFilters: _buildCategoryFilters(products),
+      query: _displayQuery,
+      products: filteredProducts,
+      quickFilters: _buildQuickFilters(
+        widget.categoryId == null ? products : filteredProducts,
+        effectiveTotalCount ?? filteredProducts.length,
+      ),
+      categoryFilters: _buildCategoryFilters(
+        widget.categoryId == null ? products : filteredProducts,
+      ),
       priceRanges: _buildPriceRanges(products),
-      totalCount: totalCount,
+      totalCount: effectiveTotalCount,
       isLoading: searchState.isLoading,
       errorMessage: searchState is SearchFailure
           ? searchState.failure.message
@@ -98,7 +119,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
         slivers: [
           SliverToBoxAdapter(
             child: SearchHeader(
-              query: widget.query,
+              query: _searchInputQuery,
               onSearchSubmitted: (value) => _goToSearch(context, value),
             ),
           ),
@@ -177,8 +198,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   ) {
     final categorySet = <String>{};
     for (final p in products) {
-      if (p.categoryDisplayName.isNotEmpty) {
-        categorySet.add(p.categoryDisplayName);
+      final label = _categoryLabelForProduct(p);
+      if (label.isNotEmpty) {
+        categorySet.add(label);
       }
     }
     return [
@@ -188,7 +210,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
         SearchFilterChipData(
           label: cat,
           count: products
-              .where((p) => p.categoryDisplayName == cat)
+              .where((p) => _categoryLabelForProduct(p) == cat)
               .length,
         ),
     ];
@@ -210,7 +232,9 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   ) {
     final counts = <String, int>{};
     for (final p in products) {
-      counts[p.categoryDisplayName] = (counts[p.categoryDisplayName] ?? 0) + 1;
+      final label = _categoryLabelForProduct(p);
+      if (label.isEmpty) continue;
+      counts[label] = (counts[label] ?? 0) + 1;
     }
     return counts.entries
         .map((e) => SearchFilterChipData(label: e.key, count: e.value))
@@ -279,7 +303,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
         _lastPriceRangeQuery = null;
         _syncInitialPriceRange(
           _resolveProducts(ref.read(searchViewModelProvider)),
-          widget.query,
+          _effectiveSearchQuery,
         );
       } else {
         _selectedPriceRanges
@@ -340,8 +364,20 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   ) {
     return products
         .where((product) {
+          if (widget.categoryId != null &&
+              !isProductInCategory(
+                widget.categoryId!,
+                productCategory: product.category,
+                productCategoryDisplayName: product.categoryDisplayName,
+                productName: _classificationTextFor(product),
+              )) {
+            return false;
+          }
+
           if (_selectedCategories.isNotEmpty &&
-              !_selectedCategories.contains(product.categoryDisplayName)) {
+              !_selectedCategories.contains(
+                _categoryLabelForProduct(product),
+              )) {
             return false;
           }
 
@@ -449,7 +485,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
       '무선' => product.name.contains('무선'),
       '노이즈캔슬링' => product.name.contains('ANC') || product.name.contains('노이즈'),
       '커널형' => product.name.contains('커널'),
-      _ => true,
+      _ => _categoryLabelForProduct(product) == label,
     };
   }
 
@@ -459,5 +495,39 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     } else {
       values.add(value);
     }
+  }
+
+  String _categoryLabelForProduct(SearchResultProduct product) {
+    return normalizedCategoryLabel(
+      category: product.category,
+      categoryDisplayName: product.categoryDisplayName,
+      productName: _classificationTextFor(product),
+    );
+  }
+
+  String _classificationTextFor(SearchResultProduct product) {
+    final searchContext = _effectiveSearchQuery.trim();
+    if (searchContext.isEmpty) return product.name;
+    return '$searchContext ${product.name}';
+  }
+
+  String get _displayQuery {
+    final searchInputQuery = _searchInputQuery;
+    if (searchInputQuery.isNotEmpty) return searchInputQuery;
+    return widget.query;
+  }
+
+  String get _effectiveSearchQuery => _searchInputQuery;
+
+  String get _searchInputQuery {
+    final query = widget.query.trim();
+    if (query.isNotEmpty) return query;
+
+    final categoryLabel = widget.categoryLabel?.trim();
+    if (categoryLabel != null && categoryLabel.isNotEmpty) {
+      return categoryLabel;
+    }
+
+    return '';
   }
 }

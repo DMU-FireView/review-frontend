@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
@@ -39,9 +40,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(
-      productDetailViewModelProvider(widget.productId),
-    );
+    final state = ref.watch(productDetailViewModelProvider(widget.productId));
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -85,8 +84,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   message: failure.message,
                   onRetry: () => ref
                       .read(
-                        productDetailViewModelProvider(widget.productId)
-                            .notifier,
+                        productDetailViewModelProvider(
+                          widget.productId,
+                        ).notifier,
                       )
                       .refresh(),
                 ),
@@ -95,20 +95,22 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   :final reviews,
                   :final reviewInsight,
                   :final similarProducts,
-                ) => _DetailContent(
-                  detail: detail,
-                  reviews: reviews,
-                  reviewInsight: reviewInsight,
-                  similarProducts: similarProducts,
-                  selectedTab: _selectedTab,
-                  onTabChanged: (tab) => setState(() => _selectedTab = tab),
-                  onFeedback: (reviewId, feedbackType) => ref
-                      .read(
-                        productDetailViewModelProvider(widget.productId)
-                            .notifier,
-                      )
-                      .submitFeedback(reviewId, feedbackType),
-                ),
+                ) =>
+                  _DetailContent(
+                    detail: detail,
+                    reviews: reviews,
+                    reviewInsight: reviewInsight,
+                    similarProducts: similarProducts,
+                    selectedTab: _selectedTab,
+                    onTabChanged: (tab) => setState(() => _selectedTab = tab),
+                    onFeedback: (reviewId, feedbackType) => ref
+                        .read(
+                          productDetailViewModelProvider(
+                            widget.productId,
+                          ).notifier,
+                        )
+                        .submitFeedback(reviewId, feedbackType),
+                  ),
               },
             ),
           ),
@@ -157,13 +159,11 @@ class _DetailContent extends StatelessWidget {
         isMobile
             ? _MobileAnalysisSection(
                 detail: detail,
-                onDetailPressed: () =>
-                    onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
               )
             : _DesktopAnalysisSection(
                 detail: detail,
-                onDetailPressed: () =>
-                    onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
               ),
         const SizedBox(height: AppSpacing.xl),
         _ProductTabBar(
@@ -229,9 +229,13 @@ class _Breadcrumb extends StatelessWidget {
                     if (i == 0) {
                       context.goNamed(RouteNames.home);
                     } else {
+                      final category = resolveProductCategory(breadcrumbs[i]);
                       context.goNamed(
                         RouteNames.search,
-                        queryParameters: {'q': breadcrumbs[i]},
+                        queryParameters: {
+                          if (category != null) 'categoryId': category.id,
+                          'category': breadcrumbs[i],
+                        },
                       );
                     }
                   },
@@ -392,14 +396,8 @@ class _ProductTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tabs = [
-      (
-        _ProductDetailTab.review,
-        '리뷰 ${_formatTabCount(detail.reviewCount)}',
-      ),
-      (
-        _ProductDetailTab.priceComparison,
-        '가격비교 ${detail.totalSellerCount}',
-      ),
+      (_ProductDetailTab.review, '리뷰 ${_formatTabCount(detail.reviewCount)}'),
+      (_ProductDetailTab.priceComparison, '가격비교 ${detail.totalSellerCount}'),
       (_ProductDetailTab.spec, '스펙'),
       (_ProductDetailTab.qa, 'Q&A ${detail.qaCount}'),
     ];
@@ -494,10 +492,7 @@ class _DesktopReviewSection extends StatelessWidget {
         const SizedBox(width: AppSpacing.lg),
         SizedBox(
           width: 280,
-          child: ReviewInsightPanel(
-            insight: insight,
-            onMorePressed: () {},
-          ),
+          child: ReviewInsightPanel(insight: insight, onMorePressed: () {}),
         ),
       ],
     );
@@ -537,9 +532,9 @@ class _ComingSoonPlaceholder extends StatelessWidget {
       child: Center(
         child: Text(
           '준비 중입니다.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
         ),
       ),
     );
@@ -585,16 +580,13 @@ class _ErrorView extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.md),
-            OutlinedButton(
-              onPressed: onRetry,
-              child: const Text('다시 시도'),
-            ),
+            OutlinedButton(onPressed: onRetry, child: const Text('다시 시도')),
           ],
         ),
       ),

@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/responsive/breakpoints.dart';
@@ -38,16 +37,18 @@ class _Backdrop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 웹에서는 HtmlElementView 이미지가 BackdropFilter 블러를 우회하므로
-    // 불투명도가 높은 단색 오버레이로 대체
+    // HtmlElementView 기반 div는 Chrome Mac(Metal GPU 백엔드)에서
+    // WebGL canvas 합성 순서 차이로 인해 보이지 않음.
+    // BackdropFilter는 Flutter 캔버스 레이어에서 동작하므로 모든 브라우저/플랫폼에서 일관적.
+    // HTML 이미지(AppNetworkImage)는 Flutter 캔버스 위 HTML 레이어라 블러 미적용되나
+    // Container의 반투명 오버레이는 canvas 위에 정상 렌더링됨.
     return GestureDetector(
       onTap: onDismiss,
-      child: kIsWeb
-          ? Container(color: const Color(0xCC0F172A))
-          : BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-              child: Container(color: const Color(0x660F172A)),
-            ),
+      behavior: HitTestBehavior.opaque,
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: Container(color: const Color(0x330F172A)),
+      ),
     );
   }
 }
