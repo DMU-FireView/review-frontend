@@ -5,6 +5,8 @@ import 'package:re_view_front/features/home/domain/entities/dashboard_summary.da
 class DashboardSummaryDto {
   const DashboardSummaryDto({
     required this.recommendedProducts,
+    this.recentProducts = const [],
+    this.riskyProducts = const [],
     required this.trendingKeywords,
   });
 
@@ -23,6 +25,15 @@ class DashboardSummaryDto {
               .whereType<Map<String, dynamic>>()
               .map(DashboardProductDto.fromJson)
               .toList(growable: false),
+      recentProducts:
+          _readList(data, ['recentProducts', 'recentViewedProducts'])
+              .whereType<Map<String, dynamic>>()
+              .map(DashboardProductDto.fromJson)
+              .toList(growable: false),
+      riskyProducts: _readList(data, ['riskyProducts', 'dangerProducts'])
+          .whereType<Map<String, dynamic>>()
+          .map(DashboardProductDto.fromJson)
+          .toList(growable: false),
       trendingKeywords:
           _readList(data, [
                 'trendingKeywords',
@@ -44,11 +55,21 @@ class DashboardSummaryDto {
   }
 
   final List<DashboardProductDto> recommendedProducts;
+  final List<DashboardProductDto> recentProducts;
+  final List<DashboardProductDto> riskyProducts;
   final List<TrendingKeywordDto> trendingKeywords;
 
   DashboardSummary toEntity() {
     return DashboardSummary(
       recommendedProducts: recommendedProducts
+          .map((item) => item.toEntity())
+          .where((item) => item.name.isNotEmpty)
+          .toList(growable: false),
+      recentProducts: recentProducts
+          .map((item) => item.toEntity())
+          .where((item) => item.name.isNotEmpty)
+          .toList(growable: false),
+      riskyProducts: riskyProducts
           .map((item) => item.toEntity())
           .where((item) => item.name.isNotEmpty)
           .toList(growable: false),
