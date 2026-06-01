@@ -1,4 +1,5 @@
 import 'package:re_view_front/core/result/result.dart';
+import 'package:re_view_front/features/product_detail/domain/entities/product_analysis_result.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/repositories/product_detail_repository.dart';
@@ -28,4 +29,13 @@ class SubmitReviewFeedbackUseCase {
 
   Future<Result<void>> call(int reviewId, String feedbackType) =>
       _repository.submitReviewFeedback(reviewId, feedbackType);
+}
+
+class TriggerProductAnalysisUseCase {
+  const TriggerProductAnalysisUseCase(this._repository);
+
+  final ProductDetailRepository _repository;
+
+  Future<Result<ProductAnalysisResult>> call(String productId) =>
+      _repository.triggerProductAnalysis(productId);
 }

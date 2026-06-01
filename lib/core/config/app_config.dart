@@ -6,6 +6,7 @@ class AppConfig {
     required this.homeDashboardPath,
     required this.searchPath,
     required this.productPath,
+    required this.analysisPath,
     required this.reviewFeedbackBasePath,
     required this.loginPath,
     required this.signupPath,
@@ -41,6 +42,10 @@ class AppConfig {
       productPath: const String.fromEnvironment(
         'PRODUCT_PATH',
         defaultValue: '/api/products',
+      ),
+      analysisPath: const String.fromEnvironment(
+        'ANALYSIS_PATH',
+        defaultValue: '/api/analysis/product',
       ),
       reviewFeedbackBasePath: const String.fromEnvironment(
         'REVIEW_FEEDBACK_BASE_PATH',
@@ -87,6 +92,7 @@ class AppConfig {
   final String homeDashboardPath;
   final String searchPath;
   final String productPath;
+  final String analysisPath;
   final String reviewFeedbackBasePath;
   final String loginPath;
   final String signupPath;
