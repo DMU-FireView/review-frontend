@@ -9,9 +9,19 @@ import 'package:re_view_front/shared/widgets/app_network_image.dart';
 enum ReviewSortOption { newest, verified, withPhoto, rtiHigh }
 
 class ReviewListSection extends StatefulWidget {
-  const ReviewListSection({super.key, required this.reviews, this.onFeedback});
+  const ReviewListSection({
+    super.key,
+    required this.reviews,
+    this.safeCount = 0,
+    this.warnCount = 0,
+    this.dangerCount = 0,
+    this.onFeedback,
+  });
 
   final List<ProductReview> reviews;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
@@ -94,6 +104,9 @@ class _ReviewListSectionState extends State<ReviewListSection> {
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: ReviewCard(
                 review: review,
+                safeCount: widget.safeCount,
+                warnCount: widget.warnCount,
+                dangerCount: widget.dangerCount,
                 onFeedback: widget.onFeedback != null
                     ? (feedbackType) =>
                           widget.onFeedback!(review.id, feedbackType)
@@ -245,9 +258,19 @@ class _Divider extends StatelessWidget {
 }
 
 class ReviewCard extends StatelessWidget {
-  const ReviewCard({super.key, required this.review, this.onFeedback});
+  const ReviewCard({
+    super.key,
+    required this.review,
+    this.safeCount = 0,
+    this.warnCount = 0,
+    this.dangerCount = 0,
+    this.onFeedback,
+  });
 
   final ProductReview review;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
   final Future<bool> Function(String feedbackType)? onFeedback;
 
   @override
@@ -319,7 +342,13 @@ class ReviewCard extends StatelessWidget {
                 ),
                 const SizedBox(width: AppSpacing.xs),
                 GestureDetector(
-                  onTap: () => showReviewRtiAnalysisDialog(context, review),
+                  onTap: () => showReviewRtiAnalysisDialog(
+                    context,
+                    review,
+                    safeCount: safeCount,
+                    warnCount: warnCount,
+                    dangerCount: dangerCount,
+                  ),
                   child: _RtiBadgeSmall(
                     score: review.rtiScore,
                     label: review.rtiLabel,
