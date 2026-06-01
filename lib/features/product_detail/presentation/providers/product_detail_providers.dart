@@ -43,6 +43,13 @@ final submitReviewFeedbackUseCaseProvider =
       );
     });
 
+final triggerProductAnalysisUseCaseProvider =
+    Provider<TriggerProductAnalysisUseCase>((ref) {
+      return TriggerProductAnalysisUseCase(
+        ref.watch(productDetailRepositoryProvider),
+      );
+    });
+
 final productDetailViewModelProvider = NotifierProvider.family<
   ProductDetailViewModel,
   ProductDetailState,
