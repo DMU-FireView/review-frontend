@@ -31,12 +31,21 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final isLoggedIn = ref.read(isLoggedInProvider);
+      final tokenStore = ref.read(authTokenStoreProvider.notifier);
       const authPages = {
         RoutePaths.landing,
         RoutePaths.login,
         RoutePaths.signup,
       };
       if (isLoggedIn && authPages.contains(state.matchedLocation)) {
+        if (!tokenStore.onboardingCompleted) {
+          return RoutePaths.onboarding;
+        }
+        return RoutePaths.home;
+      }
+      if (isLoggedIn &&
+          state.matchedLocation == RoutePaths.onboarding &&
+          tokenStore.onboardingCompleted) {
         return RoutePaths.home;
       }
       const protectedPages = {
