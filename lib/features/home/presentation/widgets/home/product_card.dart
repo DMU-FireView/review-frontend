@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
@@ -154,18 +155,24 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
     );
     _scale = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 1.0, end: 1.45)
-            .chain(CurveTween(curve: Curves.easeOut)),
+        tween: Tween(
+          begin: 1.0,
+          end: 1.45,
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 40,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 1.45, end: 0.88)
-            .chain(CurveTween(curve: Curves.easeIn)),
+        tween: Tween(
+          begin: 1.45,
+          end: 0.88,
+        ).chain(CurveTween(curve: Curves.easeIn)),
         weight: 30,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.88, end: 1.0)
-            .chain(CurveTween(curve: Curves.elasticOut)),
+        tween: Tween(
+          begin: 0.88,
+          end: 1.0,
+        ).chain(CurveTween(curve: Curves.elasticOut)),
         weight: 30,
       ),
     ]).animate(_controller);
@@ -178,10 +185,18 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
   }
 
   Future<void> _toggle() async {
+    if (!ref.read(isLoggedInProvider)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인이 필요합니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     _controller.forward(from: 0);
-    await ref
-        .read(wishlistButtonProvider(widget.productId).notifier)
-        .toggle();
+    await ref.read(wishlistButtonProvider(widget.productId).notifier).toggle();
   }
 
   @override
@@ -193,10 +208,8 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
       onTap: asyncStatus.isLoading ? null : _toggle,
       child: AnimatedBuilder(
         animation: _scale,
-        builder: (context, child) => Transform.scale(
-          scale: _scale.value,
-          child: child,
-        ),
+        builder: (context, child) =>
+            Transform.scale(scale: _scale.value, child: child),
         child: Container(
           width: 34,
           height: 34,
@@ -207,10 +220,8 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
           ),
           child: AnimatedSwitcher(
             duration: const Duration(milliseconds: 200),
-            transitionBuilder: (child, animation) => ScaleTransition(
-              scale: animation,
-              child: child,
-            ),
+            transitionBuilder: (child, animation) =>
+                ScaleTransition(scale: animation, child: child),
             child: Icon(
               liked ? Icons.favorite : Icons.favorite_border,
               key: ValueKey(liked),
