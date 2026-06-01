@@ -8,7 +8,6 @@ import 'package:re_view_front/features/search/presentation/widgets/result_column
 import 'package:re_view_front/features/search/presentation/widgets/search_summary.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
-import 'package:re_view_front/shared/widgets/loading_view.dart';
 
 class SearchResultsBody extends StatelessWidget {
   const SearchResultsBody({
@@ -75,10 +74,7 @@ class SearchResultsBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.isLoading) {
-      return const SizedBox(
-        height: 420,
-        child: AppLoadingView(message: '검색 결과를 불러오는 중입니다.'),
-      );
+      return const SearchProductGridSkeleton();
     }
 
     if (state.hasError) {

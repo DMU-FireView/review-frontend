@@ -18,7 +18,7 @@ import 'package:re_view_front/features/wishlist/presentation/widgets/wishlist_su
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
-import 'package:re_view_front/shared/widgets/loading_view.dart';
+import 'package:re_view_front/shared/widgets/shimmer_box.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 
 class WishlistPage extends ConsumerStatefulWidget {
@@ -93,10 +93,8 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
                 AppSpacing.xxxl,
               ),
               child: switch (wishlistState) {
-                WishlistLoading() || WishlistInitial() => const SizedBox(
-                  height: 320,
-                  child: AppLoadingView(message: '찜 목록을 불러오는 중입니다.'),
-                ),
+                WishlistLoading() || WishlistInitial() =>
+                  const _WishlistGridSkeleton(),
                 WishlistFailure(:final failure) => SizedBox(
                   height: 320,
                   child: AppErrorView(
@@ -390,6 +388,94 @@ class _WishlistEmptyBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.lg),
           OutlinedButton(onPressed: onGoHome, child: const Text('상품 탐색하러 가기')),
         ],
+      ),
+    );
+  }
+}
+
+class _WishlistGridSkeleton extends StatelessWidget {
+  const _WishlistGridSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final crossAxisCount = switch (width) {
+      >= 1400 => 6,
+      >= 1100 => 5,
+      >= 860 => 4,
+      >= 600 => 3,
+      _ => 2,
+    };
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: crossAxisCount,
+        crossAxisSpacing: AppSpacing.sm,
+        mainAxisSpacing: AppSpacing.sm,
+        childAspectRatio: 0.62,
+      ),
+      itemCount: crossAxisCount * 2,
+      itemBuilder: (context, _) => const _WishlistCardSkeleton(),
+    );
+  }
+}
+
+class _WishlistCardSkeleton extends StatelessWidget {
+  const _WishlistCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.border),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Expanded(child: ShimmerBox()),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 52, height: 11, radius: 3),
+                  ),
+                  const SizedBox(height: 4),
+                  const SizedBox(height: 13, child: ShimmerBox(radius: 3)),
+                  const SizedBox(height: 3),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 90, height: 13, radius: 3),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 64, height: 19, radius: 3),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: const [
+                      ShimmerBox(width: 36, height: 36, radius: 6),
+                      SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: SizedBox(height: 36, child: ShimmerBox(radius: 6)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
