@@ -47,7 +47,7 @@ class _Backdrop extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-        child: Container(color: const Color(0x330F172A)),
+        child: Container(color: const Color(0xCC0F172A)),
       ),
     );
   }

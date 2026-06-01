@@ -4,7 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 
-class SignupCard extends StatelessWidget {
+class SignupCard extends StatefulWidget {
   const SignupCard({
     required this.nameController,
     required this.emailController,
@@ -55,6 +55,23 @@ class SignupCard extends StatelessWidget {
   final VoidCallback onLoginPressed;
 
   @override
+  State<SignupCard> createState() => _SignupCardState();
+}
+
+class _SignupCardState extends State<SignupCard> {
+  final _emailFocusNode = FocusNode();
+  final _passwordFocusNode = FocusNode();
+  final _passwordConfirmFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _emailFocusNode.dispose();
+    _passwordFocusNode.dispose();
+    _passwordConfirmFocusNode.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 480),
@@ -72,7 +89,7 @@ class SignupCard extends StatelessWidget {
           ],
         ),
         child: Padding(
-          padding: EdgeInsets.all(context.isMobile ? AppSpacing.lg : 34),
+          padding: EdgeInsets.all(context.isMobile ? AppSpacing.lg : 28),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
@@ -92,7 +109,7 @@ class SignupCard extends StatelessWidget {
                   fontWeight: FontWeight.w900,
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 'Re:view 계정을 만들고 저장 상품, 신뢰 필터, 알림 설정을 시작하세요.',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -100,73 +117,86 @@ class SignupCard extends StatelessWidget {
                   height: 1.55,
                 ),
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: AppSpacing.md),
               _SignupInputField(
-                controller: nameController,
+                controller: widget.nameController,
                 label: '이름',
                 hintText: '이름을 입력하세요',
                 prefixIcon: Icons.person_outline,
-                errorText: nameError,
+                textInputAction: TextInputAction.next,
+                errorText: widget.nameError,
+                onSubmitted: () => _emailFocusNode.requestFocus(),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               _SignupInputField(
-                controller: emailController,
+                controller: widget.emailController,
                 label: '이메일',
                 hintText: '이메일을 입력하세요',
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
                 prefixIcon: Icons.mail_outline,
-                errorText: emailError,
+                errorText: widget.emailError,
+                focusNode: _emailFocusNode,
+                onSubmitted: () => _passwordFocusNode.requestFocus(),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const SizedBox(height: AppSpacing.sm),
               _SignupInputField(
-                controller: passwordController,
+                controller: widget.passwordController,
                 label: '비밀번호',
                 hintText: '비밀번호를 입력하세요',
-                obscureText: obscurePassword,
+                obscureText: widget.obscurePassword,
                 textInputAction: TextInputAction.next,
                 prefixIcon: Icons.lock_outline,
-                errorText: passwordError,
+                errorText: widget.passwordError,
                 helperText: '영문, 숫자, 특수문자를 포함해 8자 이상으로 설정해주세요.',
+                focusNode: _passwordFocusNode,
+                onSubmitted: () => _passwordConfirmFocusNode.requestFocus(),
                 trailing: TextButton(
-                  onPressed: isLoading ? null : onPasswordVisibilityPressed,
-                  child: Text(obscurePassword ? '보기' : '숨김'),
+                  onPressed:
+                      widget.isLoading
+                          ? null
+                          : widget.onPasswordVisibilityPressed,
+                  child: Text(widget.obscurePassword ? '보기' : '숨김'),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              _SignupInputField(
+                controller: widget.passwordConfirmController,
+                label: '비밀번호 확인',
+                hintText: '비밀번호를 한 번 더 입력하세요',
+                obscureText: widget.obscurePasswordConfirm,
+                textInputAction: TextInputAction.done,
+                prefixIcon: Icons.check,
+                errorText: widget.passwordConfirmError,
+                focusNode: _passwordConfirmFocusNode,
+                onSubmitted: widget.isLoading ? null : widget.onSignupPressed,
+                trailing: TextButton(
+                  onPressed:
+                      widget.isLoading
+                          ? null
+                          : widget.onPasswordConfirmVisibilityPressed,
+                  child: Text(widget.obscurePasswordConfirm ? '보기' : '숨김'),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              _SignupInputField(
-                controller: passwordConfirmController,
-                label: '비밀번호 확인',
-                hintText: '비밀번호를 한 번 더 입력하세요',
-                obscureText: obscurePasswordConfirm,
-                textInputAction: TextInputAction.done,
-                prefixIcon: Icons.check,
-                errorText: passwordConfirmError,
-                trailing: TextButton(
-                  onPressed: isLoading
-                      ? null
-                      : onPasswordConfirmVisibilityPressed,
-                  child: Text(obscurePasswordConfirm ? '보기' : '숨김'),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
               _AgreementBox(
-                agreedToTerms: agreedToTerms,
-                agreedToMarketing: agreedToMarketing,
-                termsError: termsError,
-                isLoading: isLoading,
-                onTermsChanged: onTermsChanged,
-                onMarketingChanged: onMarketingChanged,
+                agreedToTerms: widget.agreedToTerms,
+                agreedToMarketing: widget.agreedToMarketing,
+                termsError: widget.termsError,
+                isLoading: widget.isLoading,
+                onTermsChanged: widget.onTermsChanged,
+                onMarketingChanged: widget.onMarketingChanged,
               ),
-              if (failureMessage != null) ...[
-                const SizedBox(height: AppSpacing.md),
-                _SignupFailureMessage(message: failureMessage!),
+              if (widget.failureMessage != null) ...[
+                const SizedBox(height: AppSpacing.sm),
+                _SignupFailureMessage(message: widget.failureMessage!),
               ],
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
               SizedBox(
                 height: 58,
                 child: FilledButton(
-                  onPressed: isLoading ? null : onSignupPressed,
+                  onPressed:
+                      widget.isLoading ? null : widget.onSignupPressed,
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primaryDark,
                     foregroundColor: AppColors.onPrimary,
@@ -174,7 +204,7 @@ class SignupCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                     ),
                   ),
-                  child: isLoading
+                  child: widget.isLoading
                       ? const SizedBox.square(
                           dimension: 18,
                           child: CircularProgressIndicator(
@@ -185,29 +215,31 @@ class SignupCard extends StatelessWidget {
                       : const Text('회원가입하고 온보딩 시작'),
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.sm),
               const _NextStepNotice(),
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
               const _DividerLabel(label: '또는'),
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
               _SocialSignupButton(
                 label: '네이버 계정으로 가입하기',
                 mark: 'N',
-                onPressed: isLoading || onOAuthPressed == null
-                    ? null
-                    : () => onOAuthPressed!(OAuthProvider.naver),
+                onPressed:
+                    widget.isLoading || widget.onOAuthPressed == null
+                        ? null
+                        : () => widget.onOAuthPressed!(OAuthProvider.naver),
               ),
               const SizedBox(height: AppSpacing.sm),
               _SocialSignupButton(
                 label: 'Google 계정으로 가입하기',
                 mark: 'G',
-                onPressed: isLoading || onOAuthPressed == null
-                    ? null
-                    : () => onOAuthPressed!(OAuthProvider.google),
+                onPressed:
+                    widget.isLoading || widget.onOAuthPressed == null
+                        ? null
+                        : () => widget.onOAuthPressed!(OAuthProvider.google),
               ),
-              const SizedBox(height: AppSpacing.xl),
-              const Divider(height: 1),
               const SizedBox(height: AppSpacing.md),
+              const Divider(height: 1),
+              const SizedBox(height: AppSpacing.sm),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -218,7 +250,7 @@ class SignupCard extends StatelessWidget {
                     ),
                   ),
                   TextButton(
-                    onPressed: onLoginPressed,
+                    onPressed: widget.onLoginPressed,
                     child: const Text('로그인하기'),
                   ),
                 ],
@@ -243,6 +275,8 @@ class _SignupInputField extends StatelessWidget {
     this.errorText,
     this.helperText,
     this.trailing,
+    this.focusNode,
+    this.onSubmitted,
   });
 
   final TextEditingController controller;
@@ -255,6 +289,8 @@ class _SignupInputField extends StatelessWidget {
   final String? errorText;
   final String? helperText;
   final Widget? trailing;
+  final FocusNode? focusNode;
+  final VoidCallback? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -273,9 +309,12 @@ class _SignupInputField extends StatelessWidget {
           height: 56,
           child: TextField(
             controller: controller,
+            focusNode: focusNode,
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             obscureText: obscureText,
+            onSubmitted:
+                onSubmitted != null ? (_) => onSubmitted!() : null,
             decoration: InputDecoration(
               hintText: hintText,
               errorText: errorText,
