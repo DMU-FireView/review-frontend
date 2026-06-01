@@ -69,7 +69,9 @@ class SearchHeader extends ConsumerWidget {
                       onLoginPressed: () => context.go(RoutePaths.login),
                       onWishPressed: () => context.go(RoutePaths.wishlist),
                       onCartPressed: () => context.go(RoutePaths.cart),
-                      onMyPagePressed: () => context.go(RoutePaths.login),
+                      onMyPagePressed: () => context.go(
+                        isLoggedIn ? RoutePaths.myPage : RoutePaths.login,
+                      ),
                       onProfileWishPressed: () =>
                           context.go(RoutePaths.wishlist),
                       onProfileOrderPressed: () => context.go(RoutePaths.cart),
