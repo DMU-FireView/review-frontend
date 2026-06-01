@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
@@ -530,14 +531,25 @@ class _WishlistSquareButton extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncStatus = ref.watch(wishlistButtonProvider(productId));
     final liked = asyncStatus.value ?? false;
+    final isLoggedIn = ref.watch(isLoggedInProvider);
 
     return SizedBox.square(
       dimension: 36,
       child: OutlinedButton(
         onPressed: asyncStatus.isLoading
             ? null
-            : () =>
-                  ref.read(wishlistButtonProvider(productId).notifier).toggle(),
+            : () {
+                if (!isLoggedIn) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('로그인이 필요합니다.'),
+                      duration: Duration(seconds: 2),
+                    ),
+                  );
+                  return;
+                }
+                ref.read(wishlistButtonProvider(productId).notifier).toggle();
+              },
         style: _wishlistButtonStyle(liked),
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 180),
@@ -598,6 +610,16 @@ class _CartSquareButtonState extends ConsumerState<_CartSquareButton> {
 
   Future<void> _addToCart() async {
     if (_loading) return;
+    if (!ref.read(isLoggedInProvider)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('로그인이 필요합니다.'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     final alreadyInCart =
         ref.read(cartButtonProvider(widget.productId)).value ?? false;
     if (alreadyInCart) return;
