@@ -116,6 +116,9 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
           state = current.copyWith(
             reviews: enrichedReviews,
             isAnalyzing: false,
+            safeCount: analysis.safeCount,
+            warnCount: analysis.warnCount,
+            dangerCount: analysis.dangerCount,
           );
         }
       },
