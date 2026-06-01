@@ -5,6 +5,7 @@ import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/features/onboarding/domain/entities/notification_channel.dart';
 import 'package:re_view_front/features/onboarding/presentation/providers/onboarding_providers.dart';
@@ -22,6 +23,8 @@ class OnboardingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(onboardingViewModelProvider, (_, state) {
       if (state.isSuccess) {
+        ref.read(refreshHomeDashboardOnEnterProvider.notifier).request();
+        ref.invalidate(homeDashboardViewModelProvider);
         context.go(RoutePaths.home);
       }
     });

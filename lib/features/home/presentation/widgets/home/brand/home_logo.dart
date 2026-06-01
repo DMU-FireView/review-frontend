@@ -7,10 +7,21 @@ class HomeLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Image.asset(
-      'assets/images/home/brand/review_web_header_logo.png',
-      height: 32,
-      fit: BoxFit.contain,
+    final logo = ClipRect(
+      child: SizedBox(
+        width: 116,
+        height: 36,
+        child: Center(
+          child: Transform.scale(
+            scale: 2,
+            child: Image.asset(
+              'assets/images/home/brand/review_web_header_logo.png',
+              height: 32,
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      ),
     );
 
     if (onTap == null) {
