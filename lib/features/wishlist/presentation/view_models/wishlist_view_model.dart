@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/wishlist/domain/usecases/get_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/domain/usecases/toggle_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
@@ -17,6 +18,11 @@ class WishlistViewModel extends Notifier<WishlistState> {
 
   Future<void> load() async {
     if (!ref.mounted) return;
+    if (!ref.read(isLoggedInProvider)) {
+      state = const WishlistEmpty();
+      return;
+    }
+
     state = const WishlistLoading();
 
     final result = await _getWishlistUseCase();
@@ -31,6 +37,8 @@ class WishlistViewModel extends Notifier<WishlistState> {
   }
 
   Future<void> removeItem(int productId) async {
+    if (!ref.read(isLoggedInProvider)) return;
+
     final current = state;
     if (current is! WishlistSuccess) return;
 
