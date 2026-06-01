@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/cart/domain/usecases/get_cart_use_case.dart';
 import 'package:re_view_front/features/cart/domain/usecases/update_cart_use_case.dart';
 import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
@@ -17,6 +18,11 @@ class CartViewModel extends Notifier<CartState> {
 
   Future<void> load() async {
     if (!ref.mounted) return;
+    if (!ref.read(isLoggedInProvider)) {
+      state = const CartEmpty();
+      return;
+    }
+
     state = const CartLoading();
 
     final result = await _getCartUseCase();
@@ -59,6 +65,8 @@ class CartViewModel extends Notifier<CartState> {
   }
 
   Future<void> updateQuantity(int productId, int quantity) async {
+    if (!ref.read(isLoggedInProvider)) return;
+
     final current = state;
     if (current is! CartSuccess) return;
     if (quantity < 1) return;
@@ -84,6 +92,8 @@ class CartViewModel extends Notifier<CartState> {
   }
 
   Future<void> removeItem(int productId) async {
+    if (!ref.read(isLoggedInProvider)) return;
+
     final current = state;
     if (current is! CartSuccess) return;
 
@@ -108,6 +118,8 @@ class CartViewModel extends Notifier<CartState> {
   }
 
   Future<void> removeSelected() async {
+    if (!ref.read(isLoggedInProvider)) return;
+
     final current = state;
     if (current is! CartSuccess) return;
 
