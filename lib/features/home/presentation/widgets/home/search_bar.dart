@@ -7,6 +7,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/storage/web_storage.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 const _recentSearchStorageKey = 'home_recent_search_queries';
 const _suggestionPanelPlaceholder = '__review_suggestion_panel_placeholder__';
@@ -694,14 +695,16 @@ class _SuggestedProductTile extends StatelessWidget {
                 width: 42,
                 height: 42,
                 alignment: Alignment.center,
+                clipBehavior: Clip.antiAlias,
                 decoration: BoxDecoration(
                   color: const Color(0xFFF1F5F9),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
-                  Icons.inventory_2_outlined,
-                  color: AppColors.primary,
-                  size: 22,
+                child: AppNetworkImage(
+                  url: product.imageUrl,
+                  fit: BoxFit.contain,
+                  placeholderIcon: Icons.inventory_2_outlined,
+                  iconSize: 22,
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),

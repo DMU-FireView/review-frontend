@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/home/domain/entities/trending_keyword.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
@@ -309,6 +310,18 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _handleNavItemPressed(String item) {
+    final category = resolveProductCategory(item);
+    if (category != null) {
+      context.goNamed(
+        RouteNames.search,
+        queryParameters: {
+          'categoryId': category.id,
+          'category': category.label,
+        },
+      );
+      return;
+    }
+
     setState(() => _selectedNavItem = item);
     _scrollController.jumpTo(0);
   }
@@ -319,8 +332,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       return;
     }
 
-    setState(() => _selectedNavItem = label);
-    _scrollTo(_recommendationKey);
+    _handleNavItemPressed(label);
   }
 
   void _handleBannerPressed(HomeBannerData banner) {
