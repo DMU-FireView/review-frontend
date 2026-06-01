@@ -11,6 +11,8 @@ abstract interface class ProductDetailRemoteDataSource {
 
   Future<void> submitReviewFeedback(int reviewId, String feedbackType);
 
+  Future<bool> checkAnalysisHealth();
+
   Future<ProductAnalysisDto> triggerProductAnalysis(String productId);
 }
 
@@ -74,6 +76,24 @@ class ProductDetailRemoteDataSourceImpl
     if (data is Map<String, dynamic>) {
       final payload = ApiResponse<Object?>.fromJson(data);
       payload.requireSuccess();
+    }
+  }
+
+  @override
+  Future<bool> checkAnalysisHealth() async {
+    try {
+      final response = await _apiClient.get(_config.analysisHealthPath);
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        final payload = ApiResponse<Object?>.fromJson(data);
+        final body = payload.requireSuccess();
+        if (body is Map<String, dynamic>) {
+          return body['status'] == 'ok';
+        }
+      }
+      return false;
+    } catch (_) {
+      return false;
     }
   }
 

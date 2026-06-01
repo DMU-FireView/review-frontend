@@ -13,5 +13,7 @@ abstract interface class ProductDetailRepository {
     String feedbackType,
   );
 
+  Future<bool> checkAnalysisHealth();
+
   Future<Result<ProductAnalysisResult>> triggerProductAnalysis(String productId);
 }
