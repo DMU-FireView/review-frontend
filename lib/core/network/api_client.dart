@@ -9,6 +9,7 @@ class ApiClient {
           baseUrl: config.apiBaseUrl,
           connectTimeout: config.connectTimeout,
           receiveTimeout: config.receiveTimeout,
+          contentType: 'application/json',
           headers: const {'Accept': 'application/json'},
         ),
       ) {
