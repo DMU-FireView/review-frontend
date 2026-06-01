@@ -19,6 +19,7 @@ import 'package:re_view_front/features/product_detail/presentation/widgets/revie
 import 'package:re_view_front/features/product_detail/presentation/widgets/rti_summary_card.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/similar_products_section.dart';
 import 'package:re_view_front/features/product_detail/presentation/widgets/trust_signal_card.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
@@ -41,6 +42,8 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(productDetailViewModelProvider(widget.productId));
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final nickname = ref.watch(userNicknameProvider).value;
 
     return Scaffold(
       backgroundColor: AppColors.surface,
@@ -51,9 +54,16 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
               navItems: homeNavItems,
               selectedNavItem: '',
               showCategoryNav: false,
-              onLoginPressed: () {},
-              onWishPressed: () {},
-              onCartPressed: () {},
+              isLoggedIn: isLoggedIn,
+              nickname: nickname,
+              onLoginPressed: () => context.go(RoutePaths.login),
+              onWishPressed: () => context.go(RoutePaths.wishlist),
+              onCartPressed: () => context.go(RoutePaths.cart),
+              onMyPagePressed: () => context.go(RoutePaths.myPage),
+              onProfileWishPressed: () => context.go(RoutePaths.wishlist),
+              onProfileOrderPressed: () => context.go(RoutePaths.dashboard),
+              onLogoutPressed: () =>
+                  ref.read(authTokenStoreProvider.notifier).clear(),
               onNavItemPressed: (item) => context.goNamed(
                 RouteNames.search,
                 queryParameters: {'q': item},

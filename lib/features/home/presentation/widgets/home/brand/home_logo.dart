@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:re_view_front/app/theme/app_colors.dart';
 
 class HomeLogo extends StatelessWidget {
   const HomeLogo({this.onTap, super.key});
@@ -8,12 +7,10 @@ class HomeLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final logo = Text(
-      'Re:view',
-      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-        color: AppColors.textPrimary,
-        fontWeight: FontWeight.w900,
-      ),
+    final logo = Image.asset(
+      'assets/images/home/brand/review_web_header_logo.png',
+      height: 32,
+      fit: BoxFit.contain,
     );
 
     if (onTap == null) {
