@@ -54,6 +54,19 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final shouldRefresh = ref.read(refreshHomeDashboardOnEnterProvider);
+      if (!shouldRefresh) return;
+
+      ref.read(refreshHomeDashboardOnEnterProvider.notifier).consume();
+      ref.read(homeDashboardViewModelProvider.notifier).refresh();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final useWideCommerceGrid = context.viewportSize.width >= 1120;
     final isLoggedIn = ref.watch(isLoggedInProvider);
