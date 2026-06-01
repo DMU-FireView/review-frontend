@@ -9,6 +9,7 @@ import 'package:re_view_front/features/search/presentation/widgets/pagination.da
 import 'package:re_view_front/features/search/presentation/widgets/review_comparison_banner.dart';
 import 'package:re_view_front/features/search/presentation/widgets/search_product_card.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
+import 'package:re_view_front/shared/widgets/shimmer_box.dart';
 
 class ResultColumn extends StatelessWidget {
   const ResultColumn({
@@ -168,6 +169,111 @@ class ProductList extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
         ],
       ],
+    );
+  }
+}
+
+class SearchProductGridSkeleton extends StatelessWidget {
+  const SearchProductGridSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ShimmerWrapper(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final columns = ProductGrid.columnsForWidth(constraints.maxWidth);
+          final cardHeight = switch (columns) {
+            1 => 520.0,
+            2 => 490.0,
+            3 => 465.0,
+            4 => 445.0,
+            _ => 425.0,
+          };
+          final itemCount = columns * 2;
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: itemCount,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              mainAxisSpacing: AppSpacing.sm,
+              crossAxisSpacing: AppSpacing.sm,
+              mainAxisExtent: cardHeight,
+            ),
+            itemBuilder: (context, _) => const _SearchCardSkeleton(),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _SearchCardSkeleton extends StatelessWidget {
+  const _SearchCardSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    // 카드 배경은 투명 → ShimmerBox(흰색)만 shimmer 적용돼 내부 구조가 보임
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // 이미지 영역
+            const Expanded(child: ShimmerBox()),
+            // 텍스트 영역
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.xs),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 56, height: 11, radius: 3),
+                  ),
+                  const SizedBox(height: 4),
+                  const SizedBox(height: 13, child: ShimmerBox(radius: 3)),
+                  const SizedBox(height: 3),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 110, height: 13, radius: 3),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 96, height: 12, radius: 3),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: const ShimmerBox(width: 68, height: 19, radius: 3),
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Row(
+                    children: const [
+                      ShimmerBox(width: 36, height: 36, radius: 6),
+                      SizedBox(width: AppSpacing.xs),
+                      ShimmerBox(width: 36, height: 36, radius: 6),
+                      SizedBox(width: AppSpacing.xs),
+                      Expanded(
+                        child: SizedBox(height: 36, child: ShimmerBox(radius: 6)),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
