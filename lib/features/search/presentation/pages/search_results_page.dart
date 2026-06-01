@@ -46,7 +46,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   bool _isPriceFilterActive = false;
   bool _isRtiFilterActive = false;
   int _currentPage = 1;
-  int _pageSize = 60;
+  int _pageSize = 30;
   String? _lastPriceRangeQuery;
 
   @override
@@ -168,19 +168,25 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
                   });
                 },
                 onSortChanged: (value) {
+                  if (value == _sortOption) return;
                   setState(() {
                     _sortOption = value;
                     _currentPage = 1;
                   });
                 },
-                onPageSelected: (page) => setState(() => _currentPage = page),
+                onPageSelected: (page) {
+                  if (page == _currentPage) return;
+                  setState(() => _currentPage = page);
+                },
                 onPageSizeChanged: (pageSize) {
+                  if (pageSize == _pageSize) return;
                   setState(() {
                     _pageSize = pageSize;
                     _currentPage = 1;
                   });
                 },
                 onViewModeChanged: (viewMode) {
+                  if (viewMode == _viewMode) return;
                   setState(() => _viewMode = viewMode);
                 },
                 onResetFilters: _resetFilters,
@@ -355,7 +361,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
       _selectedRtiMinimum = 50;
       _isRtiFilterActive = false;
       _currentPage = 1;
-      _pageSize = 60;
+      _pageSize = 30;
     });
   }
 
