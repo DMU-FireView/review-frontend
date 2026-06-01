@@ -105,14 +105,14 @@ class OnboardingViewModel extends Notifier<OnboardingState> {
 
   String? _toApiCategory(InterestCategory category) {
     return switch (category) {
-      InterestCategory.digital => 'ELECTRONICS',
-      InterestCategory.fashion => 'FASHION',
-      InterestCategory.beauty => 'COSMETICS',
-      InterestCategory.food => 'FOOD',
-      InterestCategory.living => 'HOME_APPLIANCE',
-      InterestCategory.pet => 'PET',
-      InterestCategory.travel => 'ETC',
-      InterestCategory.kids => 'BABY',
+      InterestCategory.digital => 'DIGITAL_HOME_APPLIANCE',
+      InterestCategory.fashion => 'FASHION_WOMEN',
+      InterestCategory.beauty => 'BEAUTY_SKINCARE',
+      InterestCategory.food => 'FOOD_FRESH',
+      InterestCategory.living => 'LIVING_DAILY',
+      InterestCategory.pet => 'PET_DOG',
+      InterestCategory.travel => 'TRAVEL_GOODS',
+      InterestCategory.kids => 'BABY_NEWBORN',
     };
   }
 }
