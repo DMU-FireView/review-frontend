@@ -43,6 +43,13 @@ final submitReviewFeedbackUseCaseProvider =
       );
     });
 
+final checkAnalysisHealthUseCaseProvider =
+    Provider<CheckAnalysisHealthUseCase>((ref) {
+      return CheckAnalysisHealthUseCase(
+        ref.watch(productDetailRepositoryProvider),
+      );
+    });
+
 final triggerProductAnalysisUseCaseProvider =
     Provider<TriggerProductAnalysisUseCase>((ref) {
       return TriggerProductAnalysisUseCase(
