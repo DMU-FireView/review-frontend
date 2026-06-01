@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:re_view_front/app/theme/app_colors.dart';
+import 'package:shimmer/shimmer.dart';
 
-class ShimmerBox extends StatefulWidget {
+const _baseColor = Color(0xFFE0E0E0);
+const _highlightColor = Color(0xFFF5F5F5);
+
+// ShimmerBox는 반드시 ShimmerWrapper 안에서 사용해야 sweep이 동기화됩니다.
+// 단독 사용 시엔 ShimmerWrapper로 감싸세요.
+class ShimmerBox extends StatelessWidget {
   const ShimmerBox({super.key, this.width, this.height, this.radius = 0});
 
   final double? width;
@@ -9,53 +14,31 @@ class ShimmerBox extends StatefulWidget {
   final double radius;
 
   @override
-  State<ShimmerBox> createState() => _ShimmerBoxState();
+  Widget build(BuildContext context) {
+    Widget child = Container(
+      width: width,
+      height: height,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: radius > 0 ? BorderRadius.circular(radius) : null,
+      ),
+    );
+    return child;
+  }
 }
 
-class _ShimmerBoxState extends State<ShimmerBox>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
+class ShimmerWrapper extends StatelessWidget {
+  const ShimmerWrapper({super.key, required this.child});
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1100),
-    )..repeat(reverse: true);
-    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, _) {
-        final color = Color.lerp(
-          AppColors.surfaceMuted,
-          const Color(0xFFE2E8F0),
-          _animation.value,
-        )!;
-        Widget child = ColoredBox(color: color);
-        if (widget.radius > 0) {
-          child = ClipRRect(
-            borderRadius: BorderRadius.circular(widget.radius),
-            child: child,
-          );
-        }
-        return SizedBox(
-          width: widget.width,
-          height: widget.height,
-          child: child,
-        );
-      },
+    return Shimmer.fromColors(
+      baseColor: _baseColor,
+      highlightColor: _highlightColor,
+      period: const Duration(milliseconds: 1400),
+      child: child,
     );
   }
 }
