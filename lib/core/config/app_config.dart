@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 class AppConfig {
   const AppConfig({
     required this.apiBaseUrl,
@@ -18,61 +20,66 @@ class AppConfig {
   });
 
   factory AppConfig.fromEnvironment() {
-    return const AppConfig(
-      apiBaseUrl: String.fromEnvironment(
-        'API_BASE_URL',
-        defaultValue: 'https://api.beens.kr',
-      ),
-      homeDashboardPath: String.fromEnvironment(
+    const explicitBaseUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: '',
+    );
+    final apiBaseUrl = explicitBaseUrl.isNotEmpty
+        ? explicitBaseUrl
+        : _defaultApiBaseUrl();
+
+    return AppConfig(
+      apiBaseUrl: apiBaseUrl,
+      homeDashboardPath: const String.fromEnvironment(
         'HOME_DASHBOARD_PATH',
         defaultValue: '/api/dashboard',
       ),
-      searchPath: String.fromEnvironment(
+      searchPath: const String.fromEnvironment(
         'SEARCH_PATH',
         defaultValue: '/api/products',
       ),
-      productPath: String.fromEnvironment(
+      productPath: const String.fromEnvironment(
         'PRODUCT_PATH',
         defaultValue: '/api/products',
       ),
-      reviewFeedbackBasePath: String.fromEnvironment(
+      reviewFeedbackBasePath: const String.fromEnvironment(
         'REVIEW_FEEDBACK_BASE_PATH',
         defaultValue: '/api/reviews',
       ),
-      loginPath: String.fromEnvironment(
+      loginPath: const String.fromEnvironment(
         'LOGIN_PATH',
         defaultValue: '/api/auth/login',
       ),
-      signupPath: String.fromEnvironment(
+      signupPath: const String.fromEnvironment(
         'SIGNUP_PATH',
         defaultValue: '/api/auth/signup',
       ),
-      naverOAuthPath: String.fromEnvironment(
+      naverOAuthPath: const String.fromEnvironment(
         'NAVER_OAUTH_PATH',
         defaultValue: '/oauth2/authorization/naver',
       ),
-      googleOAuthPath: String.fromEnvironment(
+      googleOAuthPath: const String.fromEnvironment(
         'GOOGLE_OAUTH_PATH',
         defaultValue: '/oauth2/authorization/google',
       ),
-      passwordResetRequestPath: String.fromEnvironment(
+      passwordResetRequestPath: const String.fromEnvironment(
         'PASSWORD_RESET_REQUEST_PATH',
         defaultValue: '/api/auth/password/reset-request',
       ),
-      passwordResetPath: String.fromEnvironment(
+      passwordResetPath: const String.fromEnvironment(
         'PASSWORD_RESET_PATH',
         defaultValue: '/api/auth/password/reset',
       ),
-      userMePath: String.fromEnvironment(
+      userMePath: const String.fromEnvironment(
         'USER_ME_PATH',
         defaultValue: '/api/users/me',
       ),
-      landingStatsPath: String.fromEnvironment(
+      landingStatsPath: const String.fromEnvironment(
         'LANDING_STATS_PATH',
         defaultValue: '/api/landing/stats',
       ),
-      connectTimeout: Duration(seconds: 10),
-      receiveTimeout: Duration(seconds: 15),
+      connectTimeout: const Duration(seconds: 10),
+      receiveTimeout: const Duration(seconds: 15),
     );
   }
 
@@ -91,4 +98,17 @@ class AppConfig {
   final String landingStatsPath;
   final Duration connectTimeout;
   final Duration receiveTimeout;
+}
+
+String _defaultApiBaseUrl() {
+  if (!kIsWeb) return 'https://api.beens.kr';
+
+  final host = Uri.base.host;
+  final isLocalWeb =
+      host == 'localhost' ||
+      host == '127.0.0.1' ||
+      host == '::1' ||
+      host.endsWith('.localhost');
+
+  return isLocalWeb ? 'https://api.beens.kr' : Uri.base.origin;
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class ProductCard extends StatelessWidget {
@@ -48,10 +50,12 @@ class ProductCard extends StatelessWidget {
                         left: AppSpacing.sm,
                         child: _Label(label: product.label),
                       ),
-                      const Positioned(
+                      Positioned(
                         top: AppSpacing.sm,
                         right: AppSpacing.sm,
-                        child: _HeartButton(),
+                        child: _HeartButton(
+                          productId: int.tryParse(product.productId) ?? 0,
+                        ),
                       ),
                     ],
                   ),
@@ -127,16 +131,17 @@ class ProductCard extends StatelessWidget {
   }
 }
 
-class _HeartButton extends StatefulWidget {
-  const _HeartButton();
+class _HeartButton extends ConsumerStatefulWidget {
+  const _HeartButton({required this.productId});
+
+  final int productId;
 
   @override
-  State<_HeartButton> createState() => _HeartButtonState();
+  ConsumerState<_HeartButton> createState() => _HeartButtonState();
 }
 
-class _HeartButtonState extends State<_HeartButton>
+class _HeartButtonState extends ConsumerState<_HeartButton>
     with SingleTickerProviderStateMixin {
-  bool _liked = false;
   late final AnimationController _controller;
   late final Animation<double> _scale;
 
@@ -172,15 +177,20 @@ class _HeartButtonState extends State<_HeartButton>
     super.dispose();
   }
 
-  void _toggle() {
-    setState(() => _liked = !_liked);
+  Future<void> _toggle() async {
     _controller.forward(from: 0);
+    await ref
+        .read(wishlistButtonProvider(widget.productId).notifier)
+        .toggle();
   }
 
   @override
   Widget build(BuildContext context) {
+    final asyncStatus = ref.watch(wishlistButtonProvider(widget.productId));
+    final liked = asyncStatus.value ?? false;
+
     return GestureDetector(
-      onTap: _toggle,
+      onTap: asyncStatus.isLoading ? null : _toggle,
       child: AnimatedBuilder(
         animation: _scale,
         builder: (context, child) => Transform.scale(
@@ -202,10 +212,10 @@ class _HeartButtonState extends State<_HeartButton>
               child: child,
             ),
             child: Icon(
-              _liked ? Icons.favorite : Icons.favorite_border,
-              key: ValueKey(_liked),
+              liked ? Icons.favorite : Icons.favorite_border,
+              key: ValueKey(liked),
               size: 20,
-              color: _liked ? const Color(0xFFEF4444) : AppColors.textPrimary,
+              color: liked ? const Color(0xFFEF4444) : AppColors.textPrimary,
             ),
           ),
         ),

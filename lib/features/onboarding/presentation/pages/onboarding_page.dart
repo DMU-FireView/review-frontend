@@ -22,7 +22,7 @@ class OnboardingPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(onboardingViewModelProvider, (_, state) {
       if (state.isSuccess) {
-        context.go(RoutePaths.dashboard);
+        context.go(RoutePaths.home);
       }
     });
 
@@ -64,7 +64,7 @@ class OnboardingPage extends ConsumerWidget {
                               onNext: state.canProceed
                                   ? vm.goToNotificationStep
                                   : null,
-                              onSkip: () => context.go(RoutePaths.dashboard),
+                              onSkip: () => context.go(RoutePaths.home),
                             )
                           : NotificationStep(
                               state: state,
