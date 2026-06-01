@@ -20,12 +20,13 @@ class AppConfig {
   });
 
   factory AppConfig.fromEnvironment() {
-    const explicitBaseUrl = String.fromEnvironment('API_BASE_URL', defaultValue: '');
-    // On web, use the current origin so Vercel proxy rewrites handle API routing.
-    // Explicit dart-define overrides this for local web dev against a real server.
+    const explicitBaseUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: '',
+    );
     final apiBaseUrl = explicitBaseUrl.isNotEmpty
         ? explicitBaseUrl
-        : (kIsWeb ? Uri.base.origin : 'https://api.beens.kr');
+        : _defaultApiBaseUrl();
 
     return AppConfig(
       apiBaseUrl: apiBaseUrl,
@@ -97,4 +98,17 @@ class AppConfig {
   final String landingStatsPath;
   final Duration connectTimeout;
   final Duration receiveTimeout;
+}
+
+String _defaultApiBaseUrl() {
+  if (!kIsWeb) return 'https://api.beens.kr';
+
+  final host = Uri.base.host;
+  final isLocalWeb =
+      host == 'localhost' ||
+      host == '127.0.0.1' ||
+      host == '::1' ||
+      host.endsWith('.localhost');
+
+  return isLocalWeb ? 'https://api.beens.kr' : Uri.base.origin;
 }

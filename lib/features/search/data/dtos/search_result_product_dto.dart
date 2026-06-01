@@ -1,3 +1,4 @@
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
 
 class SearchResultProductDto {
@@ -38,8 +39,13 @@ class SearchResultProductDto {
       rtiGrade: _readString(json, ['rtiGrade', 'grade']),
       rtiColor: _readString(json, ['rtiColor', 'color']),
       reviewCount: _readInt(json, ['reviewCount', 'review_count']),
-      avgRating: _readDouble(json, ['avgRating', 'rating', 'starRating']) ?? 0.0,
-      platform: _readNullableString(json, ['platform', 'storeName', 'brandName']),
+      avgRating:
+          _readDouble(json, ['avgRating', 'rating', 'starRating']) ?? 0.0,
+      platform: _readNullableString(json, [
+        'platform',
+        'storeName',
+        'brandName',
+      ]),
     );
   }
 
@@ -57,13 +63,19 @@ class SearchResultProductDto {
   final String? platform;
 
   SearchResultProduct toEntity() {
+    final normalizedDisplayName = normalizedCategoryLabel(
+      category: category,
+      categoryDisplayName: categoryDisplayName,
+      productName: name,
+    );
+
     return SearchResultProduct(
       id: id,
       name: name,
       imageUrl: imageUrl,
       price: price,
       category: category,
-      categoryDisplayName: categoryDisplayName,
+      categoryDisplayName: normalizedDisplayName,
       avgRti: avgRti,
       rtiGrade: rtiGrade,
       rtiColor: rtiColor,
