@@ -95,7 +95,12 @@ class AuthRepositoryImpl implements AuthRepository {
     required bool onboardingCompleted,
   }) async {
     try {
-      _tokenStore.save(accessToken: accessToken, tokenType: tokenType);
+      _tokenStore.save(
+        accessToken: accessToken,
+        tokenType: tokenType,
+        onboardingCompleted: onboardingCompleted,
+        nickname: nickname,
+      );
       final user = AuthUser(
         id: email,
         email: email,
