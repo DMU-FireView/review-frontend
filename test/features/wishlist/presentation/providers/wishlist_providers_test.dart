@@ -18,10 +18,13 @@ void main() {
     addTearDown(container.dispose);
 
     final isWishlisted = await container.read(wishlistButtonProvider(8).future);
+    await container.read(wishlistButtonProvider(8).notifier).toggle();
 
     expect(isWishlisted, isFalse);
     expect(repository.getWishlistCalls, 0);
     expect(repository.checkWishlistCalls, 0);
+    expect(repository.addWishlistCalls, 0);
+    expect(repository.removeWishlistCalls, 0);
   });
 
   test('uses cached wishlist ids instead of per-product check calls', () async {
@@ -85,6 +88,8 @@ class _FakeWishlistRepository implements WishlistRepository {
   final List<WishlistItem> items;
   int getWishlistCalls = 0;
   int checkWishlistCalls = 0;
+  int addWishlistCalls = 0;
+  int removeWishlistCalls = 0;
 
   @override
   Future<Result<({List<WishlistItem> items, WishlistSummary summary})>>
@@ -102,11 +107,13 @@ class _FakeWishlistRepository implements WishlistRepository {
 
   @override
   Future<Result<void>> addWishlist(int productId) async {
+    addWishlistCalls += 1;
     return const Success(null);
   }
 
   @override
   Future<Result<void>> removeWishlist(int productId) async {
+    removeWishlistCalls += 1;
     return const Success(null);
   }
 
