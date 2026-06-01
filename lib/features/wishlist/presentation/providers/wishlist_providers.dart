@@ -44,6 +44,7 @@ final wishlistItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
 final wishlistProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
   ref,
 ) async {
+  ref.keepAlive();
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return <int>{};
   final result = await ref.read(getWishlistUseCaseProvider)();
@@ -67,10 +68,7 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
   @override
   Future<bool> build() async {
     final productIds = await ref.watch(wishlistProductIdsProvider.future);
-    if (productIds.contains(_productId)) return true;
-
-    final result = await ref.read(checkWishlistUseCaseProvider)(_productId);
-    return result.when(success: (v) => v, failure: (_) => false);
+    return productIds.contains(_productId);
   }
 
   Future<void> toggle() async {
