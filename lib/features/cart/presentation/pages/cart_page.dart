@@ -17,7 +17,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/home_heade
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
-import 'package:re_view_front/shared/widgets/loading_view.dart';
+import 'package:re_view_front/shared/widgets/shimmer_box.dart';
 
 class CartPage extends ConsumerStatefulWidget {
   const CartPage({super.key});
@@ -87,10 +87,7 @@ class _CartPageState extends ConsumerState<CartPage> {
                 AppSpacing.xxxl,
               ),
               child: switch (cartState) {
-                CartLoading() || CartInitial() => const SizedBox(
-                  height: 320,
-                  child: AppLoadingView(message: '장바구니를 불러오는 중입니다.'),
-                ),
+                CartLoading() || CartInitial() => const _CartSkeleton(),
                 CartFailure(:final failure) => SizedBox(
                   height: 320,
                   child: AppErrorView(
@@ -205,7 +202,7 @@ class _CartBody extends ConsumerWidget {
           CartOrderSummary(
             summary: cartState.selectedSummary,
             selectedCount: cartState.selectedIds.length,
-            onCheckout: () {},
+            onCheckout: () async {},
             onContinueShopping: () => context.go(RoutePaths.home),
           ),
         ],
@@ -222,7 +219,7 @@ class _CartBody extends ConsumerWidget {
           child: CartOrderSummary(
             summary: cartState.selectedSummary,
             selectedCount: cartState.selectedIds.length,
-            onCheckout: () {},
+            onCheckout: () async {},
             onContinueShopping: () => context.go(RoutePaths.home),
           ),
         ),
@@ -369,6 +366,60 @@ class _CartEmptyBody extends StatelessWidget {
           OutlinedButton(onPressed: onGoHome, child: const Text('쇼핑 계속하기')),
         ],
       ),
+    );
+  }
+}
+
+class _CartSkeleton extends StatelessWidget {
+  const _CartSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final isMobile = MediaQuery.sizeOf(context).width < 600;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        for (var i = 0; i < 3; i++) ...[
+          DecoratedBox(
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              border: Border(bottom: BorderSide(color: AppColors.border)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const ShimmerBox(width: 20, height: 20, radius: 4),
+                  const SizedBox(width: AppSpacing.sm),
+                  ShimmerBox(
+                    width: isMobile ? 120 : 100,
+                    height: isMobile ? 92 : 80,
+                    radius: 8,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: const [
+                        SizedBox(height: 14, child: ShimmerBox(radius: 4)),
+                        SizedBox(height: 6),
+                        ShimmerBox(width: 120, height: 12, radius: 4),
+                        SizedBox(height: AppSpacing.sm),
+                        ShimmerBox(width: 80, height: 18, radius: 4),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
