@@ -178,31 +178,33 @@ class SearchProductGridSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final columns = ProductGrid.columnsForWidth(constraints.maxWidth);
-        final cardHeight = switch (columns) {
-          1 => 520.0,
-          2 => 490.0,
-          3 => 465.0,
-          4 => 445.0,
-          _ => 425.0,
-        };
-        final itemCount = columns * 2;
+    return ShimmerWrapper(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final columns = ProductGrid.columnsForWidth(constraints.maxWidth);
+          final cardHeight = switch (columns) {
+            1 => 520.0,
+            2 => 490.0,
+            3 => 465.0,
+            4 => 445.0,
+            _ => 425.0,
+          };
+          final itemCount = columns * 2;
 
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: itemCount,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            mainAxisSpacing: AppSpacing.sm,
-            crossAxisSpacing: AppSpacing.sm,
-            mainAxisExtent: cardHeight,
-          ),
-          itemBuilder: (context, _) => const _SearchCardSkeleton(),
-        );
-      },
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: itemCount,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              mainAxisSpacing: AppSpacing.sm,
+              crossAxisSpacing: AppSpacing.sm,
+              mainAxisExtent: cardHeight,
+            ),
+            itemBuilder: (context, _) => const _SearchCardSkeleton(),
+          );
+        },
+      ),
     );
   }
 }
