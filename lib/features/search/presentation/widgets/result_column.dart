@@ -214,18 +214,21 @@ class _SearchCardSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
-        ),
+    // 카드 배경은 투명 → ShimmerBox(흰색)만 shimmer 적용돼 내부 구조가 보임
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // 이미지 영역
             const Expanded(child: ShimmerBox()),
+            // 텍스트 영역
             Padding(
               padding: const EdgeInsets.all(AppSpacing.xs),
               child: Column(
@@ -260,7 +263,9 @@ class _SearchCardSkeleton extends StatelessWidget {
                       SizedBox(width: AppSpacing.xs),
                       ShimmerBox(width: 36, height: 36, radius: 6),
                       SizedBox(width: AppSpacing.xs),
-                      Expanded(child: SizedBox(height: 36, child: ShimmerBox(radius: 6))),
+                      Expanded(
+                        child: SizedBox(height: 36, child: ShimmerBox(radius: 6)),
+                      ),
                     ],
                   ),
                 ],
