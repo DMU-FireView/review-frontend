@@ -32,8 +32,9 @@ class AppNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget child;
+    final usePlaceholder = AppNetworkImagePlaceholderScope.maybeOf(context);
 
-    if (url.isEmpty) {
+    if (url.isEmpty || usePlaceholder) {
       child = _Placeholder(icon: placeholderIcon, iconSize: iconSize);
     } else if (kIsWeb) {
       // HtmlElementView로 <img> 태그 직접 렌더링 → 외부 CDN 이미지 CORS 우회
@@ -68,6 +69,21 @@ class AppNetworkImage extends StatelessWidget {
     }
     return child;
   }
+}
+
+class AppNetworkImagePlaceholderScope extends InheritedWidget {
+  const AppNetworkImagePlaceholderScope({required super.child, super.key});
+
+  static bool maybeOf(BuildContext context) {
+    return context
+            .dependOnInheritedWidgetOfExactType<
+              AppNetworkImagePlaceholderScope
+            >() !=
+        null;
+  }
+
+  @override
+  bool updateShouldNotify(AppNetworkImagePlaceholderScope oldWidget) => false;
 }
 
 class _Shimmer extends StatefulWidget {
@@ -124,11 +140,7 @@ class _Placeholder extends StatelessWidget {
     return ColoredBox(
       color: AppColors.surfaceMuted,
       child: Center(
-        child: Icon(
-          icon,
-          size: iconSize,
-          color: AppColors.textTertiary,
-        ),
+        child: Icon(icon, size: iconSize, color: AppColors.textTertiary),
       ),
     );
   }
