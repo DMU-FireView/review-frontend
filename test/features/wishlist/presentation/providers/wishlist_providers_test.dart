@@ -27,29 +27,33 @@ void main() {
     expect(repository.removeWishlistCalls, 0);
   });
 
-  test('uses cached wishlist ids instead of per-product check calls', () async {
-    final repository = _FakeWishlistRepository(
-      items: [_wishlistItem(productId: 8)],
-    );
-    final container = _buildContainer(repository: repository, isLoggedIn: true);
-    addTearDown(container.dispose);
-    final wishlistIdsSubscription = container.listen(
-      wishlistProductIdsProvider,
-      (_, _) {},
-      fireImmediately: true,
-    );
-    addTearDown(wishlistIdsSubscription.close);
+  test(
+    'uses one wishlist snapshot for count and product button states',
+    () async {
+      final repository = _FakeWishlistRepository(
+        items: [_wishlistItem(productId: 8)],
+      );
+      final container = _buildContainer(
+        repository: repository,
+        isLoggedIn: true,
+      );
+      addTearDown(container.dispose);
 
-    final savedProduct = await container.read(wishlistButtonProvider(8).future);
-    final unsavedProduct = await container.read(
-      wishlistButtonProvider(18).future,
-    );
+      final itemCount = await container.read(wishlistItemCountProvider.future);
+      final savedProduct = await container.read(
+        wishlistButtonProvider(8).future,
+      );
+      final unsavedProduct = await container.read(
+        wishlistButtonProvider(18).future,
+      );
 
-    expect(savedProduct, isTrue);
-    expect(unsavedProduct, isFalse);
-    expect(repository.getWishlistCalls, 1);
-    expect(repository.checkWishlistCalls, 0);
-  });
+      expect(itemCount, 1);
+      expect(savedProduct, isTrue);
+      expect(unsavedProduct, isFalse);
+      expect(repository.getWishlistCalls, 1);
+      expect(repository.checkWishlistCalls, 0);
+    },
+  );
 }
 
 ProviderContainer _buildContainer({
