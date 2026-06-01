@@ -1,6 +1,6 @@
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
 
-enum SignupSubmissionStatus { idle, loading, success, failure }
+enum SignupSubmissionStatus { idle, loading, success, autoLoginFailure, failure }
 
 class SignupState {
   const SignupState({
