@@ -12,8 +12,8 @@ class SearchViewModel extends Notifier<SearchState> {
     return const SearchInitial();
   }
 
-  Future<void> search(String query) async {
-    if (query.trim().isEmpty) {
+  Future<void> search(String query, {bool allowEmpty = false}) async {
+    if (query.trim().isEmpty && !allowEmpty) {
       state = const SearchInitial();
       return;
     }
