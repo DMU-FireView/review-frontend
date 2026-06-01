@@ -119,6 +119,7 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
             safeCount: analysis.safeCount,
             warnCount: analysis.warnCount,
             dangerCount: analysis.dangerCount,
+            trend: analysis.trend,
           );
         }
       },
