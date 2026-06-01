@@ -1,3 +1,4 @@
+import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 
@@ -61,6 +62,11 @@ class ProductDetailDto {
 
   ProductDetail toEntity() {
     final comparisons = _buildPriceComparisons();
+    final normalizedDisplayName = normalizedCategoryLabel(
+      category: category,
+      categoryDisplayName: categoryDisplayName,
+      productName: name,
+    );
     return ProductDetail(
       id: id,
       name: name,
@@ -71,7 +77,7 @@ class ProductDetailDto {
       price: lowestPrice ?? price,
       deliveryInfo: null,
       category: category,
-      categoryDisplayName: categoryDisplayName,
+      categoryDisplayName: normalizedDisplayName,
       breadcrumbs: _deriveBreadcrumbs(),
       avgRating: avgRating,
       reviewCount: reviewCount,
@@ -107,32 +113,35 @@ class ProductDetailDto {
     }).toList();
   }
 
-  static String _platformDisplayName(String platform) => switch (
-    platform.toUpperCase()
-  ) {
-    'NAVER' => '네이버',
-    'COUPANG' => '쿠팡',
-    '11ST' => '11번가',
-    'GMARKET' => 'G마켓',
-    'AUCTION' => '옥션',
-    'LOTTE' => '롯데온',
-    'SSG' => 'SSG닷컴',
-    'KAKAO' => '카카오',
-    _ => platform,
-  };
+  static String _platformDisplayName(String platform) =>
+      switch (platform.toUpperCase()) {
+        'NAVER' => '네이버',
+        'COUPANG' => '쿠팡',
+        '11ST' => '11번가',
+        'GMARKET' => 'G마켓',
+        'AUCTION' => '옥션',
+        'LOTTE' => '롯데온',
+        'SSG' => 'SSG닷컴',
+        'KAKAO' => '카카오',
+        _ => platform,
+      };
 
-  static String _deliveryInfo(String platform) => switch (
-    platform.toUpperCase()
-  ) {
-    'COUPANG' => '로켓배송',
-    'NAVER' => '네이버배송',
-    '11ST' => '일반배송',
-    _ => '배송정보 확인',
-  };
+  static String _deliveryInfo(String platform) =>
+      switch (platform.toUpperCase()) {
+        'COUPANG' => '로켓배송',
+        'NAVER' => '네이버배송',
+        '11ST' => '일반배송',
+        _ => '배송정보 확인',
+      };
 
   List<String> _deriveBreadcrumbs() {
+    final normalizedDisplayName = normalizedCategoryLabel(
+      category: category,
+      categoryDisplayName: categoryDisplayName,
+      productName: name,
+    );
     return [
-      if (categoryDisplayName.isNotEmpty) categoryDisplayName,
+      if (normalizedDisplayName.isNotEmpty) normalizedDisplayName,
       if (name.isNotEmpty) name,
     ];
   }
@@ -216,12 +225,12 @@ class ProductReviewDto {
           (json['reviewerNickname'] ?? json['authorName']) as String? ?? '',
       content: json['content'] as String? ?? '',
       rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      rtiScore: (((json['reviewerAtiScore'] ??
-                      json['rtiScore'] ??
-                      json['rti']) as num?)
-                  ?.toDouble() ??
-              0.0)
-          .round(),
+      rtiScore:
+          (((json['reviewerAtiScore'] ?? json['rtiScore'] ?? json['rti'])
+                          as num?)
+                      ?.toDouble() ??
+                  0.0)
+              .round(),
       trustGrade: json['trustGrade'] as String? ?? '',
       trustGradeLabel: json['trustGradeLabel'] as String? ?? '',
       trustGradeColor: json['trustGradeColor'] as String? ?? '',
@@ -231,10 +240,9 @@ class ProductReviewDto {
     );
   }
 
-  static List<ProductReviewDto> fromList(List<dynamic> list) =>
-      list
-          .map((e) => ProductReviewDto.fromJson(e as Map<String, dynamic>))
-          .toList();
+  static List<ProductReviewDto> fromList(List<dynamic> list) => list
+      .map((e) => ProductReviewDto.fromJson(e as Map<String, dynamic>))
+      .toList();
 
   ProductReview toEntity() {
     return ProductReview(
