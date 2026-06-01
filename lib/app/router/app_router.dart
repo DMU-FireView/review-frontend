@@ -10,6 +10,7 @@ import 'package:re_view_front/features/auth/presentation/pages/signup_page.dart'
 import 'package:re_view_front/features/home/presentation/pages/home_dashboard_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
+import 'package:re_view_front/features/my_page/presentation/pages/my_page.dart';
 import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
@@ -18,7 +19,7 @@ import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page
 
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(Ref ref) {
-    ref.listen<bool>(isLoggedInProvider, (_, __) => notifyListeners());
+    ref.listen<bool>(isLoggedInProvider, (_, _) => notifyListeners());
   }
 }
 
@@ -37,6 +38,14 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       };
       if (isLoggedIn && authPages.contains(state.matchedLocation)) {
         return RoutePaths.home;
+      }
+      const protectedPages = {
+        RoutePaths.myPage,
+        RoutePaths.wishlist,
+        RoutePaths.cart,
+      };
+      if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
+        return RoutePaths.login;
       }
       return null;
     },
@@ -76,6 +85,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.dashboard,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const HomeDashboardPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.myPage,
+        name: RouteNames.myPage,
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const MyPage()),
       ),
       GoRoute(
         path: RoutePaths.search,

@@ -473,16 +473,22 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
 
     _lastPriceRangeQuery = query;
     if (products.isEmpty) {
-      _minPriceController.clear();
-      _maxPriceController.clear();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        _minPriceController.clear();
+        _maxPriceController.clear();
+      });
       return;
     }
 
     final prices = products.map((p) => p.price);
     final minPrice = prices.reduce((a, b) => a < b ? a : b);
     final maxPrice = prices.reduce((a, b) => a > b ? a : b);
-    _minPriceController.text = '$minPrice';
-    _maxPriceController.text = '$maxPrice';
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _minPriceController.text = '$minPrice';
+      _maxPriceController.text = '$maxPrice';
+    });
   }
 
   bool _matchesQuickFilter(SearchResultProduct product, String label) {

@@ -33,6 +33,8 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
 
     return const DashboardSummaryDto(
       recommendedProducts: [],
+      recentProducts: [],
+      riskyProducts: [],
       trendingKeywords: [],
     );
   }

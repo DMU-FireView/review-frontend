@@ -73,7 +73,8 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
               },
               searchKeywords: keywords,
               searchRecommendedProducts: products,
-              onMyPagePressed: () => context.go(RoutePaths.login),
+              onMyPagePressed: () =>
+                  context.go(isLoggedIn ? RoutePaths.myPage : RoutePaths.login),
               onProfileWishPressed: () {},
               onProfileOrderPressed: () => context.go(RoutePaths.login),
               onLogoutPressed: () {
