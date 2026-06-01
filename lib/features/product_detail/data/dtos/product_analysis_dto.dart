@@ -10,6 +10,7 @@ class ProductAnalysisDto {
     required this.warnCount,
     required this.dangerCount,
     required this.reviews,
+    required this.trend,
   });
 
   final String productId;
@@ -20,9 +21,11 @@ class ProductAnalysisDto {
   final int warnCount;
   final int dangerCount;
   final List<ReviewAnalysisItemDto> reviews;
+  final List<AnalysisTrendItemDto> trend;
 
   factory ProductAnalysisDto.fromJson(Map<String, dynamic> json) {
     final rawReviews = json['reviews'] as List? ?? [];
+    final rawTrend = json['trend'] as List? ?? [];
     return ProductAnalysisDto(
       productId: json['productId']?.toString() ?? '',
       averageRti: (json['averageRti'] as num?)?.toDouble() ?? 0.0,
@@ -33,6 +36,11 @@ class ProductAnalysisDto {
       dangerCount: (json['dangerCount'] as num?)?.toInt() ?? 0,
       reviews: rawReviews
           .map((e) => ReviewAnalysisItemDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      trend: rawTrend
+          .map(
+            (e) => AnalysisTrendItemDto.fromJson(e as Map<String, dynamic>),
+          )
           .toList(),
     );
   }
@@ -52,6 +60,9 @@ class ProductAnalysisDto {
 class ReviewAnalysisItemDto {
   const ReviewAnalysisItemDto({
     required this.reviewId,
+    required this.content,
+    required this.author,
+    required this.date,
     required this.rti,
     required this.level,
     required this.textScore,
@@ -61,6 +72,9 @@ class ReviewAnalysisItemDto {
   });
 
   final String reviewId;
+  final String content;
+  final String author;
+  final String date;
   final int rti;
   final String level;
   final int textScore;
@@ -72,6 +86,9 @@ class ReviewAnalysisItemDto {
     final rawReasons = json['reasons'] as List? ?? [];
     return ReviewAnalysisItemDto(
       reviewId: json['reviewId']?.toString() ?? '',
+      content: json['content'] as String? ?? '',
+      author: json['author'] as String? ?? '',
+      date: json['date'] as String? ?? '',
       rti: (json['rti'] as num?)?.toInt() ?? 0,
       level: json['level'] as String? ?? 'safe',
       textScore: (json['textScore'] as num?)?.toInt() ?? 0,
@@ -177,6 +194,35 @@ class ReviewAnalysisItemDto {
     'ABNORMAL_TIMING' => 'similarity',
     _ => 'context',
   };
+}
+
+class AnalysisTrendItemDto {
+  const AnalysisTrendItemDto({
+    required this.date,
+    required this.averageRti,
+    required this.reviewCount,
+    required this.safeCount,
+    required this.warnCount,
+    required this.dangerCount,
+  });
+
+  final String date;
+  final double averageRti;
+  final int reviewCount;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
+
+  factory AnalysisTrendItemDto.fromJson(Map<String, dynamic> json) {
+    return AnalysisTrendItemDto(
+      date: json['date'] as String? ?? '',
+      averageRti: (json['averageRti'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: (json['reviewCount'] as num?)?.toInt() ?? 0,
+      safeCount: (json['safeCount'] as num?)?.toInt() ?? 0,
+      warnCount: (json['warnCount'] as num?)?.toInt() ?? 0,
+      dangerCount: (json['dangerCount'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
 
 class ReviewReasonDto {
