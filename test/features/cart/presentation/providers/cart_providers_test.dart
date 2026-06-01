@@ -31,6 +31,21 @@ void main() {
       expect(repository.addItemCalls, 0);
     },
   );
+
+  test('uses one cart snapshot for count and product button states', () async {
+    final repository = _FakeCartRepository(items: [_cartItem(productId: 8)]);
+    final container = _buildContainer(repository: repository, isLoggedIn: true);
+    addTearDown(container.dispose);
+
+    final itemCount = await container.read(cartItemCountProvider.future);
+    final savedProduct = await container.read(cartButtonProvider(8).future);
+    final unsavedProduct = await container.read(cartButtonProvider(18).future);
+
+    expect(itemCount, 1);
+    expect(savedProduct, isTrue);
+    expect(unsavedProduct, isFalse);
+    expect(repository.getCartCalls, 1);
+  });
 }
 
 ProviderContainer _buildContainer({
@@ -46,6 +61,9 @@ ProviderContainer _buildContainer({
 }
 
 class _FakeCartRepository implements CartRepository {
+  _FakeCartRepository({this.items = const []});
+
+  final List<CartItem> items;
   int getCartCalls = 0;
   int addItemCalls = 0;
 
@@ -53,9 +71,9 @@ class _FakeCartRepository implements CartRepository {
   Future<Result<({List<CartItem> items, CartSummary summary})>>
   getCart() async {
     getCartCalls += 1;
-    return const Success((
-      items: <CartItem>[],
-      summary: CartSummary(
+    return Success((
+      items: items,
+      summary: const CartSummary(
         totalProductPrice: 0,
         shippingFee: 0,
         discountAmount: 0,
@@ -84,4 +102,20 @@ class _FakeCartRepository implements CartRepository {
   Future<Result<void>> clearCart() async {
     return const FailureResult(Failure(message: 'unexpected clear call'));
   }
+}
+
+CartItem _cartItem({required int productId}) {
+  return CartItem(
+    cartItemId: productId,
+    productId: productId,
+    name: '상품',
+    imageUrl: 'https://example.com/product.png',
+    price: 1000,
+    quantity: 1,
+    avgRti: 80,
+    rtiGrade: 'A',
+    rtiColor: '#2563EB',
+    trustLevel: '높음',
+    shippingFee: 0,
+  );
 }

@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/cart/data/datasources/cart_remote_data_source.dart';
 import 'package:re_view_front/features/cart/data/repositories/cart_repository_impl.dart';
+import 'package:re_view_front/features/cart/domain/entities/cart_item.dart';
+import 'package:re_view_front/features/cart/domain/entities/cart_summary.dart';
 import 'package:re_view_front/features/cart/domain/repositories/cart_repository.dart';
 import 'package:re_view_front/features/cart/domain/usecases/get_cart_use_case.dart';
 import 'package:re_view_front/features/cart/domain/usecases/update_cart_use_case.dart';
@@ -28,24 +30,33 @@ final cartViewModelProvider = NotifierProvider<CartViewModel, CartState>(
   CartViewModel.new,
 );
 
+typedef CartSnapshot = ({List<CartItem> items, CartSummary summary});
+
+final _cartSnapshotProvider = FutureProvider.autoDispose<CartSnapshot?>((
+  ref,
+) async {
+  ref.keepAlive();
+  final isLoggedIn = ref.watch(isLoggedInProvider);
+  if (!isLoggedIn) return null;
+
+  final result = await ref.read(getCartUseCaseProvider)();
+  return result.when(success: (data) => data, failure: (_) => null);
+});
+
 final cartItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return 0;
-  final result = await ref.read(getCartUseCaseProvider)();
-  return result.when(success: (data) => data.items.length, failure: (_) => 0);
+  final snapshot = await ref.watch(_cartSnapshotProvider.future);
+  return snapshot?.items.length ?? 0;
 });
 
 final cartProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
   ref,
 ) async {
-  ref.keepAlive();
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return <int>{};
-  final result = await ref.read(getCartUseCaseProvider)();
-  return result.when(
-    success: (data) => data.items.map((item) => item.productId).toSet(),
-    failure: (_) => <int>{},
-  );
+  final snapshot = await ref.watch(_cartSnapshotProvider.future);
+  return snapshot?.items.map((item) => item.productId).toSet() ?? <int>{};
 });
 
 final cartButtonProvider =
@@ -83,8 +94,7 @@ class CartButtonNotifier extends AsyncNotifier<bool> {
     result.when(
       success: (_) {
         state = const AsyncData(true);
-        ref.invalidate(cartItemCountProvider);
-        ref.invalidate(cartProductIdsProvider);
+        ref.invalidate(_cartSnapshotProvider);
       },
       failure: (_) => state = const AsyncData(false),
     );
