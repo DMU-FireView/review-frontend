@@ -377,10 +377,11 @@ class _CartSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.sizeOf(context).width < 600;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        for (var i = 0; i < 3; i++) ...[
+    return ShimmerWrapper(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (var i = 0; i < 3; i++) ...[
           DecoratedBox(
             decoration: BoxDecoration(
               color: AppColors.surface,
@@ -420,6 +421,7 @@ class _CartSkeleton extends StatelessWidget {
           ),
         ],
       ],
+      ),
     );
   }
 }
