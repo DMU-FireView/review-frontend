@@ -4,7 +4,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/cart/domain/entities/cart_summary.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 
-class CartOrderSummary extends StatelessWidget {
+class CartOrderSummary extends StatefulWidget {
   const CartOrderSummary({
     super.key,
     required this.summary,
@@ -15,11 +15,30 @@ class CartOrderSummary extends StatelessWidget {
 
   final CartSummary summary;
   final int selectedCount;
-  final VoidCallback onCheckout;
+  final Future<void> Function() onCheckout;
   final VoidCallback onContinueShopping;
 
   @override
+  State<CartOrderSummary> createState() => _CartOrderSummaryState();
+}
+
+class _CartOrderSummaryState extends State<CartOrderSummary> {
+  bool _isCheckingOut = false;
+
+  Future<void> _handleCheckout() async {
+    if (_isCheckingOut) return;
+    setState(() => _isCheckingOut = true);
+    try {
+      await widget.onCheckout();
+    } finally {
+      if (mounted) setState(() => _isCheckingOut = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final summary = widget.summary;
+    final selectedCount = widget.selectedCount;
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -106,7 +125,8 @@ class CartOrderSummary extends StatelessWidget {
             SizedBox(
               height: 48,
               child: ElevatedButton(
-                onPressed: selectedCount > 0 ? onCheckout : null,
+                onPressed:
+                    (selectedCount > 0 && !_isCheckingOut) ? _handleCheckout : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.onPrimary,
@@ -115,13 +135,21 @@ class CartOrderSummary extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text(
-                  '주문하기 ($selectedCount)',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppColors.onPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                child: _isCheckingOut
+                    ? const SizedBox.square(
+                        dimension: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.5,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        '주문하기 ($selectedCount)',
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: AppColors.onPrimary,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: AppSpacing.xs),
@@ -140,7 +168,7 @@ class CartOrderSummary extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.xs),
             TextButton(
-              onPressed: onContinueShopping,
+              onPressed: widget.onContinueShopping,
               child: Text(
                 '쇼핑 계속하기',
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(

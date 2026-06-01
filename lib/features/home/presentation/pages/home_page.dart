@@ -27,7 +27,7 @@ import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
-import 'package:re_view_front/shared/widgets/loading_view.dart';
+import 'package:re_view_front/shared/widgets/product_card_skeleton.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -124,10 +124,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     ),
                     const SizedBox(height: AppSpacing.xl),
                     if (dashboardState is HomeDashboardLoading) ...[
-                      const SizedBox(
-                        height: 240,
-                        child: AppLoadingView(message: '홈 데이터를 불러오는 중입니다.'),
-                      ),
+                      const ProductCardGridSkeleton(itemCount: 5),
                       const SizedBox(height: AppSpacing.xl),
                     ] else if (dashboardState is HomeDashboardFailure) ...[
                       SizedBox(
