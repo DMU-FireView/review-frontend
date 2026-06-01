@@ -86,7 +86,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               wishlistCount: wishlistCount,
               isLoggedIn: isLoggedIn,
               nickname: nickname,
-              onMyPagePressed: () => context.go(RoutePaths.login),
+              onMyPagePressed: () =>
+                  context.go(isLoggedIn ? RoutePaths.myPage : RoutePaths.login),
               onProfileWishPressed: () => context.go(RoutePaths.wishlist),
               onProfileOrderPressed: () => context.go(RoutePaths.cart),
               onLogoutPressed: _handleLogout,
@@ -289,7 +290,8 @@ class _HomePageState extends ConsumerState<HomePage> {
               onCategoryPressed: () => _scrollTo(_categoryKey),
               onSearchPressed: () => _searchFocusNode.requestFocus(),
               onWishPressed: () => context.go(RoutePaths.wishlist),
-              onMyPressed: () => context.go(RoutePaths.login),
+              onMyPressed: () =>
+                  context.go(isLoggedIn ? RoutePaths.myPage : RoutePaths.login),
             )
           : null,
     );
