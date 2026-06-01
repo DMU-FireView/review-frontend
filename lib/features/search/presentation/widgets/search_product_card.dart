@@ -11,152 +11,228 @@ import 'package:re_view_front/features/search/presentation/utils/search_formatte
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
-class SearchProductCard extends StatelessWidget {
+class SearchProductCard extends StatefulWidget {
   const SearchProductCard({super.key, required this.product});
 
   final SearchResultProduct product;
 
   @override
+  State<SearchProductCard> createState() => _SearchProductCardState();
+}
+
+class _SearchProductCardState extends State<SearchProductCard> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     final rtiColor = colorFromHex(product.rtiColor);
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
-      child: DecoratedBox(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        curve: Curves.easeOut,
         decoration: BoxDecoration(
           color: AppColors.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.border),
-          boxShadow: const [
+          border: Border.all(
+            color: _hovered ? AppColors.primary : AppColors.border,
+            width: _hovered ? 1.2 : 1,
+          ),
+          boxShadow: [
             BoxShadow(
-              color: Color(0x080F172A),
-              blurRadius: 8,
-              offset: Offset(0, 4),
+              color: _hovered
+                  ? const Color(0x302563EB)
+                  : const Color(0x080F172A),
+              blurRadius: _hovered ? 24 : 8,
+              spreadRadius: _hovered ? 1 : 0,
+              offset: Offset(0, _hovered ? 10 : 4),
             ),
           ],
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  AppNetworkImage(url: product.imageUrl),
-                  Positioned(
-                    top: AppSpacing.xs,
-                    right: AppSpacing.xs,
-                    child: RtiBadge(
-                      value: product.avgRti.round(),
-                      color: rtiColor,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(AppSpacing.xs),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    product.platform ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w800,
-                      fontSize: 11,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    product.name,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 13,
-                      height: 1.22,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
+        transform: Matrix4.translationValues(0, _hovered ? -3 : 0, 0),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => _openProductDetail(context, product.id),
+            borderRadius: BorderRadius.circular(10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      const Icon(
-                        Icons.star,
-                        color: Color(0xFFF59E0B),
-                        size: 13,
+                      AnimatedScale(
+                        scale: _hovered ? 1.035 : 1,
+                        duration: const Duration(milliseconds: 180),
+                        curve: Curves.easeOut,
+                        child: AppNetworkImage(url: product.imageUrl),
                       ),
-                      const SizedBox(width: AppSpacing.xxs),
+                      Positioned(
+                        top: AppSpacing.xs,
+                        right: AppSpacing.xs,
+                        child: RtiBadge(
+                          value: product.avgRti.round(),
+                          color: rtiColor,
+                        ),
+                      ),
+                      Positioned.fill(
+                        child: _HoverTapLayer(
+                          onEnter: () => setState(() => _hovered = true),
+                          onExit: () => setState(() => _hovered = false),
+                          onTap: () => _openProductDetail(context, product.id),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(AppSpacing.xs),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Text(
-                        product.avgRating.toStringAsFixed(1),
+                        product.platform ?? '',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: AppColors.textPrimary,
-                          fontWeight: FontWeight.w900,
-                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 11,
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.xxs),
-                      Flexible(
-                        child: Text(
-                          '(리뷰 ${formatSearchCount(product.reviewCount)})',
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall
-                              ?.copyWith(
-                                color: AppColors.textSecondary,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 11,
-                              ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    formatSearchPrice(product.price),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: AppColors.textPrimary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 17,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Row(
-                    children: [
-                      _WishlistSquareButton(productId: product.id),
-                      const SizedBox(width: AppSpacing.xs),
-                      _CartSquareButton(productId: product.id),
-                      const SizedBox(width: AppSpacing.xs),
-                      Expanded(
-                        child: ProductDetailButton(
-                          onPressed: () => context.goNamed(
-                            RouteNames.productDetail,
-                            pathParameters: {'id': product.id.toString()},
+                      const SizedBox(height: 2),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              product.name,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.titleSmall
+                                  ?.copyWith(
+                                    color: AppColors.textPrimary,
+                                    fontWeight: FontWeight.w900,
+                                    fontSize: 13,
+                                    height: 1.22,
+                                  ),
+                            ),
                           ),
-                        ),
+                          const SizedBox(width: AppSpacing.xs),
+                          _ProductQuickActions(productId: product.id),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star,
+                            color: Color(0xFFF59E0B),
+                            size: 13,
+                          ),
+                          const SizedBox(width: AppSpacing.xxs),
+                          Text(
+                            product.avgRating.toStringAsFixed(1),
+                            style: Theme.of(context).textTheme.labelSmall
+                                ?.copyWith(
+                                  color: AppColors.textPrimary,
+                                  fontWeight: FontWeight.w900,
+                                  fontSize: 12,
+                                ),
+                          ),
+                          const SizedBox(width: AppSpacing.xxs),
+                          Flexible(
+                            child: Text(
+                              '(리뷰 ${formatSearchCount(product.reviewCount)})',
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: AppColors.textSecondary,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 11,
+                                  ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        formatSearchPrice(product.price),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: AppColors.textPrimary,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 17,
+                            ),
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-class SearchProductListTile extends StatelessWidget {
+class _HoverTapLayer extends StatelessWidget {
+  const _HoverTapLayer({
+    required this.onEnter,
+    required this.onExit,
+    required this.onTap,
+  });
+
+  final VoidCallback onEnter;
+  final VoidCallback onExit;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => onEnter(),
+      onExit: (_) => onExit(),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: const ColoredBox(color: Colors.transparent),
+      ),
+    );
+  }
+}
+
+void _openProductDetail(BuildContext context, int productId) {
+  context.goNamed(
+    RouteNames.productDetail,
+    pathParameters: {'id': productId.toString()},
+  );
+}
+
+class SearchProductListTile extends StatefulWidget {
   const SearchProductListTile({super.key, required this.product});
 
   final SearchResultProduct product;
 
   @override
+  State<SearchProductListTile> createState() => _SearchProductListTileState();
+}
+
+class _SearchProductListTileState extends State<SearchProductListTile> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
+    final product = widget.product;
     final rtiColor = colorFromHex(product.rtiColor);
     final isCompact = MediaQuery.sizeOf(context).width < 760;
     final image = SizedBox(
@@ -165,9 +241,14 @@ class SearchProductListTile extends StatelessWidget {
       child: Stack(
         children: [
           Positioned.fill(
-            child: AppNetworkImage(
-              url: product.imageUrl,
-              borderRadius: AppRadius.medium,
+            child: AnimatedScale(
+              scale: _hovered ? 1.035 : 1,
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              child: AppNetworkImage(
+                url: product.imageUrl,
+                borderRadius: AppRadius.medium,
+              ),
             ),
           ),
           Positioned(
@@ -175,53 +256,78 @@ class SearchProductListTile extends StatelessWidget {
             right: AppSpacing.xs,
             child: RtiBadge(value: product.avgRti.round(), color: rtiColor),
           ),
+          Positioned.fill(
+            child: _HoverTapLayer(
+              onEnter: () => setState(() => _hovered = true),
+              onExit: () => setState(() => _hovered = false),
+              onTap: () => _openProductDetail(context, product.id),
+            ),
+          ),
         ],
       ),
     );
     final details = ListTileDetails(product: product);
     final actions = ListTileActions(product: product, compact: isCompact);
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x080F172A),
-            blurRadius: 8,
-            offset: Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        child: isCompact
-            ? Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => _openProductDetail(context, product.id),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 160),
+            curve: Curves.easeOut,
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(
+                color: _hovered ? AppColors.primary : AppColors.border,
+                width: _hovered ? 1.2 : 1,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _hovered
+                      ? const Color(0x302563EB)
+                      : const Color(0x080F172A),
+                  blurRadius: _hovered ? 24 : 8,
+                  spreadRadius: _hovered ? 1 : 0,
+                  offset: Offset(0, _hovered ? 10 : 4),
+                ),
+              ],
+            ),
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: isCompact
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          image,
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(child: details),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      actions,
+                    ],
+                  )
+                : Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       image,
-                      const SizedBox(width: AppSpacing.sm),
+                      const SizedBox(width: AppSpacing.md),
                       Expanded(child: details),
+                      const SizedBox(width: AppSpacing.md),
+                      actions,
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  actions,
-                ],
-              )
-            : Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  image,
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: details),
-                  const SizedBox(width: AppSpacing.md),
-                  actions,
-                ],
-              ),
+          ),
+        ),
       ),
     );
   }
@@ -333,17 +439,26 @@ class ListTileActions extends StatelessWidget {
               _CartSquareButton(productId: product.id),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Builder(
-            builder: (context) => ProductDetailButton(
-              onPressed: () => context.goNamed(
-                RouteNames.productDetail,
-                pathParameters: {'id': product.id.toString()},
-              ),
-            ),
-          ),
         ],
       ),
+    );
+  }
+}
+
+class _ProductQuickActions extends StatelessWidget {
+  const _ProductQuickActions({required this.productId});
+
+  final int productId;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _WishlistSquareButton(productId: productId),
+        const SizedBox(width: AppSpacing.xs),
+        _CartSquareButton(productId: productId),
+      ],
     );
   }
 }
@@ -466,31 +581,6 @@ class SquareIconButton extends StatelessWidget {
         onPressed: onPressed,
         style: outlineHoverButtonStyle(padding: EdgeInsets.zero),
         child: Icon(icon, size: 18),
-      ),
-    );
-  }
-}
-
-class ProductDetailButton extends StatelessWidget {
-  const ProductDetailButton({super.key, required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 36,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: outlineHoverButtonStyle(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-        ),
-        child: Text(
-          '최저가 보기',
-          style: Theme.of(
-            context,
-          ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w900),
-        ),
       ),
     );
   }

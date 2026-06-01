@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_theme.dart';
+import 'package:re_view_front/core/result/result.dart';
+import 'package:re_view_front/features/search/domain/entities/search_response.dart';
+import 'package:re_view_front/features/search/domain/entities/search_result_product.dart';
+import 'package:re_view_front/features/search/domain/repositories/search_repository.dart';
+import 'package:re_view_front/features/search/domain/usecases/search_products_use_case.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
+import 'package:re_view_front/features/search/presentation/providers/search_providers.dart';
 
 void main() {
   late GoRouter router;
@@ -28,9 +35,14 @@ void main() {
       ],
     );
 
-    return MaterialApp.router(
-      theme: AppTheme.light.copyWith(splashFactory: NoSplash.splashFactory),
-      routerConfig: router,
+    return ProviderScope(
+      overrides: [
+        searchRepositoryProvider.overrideWithValue(_FakeSearchRepository()),
+      ],
+      child: MaterialApp.router(
+        theme: AppTheme.light.copyWith(splashFactory: NoSplash.splashFactory),
+        routerConfig: router,
+      ),
     );
   }
 
@@ -42,7 +54,7 @@ void main() {
 
     expect(find.text('이어폰'), findsWidgets);
     expect(find.text('AeroFit ANC 무선 블루투스 이어폰'), findsOneWidget);
-    expect(find.text('정확도 순'), findsOneWidget);
+    expect(find.text('추천순'), findsOneWidget);
     expect(find.textContaining('RTI 80+'), findsOneWidget);
   });
 
@@ -107,5 +119,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('price-histogram-bars')), findsOneWidget);
+  });
+}
+
+class _FakeSearchRepository implements SearchRepository {
+  @override
+  Future<Result<SearchResponse>> searchProducts(SearchParams params) async {
+    final query = params.query.trim();
+    final products = switch (query) {
+      '이어폰' => _products('AeroFit ANC 무선 블루투스 이어폰'),
+      '가전' => _products('프리미엄 가전 상품'),
+      _ => const <SearchResultProduct>[],
+    };
+    return Success(
+      SearchResponse(products: products, totalCount: products.length),
+    );
+  }
+}
+
+List<SearchResultProduct> _products(String firstName) {
+  return List.generate(36, (index) {
+    return SearchResultProduct(
+      id: index + 1,
+      name: index == 0 ? firstName : '$firstName ${index + 1}',
+      imageUrl: 'https://example.com/product-${index + 1}.png',
+      price: 10000 + index * 1000,
+      category: 'ELECTRONICS',
+      categoryDisplayName: '이어폰',
+      avgRti: index == 0 ? 83 : 72,
+      rtiGrade: 'A',
+      rtiColor: '#16A34A',
+      reviewCount: 50 + index,
+      avgRating: 4.5,
+      platform: 'NAVER',
+    );
   });
 }
