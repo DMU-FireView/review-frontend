@@ -95,6 +95,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   :final reviews,
                   :final reviewInsight,
                   :final similarProducts,
+                  :final isAnalyzing,
                 ) =>
                   _DetailContent(
                     detail: detail,
@@ -102,6 +103,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                     reviewInsight: reviewInsight,
                     similarProducts: similarProducts,
                     selectedTab: _selectedTab,
+                    isAnalyzing: isAnalyzing,
                     onTabChanged: (tab) => setState(() => _selectedTab = tab),
                     onFeedback: (reviewId, feedbackType) => ref
                         .read(
@@ -127,6 +129,7 @@ class _DetailContent extends StatelessWidget {
     required this.reviewInsight,
     required this.similarProducts,
     required this.selectedTab,
+    required this.isAnalyzing,
     required this.onTabChanged,
     this.onFeedback,
   });
@@ -136,6 +139,7 @@ class _DetailContent extends StatelessWidget {
   final ReviewInsight reviewInsight;
   final List<SimilarProduct> similarProducts;
   final _ProductDetailTab selectedTab;
+  final bool isAnalyzing;
   final ValueChanged<_ProductDetailTab> onTabChanged;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
@@ -159,10 +163,12 @@ class _DetailContent extends StatelessWidget {
         isMobile
             ? _MobileAnalysisSection(
                 detail: detail,
+                isAnalyzing: isAnalyzing,
                 onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
               )
             : _DesktopAnalysisSection(
                 detail: detail,
+                isAnalyzing: isAnalyzing,
                 onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
               ),
         const SizedBox(height: AppSpacing.xl),
@@ -325,30 +331,38 @@ class _MobileHeroSection extends StatelessWidget {
 class _DesktopAnalysisSection extends StatelessWidget {
   const _DesktopAnalysisSection({
     required this.detail,
+    required this.isAnalyzing,
     required this.onDetailPressed,
   });
 
   final ProductDetail detail;
+  final bool isAnalyzing;
   final VoidCallback onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: RtiSummaryCard(
-            rtiSummary: detail.rtiSummary,
-            onDetailPressed: onDetailPressed,
-          ),
-        ),
-        const SizedBox(width: AppSpacing.md),
-        SizedBox(
-          width: 280,
-          child: TrustSignalCard(
-            signals: detail.trustSignals,
-            onDetailPressed: onDetailPressed,
-          ),
+        if (isAnalyzing) _AnalyzingBanner(),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: RtiSummaryCard(
+                rtiSummary: detail.rtiSummary,
+                onDetailPressed: onDetailPressed,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            SizedBox(
+              width: 280,
+              child: TrustSignalCard(
+                signals: detail.trustSignals,
+                onDetailPressed: onDetailPressed,
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -358,16 +372,22 @@ class _DesktopAnalysisSection extends StatelessWidget {
 class _MobileAnalysisSection extends StatelessWidget {
   const _MobileAnalysisSection({
     required this.detail,
+    required this.isAnalyzing,
     required this.onDetailPressed,
   });
 
   final ProductDetail detail;
+  final bool isAnalyzing;
   final VoidCallback onDetailPressed;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        if (isAnalyzing) ...[
+          _AnalyzingBanner(),
+          const SizedBox(height: AppSpacing.sm),
+        ],
         RtiSummaryCard(
           rtiSummary: detail.rtiSummary,
           onDetailPressed: onDetailPressed,
@@ -378,6 +398,46 @@ class _MobileAnalysisSection extends StatelessWidget {
           onDetailPressed: onDetailPressed,
         ),
       ],
+    );
+  }
+}
+
+class _AnalyzingBanner extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.primaryLight,
+        borderRadius: AppRadius.small,
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(
+              strokeWidth: 1.5,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            'AI 리뷰 분석 중...',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -18,12 +18,27 @@ class ProductDetailSuccess extends ProductDetailState {
     required this.reviews,
     required this.reviewInsight,
     required this.similarProducts,
+    this.isAnalyzing = false,
   });
 
   final ProductDetail detail;
   final List<ProductReview> reviews;
   final ReviewInsight reviewInsight;
   final List<SimilarProduct> similarProducts;
+  final bool isAnalyzing;
+
+  ProductDetailSuccess copyWith({
+    List<ProductReview>? reviews,
+    bool? isAnalyzing,
+  }) {
+    return ProductDetailSuccess(
+      detail: detail,
+      reviews: reviews ?? this.reviews,
+      reviewInsight: reviewInsight,
+      similarProducts: similarProducts,
+      isAnalyzing: isAnalyzing ?? this.isAnalyzing,
+    );
+  }
 }
 
 class ProductDetailFailure extends ProductDetailState {

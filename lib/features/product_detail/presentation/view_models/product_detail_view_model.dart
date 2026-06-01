@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
 import 'package:re_view_front/features/product_detail/domain/usecases/get_product_detail_use_case.dart';
 import 'package:re_view_front/features/product_detail/presentation/providers/product_detail_providers.dart';
@@ -13,12 +14,14 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
   late final GetProductDetailUseCase _getDetail;
   late final GetProductReviewsUseCase _getReviews;
   late final SubmitReviewFeedbackUseCase _submitFeedback;
+  late final TriggerProductAnalysisUseCase _triggerAnalysis;
 
   @override
   ProductDetailState build() {
     _getDetail = ref.watch(getProductDetailUseCaseProvider);
     _getReviews = ref.watch(getProductReviewsUseCaseProvider);
     _submitFeedback = ref.watch(submitReviewFeedbackUseCaseProvider);
+    _triggerAnalysis = ref.watch(triggerProductAnalysisUseCaseProvider);
     Future.microtask(() => _load(_productId));
     return const ProductDetailLoading();
   }
@@ -45,15 +48,69 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
     final reviewsResult = await _getReviews(productId);
     if (!ref.mounted) return;
 
+    final reviews = reviewsResult.when(
+      success: (r) => r,
+      failure: (_) => const <ProductReview>[],
+    );
+
     state = ProductDetailSuccess(
       detail: detail,
-      reviews: reviewsResult.when(success: (r) => r, failure: (_) => const []),
+      reviews: reviews,
       reviewInsight: const ReviewInsight(
         keywords: [],
         satisfactionPoints: [],
         dissatisfactionPoints: [],
       ),
       similarProducts: const [],
+      isAnalyzing: true,
+    );
+
+    _triggerAnalysisInBackground(productId.toString());
+  }
+
+  Future<void> _triggerAnalysisInBackground(String productId) async {
+    final analysisResult = await _triggerAnalysis(productId);
+    if (!ref.mounted) return;
+
+    final current = state;
+    if (current is! ProductDetailSuccess) return;
+
+    analysisResult.when(
+      success: (analysis) {
+        final enrichedReviews = current.reviews.map((review) {
+          final detail = analysis.reviewDetails[review.id];
+          if (detail == null) return review;
+          return ProductReview(
+            id: review.id,
+            authorName: review.authorName,
+            authorAvatarUrl: review.authorAvatarUrl,
+            rating: review.rating,
+            content: review.content,
+            createdAt: review.createdAt,
+            platform: review.platform,
+            isVerifiedPurchase: review.isVerifiedPurchase,
+            rtiScore: review.rtiScore,
+            rtiColor: review.rtiColor,
+            rtiLabel: review.rtiLabel,
+            imageUrls: review.imageUrls,
+            hashtags: review.hashtags,
+            reasons: review.reasons,
+            rtiDetail: detail,
+          );
+        }).toList();
+
+        if (ref.mounted) {
+          state = current.copyWith(
+            reviews: enrichedReviews,
+            isAnalyzing: false,
+          );
+        }
+      },
+      failure: (_) {
+        if (ref.mounted) {
+          state = current.copyWith(isAnalyzing: false);
+        }
+      },
     );
   }
 
