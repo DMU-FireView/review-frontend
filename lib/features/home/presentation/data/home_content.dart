@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:re_view_front/features/category/domain/entities/product_category_master.dart';
 
 const homeNavItems = [
   '홈',
@@ -112,7 +113,30 @@ const trendingKeywords = <String>[];
 
 const recommendedProducts = <HomeProductData>[];
 
-const popularCategories = <PopularCategoryData>[];
+final popularCategories = [
+  for (final category in productCategoryTree)
+    PopularCategoryData(
+      label: category.label,
+      icon: _popularCategoryIcons[category.id] ?? Icons.category_outlined,
+    ),
+];
+
+const _popularCategoryIcons = {
+  'digital-appliance': Icons.devices_other_outlined,
+  'fashion-clothing': Icons.checkroom_outlined,
+  'fashion-accessory': Icons.shopping_bag_outlined,
+  'beauty': Icons.spa_outlined,
+  'food': Icons.restaurant_outlined,
+  'living-kitchen': Icons.kitchen_outlined,
+  'furniture-interior': Icons.chair_outlined,
+  'sports-leisure': Icons.sports_soccer_outlined,
+  'car-tools': Icons.directions_car_outlined,
+  'baby-kids': Icons.child_care_outlined,
+  'pet': Icons.pets_outlined,
+  'book-stationery-hobby': Icons.menu_book_outlined,
+  'travel-service': Icons.luggage_outlined,
+  'luxury-brand': Icons.diamond_outlined,
+};
 
 const benefitItems = [
   BenefitData(title: '10%', description: '웰컴 쿠폰'),

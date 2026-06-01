@@ -30,7 +30,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: authNotifier,
     redirect: (context, state) {
       final isLoggedIn = ref.read(isLoggedInProvider);
-      const authPages = {RoutePaths.landing, RoutePaths.login, RoutePaths.signup};
+      const authPages = {
+        RoutePaths.landing,
+        RoutePaths.login,
+        RoutePaths.signup,
+      };
       if (isLoggedIn && authPages.contains(state.matchedLocation)) {
         return RoutePaths.home;
       }
@@ -78,7 +82,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.search,
         pageBuilder: (context, state) => _buildTransitionPage(
           state,
-          SearchResultsPage(query: state.uri.queryParameters['q'] ?? ''),
+          SearchResultsPage(
+            query: state.uri.queryParameters['q'] ?? '',
+            categoryId: state.uri.queryParameters['categoryId'],
+            categoryLabel: state.uri.queryParameters['category'],
+          ),
         ),
       ),
       GoRoute(
