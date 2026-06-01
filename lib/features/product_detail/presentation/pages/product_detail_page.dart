@@ -81,7 +81,7 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
           ),
           SliverToBoxAdapter(
             child: AppContentView(
-              maxWidth: 1440,
+              maxWidth: 1680,
               padding: EdgeInsets.fromLTRB(
                 context.isMobile ? AppSpacing.md : AppSpacing.xxl,
                 AppSpacing.md,
@@ -260,18 +260,14 @@ class _Breadcrumb extends StatelessWidget {
             onTap: i == breadcrumbs.length - 1
                 ? null
                 : () {
-                    if (i == 0) {
-                      context.goNamed(RouteNames.home);
-                    } else {
-                      final category = resolveProductCategory(breadcrumbs[i]);
-                      context.goNamed(
-                        RouteNames.search,
-                        queryParameters: {
-                          if (category != null) 'categoryId': category.id,
-                          'category': breadcrumbs[i],
-                        },
-                      );
-                    }
+                    final category = resolveProductCategory(breadcrumbs[i]);
+                    context.goNamed(
+                      RouteNames.search,
+                      queryParameters: {
+                        if (category != null) 'categoryId': category.id,
+                        'category': breadcrumbs[i],
+                      },
+                    );
                   },
             child: Text(
               breadcrumbs[i],
@@ -307,12 +303,15 @@ class _DesktopHeroSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            flex: 4,
-            child: ProductImageGallery(imageUrls: detail.imageUrls),
+            flex: 5,
+            child: ProductImageGallery(
+              productId: detail.id,
+              imageUrls: detail.imageUrls,
+            ),
           ),
           const SizedBox(width: AppSpacing.xl),
           Expanded(
-            flex: 6,
+            flex: 5,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -341,7 +340,7 @@ class _MobileHeroSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ProductImageGallery(imageUrls: detail.imageUrls),
+        ProductImageGallery(productId: detail.id, imageUrls: detail.imageUrls),
         const SizedBox(height: AppSpacing.md),
         ProductInfoSection(detail: detail),
         const SizedBox(height: AppSpacing.md),
