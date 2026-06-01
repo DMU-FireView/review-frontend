@@ -96,6 +96,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                   :final reviewInsight,
                   :final similarProducts,
                   :final isAnalyzing,
+                  :final safeCount,
+                  :final warnCount,
+                  :final dangerCount,
                 ) =>
                   _DetailContent(
                     detail: detail,
@@ -104,6 +107,9 @@ class _ProductDetailPageState extends ConsumerState<ProductDetailPage> {
                     similarProducts: similarProducts,
                     selectedTab: _selectedTab,
                     isAnalyzing: isAnalyzing,
+                    safeCount: safeCount,
+                    warnCount: warnCount,
+                    dangerCount: dangerCount,
                     onTabChanged: (tab) => setState(() => _selectedTab = tab),
                     onFeedback: (reviewId, feedbackType) => ref
                         .read(
@@ -130,6 +136,9 @@ class _DetailContent extends StatelessWidget {
     required this.similarProducts,
     required this.selectedTab,
     required this.isAnalyzing,
+    required this.safeCount,
+    required this.warnCount,
+    required this.dangerCount,
     required this.onTabChanged,
     this.onFeedback,
   });
@@ -140,6 +149,9 @@ class _DetailContent extends StatelessWidget {
   final List<SimilarProduct> similarProducts;
   final _ProductDetailTab selectedTab;
   final bool isAnalyzing;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
   final ValueChanged<_ProductDetailTab> onTabChanged;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
@@ -183,11 +195,17 @@ class _DetailContent extends StatelessWidget {
               ? _MobileReviewSection(
                   reviews: reviews,
                   insight: reviewInsight,
+                  safeCount: safeCount,
+                  warnCount: warnCount,
+                  dangerCount: dangerCount,
                   onFeedback: onFeedback,
                 )
               : _DesktopReviewSection(
                   reviews: reviews,
                   insight: reviewInsight,
+                  safeCount: safeCount,
+                  warnCount: warnCount,
+                  dangerCount: dangerCount,
                   onFeedback: onFeedback,
                 )
         else if (selectedTab == _ProductDetailTab.priceComparison)
@@ -533,11 +551,17 @@ class _DesktopReviewSection extends StatelessWidget {
   const _DesktopReviewSection({
     required this.reviews,
     required this.insight,
+    required this.safeCount,
+    required this.warnCount,
+    required this.dangerCount,
     this.onFeedback,
   });
 
   final List<ProductReview> reviews;
   final ReviewInsight insight;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
@@ -547,7 +571,13 @@ class _DesktopReviewSection extends StatelessWidget {
       children: [
         Expanded(
           flex: 65,
-          child: ReviewListSection(reviews: reviews, onFeedback: onFeedback),
+          child: ReviewListSection(
+            reviews: reviews,
+            safeCount: safeCount,
+            warnCount: warnCount,
+            dangerCount: dangerCount,
+            onFeedback: onFeedback,
+          ),
         ),
         const SizedBox(width: AppSpacing.lg),
         SizedBox(
@@ -563,11 +593,17 @@ class _MobileReviewSection extends StatelessWidget {
   const _MobileReviewSection({
     required this.reviews,
     required this.insight,
+    required this.safeCount,
+    required this.warnCount,
+    required this.dangerCount,
     this.onFeedback,
   });
 
   final List<ProductReview> reviews;
   final ReviewInsight insight;
+  final int safeCount;
+  final int warnCount;
+  final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
 
   @override
@@ -576,7 +612,13 @@ class _MobileReviewSection extends StatelessWidget {
       children: [
         ReviewInsightPanel(insight: insight, onMorePressed: () {}),
         const SizedBox(height: AppSpacing.md),
-        ReviewListSection(reviews: reviews, onFeedback: onFeedback),
+        ReviewListSection(
+          reviews: reviews,
+          safeCount: safeCount,
+          warnCount: warnCount,
+          dangerCount: dangerCount,
+          onFeedback: onFeedback,
+        ),
       ],
     );
   }
