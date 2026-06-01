@@ -2,8 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/wishlist/data/datasources/wishlist_remote_data_source.dart';
 import 'package:re_view_front/features/wishlist/data/repositories/wishlist_repository_impl.dart';
+import 'package:re_view_front/features/wishlist/domain/entities/wishlist_item.dart';
+import 'package:re_view_front/features/wishlist/domain/entities/wishlist_summary.dart';
 import 'package:re_view_front/features/wishlist/domain/repositories/wishlist_repository.dart';
-import 'package:re_view_front/features/wishlist/domain/usecases/check_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/domain/usecases/get_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/domain/usecases/toggle_wishlist_use_case.dart';
 import 'package:re_view_front/features/wishlist/presentation/view_models/wishlist_state.dart';
@@ -27,31 +28,39 @@ final toggleWishlistUseCaseProvider = Provider<ToggleWishlistUseCase>((ref) {
   return ToggleWishlistUseCase(ref.watch(wishlistRepositoryProvider));
 });
 
-final checkWishlistUseCaseProvider = Provider<CheckWishlistUseCase>((ref) {
-  return CheckWishlistUseCase(ref.watch(wishlistRepositoryProvider));
-});
-
 final wishlistViewModelProvider =
     NotifierProvider<WishlistViewModel, WishlistState>(WishlistViewModel.new);
+
+typedef WishlistSnapshot = ({
+  List<WishlistItem> items,
+  WishlistSummary summary,
+});
+
+final _wishlistSnapshotProvider = FutureProvider.autoDispose<WishlistSnapshot?>(
+  (ref) async {
+    ref.keepAlive();
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    if (!isLoggedIn) return null;
+
+    final result = await ref.read(getWishlistUseCaseProvider)();
+    return result.when(success: (data) => data, failure: (_) => null);
+  },
+);
 
 final wishlistItemCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return 0;
-  final result = await ref.read(getWishlistUseCaseProvider)();
-  return result.when(success: (data) => data.items.length, failure: (_) => 0);
+  final snapshot = await ref.watch(_wishlistSnapshotProvider.future);
+  return snapshot?.items.length ?? 0;
 });
 
 final wishlistProductIdsProvider = FutureProvider.autoDispose<Set<int>>((
   ref,
 ) async {
-  ref.keepAlive();
   final isLoggedIn = ref.watch(isLoggedInProvider);
   if (!isLoggedIn) return <int>{};
-  final result = await ref.read(getWishlistUseCaseProvider)();
-  return result.when(
-    success: (data) => data.items.map((item) => item.productId).toSet(),
-    failure: (_) => <int>{},
-  );
+  final snapshot = await ref.watch(_wishlistSnapshotProvider.future);
+  return snapshot?.items.map((item) => item.productId).toSet() ?? <int>{};
 });
 
 final wishlistButtonProvider =
@@ -94,14 +103,12 @@ class WishlistButtonNotifier extends AsyncNotifier<bool> {
     result.when(
       success: (_) {
         state = AsyncData(!current);
-        ref.invalidate(wishlistItemCountProvider);
-        ref.invalidate(wishlistProductIdsProvider);
+        ref.invalidate(_wishlistSnapshotProvider);
       },
       failure: (failure) {
         if (!current && failure.code == 'WISHLIST_ALREADY_EXISTS') {
           state = const AsyncData(true);
-          ref.invalidate(wishlistItemCountProvider);
-          ref.invalidate(wishlistProductIdsProvider);
+          ref.invalidate(_wishlistSnapshotProvider);
           return;
         }
         state = AsyncData(current);
