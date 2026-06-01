@@ -59,6 +59,8 @@ class _SignupPageState extends ConsumerState<SignupPage> {
 
     ref.listen<SignupState>(signupViewModelProvider, (previous, next) {
       if (next.status == SignupSubmissionStatus.success) {
+        context.go(RoutePaths.onboarding);
+      } else if (next.status == SignupSubmissionStatus.autoLoginFailure) {
         context.go(RoutePaths.login);
       }
     });

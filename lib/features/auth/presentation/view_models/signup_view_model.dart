@@ -1,15 +1,19 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/auth/domain/entities/oauth_provider.dart';
+import 'package:re_view_front/features/auth/domain/usecases/login_use_case.dart';
 import 'package:re_view_front/features/auth/domain/usecases/signup_use_case.dart';
 import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
 import 'package:re_view_front/features/auth/presentation/view_models/signup_state.dart';
 
 class SignupViewModel extends Notifier<SignupState> {
   late final SignupUseCase _signupUseCase;
+  late final LoginUseCase _loginUseCase;
 
   @override
   SignupState build() {
     _signupUseCase = ref.watch(signupUseCaseProvider);
+    _loginUseCase = ref.watch(loginUseCaseProvider);
     return const SignupState();
   }
 
@@ -100,22 +104,36 @@ class SignupViewModel extends Notifier<SignupState> {
       clearFailureMessage: true,
     );
 
+    final email = state.email.trim();
+    final password = state.password;
+
     final result = await _signupUseCase(
       name: state.name.trim(),
-      email: state.email.trim(),
-      password: state.password,
+      email: email,
+      password: password,
     );
 
-    if (!ref.mounted) {
-      return;
+    if (!ref.mounted) return;
+
+    switch (result) {
+      case FailureResult(:final failure):
+        state = state.copyWith(
+          status: SignupSubmissionStatus.failure,
+          failureMessage: failure.message,
+        );
+        return;
+      case Success():
+        break;
     }
 
-    state = result.when(
+    final loginResult = await _loginUseCase(email: email, password: password);
+
+    if (!ref.mounted) return;
+
+    state = loginResult.when(
       success: (_) => state.copyWith(status: SignupSubmissionStatus.success),
-      failure: (failure) => state.copyWith(
-        status: SignupSubmissionStatus.failure,
-        failureMessage: failure.message,
-      ),
+      failure: (_) =>
+          state.copyWith(status: SignupSubmissionStatus.autoLoginFailure),
     );
   }
 
