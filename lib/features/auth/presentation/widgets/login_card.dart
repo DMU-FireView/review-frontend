@@ -104,6 +104,7 @@ class LoginCard extends StatelessWidget {
                 prefixIcon: Icons.lock_outline,
                 errorText: passwordError,
                 onForgotPassword: onForgotPasswordPressed,
+                onSubmitted: onLoginPressed,
                 trailing: TextButton(
                   onPressed: onPasswordVisibilityPressed,
                   child: Text(obscurePassword ? '보기' : '숨김'),
@@ -219,6 +220,7 @@ class _LoginInputField extends StatelessWidget {
     this.obscureText = false,
     this.trailing,
     this.onForgotPassword,
+    this.onSubmitted,
   });
 
   final TextEditingController controller;
@@ -231,6 +233,7 @@ class _LoginInputField extends StatelessWidget {
   final bool obscureText;
   final Widget? trailing;
   final VoidCallback? onForgotPassword;
+  final VoidCallback? onSubmitted;
 
   @override
   Widget build(BuildContext context) {
@@ -263,6 +266,7 @@ class _LoginInputField extends StatelessWidget {
             keyboardType: keyboardType,
             textInputAction: textInputAction,
             obscureText: obscureText,
+            onSubmitted: onSubmitted != null ? (_) => onSubmitted!() : null,
             decoration: InputDecoration(
               hintText: hintText,
               errorText: errorText,
