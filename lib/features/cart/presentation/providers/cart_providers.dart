@@ -61,12 +61,19 @@ class CartButtonNotifier extends AsyncNotifier<bool> {
 
   @override
   Future<bool> build() async {
+    if (_productId <= 0) return false;
+
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    if (!isLoggedIn) return false;
+
     final productIds = await ref.watch(cartProductIdsProvider.future);
     return productIds.contains(_productId);
   }
 
   Future<void> add() async {
     if (_isAdding || state.value == true) return;
+    if (_productId <= 0) return;
+    if (!ref.read(isLoggedInProvider)) return;
 
     _isAdding = true;
     final result = await ref.read(updateCartUseCaseProvider).add(_productId);
