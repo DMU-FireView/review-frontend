@@ -64,28 +64,30 @@ class ProductCardGridSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final columns = _columnsFor(constraints.maxWidth);
-        final cardWidth =
-            (constraints.maxWidth - (columns - 1) * AppSpacing.md) / columns;
-        const imageAspectRatio = 16.0 / 9.0;
-        final imageHeight = cardWidth / imageAspectRatio;
-        const textAreaHeight = 170.0;
+    return ShimmerWrapper(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final columns = _columnsFor(constraints.maxWidth);
+          final cardWidth =
+              (constraints.maxWidth - (columns - 1) * AppSpacing.md) / columns;
+          const imageAspectRatio = 16.0 / 9.0;
+          final imageHeight = cardWidth / imageAspectRatio;
+          const textAreaHeight = 170.0;
 
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: columns,
-            mainAxisSpacing: AppSpacing.md,
-            crossAxisSpacing: AppSpacing.md,
-            mainAxisExtent: imageHeight + textAreaHeight,
-          ),
-          itemCount: itemCount,
-          itemBuilder: (context, _) => const ProductCardSkeleton(),
-        );
-      },
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: columns,
+              mainAxisSpacing: AppSpacing.md,
+              crossAxisSpacing: AppSpacing.md,
+              mainAxisExtent: imageHeight + textAreaHeight,
+            ),
+            itemCount: itemCount,
+            itemBuilder: (context, _) => const ProductCardSkeleton(),
+          );
+        },
+      ),
     );
   }
 

@@ -407,17 +407,19 @@ class _WishlistGridSkeleton extends StatelessWidget {
       _ => 2,
     };
 
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: AppSpacing.sm,
-        mainAxisSpacing: AppSpacing.sm,
-        childAspectRatio: 0.62,
+    return ShimmerWrapper(
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          crossAxisSpacing: AppSpacing.sm,
+          mainAxisSpacing: AppSpacing.sm,
+          childAspectRatio: 0.62,
+        ),
+        itemCount: crossAxisCount * 2,
+        itemBuilder: (context, _) => const _WishlistCardSkeleton(),
       ),
-      itemCount: crossAxisCount * 2,
-      itemBuilder: (context, _) => const _WishlistCardSkeleton(),
     );
   }
 }
