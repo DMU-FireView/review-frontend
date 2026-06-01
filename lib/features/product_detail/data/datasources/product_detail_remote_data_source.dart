@@ -1,6 +1,7 @@
 import 'package:re_view_front/core/config/app_config.dart';
 import 'package:re_view_front/core/network/api_client.dart';
 import 'package:re_view_front/core/network/api_response.dart';
+import 'package:re_view_front/features/product_detail/data/dtos/product_analysis_dto.dart';
 import 'package:re_view_front/features/product_detail/data/dtos/product_detail_dto.dart';
 
 abstract interface class ProductDetailRemoteDataSource {
@@ -9,6 +10,10 @@ abstract interface class ProductDetailRemoteDataSource {
   Future<List<ProductReviewDto>> getProductReviews(int productId);
 
   Future<void> submitReviewFeedback(int reviewId, String feedbackType);
+
+  Future<bool> checkAnalysisHealth();
+
+  Future<ProductAnalysisDto> triggerProductAnalysis(String productId);
 }
 
 class ProductDetailRemoteDataSourceImpl
@@ -72,5 +77,43 @@ class ProductDetailRemoteDataSourceImpl
       final payload = ApiResponse<Object?>.fromJson(data);
       payload.requireSuccess();
     }
+  }
+
+  @override
+  Future<bool> checkAnalysisHealth() async {
+    try {
+      final response = await _apiClient.get(_config.analysisHealthPath);
+      final data = response.data;
+      if (data is Map<String, dynamic>) {
+        final payload = ApiResponse<Object?>.fromJson(data);
+        final body = payload.requireSuccess();
+        if (body is Map<String, dynamic>) {
+          return body['status'] == 'ok';
+        }
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  @override
+  Future<ProductAnalysisDto> triggerProductAnalysis(String productId) async {
+    final response = await _apiClient.post(
+      _config.analysisPath,
+      data: {'productId': productId},
+    );
+    final data = response.data;
+
+    if (data is Map<String, dynamic>) {
+      final payload = ApiResponse<Object?>.fromJson(data);
+      final body = payload.requireSuccess();
+
+      if (body is Map<String, dynamic>) {
+        return ProductAnalysisDto.fromJson(body);
+      }
+    }
+
+    throw ApiResponseException(message: 'AI 분석 결과를 불러오지 못했습니다.');
   }
 }
