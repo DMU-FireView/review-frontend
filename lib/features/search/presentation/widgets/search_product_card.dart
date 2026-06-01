@@ -29,8 +29,8 @@ class SearchProductCard extends StatelessWidget {
           boxShadow: const [
             BoxShadow(
               color: Color(0x080F172A),
-              blurRadius: 14,
-              offset: Offset(0, 8),
+              blurRadius: 8,
+              offset: Offset(0, 4),
             ),
           ],
         ),
@@ -188,8 +188,8 @@ class SearchProductListTile extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: Color(0x080F172A),
-            blurRadius: 14,
-            offset: Offset(0, 8),
+            blurRadius: 8,
+            offset: Offset(0, 4),
           ),
         ],
       ),

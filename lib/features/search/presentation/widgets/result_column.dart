@@ -140,7 +140,11 @@ class ProductGrid extends StatelessWidget {
         mainAxisExtent: cardHeight,
       ),
       itemBuilder: (context, index) {
-        return SearchProductCard(product: products[index]);
+        final product = products[index];
+        return RepaintBoundary(
+          key: ValueKey('search-product-card-${product.id}'),
+          child: SearchProductCard(product: product),
+        );
       },
     );
   }
@@ -157,7 +161,10 @@ class ProductList extends StatelessWidget {
       key: const ValueKey('search-product-list'),
       children: [
         for (final product in products) ...[
-          SearchProductListTile(product: product),
+          RepaintBoundary(
+            key: ValueKey('search-product-list-tile-${product.id}'),
+            child: SearchProductListTile(product: product),
+          ),
           const SizedBox(height: AppSpacing.sm),
         ],
       ],
@@ -400,7 +407,7 @@ class PageSizeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const pageSizes = [30, 60, 120];
+    const pageSizes = [30, 60];
 
     return PopupMenuButton<int>(
       tooltip: '페이지당 상품 수',
