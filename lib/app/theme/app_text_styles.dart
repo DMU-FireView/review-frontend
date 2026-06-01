@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 
 abstract final class AppTextStyles {
-  static const String? fontFamily = null;
+  static const String fontFamily = 'Freesentation';
 
   static const displayLarge = TextStyle(
     fontFamily: fontFamily,
