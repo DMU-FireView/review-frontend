@@ -14,6 +14,7 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
   late final GetProductDetailUseCase _getDetail;
   late final GetProductReviewsUseCase _getReviews;
   late final SubmitReviewFeedbackUseCase _submitFeedback;
+  late final CheckAnalysisHealthUseCase _checkHealth;
   late final TriggerProductAnalysisUseCase _triggerAnalysis;
 
   @override
@@ -21,6 +22,7 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
     _getDetail = ref.watch(getProductDetailUseCaseProvider);
     _getReviews = ref.watch(getProductReviewsUseCaseProvider);
     _submitFeedback = ref.watch(submitReviewFeedbackUseCaseProvider);
+    _checkHealth = ref.watch(checkAnalysisHealthUseCaseProvider);
     _triggerAnalysis = ref.watch(triggerProductAnalysisUseCaseProvider);
     Future.microtask(() => _load(_productId));
     return const ProductDetailLoading();
@@ -69,6 +71,17 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
   }
 
   Future<void> _triggerAnalysisInBackground(String productId) async {
+    final isHealthy = await _checkHealth();
+    if (!ref.mounted) return;
+
+    if (!isHealthy) {
+      final current = state;
+      if (current is ProductDetailSuccess) {
+        state = current.copyWith(isAnalyzing: false);
+      }
+      return;
+    }
+
     final analysisResult = await _triggerAnalysis(productId);
     if (!ref.mounted) return;
 

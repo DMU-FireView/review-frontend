@@ -66,6 +66,10 @@ class ProductDetailRepositoryImpl implements ProductDetailRepository {
   }
 
   @override
+  Future<bool> checkAnalysisHealth() =>
+      _remoteDataSource.checkAnalysisHealth();
+
+  @override
   Future<Result<ProductAnalysisResult>> triggerProductAnalysis(
     String productId,
   ) async {

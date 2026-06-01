@@ -31,6 +31,14 @@ class SubmitReviewFeedbackUseCase {
       _repository.submitReviewFeedback(reviewId, feedbackType);
 }
 
+class CheckAnalysisHealthUseCase {
+  const CheckAnalysisHealthUseCase(this._repository);
+
+  final ProductDetailRepository _repository;
+
+  Future<bool> call() => _repository.checkAnalysisHealth();
+}
+
 class TriggerProductAnalysisUseCase {
   const TriggerProductAnalysisUseCase(this._repository);
 
