@@ -1,22 +1,32 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
-class ProductImageGallery extends StatefulWidget {
-  const ProductImageGallery({super.key, required this.imageUrls});
+class ProductImageGallery extends ConsumerStatefulWidget {
+  const ProductImageGallery({
+    super.key,
+    required this.productId,
+    required this.imageUrls,
+  });
 
+  final int productId;
   final List<String> imageUrls;
 
   @override
-  State<ProductImageGallery> createState() => _ProductImageGalleryState();
+  ConsumerState<ProductImageGallery> createState() =>
+      _ProductImageGalleryState();
 }
 
-class _ProductImageGalleryState extends State<ProductImageGallery> {
+class _ProductImageGalleryState extends ConsumerState<ProductImageGallery> {
   int _selectedIndex = 0;
   Timer? _autoSlideTimer;
+  Offset? _hoverPosition;
 
   @override
   void initState() {
@@ -54,24 +64,35 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
     return Column(
       children: [
         Stack(
+          clipBehavior: Clip.none,
           children: [
             GestureDetector(
               onTap: images.isNotEmpty
                   ? () =>
                         _showProductImageDialog(context, images, _selectedIndex)
                   : null,
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F7FB),
-                    borderRadius: AppRadius.large,
-                    border: Border.all(color: AppColors.border),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: AppRadius.large,
+              child: MouseRegion(
+                cursor: images.isNotEmpty
+                    ? SystemMouseCursors.zoomIn
+                    : MouseCursor.defer,
+                onHover: images.isNotEmpty
+                    ? (event) =>
+                          setState(() => _hoverPosition = event.localPosition)
+                    : null,
+                onExit: (_) => setState(() => _hoverPosition = null),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF5F7FB),
+                      borderRadius: AppRadius.large,
+                      border: Border.all(color: AppColors.border),
+                    ),
                     child: _selectedIndex < images.length
-                        ? AppNetworkImage(url: images[_selectedIndex])
+                        ? _ZoomableProductImage(
+                            url: images[_selectedIndex],
+                            hoverPosition: _hoverPosition,
+                          )
                         : const ColoredBox(color: AppColors.surfaceMuted),
                   ),
                 ),
@@ -80,7 +101,7 @@ class _ProductImageGalleryState extends State<ProductImageGallery> {
             Positioned(
               top: AppSpacing.sm,
               right: AppSpacing.sm,
-              child: _WishlistButton(),
+              child: _WishlistButton(productId: widget.productId),
             ),
             if (images.length > 1) ...[
               Positioned(
@@ -188,16 +209,149 @@ class _IndexIndicator extends StatelessWidget {
   }
 }
 
-class _WishlistButton extends StatefulWidget {
-  @override
-  State<_WishlistButton> createState() => _WishlistButtonState();
-}
+class _ZoomableProductImage extends StatelessWidget {
+  const _ZoomableProductImage({required this.url, required this.hoverPosition});
 
-class _WishlistButtonState extends State<_WishlistButton> {
-  bool _isFavorite = false;
+  final String url;
+  final Offset? hoverPosition;
 
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final position = hoverPosition;
+        final showZoom =
+            position != null && constraints.biggest.shortestSide > 220;
+        final lensSize = (constraints.biggest.shortestSide * 0.26)
+            .clamp(112.0, 148.0)
+            .toDouble();
+        final previewSize = (constraints.biggest.shortestSide * 0.62)
+            .clamp(260.0, 360.0)
+            .toDouble();
+        final canShowLeftPreview = constraints.maxWidth > previewSize + 72;
+        final alignment = position == null
+            ? Alignment.center
+            : Alignment(
+                (position.dx / constraints.maxWidth).clamp(0, 1) * 2 - 1,
+                (position.dy / constraints.maxHeight).clamp(0, 1) * 2 - 1,
+              );
+
+        return Stack(
+          clipBehavior: Clip.none,
+          fit: StackFit.expand,
+          children: [
+            ClipRRect(
+              borderRadius: AppRadius.large,
+              child: AppNetworkImage(url: url),
+            ),
+            if (showZoom) ...[
+              Positioned(
+                left: (position.dx - lensSize / 2).clamp(
+                  8,
+                  constraints.maxWidth - lensSize - 8,
+                ),
+                top: (position.dy - lensSize / 2).clamp(
+                  8,
+                  constraints.maxHeight - lensSize - 8,
+                ),
+                child: IgnorePointer(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.36),
+                      border: Border.all(color: Colors.white, width: 1.5),
+                      boxShadow: const [
+                        BoxShadow(color: Color(0x22000000), blurRadius: 10),
+                      ],
+                    ),
+                    child: SizedBox.square(dimension: lensSize),
+                  ),
+                ),
+              ),
+              _ZoomPreview(
+                url: url,
+                alignment: alignment,
+                size: previewSize,
+                left: canShowLeftPreview ? -previewSize - AppSpacing.md : null,
+                right: canShowLeftPreview ? null : AppSpacing.sm,
+                top: canShowLeftPreview ? 0 : null,
+                bottom: canShowLeftPreview ? null : AppSpacing.sm,
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _ZoomPreview extends StatelessWidget {
+  const _ZoomPreview({
+    required this.url,
+    required this.alignment,
+    required this.size,
+    required this.left,
+    required this.right,
+    required this.top,
+    required this.bottom,
+  });
+
+  final String url;
+  final Alignment alignment;
+  final double size;
+  final double? left;
+  final double? right;
+  final double? top;
+  final double? bottom;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: left,
+      right: right,
+      top: top,
+      bottom: bottom,
+      child: IgnorePointer(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: AppRadius.medium,
+            border: Border.all(color: Colors.white, width: 2),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x26000000),
+                blurRadius: 18,
+                offset: Offset(0, 8),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: AppRadius.medium,
+            child: SizedBox.square(
+              dimension: size,
+              child: Transform.scale(
+                scale: 2.8,
+                alignment: alignment,
+                child: AppNetworkImage(url: url),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _WishlistButton extends ConsumerWidget {
+  const _WishlistButton({required this.productId});
+
+  final int productId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncStatus = ref.watch(wishlistButtonProvider(productId));
+    final liked = asyncStatus.value ?? false;
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface.withValues(alpha: 0.9),
@@ -207,11 +361,24 @@ class _WishlistButtonState extends State<_WishlistButton> {
       child: SizedBox.square(
         dimension: 40,
         child: IconButton(
-          onPressed: () => setState(() => _isFavorite = !_isFavorite),
+          onPressed: asyncStatus.isLoading
+              ? null
+              : () {
+                  if (!isLoggedIn) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('로그인이 필요합니다.'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
+                    return;
+                  }
+                  ref.read(wishlistButtonProvider(productId).notifier).toggle();
+                },
           icon: Icon(
-            _isFavorite ? Icons.favorite : Icons.favorite_border,
+            liked ? Icons.favorite : Icons.favorite_border,
             size: 20,
-            color: _isFavorite ? Colors.red : AppColors.textSecondary,
+            color: liked ? Colors.red : AppColors.textSecondary,
           ),
           padding: EdgeInsets.zero,
         ),

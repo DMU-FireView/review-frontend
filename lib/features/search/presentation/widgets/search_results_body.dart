@@ -6,7 +6,6 @@ import 'package:re_view_front/features/search/presentation/view_models/search_re
 import 'package:re_view_front/features/search/presentation/widgets/filter_panel.dart';
 import 'package:re_view_front/features/search/presentation/widgets/result_column.dart';
 import 'package:re_view_front/features/search/presentation/widgets/search_summary.dart';
-import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/shimmer_box.dart';
@@ -215,9 +214,7 @@ class _SearchResultsSkeleton extends StatelessWidget {
     final isMobile =
         context.isMobile || MediaQuery.sizeOf(context).width < 1080;
 
-    return ShimmerWrapper(
-      child: isMobile ? _buildMobile() : _buildWide(),
-    );
+    return ShimmerWrapper(child: isMobile ? _buildMobile() : _buildWide());
   }
 
   Widget _buildWide() {
@@ -333,4 +330,3 @@ class _ResultsAreaSkeleton extends StatelessWidget {
     );
   }
 }
-

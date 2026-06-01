@@ -95,7 +95,11 @@ class WishlistProductCard extends StatelessWidget {
                   const SizedBox(height: AppSpacing.xs),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: Color(0xFFF59E0B), size: 13),
+                      const Icon(
+                        Icons.star,
+                        color: Color(0xFFF59E0B),
+                        size: 13,
+                      ),
                       const SizedBox(width: AppSpacing.xxs),
                       Text(
                         item.avgRating.toStringAsFixed(1),
@@ -110,11 +114,12 @@ class WishlistProductCard extends StatelessWidget {
                         child: Text(
                           '(리뷰 ${formatSearchCount(item.reviewCount)})',
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 11,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 11,
+                              ),
                         ),
                       ),
                     ],
@@ -137,12 +142,16 @@ class WishlistProductCard extends StatelessWidget {
                             ? const Center(
                                 child: SizedBox.square(
                                   dimension: 16,
-                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
                                 ),
                               )
                             : OutlinedButton(
                                 onPressed: onRemove,
-                                style: outlineHoverButtonStyle(padding: EdgeInsets.zero),
+                                style: outlineHoverButtonStyle(
+                                  padding: EdgeInsets.zero,
+                                ),
                                 child: const Icon(
                                   Icons.favorite,
                                   size: 18,
@@ -152,10 +161,23 @@ class WishlistProductCard extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.xs),
                       Expanded(
-                        child: ProductDetailButton(
-                          onPressed: () => context.goNamed(
-                            RouteNames.productDetail,
-                            pathParameters: {'id': item.productId.toString()},
+                        child: SizedBox(
+                          height: 36,
+                          child: OutlinedButton(
+                            onPressed: () => context.goNamed(
+                              RouteNames.productDetail,
+                              pathParameters: {'id': item.productId.toString()},
+                            ),
+                            style: outlineHoverButtonStyle(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sm,
+                              ),
+                            ),
+                            child: Text(
+                              '상품 보기',
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(fontWeight: FontWeight.w900),
+                            ),
                           ),
                         ),
                       ),
@@ -188,7 +210,11 @@ class _PriceDropBadge extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.trending_down_rounded, color: AppColors.error, size: 12),
+            const Icon(
+              Icons.trending_down_rounded,
+              color: AppColors.error,
+              size: 12,
+            ),
             const SizedBox(width: 2),
             Text(
               '가격 하락',
