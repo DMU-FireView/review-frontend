@@ -43,3 +43,21 @@ final homeDashboardViewModelProvider =
     NotifierProvider.autoDispose<HomeDashboardViewModel, HomeDashboardState>(
       HomeDashboardViewModel.new,
     );
+
+final refreshHomeDashboardOnEnterProvider =
+    NotifierProvider<RefreshHomeDashboardOnEnter, bool>(
+      RefreshHomeDashboardOnEnter.new,
+    );
+
+class RefreshHomeDashboardOnEnter extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  void request() {
+    state = true;
+  }
+
+  void consume() {
+    state = false;
+  }
+}
