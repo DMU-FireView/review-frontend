@@ -32,8 +32,7 @@ class OAuthCallbackViewModel extends Notifier<OAuthCallbackState> {
           tokenType: queryParams['tokenType'] ?? 'Bearer',
           email: queryParams['email'] ?? '',
           nickname: queryParams['nickname'] ?? '',
-          onboardingCompleted:
-              queryParams['onboardingCompleted'] == 'true',
+          onboardingCompleted: queryParams['onboarding'] != 'true',
         );
 
     if (!ref.mounted) return;
