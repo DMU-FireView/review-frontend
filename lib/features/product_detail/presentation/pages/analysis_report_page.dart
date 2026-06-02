@@ -409,8 +409,6 @@ class _ProductHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final (riskColor, _, riskLabel) = _resolveRisk(detail.rtiSummary.rtiScore);
-
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -498,16 +496,6 @@ class _ProductHeroCard extends StatelessWidget {
                                 color: AppColors.textTertiary,
                               ),
                             ),
-                    ),
-                    // RTI chip badge (bottom-left)
-                    Positioned(
-                      bottom: -12,
-                      left: 0,
-                      child: _RtiCircle(
-                        score: detail.rtiSummary.rtiScore,
-                        color: riskColor,
-                        label: riskLabel,
-                      ),
                     ),
                   ],
                 ),
@@ -651,15 +639,6 @@ class _ProductHeroCard extends StatelessWidget {
     return buf.toString();
   }
 
-  static (Color, Color, String) _resolveRisk(int score) {
-    if (score >= 70) {
-      return (AppColors.success, AppColors.successSoft, '신뢰');
-    } else if (score >= 40) {
-      return (AppColors.warning, AppColors.warningSoft, '의심');
-    } else {
-      return (AppColors.error, AppColors.errorSoft, '위험');
-    }
-  }
 }
 
 class _MetaChip extends StatelessWidget {
@@ -689,63 +668,6 @@ class _MetaChip extends StatelessWidget {
   }
 }
 
-class _RtiCircle extends StatelessWidget {
-  const _RtiCircle({
-    required this.score,
-    required this.color,
-    required this.label,
-  });
-
-  final int score;
-  final Color color;
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(100),
-        border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(Icons.verified_user_outlined, size: 11, color: color),
-          const SizedBox(width: 4),
-          Text(
-            'RTI $score',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w900,
-              color: color,
-              height: 1,
-            ),
-          ),
-          if (label.isNotEmpty) ...[
-            const SizedBox(width: 4),
-            Container(
-              width: 1,
-              height: 10,
-              color: color.withValues(alpha: 0.3),
-            ),
-            const SizedBox(width: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.w600,
-                color: color,
-                height: 1,
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Trust Status Card (Right)
@@ -1075,19 +997,17 @@ class _AnalysisSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Find top reason pattern
     final reasonCounts = <String, int>{};
     for (final r in reviews) {
       for (final s in r.reasons) {
         if (s.isNotEmpty) reasonCounts[s] = (reasonCounts[s] ?? 0) + 1;
       }
     }
-    final topReason = reasonCounts.isEmpty
-        ? '-'
-        : (reasonCounts.entries.toList()
-              ..sort((a, b) => b.value.compareTo(a.value)))
-            .first
-            .key;
+    final topReasons = (reasonCounts.entries.toList()
+          ..sort((a, b) => b.value.compareTo(a.value)))
+        .take(4)
+        .map((e) => e.key)
+        .toList();
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -1115,30 +1035,77 @@ class _AnalysisSummaryCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.md),
-            _SummaryRow(
-              label: '분석 리뷰',
-              value: '${rtiSummary.analyzedReviewCount}개',
+            // Stat grid 2x2
+            Row(
+              children: [
+                Expanded(
+                  child: _StatTile(
+                    label: '분석 리뷰',
+                    value: '${rtiSummary.analyzedReviewCount}개',
+                    icon: Icons.reviews_outlined,
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: _StatTile(
+                    label: '평균 RTI',
+                    value: '${rtiSummary.rtiScore}점',
+                    icon: Icons.verified_user_outlined,
+                  ),
+                ),
+              ],
             ),
-            _SummaryRow(
-              label: '평균 RTI',
-              value: '${rtiSummary.rtiScore}점',
+            const SizedBox(height: AppSpacing.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: _StatTile(
+                    label: '위험 리뷰',
+                    value: '$dangerCount개',
+                    icon: Icons.warning_amber_outlined,
+                    valueColor: AppColors.error,
+                    iconColor: AppColors.error,
+                    bgColor: AppColors.error.withValues(alpha: 0.06),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: _StatTile(
+                    label: '신뢰 리뷰',
+                    value: '$safeCount개',
+                    icon: Icons.check_circle_outline,
+                    valueColor: AppColors.success,
+                    iconColor: AppColors.success,
+                    bgColor: AppColors.success.withValues(alpha: 0.06),
+                  ),
+                ),
+              ],
             ),
-            _SummaryRow(
-              label: '위험 리뷰',
-              value: '$dangerCount개',
-              valueColor: AppColors.error,
+            const SizedBox(height: AppSpacing.md),
+            const Divider(color: AppColors.border, height: 1),
+            const SizedBox(height: AppSpacing.md),
+            Text(
+              '주요 신호',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w700,
+              ),
             ),
-            _SummaryRow(
-              label: '신뢰 리뷰',
-              value: '$safeCount개',
-              valueColor: AppColors.success,
-            ),
-            _SummaryRow(
-              label: '주요 신호',
-              value: topReason.length > 12
-                  ? '${topReason.substring(0, 12)}…'
-                  : topReason,
-            ),
+            const SizedBox(height: AppSpacing.xs),
+            topReasons.isEmpty
+                ? Text(
+                    '분석 신호 없음',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppColors.textTertiary,
+                    ),
+                  )
+                : Wrap(
+                    spacing: AppSpacing.xs,
+                    runSpacing: AppSpacing.xs,
+                    children: topReasons
+                        .map((r) => _SignalChip(label: r))
+                        .toList(),
+                  ),
           ],
         ),
       ),
@@ -1146,36 +1113,98 @@ class _AnalysisSummaryCard extends StatelessWidget {
   }
 }
 
-class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({
+class _StatTile extends StatelessWidget {
+  const _StatTile({
     required this.label,
     required this.value,
+    required this.icon,
     this.valueColor,
+    this.iconColor,
+    this.bgColor,
   });
 
   final String label;
   final String value;
+  final IconData icon;
   final Color? valueColor;
+  final Color? iconColor;
+  final Color? bgColor;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: bgColor ?? AppColors.surfaceMuted,
+        borderRadius: AppRadius.small,
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textSecondary,
+          Row(
+            children: [
+              Icon(
+                icon,
+                size: 13,
+                color: iconColor ?? AppColors.textTertiary,
               ),
-            ),
+              const SizedBox(width: 4),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
+          const SizedBox(height: 4),
           Text(
             value,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: valueColor ?? AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SignalChip extends StatelessWidget {
+  const _SignalChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.info_outline,
+            size: 10,
+            color: AppColors.textTertiary,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
