@@ -676,6 +676,7 @@ class PriceRangeSlider extends StatelessWidget {
                 inactiveTrackColor: Colors.transparent,
                 thumbColor: AppColors.surface,
                 overlayColor: AppColors.primary.withValues(alpha: 0.12),
+                overlayShape: const RoundSliderOverlayShape(overlayRadius: 8),
                 rangeThumbShape: const RoundRangeSliderThumbShape(
                   enabledThumbRadius: 8,
                   elevation: 0,
