@@ -498,52 +498,44 @@ class _RtiBadgeSmall extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: AppRadius.small,
+        borderRadius: BorderRadius.circular(100),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.verified_user_outlined, size: 11, color: color),
-                const SizedBox(width: 2),
-                Text(
-                  score > 0 ? 'RTI $score' : 'RTI -',
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 11,
-                  ),
-                ),
-              ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.verified_user_outlined, size: 11, color: color),
+          const SizedBox(width: 3),
+          Text(
+            score > 0 ? 'RTI $score' : 'RTI -',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w900,
+              fontSize: 11,
             ),
-            if (label.isNotEmpty)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: color,
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (hasDetail) ...[
-                  const SizedBox(width: 2),
-                  Icon(Icons.chevron_right, size: 10, color: color),
-                ],
-              ],
+          ),
+          if (label.isNotEmpty) ...[
+            const SizedBox(width: 4),
+            Container(width: 1, height: 9, color: color.withValues(alpha: 0.3)),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: color,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
-        ),
+          if (hasDetail) ...[
+            const SizedBox(width: 2),
+            Icon(Icons.chevron_right, size: 10, color: color),
+          ],
+        ],
       ),
     );
   }
