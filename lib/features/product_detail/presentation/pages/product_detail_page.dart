@@ -186,12 +186,18 @@ class _DetailContent extends StatelessWidget {
             ? _MobileAnalysisSection(
                 detail: detail,
                 isAnalyzing: isAnalyzing,
-                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => context.goNamed(
+                  RouteNames.analysisReport,
+                  pathParameters: {'id': detail.id.toString()},
+                ),
               )
             : _DesktopAnalysisSection(
                 detail: detail,
                 isAnalyzing: isAnalyzing,
-                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => context.goNamed(
+                  RouteNames.analysisReport,
+                  pathParameters: {'id': detail.id.toString()},
+                ),
               ),
         const SizedBox(height: AppSpacing.xl),
         _ProductTabBar(
@@ -429,42 +435,101 @@ class _MobileAnalysisSection extends StatelessWidget {
   }
 }
 
-class _AnalyzingBanner extends StatelessWidget {
+class _AnalyzingBanner extends StatefulWidget {
+  @override
+  State<_AnalyzingBanner> createState() => _AnalyzingBannerState();
+}
+
+class _AnalyzingBannerState extends State<_AnalyzingBanner>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _pulse;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1400),
+    )..repeat(reverse: true);
+    _pulse = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sm,
-        vertical: AppSpacing.xs,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.primaryLight,
-        borderRadius: AppRadius.small,
-        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(
-            width: 12,
-            height: 12,
-            child: CircularProgressIndicator(
-              strokeWidth: 1.5,
-              color: AppColors.primary,
+    return AnimatedBuilder(
+      animation: _pulse,
+      builder: (context, _) {
+        return Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(bottom: AppSpacing.md),
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppColors.primary.withValues(alpha: 0.09 + _pulse.value * 0.04),
+                AppColors.primary.withValues(alpha: 0.04),
+              ],
+            ),
+            borderRadius: AppRadius.medium,
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.35),
             ),
           ),
-          const SizedBox(width: AppSpacing.xs),
-          Text(
-            'AI 리뷰 분석 중...',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w600,
-              fontSize: 11,
-            ),
+          child: Row(
+            children: [
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppColors.primary
+                      .withValues(alpha: 0.1 + _pulse.value * 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'AI 리뷰 분석 진행 중',
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Re:view AI가 리뷰를 실시간 분석하고 있습니다. 완료 후 신뢰도 점수가 자동으로 업데이트됩니다.',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.primary.withValues(alpha: 0.75),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

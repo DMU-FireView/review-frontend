@@ -12,6 +12,7 @@ abstract final class RoutePaths {
   static const passwordReset = '/password-reset';
   static const wishlist = '/wishlist';
   static const cart = '/cart';
+  static const analysisReport = '/product/:id/analysis';
 }
 
 abstract final class RouteNames {
@@ -28,4 +29,5 @@ abstract final class RouteNames {
   static const passwordReset = 'passwordReset';
   static const wishlist = 'wishlist';
   static const cart = 'cart';
+  static const analysisReport = 'analysisReport';
 }

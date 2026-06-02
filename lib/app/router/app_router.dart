@@ -12,6 +12,7 @@ import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/my_page/presentation/pages/my_page.dart';
 import 'package:re_view_front/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:re_view_front/features/product_detail/presentation/pages/analysis_report_page.dart';
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
@@ -120,6 +121,15 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final idStr = state.pathParameters['id'] ?? '0';
           final id = int.tryParse(idStr) ?? 0;
           return _buildTransitionPage(state, ProductDetailPage(productId: id));
+        },
+      ),
+      GoRoute(
+        path: RoutePaths.analysisReport,
+        name: RouteNames.analysisReport,
+        pageBuilder: (context, state) {
+          final idStr = state.pathParameters['id'] ?? '0';
+          final id = int.tryParse(idStr) ?? 0;
+          return _buildTransitionPage(state, AnalysisReportPage(productId: id));
         },
       ),
       GoRoute(
