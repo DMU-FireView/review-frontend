@@ -1,3 +1,4 @@
+import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
 
 class ProductAnalysisResult {
@@ -8,6 +9,10 @@ class ProductAnalysisResult {
     required this.dangerCount,
     required this.reviewDetails,
     this.trend = const [],
+    this.realReviewRatio = 0.0,
+    this.adSuspicionRatio = 0.0,
+    this.repetitiveRatio = 0.0,
+    this.trustSignals = const [],
   });
 
   final double averageRti;
@@ -16,6 +21,10 @@ class ProductAnalysisResult {
   final int dangerCount;
   final Map<int, ReviewRtiDetail> reviewDetails;
   final List<AnalysisTrendPoint> trend;
+  final double realReviewRatio;
+  final double adSuspicionRatio;
+  final double repetitiveRatio;
+  final List<TrustSignal> trustSignals;
 }
 
 class AnalysisTrendPoint {

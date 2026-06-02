@@ -43,9 +43,37 @@ class ProductDetailSuccess extends ProductDetailState {
     int? warnCount,
     int? dangerCount,
     List<AnalysisTrendPoint>? trend,
+    RtiSummary? rtiSummary,
+    List<TrustSignal>? trustSignals,
   }) {
+    final updatedDetail = (rtiSummary != null || trustSignals != null)
+        ? ProductDetail(
+            id: detail.id,
+            name: detail.name,
+            brand: detail.brand,
+            sellerName: detail.sellerName,
+            isOfficialSeller: detail.isOfficialSeller,
+            imageUrls: detail.imageUrls,
+            price: detail.price,
+            deliveryInfo: detail.deliveryInfo,
+            category: detail.category,
+            categoryDisplayName: detail.categoryDisplayName,
+            breadcrumbs: detail.breadcrumbs,
+            avgRating: detail.avgRating,
+            reviewCount: detail.reviewCount,
+            qaCount: detail.qaCount,
+            avgRti: detail.avgRti,
+            rtiGrade: detail.rtiGrade,
+            rtiColor: detail.rtiColor,
+            specChips: detail.specChips,
+            priceComparisons: detail.priceComparisons,
+            totalSellerCount: detail.totalSellerCount,
+            rtiSummary: rtiSummary ?? detail.rtiSummary,
+            trustSignals: trustSignals ?? detail.trustSignals,
+          )
+        : detail;
     return ProductDetailSuccess(
-      detail: detail,
+      detail: updatedDetail,
       reviews: reviews ?? this.reviews,
       reviewInsight: reviewInsight,
       similarProducts: similarProducts,
