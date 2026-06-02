@@ -499,10 +499,10 @@ class _ProductHeroCard extends StatelessWidget {
                               ),
                             ),
                     ),
-                    // RTI circle badge (bottom-left)
+                    // RTI chip badge (bottom-left)
                     Positioned(
-                      bottom: -8,
-                      left: -8,
+                      bottom: -12,
+                      left: 0,
                       child: _RtiCircle(
                         score: detail.rtiSummary.rtiScore,
                         color: riskColor,
@@ -635,35 +635,6 @@ class _ProductHeroCard extends StatelessWidget {
                 fontWeight: FontWeight.w900,
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
-            // Action buttons
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton.icon(
-                    onPressed: onBack,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.sm,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: AppRadius.medium,
-                      ),
-                    ),
-                    icon: const Icon(Icons.arrow_back_ios, size: 13),
-                    label: const Text(
-                      '상품 상세로 돌아가기',
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
           ],
         ),
       ),
@@ -732,34 +703,44 @@ class _RtiCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 48,
-      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
         color: color.withValues(alpha: 0.1),
-        border: Border.all(color: color, width: 2),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
+          Icon(Icons.verified_user_outlined, size: 11, color: color),
+          const SizedBox(width: 4),
           Text(
-            score.toString(),
+            'RTI $score',
             style: TextStyle(
-              fontSize: 15,
+              fontSize: 11,
               fontWeight: FontWeight.w900,
               color: color,
               height: 1,
             ),
           ),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 8,
-              fontWeight: FontWeight.w700,
-              color: color.withValues(alpha: 0.85),
-              height: 1.2,
+          if (label.isNotEmpty) ...[
+            const SizedBox(width: 4),
+            Container(
+              width: 1,
+              height: 10,
+              color: color.withValues(alpha: 0.3),
             ),
-          ),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: color,
+                height: 1,
+              ),
+            ),
+          ],
         ],
       ),
     );
@@ -2156,43 +2137,38 @@ class _RtiBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 44,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xxs,
-        vertical: AppSpacing.xxs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.08),
-        borderRadius: AppRadius.small,
-        border: Border.all(color: color.withValues(alpha: 0.25)),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
-      child: Column(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Icon(Icons.verified_user_outlined, size: 11, color: color),
+          const SizedBox(width: 3),
           Text(
-            'RTI',
+            'RTI $score',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w600,
-              fontSize: 9,
-            ),
-          ),
-          Text(
-            score.toString(),
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: color,
               fontWeight: FontWeight.w900,
+              fontSize: 11,
             ),
           ),
-          if (label.isNotEmpty)
+          if (label.isNotEmpty) ...[
+            const SizedBox(width: 4),
+            Container(width: 1, height: 9, color: color.withValues(alpha: 0.3)),
+            const SizedBox(width: 4),
             Text(
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: 9,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
               ),
             ),
+          ],
         ],
       ),
     );
