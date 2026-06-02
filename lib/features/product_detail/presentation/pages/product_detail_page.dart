@@ -186,12 +186,18 @@ class _DetailContent extends StatelessWidget {
             ? _MobileAnalysisSection(
                 detail: detail,
                 isAnalyzing: isAnalyzing,
-                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => context.goNamed(
+                  RouteNames.analysisReport,
+                  pathParameters: {'id': detail.id.toString()},
+                ),
               )
             : _DesktopAnalysisSection(
                 detail: detail,
                 isAnalyzing: isAnalyzing,
-                onDetailPressed: () => onTabChanged(_ProductDetailTab.review),
+                onDetailPressed: () => context.goNamed(
+                  RouteNames.analysisReport,
+                  pathParameters: {'id': detail.id.toString()},
+                ),
               ),
         const SizedBox(height: AppSpacing.xl),
         _ProductTabBar(
