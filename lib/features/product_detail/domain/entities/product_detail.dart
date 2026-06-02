@@ -108,6 +108,29 @@ class RtiSummary {
   final String repetitionLabel;
   final String summaryMessage;
   final int analyzedReviewCount;
+
+  RtiSummary copyWith({
+    double? realReviewRatio,
+    String? realReviewLabel,
+    double? adSuspicionRatio,
+    String? adSuspicionLabel,
+    double? repetitionRatio,
+    String? repetitionLabel,
+  }) {
+    return RtiSummary(
+      rtiScore: rtiScore,
+      rtiLabel: rtiLabel,
+      rtiSubLabel: rtiSubLabel,
+      realReviewRatio: realReviewRatio ?? this.realReviewRatio,
+      realReviewLabel: realReviewLabel ?? this.realReviewLabel,
+      adSuspicionRatio: adSuspicionRatio ?? this.adSuspicionRatio,
+      adSuspicionLabel: adSuspicionLabel ?? this.adSuspicionLabel,
+      repetitionRatio: repetitionRatio ?? this.repetitionRatio,
+      repetitionLabel: repetitionLabel ?? this.repetitionLabel,
+      summaryMessage: summaryMessage,
+      analyzedReviewCount: analyzedReviewCount,
+    );
+  }
 }
 
 class TrustSignal {
