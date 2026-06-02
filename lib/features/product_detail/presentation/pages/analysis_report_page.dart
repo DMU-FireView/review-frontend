@@ -132,6 +132,27 @@ class _ReportContent extends StatelessWidget {
     final topPatterns = _aggregateTopPatterns(reviews);
     final sampleReviews = reviews.take(5).toList();
 
+    // Derive distribution from reviews' rtiScore when analysis counts not yet available
+    final int effectiveSafe;
+    final int effectiveWarn;
+    final int effectiveDanger;
+    if (safeCount + warnCount + dangerCount == 0 && reviews.isNotEmpty) {
+      int s = 0, w = 0, d = 0;
+      for (final r in reviews) {
+        if (r.rtiScore <= 0) continue;
+        if (r.rtiScore >= 70) s++;
+        else if (r.rtiScore >= 40) w++;
+        else d++;
+      }
+      effectiveSafe = s;
+      effectiveWarn = w;
+      effectiveDanger = d;
+    } else {
+      effectiveSafe = safeCount;
+      effectiveWarn = warnCount;
+      effectiveDanger = dangerCount;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -140,16 +161,18 @@ class _ReportContent extends StatelessWidget {
         if (isNarrow)
           _MobileHeroSection(
             detail: detail,
-            safeCount: safeCount,
-            warnCount: warnCount,
-            dangerCount: dangerCount,
+            safeCount: effectiveSafe,
+            warnCount: effectiveWarn,
+            dangerCount: effectiveDanger,
+            isAnalyzing: isAnalyzing,
           )
         else
           _DesktopHeroSection(
             detail: detail,
-            safeCount: safeCount,
-            warnCount: warnCount,
-            dangerCount: dangerCount,
+            safeCount: effectiveSafe,
+            warnCount: effectiveWarn,
+            dangerCount: effectiveDanger,
+            isAnalyzing: isAnalyzing,
           ),
         const SizedBox(height: AppSpacing.xl),
         _CategorySection(categoryDisplayName: detail.categoryDisplayName),
@@ -223,12 +246,14 @@ class _DesktopHeroSection extends StatelessWidget {
     required this.safeCount,
     required this.warnCount,
     required this.dangerCount,
+    required this.isAnalyzing,
   });
 
   final ProductDetail detail;
   final int safeCount;
   final int warnCount;
   final int dangerCount;
+  final bool isAnalyzing;
 
   @override
   Widget build(BuildContext context) {
@@ -236,7 +261,7 @@ class _DesktopHeroSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 320,
+          width: 300,
           child: _ProductSummaryCard(detail: detail),
         ),
         const SizedBox(width: AppSpacing.lg),
@@ -246,6 +271,7 @@ class _DesktopHeroSection extends StatelessWidget {
             safeCount: safeCount,
             warnCount: warnCount,
             dangerCount: dangerCount,
+            isAnalyzing: isAnalyzing,
           ),
         ),
       ],
@@ -259,12 +285,14 @@ class _MobileHeroSection extends StatelessWidget {
     required this.safeCount,
     required this.warnCount,
     required this.dangerCount,
+    required this.isAnalyzing,
   });
 
   final ProductDetail detail;
   final int safeCount;
   final int warnCount;
   final int dangerCount;
+  final bool isAnalyzing;
 
   @override
   Widget build(BuildContext context) {
@@ -277,6 +305,7 @@ class _MobileHeroSection extends StatelessWidget {
           safeCount: safeCount,
           warnCount: warnCount,
           dangerCount: dangerCount,
+          isAnalyzing: isAnalyzing,
         ),
       ],
     );
@@ -430,123 +459,212 @@ class _RiskSummaryCard extends StatelessWidget {
     required this.safeCount,
     required this.warnCount,
     required this.dangerCount,
+    required this.isAnalyzing,
   });
 
   final RtiSummary rtiSummary;
   final int safeCount;
   final int warnCount;
   final int dangerCount;
+  final bool isAnalyzing;
 
   @override
   Widget build(BuildContext context) {
     final total = safeCount + warnCount + dangerCount;
     final (riskColor, riskBg, riskLabel) = _resolveRisk(rtiSummary.rtiScore);
+    final progress = (rtiSummary.rtiScore / 100).clamp(0.0, 1.0);
 
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: AppRadius.medium,
         border: Border.all(color: AppColors.border),
+        boxShadow: const [
+          BoxShadow(
+            color: AppColors.shadow,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DecoratedBox(
-              decoration: BoxDecoration(
-                color: riskBg,
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xs,
-                  vertical: AppSpacing.xxs,
-                ),
-                child: Text(
-                  riskLabel,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: riskColor,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── 점수 헤더 (컬러 배경) ──────────────────────────
+          Container(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.lg,
+              AppSpacing.md,
+            ),
+            decoration: BoxDecoration(
+              color: riskBg,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppRadius.md),
               ),
             ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  rtiSummary.rtiScore.toString(),
-                  style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w900,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'RTI 신뢰 점수',
+                            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                              color: riskColor.withValues(alpha: 0.75),
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.xxs),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.baseline,
+                            textBaseline: TextBaseline.alphabetic,
+                            children: [
+                              Text(
+                                rtiSummary.rtiScore.toString(),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall
+                                    ?.copyWith(
+                                      color: riskColor,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                              ),
+                              const SizedBox(width: 4),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Text(
+                                  '/ 100',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(
+                                        color: riskColor.withValues(alpha: 0.55),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: riskColor.withValues(alpha: 0.12),
+                        borderRadius: BorderRadius.circular(AppRadius.sm),
+                        border: Border.all(
+                          color: riskColor.withValues(alpha: 0.3),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: AppSpacing.xxs + 2,
+                        ),
+                        child: Text(
+                          riskLabel,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: riskColor,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                // 점수 프로그레스 바
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    color: riskColor,
+                    backgroundColor: riskColor.withValues(alpha: 0.15),
+                    minHeight: 7,
                   ),
                 ),
-                const SizedBox(width: AppSpacing.xxs),
+                const SizedBox(height: AppSpacing.xs),
                 Text(
-                  '/ 100',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppColors.textTertiary,
+                  rtiSummary.summaryMessage,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: riskColor.withValues(alpha: 0.7),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.xxs),
-            Text(
-              rtiSummary.summaryMessage,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+          ),
+
+          // ── 분포 섹션 ───────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      '리뷰 신뢰도 분포',
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (isAnalyzing && total == 0) ...[
+                      const SizedBox(width: AppSpacing.xs),
+                      const SizedBox(
+                        width: 10,
+                        height: 10,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 1.5,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'AI 분석 중',
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                _DistributionBar(
+                  label: '안전',
+                  count: safeCount,
+                  total: total,
+                  color: AppColors.success,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                _DistributionBar(
+                  label: '의심',
+                  count: warnCount,
+                  total: total,
+                  color: AppColors.warning,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                _DistributionBar(
+                  label: '위험',
+                  count: dangerCount,
+                  total: total,
+                  color: AppColors.error,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.lg),
-            if (total > 0) ...[
-              _DistributionBar(
-                label: '안전',
-                count: safeCount,
-                total: total,
-                color: AppColors.success,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _DistributionBar(
-                label: '의심',
-                count: warnCount,
-                total: total,
-                color: AppColors.warning,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _DistributionBar(
-                label: '위험',
-                count: dangerCount,
-                total: total,
-                color: AppColors.error,
-              ),
-            ] else ...[
-              _DistributionBar(
-                label: '안전',
-                count: 0,
-                total: 1,
-                color: AppColors.success,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _DistributionBar(
-                label: '의심',
-                count: 0,
-                total: 1,
-                color: AppColors.warning,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              _DistributionBar(
-                label: '위험',
-                count: 0,
-                total: 1,
-                color: AppColors.error,
-              ),
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -583,62 +701,46 @@ class _DistributionBar extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 32,
+          width: 30,
           child: Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w700,
               fontSize: 11,
             ),
           ),
         ),
         const SizedBox(width: AppSpacing.xs),
         Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              return Stack(
-                children: [
-                  Container(
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.border,
-                      borderRadius: BorderRadius.circular(999),
-                    ),
-                  ),
-                  FractionallySizedBox(
-                    widthFactor: pct.clamp(0.0, 1.0),
-                    child: Container(
-                      height: 8,
-                      decoration: BoxDecoration(
-                        color: color,
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: pct.clamp(0.0, 1.0),
+              color: color,
+              backgroundColor: color.withValues(alpha: 0.12),
+              minHeight: 8,
+            ),
           ),
         ),
-        const SizedBox(width: AppSpacing.xs),
+        const SizedBox(width: AppSpacing.sm),
         SizedBox(
-          width: 40,
+          width: 36,
           child: Text(
             pctLabel,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-              fontSize: 11,
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w800,
+              fontSize: 12,
             ),
             textAlign: TextAlign.end,
           ),
         ),
         const SizedBox(width: AppSpacing.xxs),
         SizedBox(
-          width: 28,
+          width: 32,
           child: Text(
-            '($count)',
+            '${count}개',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textTertiary,
               fontSize: 10,
