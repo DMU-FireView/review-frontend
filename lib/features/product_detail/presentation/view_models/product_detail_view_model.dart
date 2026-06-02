@@ -112,6 +112,27 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
           );
         }).toList();
 
+        // Compute fallback ratios from reviews when API returns zeros
+        var realRR = analysis.realReviewRatio;
+        var adSR = analysis.adSuspicionRatio;
+        var repR = analysis.repetitiveRatio;
+
+        if (realRR == 0.0 && adSR == 0.0 && repR == 0.0) {
+          final scored = enrichedReviews.where((r) => r.rtiScore > 0).toList();
+          final total = scored.length;
+          if (total > 0) {
+            realRR = scored.where((r) => r.rtiScore >= 70).length / total * 100;
+            adSR = scored
+                .where((r) => r.reasons.any(
+                  (s) => s.contains('광고') || s.contains('체험') || s.contains('협찬')))
+                .length / total * 100;
+            repR = scored
+                .where((r) => r.reasons.any(
+                  (s) => s.contains('반복') || s.contains('유사')))
+                .length / total * 100;
+          }
+        }
+
         if (ref.mounted) {
           state = current.copyWith(
             reviews: enrichedReviews,
@@ -121,12 +142,12 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
             dangerCount: analysis.dangerCount,
             trend: analysis.trend,
             rtiSummary: current.detail.rtiSummary.copyWith(
-              realReviewRatio: analysis.realReviewRatio / 100,
-              realReviewLabel: '${analysis.realReviewRatio.toStringAsFixed(1)}%',
-              adSuspicionRatio: analysis.adSuspicionRatio / 100,
-              adSuspicionLabel: '${analysis.adSuspicionRatio.toStringAsFixed(1)}%',
-              repetitionRatio: analysis.repetitiveRatio / 100,
-              repetitionLabel: '${analysis.repetitiveRatio.toStringAsFixed(1)}%',
+              realReviewRatio: realRR / 100,
+              realReviewLabel: '${realRR.toStringAsFixed(1)}%',
+              adSuspicionRatio: adSR / 100,
+              adSuspicionLabel: '${adSR.toStringAsFixed(1)}%',
+              repetitionRatio: repR / 100,
+              repetitionLabel: '${repR.toStringAsFixed(1)}%',
             ),
             trustSignals: analysis.trustSignals,
           );
