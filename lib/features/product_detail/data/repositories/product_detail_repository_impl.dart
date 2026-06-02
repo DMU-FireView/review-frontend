@@ -82,6 +82,18 @@ class ProductDetailRepositoryImpl implements ProductDetailRepository {
           warnCount: dto.warnCount,
           dangerCount: dto.dangerCount,
           reviewDetails: dto.toReviewRtiDetailMap(),
+          trend: dto.trend
+              .map(
+                (t) => AnalysisTrendPoint(
+                  date: t.date,
+                  averageRti: t.averageRti,
+                  reviewCount: t.reviewCount,
+                  safeCount: t.safeCount,
+                  warnCount: t.warnCount,
+                  dangerCount: t.dangerCount,
+                ),
+              )
+              .toList(),
         ),
       );
     } on ApiResponseException catch (error) {

@@ -1,4 +1,5 @@
 import 'package:re_view_front/core/error/failure.dart';
+import 'package:re_view_front/features/product_detail/domain/entities/product_analysis_result.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_insight.dart';
@@ -22,6 +23,7 @@ class ProductDetailSuccess extends ProductDetailState {
     this.safeCount = 0,
     this.warnCount = 0,
     this.dangerCount = 0,
+    this.trend = const [],
   });
 
   final ProductDetail detail;
@@ -32,6 +34,7 @@ class ProductDetailSuccess extends ProductDetailState {
   final int safeCount;
   final int warnCount;
   final int dangerCount;
+  final List<AnalysisTrendPoint> trend;
 
   ProductDetailSuccess copyWith({
     List<ProductReview>? reviews,
@@ -39,6 +42,7 @@ class ProductDetailSuccess extends ProductDetailState {
     int? safeCount,
     int? warnCount,
     int? dangerCount,
+    List<AnalysisTrendPoint>? trend,
   }) {
     return ProductDetailSuccess(
       detail: detail,
@@ -49,6 +53,7 @@ class ProductDetailSuccess extends ProductDetailState {
       safeCount: safeCount ?? this.safeCount,
       warnCount: warnCount ?? this.warnCount,
       dangerCount: dangerCount ?? this.dangerCount,
+      trend: trend ?? this.trend,
     );
   }
 }
