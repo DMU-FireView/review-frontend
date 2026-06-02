@@ -94,6 +94,10 @@ class ProductDetailRepositoryImpl implements ProductDetailRepository {
                 ),
               )
               .toList(),
+          realReviewRatio: dto.realReviewRatio,
+          adSuspicionRatio: dto.adSuspicionRatio,
+          repetitiveRatio: dto.repetitiveRatio,
+          trustSignals: dto.trustSignals.map((s) => s.toEntity()).toList(),
         ),
       );
     } on ApiResponseException catch (error) {
