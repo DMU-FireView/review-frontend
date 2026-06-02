@@ -33,5 +33,5 @@
       "destination": "/index.html"
     }
   ],
-  "buildCommand": "flutter build web --release"
+  "buildCommand": "bash build.sh"
 }
