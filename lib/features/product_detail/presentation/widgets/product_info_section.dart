@@ -87,59 +87,39 @@ class _RtiBadgeLarge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    final label = _rtiLabel(score);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.small,
-        border: Border.all(color: AppColors.border),
+        color: color.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(100),
+        border: Border.all(color: color.withValues(alpha: 0.35), width: 1),
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
-          vertical: AppSpacing.xs,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xxs),
-                Text(
-                  'RTI $score',
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xxs),
-                const Icon(
-                  Icons.info_outline,
-                  size: 13,
-                  color: AppColors.textTertiary,
-                ),
-              ],
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.verified_user_outlined, size: 13, color: color),
+          const SizedBox(width: 5),
+          Text(
+            'RTI $score',
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w900,
+              fontSize: 12,
             ),
-            const SizedBox(height: 2),
-            Text(
-              _rtiLabel(score),
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: color,
-                fontWeight: FontWeight.w700,
-                fontSize: 11,
-              ),
+          ),
+          const SizedBox(width: 6),
+          Container(width: 1, height: 11, color: color.withValues(alpha: 0.3)),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: color,
+              fontWeight: FontWeight.w600,
+              fontSize: 11,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
