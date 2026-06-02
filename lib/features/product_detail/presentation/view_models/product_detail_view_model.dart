@@ -120,6 +120,15 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
             warnCount: analysis.warnCount,
             dangerCount: analysis.dangerCount,
             trend: analysis.trend,
+            rtiSummary: current.detail.rtiSummary.copyWith(
+              realReviewRatio: analysis.realReviewRatio / 100,
+              realReviewLabel: '${analysis.realReviewRatio.toStringAsFixed(1)}%',
+              adSuspicionRatio: analysis.adSuspicionRatio / 100,
+              adSuspicionLabel: '${analysis.adSuspicionRatio.toStringAsFixed(1)}%',
+              repetitionRatio: analysis.repetitiveRatio / 100,
+              repetitionLabel: '${analysis.repetitiveRatio.toStringAsFixed(1)}%',
+            ),
+            trustSignals: analysis.trustSignals,
           );
         }
       },
