@@ -1,3 +1,4 @@
+import 'package:re_view_front/features/product_detail/domain/entities/product_detail.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
 
 class ProductAnalysisDto {
@@ -11,6 +12,10 @@ class ProductAnalysisDto {
     required this.dangerCount,
     required this.reviews,
     required this.trend,
+    required this.realReviewRatio,
+    required this.adSuspicionRatio,
+    required this.repetitiveRatio,
+    required this.trustSignals,
   });
 
   final String productId;
@@ -22,10 +27,15 @@ class ProductAnalysisDto {
   final int dangerCount;
   final List<ReviewAnalysisItemDto> reviews;
   final List<AnalysisTrendItemDto> trend;
+  final double realReviewRatio;
+  final double adSuspicionRatio;
+  final double repetitiveRatio;
+  final List<TrustSignalDto> trustSignals;
 
   factory ProductAnalysisDto.fromJson(Map<String, dynamic> json) {
     final rawReviews = json['reviews'] as List? ?? [];
     final rawTrend = json['trend'] as List? ?? [];
+    final rawSignals = json['trustSignals'] as List? ?? [];
     return ProductAnalysisDto(
       productId: json['productId']?.toString() ?? '',
       averageRti: (json['averageRti'] as num?)?.toDouble() ?? 0.0,
@@ -42,6 +52,12 @@ class ProductAnalysisDto {
             (e) => AnalysisTrendItemDto.fromJson(e as Map<String, dynamic>),
           )
           .toList(),
+      realReviewRatio: (json['realReviewRatio'] as num?)?.toDouble() ?? 0.0,
+      adSuspicionRatio: (json['adSuspicionRatio'] as num?)?.toDouble() ?? 0.0,
+      repetitiveRatio: (json['repetitiveRatio'] as num?)?.toDouble() ?? 0.0,
+      trustSignals: rawSignals
+          .map((e) => TrustSignalDto.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
   }
 
@@ -57,24 +73,50 @@ class ProductAnalysisDto {
   }
 }
 
+class TrustSignalDto {
+  const TrustSignalDto({
+    required this.label,
+    required this.value,
+    required this.isPositive,
+  });
+
+  final String label;
+  final String value;
+  final bool isPositive;
+
+  factory TrustSignalDto.fromJson(Map<String, dynamic> json) {
+    return TrustSignalDto(
+      label: json['label'] as String? ?? '',
+      value: json['value'] as String? ?? '',
+      isPositive: json['isPositive'] as bool? ?? false,
+    );
+  }
+
+  TrustSignal toEntity() => TrustSignal(
+        label: label,
+        value: value,
+        isPositive: isPositive,
+      );
+}
+
 class ReviewAnalysisItemDto {
   const ReviewAnalysisItemDto({
     required this.reviewId,
-    required this.content,
-    required this.author,
-    required this.date,
     required this.rti,
     required this.level,
     required this.textScore,
     required this.behaviorScore,
     required this.networkScore,
     required this.reasons,
+    this.content,
+    this.author,
+    this.date,
   });
 
   final String reviewId;
-  final String content;
-  final String author;
-  final String date;
+  final String? content;
+  final String? author;
+  final String? date;
   final int rti;
   final String level;
   final int textScore;
@@ -86,9 +128,9 @@ class ReviewAnalysisItemDto {
     final rawReasons = json['reasons'] as List? ?? [];
     return ReviewAnalysisItemDto(
       reviewId: json['reviewId']?.toString() ?? '',
-      content: json['content'] as String? ?? '',
-      author: json['author'] as String? ?? '',
-      date: json['date'] as String? ?? '',
+      content: json['content'] as String?,
+      author: json['author'] as String?,
+      date: json['date'] as String?,
       rti: (json['rti'] as num?)?.toInt() ?? 0,
       level: json['level'] as String? ?? 'safe',
       textScore: (json['textScore'] as num?)?.toInt() ?? 0,
@@ -145,55 +187,63 @@ class ReviewAnalysisItemDto {
   }
 
   static String _levelHexColor(String level) => switch (level.toLowerCase()) {
-    'safe' => '#22C55E',
-    'warn' || 'suspicious' => '#F59E0B',
-    'danger' => '#EF4444',
-    _ => '#6B7280',
-  };
+        'safe' => '#22C55E',
+        'warn' || 'suspicious' => '#F59E0B',
+        'danger' => '#EF4444',
+        _ => '#6B7280',
+      };
 
   static String _buildSummaryDescription(String level, int rti) =>
       switch (level.toLowerCase()) {
-        'safe' =>
-          'AI 분석 결과 신뢰도 높은 리뷰입니다. (RTI $rti)',
+        'safe' => 'AI 분석 결과 신뢰도 높은 리뷰입니다. (RTI $rti)',
         'warn' || 'suspicious' =>
           'AI 분석 결과 일부 의심 신호가 감지된 리뷰입니다. (RTI $rti)',
-        'danger' =>
-          'AI 분석 결과 신뢰도가 낮은 리뷰입니다. (RTI $rti)',
+        'danger' => 'AI 분석 결과 신뢰도가 낮은 리뷰입니다. (RTI $rti)',
         _ => 'AI 분석 결과입니다. (RTI $rti)',
       };
 
   static List<RtiSummaryTag> _buildSummaryTags(String level) =>
       switch (level.toLowerCase()) {
         'safe' => const [
-          RtiSummaryTag(label: '신뢰 리뷰', type: RtiTagType.positive),
-        ],
+            RtiSummaryTag(label: '신뢰 리뷰', type: RtiTagType.positive),
+          ],
         'warn' || 'suspicious' => const [
-          RtiSummaryTag(label: '의심 신호 감지', type: RtiTagType.info),
-        ],
+            RtiSummaryTag(label: '의심 신호 감지', type: RtiTagType.info),
+          ],
         'danger' => const [
-          RtiSummaryTag(label: '위험 리뷰', type: RtiTagType.warning),
-        ],
+            RtiSummaryTag(label: '위험 리뷰', type: RtiTagType.warning),
+          ],
         _ => const [],
       };
 
   static String _codeToDescription(String code) => switch (code) {
-    'NATURAL_TEXT' => '자연스러운 문체가 감지되었습니다.',
-    'EXCESSIVE_EXCLAMATION' => '과도한 느낌표 사용 패턴이 감지되었습니다.',
-    'REPETITIVE_PATTERN' => '반복적인 표현 패턴이 감지되었습니다.',
-    'VERIFIED_PURCHASE' => '구매 인증이 확인된 리뷰입니다.',
-    'ABNORMAL_TIMING' => '비정상적인 시점에 작성된 리뷰입니다.',
-    'SIMILAR_CONTENT' => '다른 리뷰와 유사한 내용이 포함되어 있습니다.',
-    'HIGH_STAR_ONLY' => '별점만 높고 내용이 부실한 리뷰입니다.',
-    _ => code,
-  };
+        'REPETITIVE_KEYWORD' => '반복 표현 패턴이 감지되었습니다.',
+        'PURCHASE_NOT_VERIFIED' => '구매 이력이 확인되지 않았습니다.',
+        'MULTIPLE_REVIEWS_SAME_DAY' => '동일 작성자의 같은 날짜 다수 리뷰 작성이 감지되었습니다.',
+        'NO_IMAGE_ATTACHED' => '이미지 첨부가 없는 리뷰입니다.',
+        'SIMILAR_REVIEW_CLUSTER' => '유사 리뷰 네트워크 군집이 탐지되었습니다.',
+        'SIMILAR_REVIEW_PATTERN' => '일부 유사 리뷰 패턴이 탐지되었습니다.',
+        'EXCESSIVE_EXCLAMATION' => '과도한 느낌표 사용 패턴이 감지되었습니다.',
+        'SHORT_REVIEW' => '내용이 지나치게 짧은 리뷰입니다.',
+        'LOW_QUALITY_SCORE' => '리뷰 품질 점수가 낮습니다.',
+        'PURCHASE_UNKNOWN' => '구매 인증 여부가 불명확합니다.',
+        'FREE_TRIAL_REVIEW' => '체험단 리뷰로 의심됩니다.',
+        'REPURCHASE_SIGNAL' => '재구매 신호가 감지되었습니다.',
+        _ => code,
+      };
 
   static String _codeToIconType(String code) => switch (code) {
-    'NATURAL_TEXT' || 'HIGH_STAR_ONLY' || 'EXCESSIVE_EXCLAMATION' => 'context',
-    'REPETITIVE_PATTERN' || 'SIMILAR_CONTENT' => 'repeat',
-    'VERIFIED_PURCHASE' => 'history',
-    'ABNORMAL_TIMING' => 'similarity',
-    _ => 'context',
-  };
+        'REPETITIVE_KEYWORD' ||
+        'SIMILAR_REVIEW_CLUSTER' ||
+        'SIMILAR_REVIEW_PATTERN' =>
+          'repeat',
+        'PURCHASE_NOT_VERIFIED' ||
+        'PURCHASE_UNKNOWN' ||
+        'FREE_TRIAL_REVIEW' =>
+          'history',
+        'MULTIPLE_REVIEWS_SAME_DAY' || 'REPURCHASE_SIGNAL' => 'similarity',
+        _ => 'context',
+      };
 }
 
 class AnalysisTrendItemDto {
