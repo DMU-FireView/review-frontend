@@ -16,6 +16,7 @@ import 'package:re_view_front/features/product_detail/presentation/pages/analysi
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
+import 'package:re_view_front/features/settings/presentation/pages/settings_page.dart';
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
 
 class _AuthNotifier extends ChangeNotifier {
@@ -53,6 +54,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         RoutePaths.myPage,
         RoutePaths.wishlist,
         RoutePaths.cart,
+        RoutePaths.settings,
       };
       if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
         return RoutePaths.login;
@@ -157,6 +159,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.cart,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const CartPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.settings,
+        name: RouteNames.settings,
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const SettingsPage()),
       ),
     ],
   );
