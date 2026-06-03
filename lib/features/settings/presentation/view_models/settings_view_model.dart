@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 
-class SettingsViewModel extends AutoDisposeNotifier<SettingsState> {
+class SettingsViewModel extends Notifier<SettingsState> {
   @override
   SettingsState build() {
     return const SettingsIdle(settings: SettingsData());
