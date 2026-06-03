@@ -4,5 +4,5 @@ import 'package:re_view_front/features/settings/presentation/view_models/setting
 
 final settingsViewModelProvider =
     NotifierProvider.autoDispose<SettingsViewModel, SettingsState>(
-      SettingsViewModel.new,
-    );
+  SettingsViewModel.new,
+);
