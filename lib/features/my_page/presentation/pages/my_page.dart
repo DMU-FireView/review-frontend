@@ -569,7 +569,7 @@ class _SideNavCard extends StatelessWidget {
           _SideNavItem(
             icon: Icons.settings_outlined,
             label: '계정 설정',
-            onTap: onSettingsTap,
+            onTap: () => context.go(RoutePaths.settings),
           ),
           const SizedBox(height: AppSpacing.lg),
         ],
