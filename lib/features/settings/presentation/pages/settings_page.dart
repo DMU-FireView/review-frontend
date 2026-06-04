@@ -16,6 +16,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/home_heade
 import 'package:re_view_front/features/my_page/domain/entities/user_profile.dart';
 import 'package:re_view_front/features/my_page/presentation/providers/my_page_providers.dart';
 import 'package:re_view_front/features/my_page/presentation/view_models/my_page_state.dart';
+import 'package:re_view_front/core/providers/locale_provider.dart';
 import 'package:re_view_front/features/settings/presentation/providers/settings_providers.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
@@ -68,6 +69,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget build(BuildContext context) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
+    final currentLocale = ref.watch(localeProvider);
     final dashboardState = ref.watch(homeDashboardViewModelProvider);
     final myPageState = ref.watch(myPageViewModelProvider);
     final nickname = ref.watch(userNicknameProvider).value;
@@ -117,6 +119,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               ),
               child: _SettingsBody(
                 settingsState: settingsState,
+                currentLocale: currentLocale,
                 profile: profile,
                 minReviewController: _minReviewController,
                 lowRtiController: _lowRtiController,
@@ -154,6 +157,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         .setLowRtiThreshold(parsed);
                   }
                 },
+                onLocaleChanged: (locale) =>
+                    ref.read(localeProvider.notifier).setLocale(locale),
                 onSave: () =>
                     ref.read(settingsViewModelProvider.notifier).save(),
                 onMyPageTap: () => context.go(RoutePaths.myPage),
@@ -219,9 +224,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 class _SettingsBody extends StatelessWidget {
   const _SettingsBody({
     required this.settingsState,
+    required this.currentLocale,
     required this.profile,
     required this.minReviewController,
     required this.lowRtiController,
+    required this.onLocaleChanged,
     required this.onEmailNotificationChanged,
     required this.onPushNotificationChanged,
     required this.onAdEmailChanged,
@@ -238,9 +245,11 @@ class _SettingsBody extends StatelessWidget {
   });
 
   final SettingsState settingsState;
+  final Locale currentLocale;
   final UserProfile? profile;
   final TextEditingController minReviewController;
   final TextEditingController lowRtiController;
+  final ValueChanged<Locale> onLocaleChanged;
   final ValueChanged<bool> onEmailNotificationChanged;
   final ValueChanged<bool> onPushNotificationChanged;
   final ValueChanged<bool> onAdEmailChanged;
@@ -270,6 +279,11 @@ class _SettingsBody extends StatelessWidget {
     final mainContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        _LanguageSection(
+          currentLocale: currentLocale,
+          onLocaleChanged: onLocaleChanged,
+        ),
+        const SizedBox(height: AppSpacing.xl),
         _NotificationSection(
           data: data,
           onEmailChanged: onEmailNotificationChanged,
@@ -532,6 +546,145 @@ class _SideNavItem extends StatelessWidget {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LanguageSection extends StatelessWidget {
+  const _LanguageSection({
+    required this.currentLocale,
+    required this.onLocaleChanged,
+  });
+
+  final Locale currentLocale;
+  final ValueChanged<Locale> onLocaleChanged;
+
+  static const _languages = [
+    (locale: Locale('ko'), label: '한국어', sub: 'Korean'),
+    (locale: Locale('en'), label: 'English', sub: 'English'),
+    (locale: Locale('ja'), label: '日本語', sub: 'Japanese'),
+    (locale: Locale('zh'), label: '中文', sub: 'Chinese'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return _Panel(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.language_outlined,
+                color: AppColors.primary,
+                size: 22,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Text(
+                '언어 설정',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '앱에서 사용할 언어를 선택하세요. 변경 즉시 적용됩니다.',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Divider(color: AppColors.border, height: 1),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              for (final lang in _languages)
+                _LanguageChip(
+                  label: lang.label,
+                  sub: lang.sub,
+                  selected: currentLocale.languageCode ==
+                      lang.locale.languageCode,
+                  onTap: () => onLocaleChanged(lang.locale),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguageChip extends StatelessWidget {
+  const _LanguageChip({
+    required this.label,
+    required this.sub,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String sub;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary : AppColors.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? AppColors.primary : AppColors.border,
+            width: selected ? 1.5 : 1,
+          ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.18),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ]
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color:
+                    selected ? AppColors.onPrimary : AppColors.textPrimary,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              sub,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: selected
+                    ? AppColors.onPrimary.withValues(alpha: 0.8)
+                    : AppColors.textSecondary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
       ),
     );
