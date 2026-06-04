@@ -1,0 +1,84 @@
+{
+  "@@locale": "ko",
+
+  "appTitle": "Re:view",
+  "@appTitle": { "description": "앱 이름" },
+
+  "navHome": "홈",
+  "@navHome": { "description": "홈 네비게이션 항목" },
+
+  "navSearch": "검색",
+  "@navSearch": { "description": "검색 네비게이션 항목" },
+
+  "navCart": "장바구니",
+  "@navCart": { "description": "장바구니 네비게이션 항목" },
+
+  "navWishlist": "저장한 상품",
+  "@navWishlist": { "description": "위시리스트 네비게이션 항목" },
+
+  "navMyPage": "마이페이지",
+  "@navMyPage": { "description": "마이페이지 네비게이션 항목" },
+
+  "navSettings": "설정",
+  "@navSettings": { "description": "설정 네비게이션 항목" },
+
+  "actionSave": "저장",
+  "@actionSave": { "description": "저장 버튼" },
+
+  "actionCancel": "취소",
+  "@actionCancel": { "description": "취소 버튼" },
+
+  "actionConfirm": "확인",
+  "@actionConfirm": { "description": "확인 버튼" },
+
+  "actionRetry": "다시 시도",
+  "@actionRetry": { "description": "재시도 버튼" },
+
+  "actionBack": "뒤로",
+  "@actionBack": { "description": "뒤로가기 버튼" },
+
+  "actionLogin": "로그인",
+  "@actionLogin": { "description": "로그인 버튼" },
+
+  "actionLogout": "로그아웃",
+  "@actionLogout": { "description": "로그아웃 버튼" },
+
+  "actionSignup": "회원가입",
+  "@actionSignup": { "description": "회원가입 버튼" },
+
+  "actionViewAll": "전체 보기",
+  "@actionViewAll": { "description": "전체 보기 버튼" },
+
+  "stateLoading": "불러오는 중입니다.",
+  "@stateLoading": { "description": "로딩 메시지" },
+
+  "stateError": "오류가 발생했습니다.",
+  "@stateError": { "description": "오류 메시지" },
+
+  "stateEmpty": "표시할 항목이 없습니다.",
+  "@stateEmpty": { "description": "빈 상태 메시지" },
+
+  "settingsSaved": "설정이 저장되었습니다.",
+  "@settingsSaved": { "description": "설정 저장 완료 메시지" },
+
+  "settingsLanguage": "언어",
+  "@settingsLanguage": { "description": "언어 설정 레이블" },
+
+  "settingsNotifications": "알림 설정",
+  "@settingsNotifications": { "description": "알림 설정 섹션 제목" },
+
+  "settingsFilters": "분석 필터 설정",
+  "@settingsFilters": { "description": "분석 필터 설정 섹션 제목" },
+
+  "langKorean": "한국어",
+  "@langKorean": { "description": "언어명 한국어" },
+
+  "langEnglish": "English",
+  "@langEnglish": { "description": "언어명 영어" },
+
+  "langJapanese": "日本語",
+  "@langJapanese": { "description": "언어명 일본어" },
+
+  "langChinese": "中文(简体)",
+  "@langChinese": { "description": "언어명 중국어 간체" }
+}
