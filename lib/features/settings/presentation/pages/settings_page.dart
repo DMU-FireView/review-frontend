@@ -6,6 +6,7 @@ import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/core/providers/locale_provider.dart';
 import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
 import 'package:re_view_front/features/category/domain/entities/product_category_master.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
@@ -16,7 +17,6 @@ import 'package:re_view_front/features/home/presentation/widgets/home/home_heade
 import 'package:re_view_front/features/my_page/domain/entities/user_profile.dart';
 import 'package:re_view_front/features/my_page/presentation/providers/my_page_providers.dart';
 import 'package:re_view_front/features/my_page/presentation/view_models/my_page_state.dart';
-import 'package:re_view_front/core/providers/locale_provider.dart';
 import 'package:re_view_front/features/settings/presentation/providers/settings_providers.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
@@ -37,18 +37,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   void initState() {
     super.initState();
-    final settings = ref.read(settingsViewModelProvider);
-    final data = _dataFrom(settings);
-    _minReviewController = TextEditingController(
-      text: data.minReviewCount.toString(),
-    );
-    _lowRtiController = TextEditingController(
-      text: data.lowRtiThreshold.toString(),
-    );
-
-    Future.microtask(() {
-      ref.read(myPageViewModelProvider.notifier).load();
-    });
+    final data = _dataFrom(ref.read(settingsViewModelProvider));
+    _minReviewController =
+        TextEditingController(text: data.minReviewCount.toString());
+    _lowRtiController =
+        TextEditingController(text: data.lowRtiThreshold.toString());
+    Future.microtask(() => ref.read(myPageViewModelProvider.notifier).load());
   }
 
   @override
@@ -123,6 +117,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 profile: profile,
                 minReviewController: _minReviewController,
                 lowRtiController: _lowRtiController,
+                onLocaleChanged: (locale) =>
+                    ref.read(localeProvider.notifier).setLocale(locale),
                 onEmailNotificationChanged: (v) => ref
                     .read(settingsViewModelProvider.notifier)
                     .setEmailNotification(v),
@@ -142,23 +138,21 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     .read(settingsViewModelProvider.notifier)
                     .setCategoryFilter(id, label),
                 onMinReviewCountChanged: (v) {
-                  final parsed = int.tryParse(v);
-                  if (parsed != null && parsed >= 0) {
+                  final n = int.tryParse(v);
+                  if (n != null && n >= 0) {
                     ref
                         .read(settingsViewModelProvider.notifier)
-                        .setMinReviewCount(parsed);
+                        .setMinReviewCount(n);
                   }
                 },
                 onLowRtiThresholdChanged: (v) {
-                  final parsed = int.tryParse(v);
-                  if (parsed != null && parsed >= 0 && parsed <= 100) {
+                  final n = int.tryParse(v);
+                  if (n != null && n >= 0 && n <= 100) {
                     ref
                         .read(settingsViewModelProvider.notifier)
-                        .setLowRtiThreshold(parsed);
+                        .setLowRtiThreshold(n);
                   }
                 },
-                onLocaleChanged: (locale) =>
-                    ref.read(localeProvider.notifier).setLocale(locale),
                 onSave: () =>
                     ref.read(settingsViewModelProvider.notifier).save(),
                 onMyPageTap: () => context.go(RoutePaths.myPage),
@@ -180,9 +174,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   }
 
   void _handleSearchSubmitted(String value) {
-    final query = value.trim();
-    if (query.isEmpty) return;
-    context.goNamed(RouteNames.search, queryParameters: {'q': query});
+    final q = value.trim();
+    if (q.isEmpty) return;
+    context.goNamed(RouteNames.search, queryParameters: {'q': q});
   }
 
   void _handleLogout() {
@@ -190,36 +184,35 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     context.go(RoutePaths.landing);
   }
 
-  List<String> _keywordsFrom(HomeDashboardState state) {
-    return switch (state) {
-      HomeDashboardSuccess(:final dashboard) =>
-        dashboard.trendingKeywords.map((k) => k.keyword).toList(),
-      _ => const [],
-    };
-  }
+  List<String> _keywordsFrom(HomeDashboardState state) => switch (state) {
+    HomeDashboardSuccess(:final dashboard) =>
+      dashboard.trendingKeywords.map((k) => k.keyword).toList(),
+    _ => const [],
+  };
 
-  List<HomeProductData> _productsFrom(HomeDashboardState state) {
-    return switch (state) {
-      HomeDashboardSuccess(:final dashboard) =>
-        dashboard.recommendedProducts.map(_toHomeProductData).toList(),
-      _ => const [],
-    };
-  }
+  List<HomeProductData> _productsFrom(HomeDashboardState state) =>
+      switch (state) {
+        HomeDashboardSuccess(:final dashboard) =>
+          dashboard.recommendedProducts.map(_toHomeProductData).toList(),
+        _ => const [],
+      };
 
-  HomeProductData _toHomeProductData(DashboardProduct product) {
-    return HomeProductData(
-      productId: product.id,
-      name: product.name,
-      storeName: product.storeName,
-      priceLabel: _formatPrice(product.price),
-      ratingLabel: product.rating?.toStringAsFixed(1) ?? '-',
-      reviewCountLabel: product.reviewCount?.toString() ?? '-',
-      rtiLabel: product.rtiScore == null ? '' : 'RTI ${product.rtiScore}',
-      imageUrl: product.imageUrl,
-      label: product.label ?? '',
-    );
-  }
+  HomeProductData _toHomeProductData(DashboardProduct p) => HomeProductData(
+    productId: p.id,
+    name: p.name,
+    storeName: p.storeName,
+    priceLabel: _formatPrice(p.price),
+    ratingLabel: p.rating?.toStringAsFixed(1) ?? '-',
+    reviewCountLabel: p.reviewCount?.toString() ?? '-',
+    rtiLabel: p.rtiScore == null ? '' : 'RTI ${p.rtiScore}',
+    imageUrl: p.imageUrl,
+    label: p.label ?? '',
+  );
 }
+
+// ─────────────────────────────────────────────────────────────
+// Body
+// ─────────────────────────────────────────────────────────────
 
 class _SettingsBody extends StatelessWidget {
   const _SettingsBody({
@@ -272,25 +265,19 @@ class _SettingsBody extends StatelessWidget {
       SettingsSaved(:final settings) => settings,
       SettingsError(:final settings) => settings,
     };
-
     final isSaving = settingsState is SettingsSaving;
     final isSaved = settingsState is SettingsSaved;
 
     final mainContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _LanguageSection(
-          currentLocale: currentLocale,
-          onLocaleChanged: onLocaleChanged,
-        ),
-        const SizedBox(height: AppSpacing.xl),
         _NotificationSection(
           data: data,
           onEmailChanged: onEmailNotificationChanged,
           onPushChanged: onPushNotificationChanged,
           onAdEmailChanged: onAdEmailChanged,
         ),
-        const SizedBox(height: AppSpacing.xl),
+        const SizedBox(height: AppSpacing.lg),
         _FilterSection(
           data: data,
           minReviewController: minReviewController,
@@ -301,18 +288,22 @@ class _SettingsBody extends StatelessWidget {
           onMinReviewCountChanged: onMinReviewCountChanged,
           onLowRtiThresholdChanged: onLowRtiThresholdChanged,
         ),
-        const SizedBox(height: AppSpacing.xl),
-        _SaveBar(
-          isSaving: isSaving,
-          isSaved: isSaved,
-          onSave: onSave,
-        ),
+        const SizedBox(height: AppSpacing.lg),
+        _SaveBar(isSaving: isSaving, isSaved: isSaved, onSave: onSave),
       ],
     );
 
-    final rightPanel = _AccountPanel(
-      profile: profile,
-      onPasswordTap: onPasswordTap,
+    // 우측 컬럼: 계정 카드 → 언어 설정
+    final rightColumn = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _AccountPanel(profile: profile, onPasswordTap: onPasswordTap),
+        const SizedBox(height: AppSpacing.lg),
+        _LanguageSection(
+          currentLocale: currentLocale,
+          onLocaleChanged: onLocaleChanged,
+        ),
+      ],
     );
 
     return Column(
@@ -329,29 +320,23 @@ class _SettingsBody extends StatelessWidget {
           const SizedBox(height: AppSpacing.xl),
           mainContent,
           const SizedBox(height: AppSpacing.xl),
-          rightPanel,
+          rightColumn,
         ] else
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 260,
+                width: 248,
                 child: _SideNavCard(
                   onMyPageTap: onMyPageTap,
                   onCartTap: onCartTap,
                   onWishlistTap: onWishlistTap,
                 ),
               ),
-              const SizedBox(width: AppSpacing.xl),
-              Expanded(
-                flex: 3,
-                child: mainContent,
-              ),
-              const SizedBox(width: AppSpacing.xl),
-              SizedBox(
-                width: 280,
-                child: rightPanel,
-              ),
+              const SizedBox(width: AppSpacing.lg),
+              Expanded(flex: 3, child: mainContent),
+              const SizedBox(width: AppSpacing.lg),
+              SizedBox(width: 272, child: rightColumn),
             ],
           ),
       ],
@@ -359,9 +344,12 @@ class _SettingsBody extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// Page title & breadcrumb
+// ─────────────────────────────────────────────────────────────
+
 class _PageTitle extends StatelessWidget {
   const _PageTitle({required this.profile});
-
   final UserProfile? profile;
 
   @override
@@ -371,32 +359,13 @@ class _PageTitle extends StatelessWidget {
       children: [
         Row(
           children: [
-            TextButton(
-              onPressed: () => context.go(RoutePaths.home),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textSecondary,
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-              ),
-              child: const Text('홈'),
+            _Breadcrumb(label: '홈', onTap: () => context.go(RoutePaths.home)),
+            const _BreadcrumbSep(),
+            _Breadcrumb(
+              label: '마이페이지',
+              onTap: () => context.go(RoutePaths.myPage),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              child: Icon(Icons.chevron_right, size: 16),
-            ),
-            TextButton(
-              onPressed: () => context.go(RoutePaths.myPage),
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.textSecondary,
-                padding: EdgeInsets.zero,
-                minimumSize: Size.zero,
-              ),
-              child: const Text('마이페이지'),
-            ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-              child: Icon(Icons.chevron_right, size: 16),
-            ),
+            const _BreadcrumbSep(),
             Text(
               '설정',
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
@@ -407,10 +376,9 @@ class _PageTitle extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.xs),
-        Wrap(
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: AppSpacing.lg,
-          runSpacing: AppSpacing.xs,
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.baseline,
+          textBaseline: TextBaseline.alphabetic,
           children: [
             Text(
               '설정',
@@ -419,13 +387,14 @@ class _PageTitle extends StatelessWidget {
                 fontWeight: FontWeight.w900,
               ),
             ),
+            const SizedBox(width: AppSpacing.md),
             Text(
               profile != null
                   ? '${profile!.nickname}님의 알림, 필터, 계정 설정을 관리해요.'
                   : '알림, 필터, 계정 설정을 관리해요.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.textSecondary,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -434,6 +403,40 @@ class _PageTitle extends StatelessWidget {
     );
   }
 }
+
+class _Breadcrumb extends StatelessWidget {
+  const _Breadcrumb({required this.label, required this.onTap});
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+}
+
+class _BreadcrumbSep extends StatelessWidget {
+  const _BreadcrumbSep();
+
+  @override
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+    child: Icon(Icons.chevron_right, size: 14, color: AppColors.textTertiary),
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Sidebar nav
+// ─────────────────────────────────────────────────────────────
 
 class _SideNavCard extends StatelessWidget {
   const _SideNavCard({
@@ -448,51 +451,31 @@ class _SideNavCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Panel(
+    return _Card(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
-          const SizedBox(height: AppSpacing.md),
-          _SideNavItem(
-            icon: Icons.home_outlined,
-            label: '마이페이지',
-            onTap: onMyPageTap,
-          ),
-          _SideNavItem(
-            icon: Icons.inventory_2_outlined,
-            label: '주문/배송',
-            onTap: onCartTap,
-          ),
-          _SideNavItem(
-            icon: Icons.favorite_border,
-            label: '저장한 상품',
-            onTap: onWishlistTap,
-          ),
-          _SideNavItem(
-            icon: Icons.history,
-            label: '최근 본 상품',
-            onTap: onWishlistTap,
-          ),
-          _SideNavItem(
-            icon: Icons.rate_review_outlined,
-            label: '리뷰 활동',
-            onTap: onMyPageTap,
-          ),
-          _SideNavItem(
+          const SizedBox(height: AppSpacing.xs),
+          _NavItem(icon: Icons.home_outlined, label: '마이페이지', onTap: onMyPageTap),
+          _NavItem(icon: Icons.inventory_2_outlined, label: '주문/배송', onTap: onCartTap),
+          _NavItem(icon: Icons.favorite_border, label: '저장한 상품', onTap: onWishlistTap),
+          _NavItem(icon: Icons.history, label: '최근 본 상품', onTap: onWishlistTap),
+          _NavItem(icon: Icons.rate_review_outlined, label: '리뷰 활동', onTap: onMyPageTap),
+          _NavItem(
             icon: Icons.settings_outlined,
             label: '계정 설정',
             selected: true,
             onTap: () {},
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.xs),
         ],
       ),
     );
   }
 }
 
-class _SideNavItem extends StatelessWidget {
-  const _SideNavItem({
+class _NavItem extends StatelessWidget {
+  const _NavItem({
     required this.icon,
     required this.label,
     required this.onTap,
@@ -511,7 +494,7 @@ class _SideNavItem extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Container(
-          height: 56,
+          height: 52,
           decoration: BoxDecoration(
             border: selected
                 ? const Border(
@@ -527,169 +510,28 @@ class _SideNavItem extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: selected ? AppColors.primary : AppColors.textPrimary,
-                size: 24,
+                color: selected ? AppColors.primary : AppColors.textSecondary,
+                size: 20,
               ),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  label,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color:
-                        selected ? AppColors.primary : AppColors.textPrimary,
-                    fontWeight:
-                        selected ? FontWeight.w900 : FontWeight.w700,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _LanguageSection extends StatelessWidget {
-  const _LanguageSection({
-    required this.currentLocale,
-    required this.onLocaleChanged,
-  });
-
-  final Locale currentLocale;
-  final ValueChanged<Locale> onLocaleChanged;
-
-  static const _languages = [
-    (locale: Locale('ko'), label: '한국어', sub: 'Korean'),
-    (locale: Locale('en'), label: 'English', sub: 'English'),
-    (locale: Locale('ja'), label: '日本語', sub: 'Japanese'),
-    (locale: Locale('zh'), label: '中文', sub: 'Chinese'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return _Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.language_outlined,
-                color: AppColors.primary,
-                size: 22,
-              ),
-              const SizedBox(width: AppSpacing.xs),
+              const SizedBox(width: AppSpacing.sm),
               Text(
-                '언어 설정',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
+                label,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: selected ? AppColors.primary : AppColors.textPrimary,
+                  fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            '앱에서 사용할 언어를 선택하세요. 변경 즉시 적용됩니다.',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: AppSpacing.md),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (final lang in _languages)
-                _LanguageChip(
-                  label: lang.label,
-                  sub: lang.sub,
-                  selected: currentLocale.languageCode ==
-                      lang.locale.languageCode,
-                  onTap: () => onLocaleChanged(lang.locale),
-                ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _LanguageChip extends StatelessWidget {
-  const _LanguageChip({
-    required this.label,
-    required this.sub,
-    required this.selected,
-    required this.onTap,
-  });
-
-  final String label;
-  final String sub;
-  final bool selected;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          color: selected ? AppColors.primary : AppColors.surface,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: selected ? AppColors.primary : AppColors.border,
-            width: selected ? 1.5 : 1,
-          ),
-          boxShadow: selected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.18),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
-                  ),
-                ]
-              : null,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color:
-                    selected ? AppColors.onPrimary : AppColors.textPrimary,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              sub,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: selected
-                    ? AppColors.onPrimary.withValues(alpha: 0.8)
-                    : AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// ─────────────────────────────────────────────────────────────
+// Notification section
+// ─────────────────────────────────────────────────────────────
 
 class _NotificationSection extends StatelessWidget {
   const _NotificationSection({
@@ -706,54 +548,48 @@ class _NotificationSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _Panel(
+    return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.notifications_outlined,
-                color: AppColors.primary,
-                size: 22,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '알림 설정',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
+          _SectionHeader(
+            icon: Icons.notifications_outlined,
+            iconColor: const Color(0xFF6366F1),
+            iconBg: const Color(0xFFEEF2FF),
+            title: '알림 설정',
           ),
-          const SizedBox(height: AppSpacing.md),
-          const Divider(color: AppColors.border, height: 1),
-          _SettingToggleRow(
+          const SizedBox(height: AppSpacing.sm),
+          _ToggleRow(
+            icon: Icons.email_outlined,
             label: '이메일 알림 받기',
-            description: '상품 가격 변동, 리뷰 업데이트 알림을 이메일로 받아요.',
+            description: '상품 가격 변동, 리뷰 업데이트를 이메일로 받아요.',
             value: data.emailNotification,
             onChanged: onEmailChanged,
           ),
-          const Divider(color: AppColors.border, height: 1),
-          _SettingToggleRow(
+          _ToggleRow(
+            icon: Icons.phone_iphone_outlined,
             label: '앱 푸시 알림 받기',
             description: '저장한 상품의 실시간 알림을 브라우저에서 받아요.',
             value: data.pushNotification,
             onChanged: onPushChanged,
           ),
-          const Divider(color: AppColors.border, height: 1),
-          _SettingToggleRow(
+          _ToggleRow(
+            icon: Icons.campaign_outlined,
             label: '이메일 광고 수신',
             description: '프로모션 및 맞춤 혜택 정보를 이메일로 받아요.',
             value: data.adEmailNotification,
             onChanged: onAdEmailChanged,
+            isLast: true,
           ),
         ],
       ),
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────
+// Filter section
+// ─────────────────────────────────────────────────────────────
 
 class _FilterSection extends StatelessWidget {
   const _FilterSection({
@@ -778,69 +614,95 @@ class _FilterSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topCategories = productCategoryTree
-        .map((c) => (id: c.id, label: c.label))
-        .toList();
+    final topCategories =
+        productCategoryTree.map((c) => (id: c.id, label: c.label)).toList();
 
-    return _Panel(
+    return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.tune_outlined,
-                color: AppColors.primary,
-                size: 22,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '분석 필터 설정',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  color: AppColors.textPrimary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
+          _SectionHeader(
+            icon: Icons.tune_outlined,
+            iconColor: const Color(0xFF0891B2),
+            iconBg: const Color(0xFFCFFAFE),
+            title: '분석 필터 설정',
           ),
-          const SizedBox(height: AppSpacing.md),
-          const Divider(color: AppColors.border, height: 1),
-          _SettingToggleRow(
+          const SizedBox(height: AppSpacing.sm),
+          _ToggleRow(
+            icon: Icons.warning_amber_outlined,
             label: '주의 상품 먼저 보기',
             description: '리뷰 신뢰도가 낮은 상품을 목록 상단에 표시해요.',
             value: data.highlightLowRti,
             onChanged: onHighlightLowRtiChanged,
           ),
-          const Divider(color: AppColors.border, height: 1),
-          _SettingToggleRow(
+          _ToggleRow(
+            icon: Icons.favorite_border,
             label: '저장 상품 알림 받기',
             description: '관심 상품의 RTI 변화가 있을 때 알림을 드려요.',
             value: data.wishlistAlert,
             onChanged: onWishlistAlertChanged,
           ),
+          const SizedBox(height: AppSpacing.xs),
           const Divider(color: AppColors.border, height: 1),
           const SizedBox(height: AppSpacing.md),
-          _CategoryFilterRow(
-            selectedId: data.categoryFilterId,
-            selectedLabel: data.categoryFilterLabel,
-            categories: topCategories,
-            onChanged: onCategoryChanged,
+          _FilterInputLabel(
+            label: '카테고리 필터',
+            description: '선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.',
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          DropdownButtonFormField<String>(
+            value: data.categoryFilterId,
+            decoration: _inputDecoration(),
+            hint: const Text('전체 카테고리'),
+            items: [
+              const DropdownMenuItem<String>(
+                value: null,
+                child: Text('전체 카테고리'),
+              ),
+              for (final cat in topCategories)
+                DropdownMenuItem<String>(
+                  value: cat.id,
+                  child: Text(cat.label),
+                ),
+            ],
+            onChanged: (id) {
+              final label = id == null
+                  ? null
+                  : topCategories.firstWhere((c) => c.id == id).label;
+              onCategoryChanged(id, label);
+            },
           ),
           const SizedBox(height: AppSpacing.md),
-          _NumberInputRow(
+          _FilterInputLabel(
             label: '리뷰 최소 개수',
             description: '이 개수 이상 리뷰가 있는 상품만 분석 결과에 반영해요.',
-            controller: minReviewController,
-            unit: '개',
-            onChanged: onMinReviewCountChanged,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: 160,
+            child: TextFormField(
+              controller: minReviewController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: _inputDecoration(suffixText: '개'),
+              onChanged: onMinReviewCountChanged,
+            ),
           ),
           const SizedBox(height: AppSpacing.md),
-          _NumberInputRow(
+          _FilterInputLabel(
             label: '낮은 RTI 경고 기준',
             description: 'RTI 점수가 이 값 이하면 주의 상품으로 분류해요.',
-            controller: lowRtiController,
-            unit: '점',
-            onChanged: onLowRtiThresholdChanged,
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          SizedBox(
+            width: 160,
+            child: TextFormField(
+              controller: lowRtiController,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              decoration: _inputDecoration(suffixText: '점'),
+              onChanged: onLowRtiThresholdChanged,
+            ),
           ),
         ],
       ),
@@ -848,149 +710,35 @@ class _FilterSection extends StatelessWidget {
   }
 }
 
-class _SettingToggleRow extends StatelessWidget {
-  const _SettingToggleRow({
-    required this.label,
-    required this.description,
-    required this.value,
-    required this.onChanged,
-  });
-
-  final String label;
-  final String description;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  description,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.textSecondary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Switch(value: value, onChanged: onChanged),
-        ],
-      ),
-    );
-  }
+InputDecoration _inputDecoration({String? suffixText}) {
+  return InputDecoration(
+    suffixText: suffixText,
+    isDense: true,
+    contentPadding: const EdgeInsets.symmetric(
+      horizontal: AppSpacing.md,
+      vertical: AppSpacing.sm,
+    ),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: AppColors.border),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: AppColors.border),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+    ),
+    filled: true,
+    fillColor: AppColors.surface,
+  );
 }
 
-class _CategoryFilterRow extends StatelessWidget {
-  const _CategoryFilterRow({
-    required this.selectedId,
-    required this.selectedLabel,
-    required this.categories,
-    required this.onChanged,
-  });
-
-  final String? selectedId;
-  final String? selectedLabel;
-  final List<({String id, String label})> categories;
-  final void Function(String? id, String? label) onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '카테고리 필터',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          '선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        DropdownButtonFormField<String>(
-          value: selectedId,
-          decoration: InputDecoration(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.primary, width: 2),
-            ),
-            isDense: true,
-          ),
-          hint: const Text('전체 카테고리'),
-          items: [
-            const DropdownMenuItem<String>(
-              value: null,
-              child: Text('전체 카테고리'),
-            ),
-            for (final cat in categories)
-              DropdownMenuItem<String>(
-                value: cat.id,
-                child: Text(cat.label),
-              ),
-          ],
-          onChanged: (id) {
-            final label = id == null
-                ? null
-                : categories.firstWhere((c) => c.id == id).label;
-            onChanged(id, label);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-class _NumberInputRow extends StatelessWidget {
-  const _NumberInputRow({
-    required this.label,
-    required this.description,
-    required this.controller,
-    required this.unit,
-    required this.onChanged,
-  });
-
+class _FilterInputLabel extends StatelessWidget {
+  const _FilterInputLabel({required this.label, required this.description});
   final String label;
   final String description;
-  final TextEditingController controller;
-  final String unit;
-  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -1009,44 +757,328 @@ class _NumberInputRow extends StatelessWidget {
           description,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          width: 180,
-          child: TextFormField(
-            controller: controller,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: InputDecoration(
-              suffixText: unit,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.sm,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.border),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.border),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
-              ),
-              isDense: true,
-            ),
-            onChanged: onChanged,
           ),
         ),
       ],
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────
+// Account panel (right column top)
+// ─────────────────────────────────────────────────────────────
+
+class _AccountPanel extends StatelessWidget {
+  const _AccountPanel({required this.profile, required this.onPasswordTap});
+  final UserProfile? profile;
+  final VoidCallback onPasswordTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final createdAt = profile?.createdAt;
+    final joinLabel = createdAt != null
+        ? '${createdAt.year}.${createdAt.month.toString().padLeft(2, '0')}.${createdAt.day.toString().padLeft(2, '0')}'
+        : '-';
+
+    return _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              _IconBadge(
+                icon: Icons.person_outline,
+                iconColor: AppColors.primary,
+                bg: AppColors.primaryLight,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Expanded(
+                child: Text(
+                  '계정',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: AppColors.textPrimary,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: onPasswordTap,
+                child: Text(
+                  '비밀번호 변경',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          const Divider(color: AppColors.border, height: 1),
+          const SizedBox(height: AppSpacing.sm),
+          _InfoRow(label: '이름', value: profile?.nickname.isEmpty ?? true ? '사용자' : profile!.nickname),
+          _InfoRow(label: '이메일', value: profile?.email ?? '-'),
+          _InfoRow(label: '가입일', value: joinLabel),
+          _InfoRow(
+            label: '회원 유형',
+            value: profile?.role.isEmpty ?? true ? 'USER 회원' : '${profile!.role} 회원',
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          const Divider(color: AppColors.border, height: 1),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            '연동 서비스',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          _ServiceRow(label: '네이버 쇼핑', connected: true),
+          _ServiceRow(label: '쿠팡', connected: true),
+          _ServiceRow(label: '11번가', connected: false),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoRow extends StatelessWidget {
+  const _InfoRow({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 60,
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              overflow: TextOverflow.ellipsis,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ServiceRow extends StatelessWidget {
+  const _ServiceRow({required this.label, required this.connected});
+  final String label;
+  final bool connected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: connected
+                  ? AppColors.successSoft
+                  : AppColors.surfaceMuted,
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Text(
+              connected ? '연동됨' : '미연동',
+              style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                color: connected ? AppColors.success : AppColors.textTertiary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Language section (right column bottom)
+// ─────────────────────────────────────────────────────────────
+
+class _LanguageSection extends StatelessWidget {
+  const _LanguageSection({
+    required this.currentLocale,
+    required this.onLocaleChanged,
+  });
+
+  final Locale currentLocale;
+  final ValueChanged<Locale> onLocaleChanged;
+
+  static const _langs = [
+    (locale: Locale('ko'), label: '한국어', sub: 'Korean'),
+    (locale: Locale('en'), label: 'English', sub: 'English'),
+    (locale: Locale('ja'), label: '日本語', sub: 'Japanese'),
+    (locale: Locale('zh'), label: '中文', sub: 'Chinese'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return _Card(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _SectionHeader(
+            icon: Icons.language_outlined,
+            iconColor: const Color(0xFF059669),
+            iconBg: const Color(0xFFD1FAE5),
+            title: '언어 설정',
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            '변경 즉시 적용됩니다.',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          GridView.count(
+            crossAxisCount: 2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            crossAxisSpacing: AppSpacing.xs,
+            mainAxisSpacing: AppSpacing.xs,
+            childAspectRatio: 2.6,
+            children: [
+              for (final lang in _langs)
+                _LangChip(
+                  label: lang.label,
+                  sub: lang.sub,
+                  selected:
+                      currentLocale.languageCode == lang.locale.languageCode,
+                  onTap: () => onLocaleChanged(lang.locale),
+                ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LangChip extends StatelessWidget {
+  const _LangChip({
+    required this.label,
+    required this.sub,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final String sub;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: selected ? AppColors.primary : AppColors.background,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: selected ? AppColors.primary : AppColors.border,
+            width: selected ? 1.5 : 1,
+          ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.2),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: 6,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (selected) ...[
+                const Icon(
+                  Icons.check_circle_rounded,
+                  size: 14,
+                  color: AppColors.onPrimary,
+                ),
+                const SizedBox(width: 4),
+              ],
+              Flexible(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: selected
+                            ? AppColors.onPrimary
+                            : AppColors.textPrimary,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                      ),
+                    ),
+                    Text(
+                      sub,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: selected
+                            ? AppColors.onPrimary.withValues(alpha: 0.75)
+                            : AppColors.textTertiary,
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Save bar
+// ─────────────────────────────────────────────────────────────
 
 class _SaveBar extends StatelessWidget {
   const _SaveBar({
@@ -1064,33 +1096,42 @@ class _SaveBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        if (isSaved)
-          Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.md),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.check_circle_outline,
-                  color: AppColors.success,
-                  size: 18,
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                Text(
-                  '설정이 저장되었습니다.',
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: AppColors.success,
-                    fontWeight: FontWeight.w700,
+        AnimatedSwitcher(
+          duration: const Duration(milliseconds: 250),
+          child: isSaved
+              ? Padding(
+                  key: const ValueKey('saved'),
+                  padding: const EdgeInsets.only(right: AppSpacing.md),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: AppColors.success,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        '저장됐어요',
+                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                          color: AppColors.success,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
+                )
+              : const SizedBox.shrink(key: ValueKey('idle')),
+        ),
         FilledButton(
           onPressed: isSaving ? null : onSave,
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.onPrimary,
+            minimumSize: const Size(100, 44),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.xl,
               vertical: AppSpacing.sm,
@@ -1098,154 +1139,47 @@ class _SaveBar extends StatelessWidget {
           ),
           child: isSaving
               ? const SizedBox.square(
-                  dimension: 18,
+                  dimension: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
                     color: AppColors.onPrimary,
                   ),
                 )
-              : const Text('저장'),
+              : const Text('저장', style: TextStyle(fontWeight: FontWeight.w800)),
         ),
       ],
     );
   }
 }
 
-class _AccountPanel extends StatelessWidget {
-  const _AccountPanel({
-    required this.profile,
-    required this.onPasswordTap,
+// ─────────────────────────────────────────────────────────────
+// Shared small widgets
+// ─────────────────────────────────────────────────────────────
+
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({
+    required this.icon,
+    required this.iconColor,
+    required this.iconBg,
+    required this.title,
   });
 
-  final UserProfile? profile;
-  final VoidCallback onPasswordTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final createdAt = profile?.createdAt;
-    final joinDateLabel = createdAt != null
-        ? '${createdAt.year}.${createdAt.month.toString().padLeft(2, '0')}.${createdAt.day.toString().padLeft(2, '0')}'
-        : '-';
-
-    return _Panel(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.person_outline,
-                color: AppColors.primary,
-                size: 22,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: Text(
-                  '계정',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: AppColors.textPrimary,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: onPasswordTap,
-                style: TextButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                    vertical: AppSpacing.xxs,
-                  ),
-                  minimumSize: Size.zero,
-                  textStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                child: const Text('비밀번호 변경'),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: AppSpacing.sm),
-          _InfoRow(
-            label: '이름',
-            value: profile?.nickname.isEmpty ?? true
-                ? '사용자'
-                : profile!.nickname,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          _InfoRow(label: '이메일', value: profile?.email ?? '-'),
-          const SizedBox(height: AppSpacing.xs),
-          _InfoRow(label: '가입일', value: joinDateLabel),
-          const SizedBox(height: AppSpacing.xs),
-          _InfoRow(
-            label: '회원 유형',
-            value: profile?.role.isEmpty ?? true
-                ? '일반 회원'
-                : '${profile!.role} 회원',
-          ),
-          const SizedBox(height: AppSpacing.md),
-          const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            '연동 서비스',
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          _ServiceRow(
-            label: '네이버 쇼핑',
-            statusLabel: '연동됨',
-            statusColor: AppColors.success,
-          ),
-          _ServiceRow(
-            label: '쿠팡',
-            statusLabel: '연동됨',
-            statusColor: AppColors.success,
-          ),
-          _ServiceRow(
-            label: '11번가',
-            statusLabel: '미연동',
-            statusColor: AppColors.textTertiary,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.label, required this.value});
-
-  final String label;
-  final String value;
+  final IconData icon;
+  final Color iconColor;
+  final Color iconBg;
+  final String title;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        SizedBox(
-          width: 64,
-          child: Text(
-            label,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w700,
-            ),
+        _IconBadge(icon: icon, iconColor: iconColor, bg: iconBg),
+        const SizedBox(width: AppSpacing.xs),
+        Text(
+          title,
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+            color: AppColors.textPrimary,
+            fontWeight: FontWeight.w900,
           ),
         ),
       ],
@@ -1253,80 +1187,127 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _ServiceRow extends StatelessWidget {
-  const _ServiceRow({
-    required this.label,
-    required this.statusLabel,
-    required this.statusColor,
+class _IconBadge extends StatelessWidget {
+  const _IconBadge({
+    required this.icon,
+    required this.iconColor,
+    required this.bg,
   });
 
-  final String label;
-  final String statusLabel;
-  final Color statusColor;
+  final IconData icon;
+  final Color iconColor;
+  final Color bg;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-          Text(
-            statusLabel,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: statusColor,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
+    return Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
+      child: Icon(icon, color: iconColor, size: 18),
     );
   }
 }
 
-class _Panel extends StatelessWidget {
-  const _Panel({required this.child, this.padding});
+class _ToggleRow extends StatelessWidget {
+  const _ToggleRow({
+    required this.icon,
+    required this.label,
+    required this.description,
+    required this.value,
+    required this.onChanged,
+    this.isLast = false,
+  });
 
+  final IconData icon;
+  final String label;
+  final String description;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final bool isLast;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Icon(icon, size: 18, color: AppColors.textSecondary),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.textPrimary,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    Text(
+                      description,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Switch(
+                value: value,
+                onChanged: onChanged,
+                activeColor: AppColors.primary,
+              ),
+            ],
+          ),
+        ),
+        if (!isLast) const Divider(color: AppColors.border, height: 1),
+      ],
+    );
+  }
+}
+
+class _Card extends StatelessWidget {
+  const _Card({required this.child, this.padding});
   final Widget child;
   final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
+    return Container(
       decoration: BoxDecoration(
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.border),
         boxShadow: const [
           BoxShadow(
-            color: Color(0x0D0F172A),
-            blurRadius: 18,
-            offset: Offset(0, 8),
+            color: Color(0x080F172A),
+            blurRadius: 16,
+            offset: Offset(0, 4),
           ),
         ],
       ),
-      child: Padding(
-        padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
-        child: child,
-      ),
+      padding: padding ?? const EdgeInsets.all(AppSpacing.lg),
+      child: child,
     );
   }
 }
 
+// ─────────────────────────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────────────────────────
+
 String _formatPrice(int price) {
   final digits = price.toString();
-  final buffer = StringBuffer();
+  final buf = StringBuffer();
   for (var i = 0; i < digits.length; i++) {
-    if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(',');
-    buffer.write(digits[i]);
+    if (i > 0 && (digits.length - i) % 3 == 0) buf.write(',');
+    buf.write(digits[i]);
   }
-  return '$buffer원';
+  return '${buf}원';
 }
