@@ -15,6 +15,7 @@ import 'package:re_view_front/features/wishlist/presentation/view_models/wishlis
 import 'package:re_view_front/features/wishlist/presentation/widgets/wishlist_filter_bar.dart';
 import 'package:re_view_front/features/wishlist/presentation/widgets/wishlist_product_card.dart';
 import 'package:re_view_front/features/wishlist/presentation/widgets/wishlist_summary_card.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
@@ -247,7 +248,7 @@ class _WishlistBody extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxxl),
             child: Center(
               child: Text(
-                '선택한 필터에 해당하는 찜 상품이 없습니다.',
+                AppLocalizations.of(context).wishlistFilteredEmpty,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -321,7 +322,7 @@ class _WishlistPageHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '찜한 상품',
+          AppLocalizations.of(context).wishlistTitle,
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             color: AppColors.textPrimary,
             fontWeight: FontWeight.w900,
@@ -329,7 +330,7 @@ class _WishlistPageHeader extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.xxs),
         Text(
-          '저장된 상품을 한눈에 보고 가격과 리뷰 신뢰도를 확인해보세요.',
+          AppLocalizations.of(context).wishlistSubtitle,
           style: Theme.of(
             context,
           ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
@@ -340,7 +341,7 @@ class _WishlistPageHeader extends StatelessWidget {
             const Icon(Icons.favorite, size: 14, color: AppColors.error),
             const SizedBox(width: AppSpacing.xxs),
             Text(
-              '찜한 상품 $totalCount개',
+              AppLocalizations.of(context).wishlistCount(totalCount),
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w700,
@@ -372,7 +373,7 @@ class _WishlistEmptyBody extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           Text(
-            '찜한 상품이 없습니다',
+            AppLocalizations.of(context).wishlistEmpty,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w800,
@@ -380,13 +381,16 @@ class _WishlistEmptyBody extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            '상품 카드의 하트를 눌러 찜 목록에 추가해보세요.',
+            AppLocalizations.of(context).wishlistEmptyDesc,
             style: Theme.of(
               context,
             ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.lg),
-          OutlinedButton(onPressed: onGoHome, child: const Text('상품 탐색하러 가기')),
+          OutlinedButton(
+            onPressed: onGoHome,
+            child: Text(AppLocalizations.of(context).wishlistBrowse),
+          ),
         ],
       ),
     );
