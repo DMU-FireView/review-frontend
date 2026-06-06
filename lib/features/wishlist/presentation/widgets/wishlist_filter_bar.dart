@@ -2,30 +2,40 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_item.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 enum WishlistSortOption {
-  recent(label: '최근 저장 순'),
-  priceLow(label: '낮은 가격 순'),
-  priceHigh(label: '높은 가격 순'),
-  rti(label: 'RTI 높은 순'),
-  reviewCount(label: '리뷰 많은 순');
+  recent,
+  priceLow,
+  priceHigh,
+  rti,
+  reviewCount;
 
-  const WishlistSortOption({required this.label});
-
-  final String label;
+  String localizedLabel(AppLocalizations l10n) => switch (this) {
+    WishlistSortOption.recent => l10n.wishlistSortRecent,
+    WishlistSortOption.priceLow => l10n.wishlistSortPriceLow,
+    WishlistSortOption.priceHigh => l10n.wishlistSortPriceHigh,
+    WishlistSortOption.rti => l10n.wishlistSortRti,
+    WishlistSortOption.reviewCount => l10n.wishlistSortReviewCount,
+  };
 }
 
 enum WishlistFilterOption {
-  all(label: '전체'),
-  priceDrop(label: '가격 하락'),
-  rti(label: 'RTI 점수'),
-  lowestPrice(label: '최저 가격'),
-  brand(label: '브랜드'),
-  category(label: '카테고리');
+  all,
+  priceDrop,
+  rti,
+  lowestPrice,
+  brand,
+  category;
 
-  const WishlistFilterOption({required this.label});
-
-  final String label;
+  String localizedLabel(AppLocalizations l10n) => switch (this) {
+    WishlistFilterOption.all => l10n.wishlistFilterAll,
+    WishlistFilterOption.priceDrop => l10n.wishlistFilterPriceDrop,
+    WishlistFilterOption.rti => l10n.wishlistFilterRti,
+    WishlistFilterOption.lowestPrice => l10n.wishlistFilterLowestPrice,
+    WishlistFilterOption.brand => l10n.wishlistFilterBrand,
+    WishlistFilterOption.category => l10n.wishlistFilterCategory,
+  };
 }
 
 class WishlistFilterBar extends StatelessWidget {
@@ -46,6 +56,7 @@ class WishlistFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final priceDropCount = items.where((i) => i.isPriceDrop).length;
 
     return Row(
@@ -59,7 +70,7 @@ class WishlistFilterBar extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.xs),
                     child: _FilterChip(
-                      label: filter.label,
+                      label: filter.localizedLabel(l10n),
                       badge: filter == WishlistFilterOption.priceDrop && priceDropCount > 0
                           ? priceDropCount
                           : null,
@@ -159,6 +170,7 @@ class _SortDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
         color: AppColors.surface,
@@ -182,7 +194,7 @@ class _SortDropdown extends StatelessWidget {
                 .map(
                   (opt) => DropdownMenuItem(
                     value: opt,
-                    child: Text(opt.label),
+                    child: Text(opt.localizedLabel(l10n)),
                   ),
                 )
                 .toList(),
