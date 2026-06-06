@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_summary.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class WishlistSummaryCard extends StatelessWidget {
   const WishlistSummaryCard({super.key, required this.summary, required this.totalCount});
@@ -35,7 +36,7 @@ class WishlistSummaryCard extends StatelessWidget {
                 const Icon(Icons.bar_chart_rounded, size: 16, color: AppColors.textSecondary),
                 const SizedBox(width: AppSpacing.xxs),
                 Text(
-                  '찜 리스트 요약',
+                  AppLocalizations.of(context).wishlistSummaryTitle,
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
                     color: AppColors.textSecondary,
                     fontWeight: FontWeight.w700,
@@ -43,7 +44,7 @@ class WishlistSummaryCard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Text(
-                  '총 $totalCount개',
+                  AppLocalizations.of(context).wishlistSummaryTotal(totalCount),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.textTertiary,
                     fontWeight: FontWeight.w700,
@@ -62,7 +63,7 @@ class WishlistSummaryCard extends StatelessWidget {
                     iconColor: AppColors.error,
                     bgColor: AppColors.errorSoft,
                     value: '${summary.priceDropCount}개',
-                    label: '가격 하락',
+                    label: AppLocalizations.of(context).wishlistSummaryPriceDrop,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
@@ -72,7 +73,7 @@ class WishlistSummaryCard extends StatelessWidget {
                     iconColor: AppColors.info,
                     bgColor: AppColors.infoSoft,
                     value: '${summary.newAlertCount}개',
-                    label: '신규 알림',
+                    label: AppLocalizations.of(context).wishlistSummaryNewAlert,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.xs),
@@ -82,7 +83,7 @@ class WishlistSummaryCard extends StatelessWidget {
                     iconColor: AppColors.textSecondary,
                     bgColor: AppColors.surfaceMuted,
                     value: '${summary.totalReviewCount}개',
-                    label: '총 리뷰',
+                    label: AppLocalizations.of(context).wishlistSummaryTotalReview,
                   ),
                 ),
               ],
