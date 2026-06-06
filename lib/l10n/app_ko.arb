@@ -80,5 +80,370 @@
   "@langJapanese": { "description": "언어명 일본어" },
 
   "langChinese": "中文(简体)",
-  "@langChinese": { "description": "언어명 중국어 간체" }
+  "@langChinese": { "description": "언어명 중국어 간체" },
+
+  "sideNavOrders": "주문/배송",
+  "@sideNavOrders": { "description": "사이드 네비게이션 주문/배송" },
+
+  "sideNavRecentlyViewed": "최근 본 상품",
+  "@sideNavRecentlyViewed": { "description": "사이드 네비게이션 최근 본 상품" },
+
+  "sideNavReviewActivity": "리뷰 활동",
+  "@sideNavReviewActivity": { "description": "사이드 네비게이션 리뷰 활동" },
+
+  "sideNavAccountSettings": "계정 설정",
+  "@sideNavAccountSettings": { "description": "사이드 네비게이션 계정 설정" },
+
+  "settingsSubtitle": "알림, 필터, 계정 설정을 관리해요.",
+  "@settingsSubtitle": { "description": "설정 페이지 부제목 (비로그인)" },
+
+  "settingsSubtitleNamed": "{nickname}님의 알림, 필터, 계정 설정을 관리해요.",
+  "@settingsSubtitleNamed": {
+    "description": "설정 페이지 부제목 (로그인)",
+    "placeholders": {
+      "nickname": { "type": "String" }
+    }
+  },
+
+  "settingsNotificationEmail": "이메일 알림 받기",
+  "@settingsNotificationEmail": { "description": "이메일 알림 토글 레이블" },
+
+  "settingsNotificationEmailDesc": "상품 가격 변동, 리뷰 업데이트를 이메일로 받아요.",
+  "@settingsNotificationEmailDesc": { "description": "이메일 알림 토글 설명" },
+
+  "settingsNotificationPush": "앱 푸시 알림 받기",
+  "@settingsNotificationPush": { "description": "푸시 알림 토글 레이블" },
+
+  "settingsNotificationPushDesc": "저장한 상품의 실시간 알림을 브라우저에서 받아요.",
+  "@settingsNotificationPushDesc": { "description": "푸시 알림 토글 설명" },
+
+  "settingsNotificationAdEmail": "이메일 광고 수신",
+  "@settingsNotificationAdEmail": { "description": "광고 이메일 토글 레이블" },
+
+  "settingsNotificationAdEmailDesc": "프로모션 및 맞춤 혜택 정보를 이메일로 받아요.",
+  "@settingsNotificationAdEmailDesc": { "description": "광고 이메일 토글 설명" },
+
+  "settingsFilterHighlightLowRti": "주의 상품 먼저 보기",
+  "@settingsFilterHighlightLowRti": { "description": "주의 상품 강조 토글 레이블" },
+
+  "settingsFilterHighlightLowRtiDesc": "리뷰 신뢰도가 낮은 상품을 목록 상단에 표시해요.",
+  "@settingsFilterHighlightLowRtiDesc": { "description": "주의 상품 강조 토글 설명" },
+
+  "settingsFilterWishlistAlert": "저장 상품 알림 받기",
+  "@settingsFilterWishlistAlert": { "description": "저장 상품 알림 토글 레이블" },
+
+  "settingsFilterWishlistAlertDesc": "관심 상품의 RTI 변화가 있을 때 알림을 드려요.",
+  "@settingsFilterWishlistAlertDesc": { "description": "저장 상품 알림 토글 설명" },
+
+  "settingsFilterCategory": "카테고리 필터",
+  "@settingsFilterCategory": { "description": "카테고리 필터 레이블" },
+
+  "settingsFilterCategoryDesc": "선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.",
+  "@settingsFilterCategoryDesc": { "description": "카테고리 필터 설명" },
+
+  "settingsFilterCategoryAll": "전체 카테고리",
+  "@settingsFilterCategoryAll": { "description": "카테고리 전체 선택 옵션" },
+
+  "settingsFilterMinReview": "리뷰 최소 개수",
+  "@settingsFilterMinReview": { "description": "최소 리뷰 개수 필터 레이블" },
+
+  "settingsFilterMinReviewDesc": "이 개수 이상 리뷰가 있는 상품만 분석 결과에 반영해요.",
+  "@settingsFilterMinReviewDesc": { "description": "최소 리뷰 개수 필터 설명" },
+
+  "settingsFilterMinReviewSuffix": "개",
+  "@settingsFilterMinReviewSuffix": { "description": "리뷰 개수 단위" },
+
+  "settingsFilterLowRti": "낮은 RTI 경고 기준",
+  "@settingsFilterLowRti": { "description": "낮은 RTI 경고 기준 레이블" },
+
+  "settingsFilterLowRtiDesc": "RTI 점수가 이 값 이하면 주의 상품으로 분류해요.",
+  "@settingsFilterLowRtiDesc": { "description": "낮은 RTI 경고 기준 설명" },
+
+  "settingsFilterLowRtiSuffix": "점",
+  "@settingsFilterLowRtiSuffix": { "description": "RTI 점수 단위" },
+
+  "settingsAccountTitle": "계정",
+  "@settingsAccountTitle": { "description": "계정 섹션 제목" },
+
+  "settingsAccountChangePassword": "비밀번호 변경",
+  "@settingsAccountChangePassword": { "description": "비밀번호 변경 링크" },
+
+  "settingsAccountLabelName": "이름",
+  "@settingsAccountLabelName": { "description": "계정 이름 레이블" },
+
+  "settingsAccountLabelEmail": "이메일",
+  "@settingsAccountLabelEmail": { "description": "계정 이메일 레이블" },
+
+  "settingsAccountLabelJoinDate": "가입일",
+  "@settingsAccountLabelJoinDate": { "description": "계정 가입일 레이블" },
+
+  "settingsAccountLabelMemberType": "회원 유형",
+  "@settingsAccountLabelMemberType": { "description": "회원 유형 레이블" },
+
+  "settingsAccountDefaultName": "사용자",
+  "@settingsAccountDefaultName": { "description": "닉네임 미설정 시 기본 이름" },
+
+  "settingsAccountMemberLabel": "{role} 회원",
+  "@settingsAccountMemberLabel": {
+    "description": "회원 유형 표시 (역할 포함)",
+    "placeholders": {
+      "role": { "type": "String" }
+    }
+  },
+
+  "settingsAccountLinkedServices": "연동 서비스",
+  "@settingsAccountLinkedServices": { "description": "연동 서비스 섹션 레이블" },
+
+  "settingsAccountConnected": "연동됨",
+  "@settingsAccountConnected": { "description": "서비스 연동 상태" },
+
+  "settingsAccountDisconnected": "미연동",
+  "@settingsAccountDisconnected": { "description": "서비스 미연동 상태" },
+
+  "settingsLanguageSection": "언어 설정",
+  "@settingsLanguageSection": { "description": "언어 설정 섹션 제목" },
+
+  "settingsLanguageApplyNow": "변경 즉시 적용됩니다.",
+  "@settingsLanguageApplyNow": { "description": "언어 변경 즉시 적용 안내" },
+
+  "settingsSavedFeedback": "저장됐어요",
+  "@settingsSavedFeedback": { "description": "설정 저장 완료 피드백 메시지" },
+
+  "wishlistTitle": "찜한 상품",
+  "@wishlistTitle": { "description": "위시리스트 페이지 제목" },
+
+  "wishlistSubtitle": "저장된 상품을 한눈에 보고 가격과 리뷰 신뢰도를 확인해보세요.",
+  "@wishlistSubtitle": { "description": "위시리스트 페이지 부제목" },
+
+  "wishlistCount": "찜한 상품 {count}개",
+  "@wishlistCount": {
+    "description": "찜한 상품 개수 표시",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "wishlistEmpty": "찜한 상품이 없습니다",
+  "@wishlistEmpty": { "description": "위시리스트 빈 상태 제목" },
+
+  "wishlistEmptyDesc": "상품 카드의 하트를 눌러 찜 목록에 추가해보세요.",
+  "@wishlistEmptyDesc": { "description": "위시리스트 빈 상태 설명" },
+
+  "wishlistBrowse": "상품 탐색하러 가기",
+  "@wishlistBrowse": { "description": "위시리스트 빈 상태 탐색 버튼" },
+
+  "wishlistFilteredEmpty": "선택한 필터에 해당하는 찜 상품이 없습니다.",
+  "@wishlistFilteredEmpty": { "description": "필터 결과 없음 메시지" },
+
+  "wishlistSummaryTitle": "찜 리스트 요약",
+  "@wishlistSummaryTitle": { "description": "위시리스트 요약 카드 제목" },
+
+  "wishlistSummaryTotal": "총 {count}개",
+  "@wishlistSummaryTotal": {
+    "description": "위시리스트 총 개수",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "wishlistSummaryPriceDrop": "가격 하락",
+  "@wishlistSummaryPriceDrop": { "description": "가격 하락 통계 레이블" },
+
+  "wishlistSummaryNewAlert": "신규 알림",
+  "@wishlistSummaryNewAlert": { "description": "신규 알림 통계 레이블" },
+
+  "wishlistSummaryTotalReview": "총 리뷰",
+  "@wishlistSummaryTotalReview": { "description": "총 리뷰 통계 레이블" },
+
+  "wishlistProductView": "상품 보기",
+  "@wishlistProductView": { "description": "위시리스트 상품 보기 버튼" },
+
+  "wishlistProductPriceDrop": "가격 하락",
+  "@wishlistProductPriceDrop": { "description": "상품 카드 가격 하락 뱃지" },
+
+  "wishlistSortRecent": "최근 저장 순",
+  "@wishlistSortRecent": { "description": "최근 저장 순 정렬 옵션" },
+
+  "wishlistSortPriceLow": "낮은 가격 순",
+  "@wishlistSortPriceLow": { "description": "낮은 가격 순 정렬 옵션" },
+
+  "wishlistSortPriceHigh": "높은 가격 순",
+  "@wishlistSortPriceHigh": { "description": "높은 가격 순 정렬 옵션" },
+
+  "wishlistSortRti": "RTI 높은 순",
+  "@wishlistSortRti": { "description": "RTI 높은 순 정렬 옵션" },
+
+  "wishlistSortReviewCount": "리뷰 많은 순",
+  "@wishlistSortReviewCount": { "description": "리뷰 많은 순 정렬 옵션" },
+
+  "wishlistFilterAll": "전체",
+  "@wishlistFilterAll": { "description": "전체 필터 옵션" },
+
+  "wishlistFilterPriceDrop": "가격 하락",
+  "@wishlistFilterPriceDrop": { "description": "가격 하락 필터 옵션" },
+
+  "wishlistFilterRti": "RTI 점수",
+  "@wishlistFilterRti": { "description": "RTI 점수 필터 옵션" },
+
+  "wishlistFilterLowestPrice": "최저 가격",
+  "@wishlistFilterLowestPrice": { "description": "최저 가격 필터 옵션" },
+
+  "wishlistFilterBrand": "브랜드",
+  "@wishlistFilterBrand": { "description": "브랜드 필터 옵션" },
+
+  "wishlistFilterCategory": "카테고리",
+  "@wishlistFilterCategory": { "description": "카테고리 필터 옵션" },
+
+  "myPageTitle": "마이페이지",
+  "@myPageTitle": { "description": "마이페이지 제목" },
+
+  "myPageLoading": "마이페이지 정보를 불러오는 중입니다.",
+  "@myPageLoading": { "description": "마이페이지 로딩 메시지" },
+
+  "myPageWishlistLoading": "저장한 상품을 불러오는 중입니다.",
+  "@myPageWishlistLoading": { "description": "위시리스트 로딩 메시지" },
+
+  "myPageWishlistEmpty": "저장한 상품이 없습니다.",
+  "@myPageWishlistEmpty": { "description": "위시리스트 빈 상태 메시지" },
+
+  "myPageInterestProducts": "관심 상품",
+  "@myPageInterestProducts": { "description": "관심 상품 섹션 제목" },
+
+  "myPageDefaultName": "사용자",
+  "@myPageDefaultName": { "description": "닉네임 미설정 시 기본 이름" },
+
+  "myPageMemberBasic": "일반 회원 (무료)",
+  "@myPageMemberBasic": { "description": "일반 회원 표시 문구" },
+
+  "myPageSideNavMyPage": "마이페이지",
+  "@myPageSideNavMyPage": { "description": "사이드 네비게이션 마이페이지" },
+
+  "myPageSideNavOrders": "주문/배송",
+  "@myPageSideNavOrders": { "description": "사이드 네비게이션 주문/배송" },
+
+  "myPageSideNavWishlist": "저장한 상품",
+  "@myPageSideNavWishlist": { "description": "사이드 네비게이션 저장한 상품" },
+
+  "myPageSideNavRecentlyViewed": "최근 본 상품",
+  "@myPageSideNavRecentlyViewed": { "description": "사이드 네비게이션 최근 본 상품" },
+
+  "myPageSideNavRiskyProducts": "주의 상품",
+  "@myPageSideNavRiskyProducts": { "description": "사이드 네비게이션 주의 상품" },
+
+  "myPageSideNavAlerts": "알림",
+  "@myPageSideNavAlerts": { "description": "사이드 네비게이션 알림" },
+
+  "myPageRecentActivity": "최근 활동",
+  "@myPageRecentActivity": { "description": "최근 활동 섹션 제목" },
+
+  "myPageRecentActivityEmpty": "최근 활동이 없습니다.",
+  "@myPageRecentActivityEmpty": { "description": "최근 활동 빈 상태" },
+
+  "myPageRecentLabel": "최근",
+  "@myPageRecentLabel": { "description": "최근 날짜 표시" },
+
+  "myPageReviewTrustSummary": "리뷰 신뢰 요약",
+  "@myPageReviewTrustSummary": { "description": "리뷰 신뢰 요약 섹션 제목" },
+
+  "myPageAvgRti": "관심 상품 평균 RTI",
+  "@myPageAvgRti": { "description": "관심 상품 평균 RTI 레이블" },
+
+  "myPageRtiSaveHint": "관심 상품을 저장하면 리뷰 신뢰도 요약이 표시됩니다.",
+  "@myPageRtiSaveHint": { "description": "RTI 요약 저장 안내" },
+
+  "myPageRiskyNone": "현재 대시보드에 주의가 필요한 상품이 없습니다.",
+  "@myPageRiskyNone": { "description": "주의 상품 없음 메시지" },
+
+  "myPageRiskyCount": "주의 상품 {count}개를 확인해보세요.",
+  "@myPageRiskyCount": {
+    "description": "주의 상품 개수 안내",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "myPageHighlightLowRti": "주의 상품 먼저 보기",
+  "@myPageHighlightLowRti": { "description": "주의 상품 먼저 보기 레이블" },
+
+  "myPageWishlistAlertLabel": "저장 상품 알림 받기",
+  "@myPageWishlistAlertLabel": { "description": "저장 상품 알림 레이블" },
+
+  "myPageAccountInfo": "계정 정보",
+  "@myPageAccountInfo": { "description": "계정 정보 섹션 제목" },
+
+  "myPageAccountInfoSubtitle": "개인 정보 및 기본 정보를 관리해요.",
+  "@myPageAccountInfoSubtitle": { "description": "계정 정보 섹션 부제목" },
+
+  "myPageAccountNickname": "닉네임: {nickname}",
+  "@myPageAccountNickname": {
+    "description": "닉네임 표시",
+    "placeholders": {
+      "nickname": { "type": "String" }
+    }
+  },
+
+  "myPageAccountEmail": "이메일: {email}",
+  "@myPageAccountEmail": {
+    "description": "이메일 표시",
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+
+  "myPageAccountMemberType": "회원 유형: {role}",
+  "@myPageAccountMemberType": {
+    "description": "회원 유형 표시",
+    "placeholders": {
+      "role": { "type": "String" }
+    }
+  },
+
+  "myPageDefaultMemberRole": "일반 회원",
+  "@myPageDefaultMemberRole": { "description": "기본 회원 유형" },
+
+  "myPageLoginInfo": "로그인 정보",
+  "@myPageLoginInfo": { "description": "로그인 정보 섹션 제목" },
+
+  "myPageLoginInfoSubtitle": "이메일, 로그인 수단을 관리해요.",
+  "@myPageLoginInfoSubtitle": { "description": "로그인 정보 섹션 부제목" },
+
+  "myPageLoginEmail": "로그인 이메일: {email}",
+  "@myPageLoginEmail": {
+    "description": "로그인 이메일 표시",
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+
+  "myPageLoginStatus": "인증 상태: 로그인됨",
+  "@myPageLoginStatus": { "description": "로그인 상태 표시" },
+
+  "myPageOnboardingComplete": "완료",
+  "@myPageOnboardingComplete": { "description": "온보딩 완료 상태" },
+
+  "myPageOnboardingIncomplete": "미완료",
+  "@myPageOnboardingIncomplete": { "description": "온보딩 미완료 상태" },
+
+  "myPageOnboarding": "온보딩: {status}",
+  "@myPageOnboarding": {
+    "description": "온보딩 상태 표시",
+    "placeholders": {
+      "status": { "type": "String" }
+    }
+  },
+
+  "myPageChangePassword": "비밀번호 변경",
+  "@myPageChangePassword": { "description": "비밀번호 변경 섹션 제목" },
+
+  "myPageChangePasswordSubtitle": "안전한 비밀번호로 관리하세요.",
+  "@myPageChangePasswordSubtitle": { "description": "비밀번호 변경 부제목" },
+
+  "myPageNotificationSettings": "알림 설정",
+  "@myPageNotificationSettings": { "description": "알림 설정 섹션 제목" },
+
+  "myPageNotificationSettingsSubtitle": "이메일 및 푸시 알림을 설정해요.",
+  "@myPageNotificationSettingsSubtitle": { "description": "알림 설정 부제목" },
+
+  "myPageAccountSecurity": "계정 / 보안",
+  "@myPageAccountSecurity": { "description": "계정/보안 섹션 헤더" }
 }
