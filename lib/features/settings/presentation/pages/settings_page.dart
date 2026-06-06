@@ -20,6 +20,7 @@ import 'package:re_view_front/features/my_page/presentation/view_models/my_page_
 import 'package:re_view_front/features/settings/presentation/providers/settings_providers.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 
@@ -359,15 +360,15 @@ class _PageTitle extends StatelessWidget {
       children: [
         Row(
           children: [
-            _Breadcrumb(label: '홈', onTap: () => context.go(RoutePaths.home)),
+            _Breadcrumb(label: AppLocalizations.of(context).navHome, onTap: () => context.go(RoutePaths.home)),
             const _BreadcrumbSep(),
             _Breadcrumb(
-              label: '마이페이지',
+              label: AppLocalizations.of(context).navMyPage,
               onTap: () => context.go(RoutePaths.myPage),
             ),
             const _BreadcrumbSep(),
             Text(
-              '설정',
+              AppLocalizations.of(context).navSettings,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w700,
@@ -381,7 +382,7 @@ class _PageTitle extends StatelessWidget {
           textBaseline: TextBaseline.alphabetic,
           children: [
             Text(
-              '설정',
+              AppLocalizations.of(context).navSettings,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w900,
@@ -390,8 +391,8 @@ class _PageTitle extends StatelessWidget {
             const SizedBox(width: AppSpacing.md),
             Text(
               profile != null
-                  ? '${profile!.nickname}님의 알림, 필터, 계정 설정을 관리해요.'
-                  : '알림, 필터, 계정 설정을 관리해요.',
+                  ? AppLocalizations.of(context).settingsSubtitleNamed(profile!.nickname)
+                  : AppLocalizations.of(context).settingsSubtitle,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w600,
@@ -456,14 +457,14 @@ class _SideNavCard extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: AppSpacing.xs),
-          _NavItem(icon: Icons.home_outlined, label: '마이페이지', onTap: onMyPageTap),
-          _NavItem(icon: Icons.inventory_2_outlined, label: '주문/배송', onTap: onCartTap),
-          _NavItem(icon: Icons.favorite_border, label: '저장한 상품', onTap: onWishlistTap),
-          _NavItem(icon: Icons.history, label: '최근 본 상품', onTap: onWishlistTap),
-          _NavItem(icon: Icons.rate_review_outlined, label: '리뷰 활동', onTap: onMyPageTap),
+          _NavItem(icon: Icons.home_outlined, label: AppLocalizations.of(context).navMyPage, onTap: onMyPageTap),
+          _NavItem(icon: Icons.inventory_2_outlined, label: AppLocalizations.of(context).sideNavOrders, onTap: onCartTap),
+          _NavItem(icon: Icons.favorite_border, label: AppLocalizations.of(context).navWishlist, onTap: onWishlistTap),
+          _NavItem(icon: Icons.history, label: AppLocalizations.of(context).sideNavRecentlyViewed, onTap: onWishlistTap),
+          _NavItem(icon: Icons.rate_review_outlined, label: AppLocalizations.of(context).sideNavReviewActivity, onTap: onMyPageTap),
           _NavItem(
             icon: Icons.settings_outlined,
-            label: '계정 설정',
+            label: AppLocalizations.of(context).sideNavAccountSettings,
             selected: true,
             onTap: () {},
           ),
@@ -556,27 +557,27 @@ class _NotificationSection extends StatelessWidget {
             icon: Icons.notifications_outlined,
             iconColor: const Color(0xFF6366F1),
             iconBg: const Color(0xFFEEF2FF),
-            title: '알림 설정',
+            title: AppLocalizations.of(context).settingsNotifications,
           ),
           const SizedBox(height: AppSpacing.sm),
           _ToggleRow(
             icon: Icons.email_outlined,
-            label: '이메일 알림 받기',
-            description: '상품 가격 변동, 리뷰 업데이트를 이메일로 받아요.',
+            label: AppLocalizations.of(context).settingsNotificationEmail,
+            description: AppLocalizations.of(context).settingsNotificationEmailDesc,
             value: data.emailNotification,
             onChanged: onEmailChanged,
           ),
           _ToggleRow(
             icon: Icons.phone_iphone_outlined,
-            label: '앱 푸시 알림 받기',
-            description: '저장한 상품의 실시간 알림을 브라우저에서 받아요.',
+            label: AppLocalizations.of(context).settingsNotificationPush,
+            description: AppLocalizations.of(context).settingsNotificationPushDesc,
             value: data.pushNotification,
             onChanged: onPushChanged,
           ),
           _ToggleRow(
             icon: Icons.campaign_outlined,
-            label: '이메일 광고 수신',
-            description: '프로모션 및 맞춤 혜택 정보를 이메일로 받아요.',
+            label: AppLocalizations.of(context).settingsNotificationAdEmail,
+            description: AppLocalizations.of(context).settingsNotificationAdEmailDesc,
             value: data.adEmailNotification,
             onChanged: onAdEmailChanged,
             isLast: true,
@@ -625,20 +626,20 @@ class _FilterSection extends StatelessWidget {
             icon: Icons.tune_outlined,
             iconColor: const Color(0xFF0891B2),
             iconBg: const Color(0xFFCFFAFE),
-            title: '분석 필터 설정',
+            title: AppLocalizations.of(context).settingsFilters,
           ),
           const SizedBox(height: AppSpacing.sm),
           _ToggleRow(
             icon: Icons.warning_amber_outlined,
-            label: '주의 상품 먼저 보기',
-            description: '리뷰 신뢰도가 낮은 상품을 목록 상단에 표시해요.',
+            label: AppLocalizations.of(context).settingsFilterHighlightLowRti,
+            description: AppLocalizations.of(context).settingsFilterHighlightLowRtiDesc,
             value: data.highlightLowRti,
             onChanged: onHighlightLowRtiChanged,
           ),
           _ToggleRow(
             icon: Icons.favorite_border,
-            label: '저장 상품 알림 받기',
-            description: '관심 상품의 RTI 변화가 있을 때 알림을 드려요.',
+            label: AppLocalizations.of(context).settingsFilterWishlistAlert,
+            description: AppLocalizations.of(context).settingsFilterWishlistAlertDesc,
             value: data.wishlistAlert,
             onChanged: onWishlistAlertChanged,
           ),
@@ -646,18 +647,18 @@ class _FilterSection extends StatelessWidget {
           const Divider(color: AppColors.border, height: 1),
           const SizedBox(height: AppSpacing.md),
           _FilterInputLabel(
-            label: '카테고리 필터',
-            description: '선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.',
+            label: AppLocalizations.of(context).settingsFilterCategory,
+            description: AppLocalizations.of(context).settingsFilterCategoryDesc,
           ),
           const SizedBox(height: AppSpacing.sm),
           DropdownButtonFormField<String>(
             value: data.categoryFilterId,
             decoration: _inputDecoration(),
-            hint: const Text('전체 카테고리'),
+            hint: Text(AppLocalizations.of(context).settingsFilterCategoryAll),
             items: [
-              const DropdownMenuItem<String>(
+              DropdownMenuItem<String>(
                 value: null,
-                child: Text('전체 카테고리'),
+                child: Text(AppLocalizations.of(context).settingsFilterCategoryAll),
               ),
               for (final cat in topCategories)
                 DropdownMenuItem<String>(
@@ -674,8 +675,8 @@ class _FilterSection extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           _FilterInputLabel(
-            label: '리뷰 최소 개수',
-            description: '이 개수 이상 리뷰가 있는 상품만 분석 결과에 반영해요.',
+            label: AppLocalizations.of(context).settingsFilterMinReview,
+            description: AppLocalizations.of(context).settingsFilterMinReviewDesc,
           ),
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
@@ -684,14 +685,16 @@ class _FilterSection extends StatelessWidget {
               controller: minReviewController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: _inputDecoration(suffixText: '개'),
+              decoration: _inputDecoration(
+                suffixText: AppLocalizations.of(context).settingsFilterMinReviewSuffix,
+              ),
               onChanged: onMinReviewCountChanged,
             ),
           ),
           const SizedBox(height: AppSpacing.md),
           _FilterInputLabel(
-            label: '낮은 RTI 경고 기준',
-            description: 'RTI 점수가 이 값 이하면 주의 상품으로 분류해요.',
+            label: AppLocalizations.of(context).settingsFilterLowRti,
+            description: AppLocalizations.of(context).settingsFilterLowRtiDesc,
           ),
           const SizedBox(height: AppSpacing.sm),
           SizedBox(
@@ -700,7 +703,9 @@ class _FilterSection extends StatelessWidget {
               controller: lowRtiController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: _inputDecoration(suffixText: '점'),
+              decoration: _inputDecoration(
+                suffixText: AppLocalizations.of(context).settingsFilterLowRtiSuffix,
+              ),
               onChanged: onLowRtiThresholdChanged,
             ),
           ),
@@ -794,7 +799,7 @@ class _AccountPanel extends StatelessWidget {
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: Text(
-                  '계정',
+                  AppLocalizations.of(context).settingsAccountTitle,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w900,
@@ -804,7 +809,7 @@ class _AccountPanel extends StatelessWidget {
               GestureDetector(
                 onTap: onPasswordTap,
                 child: Text(
-                  '비밀번호 변경',
+                  AppLocalizations.of(context).settingsAccountChangePassword,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.primary,
                     fontWeight: FontWeight.w700,
@@ -816,18 +821,25 @@ class _AccountPanel extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           const Divider(color: AppColors.border, height: 1),
           const SizedBox(height: AppSpacing.sm),
-          _InfoRow(label: '이름', value: profile?.nickname.isEmpty ?? true ? '사용자' : profile!.nickname),
-          _InfoRow(label: '이메일', value: profile?.email ?? '-'),
-          _InfoRow(label: '가입일', value: joinLabel),
           _InfoRow(
-            label: '회원 유형',
-            value: profile?.role.isEmpty ?? true ? 'USER 회원' : '${profile!.role} 회원',
+            label: AppLocalizations.of(context).settingsAccountLabelName,
+            value: profile?.nickname.isEmpty ?? true
+                ? AppLocalizations.of(context).settingsAccountDefaultName
+                : profile!.nickname,
+          ),
+          _InfoRow(label: AppLocalizations.of(context).settingsAccountLabelEmail, value: profile?.email ?? '-'),
+          _InfoRow(label: AppLocalizations.of(context).settingsAccountLabelJoinDate, value: joinLabel),
+          _InfoRow(
+            label: AppLocalizations.of(context).settingsAccountLabelMemberType,
+            value: profile?.role.isEmpty ?? true
+                ? AppLocalizations.of(context).settingsAccountMemberLabel('USER')
+                : AppLocalizations.of(context).settingsAccountMemberLabel(profile!.role),
           ),
           const SizedBox(height: AppSpacing.sm),
           const Divider(color: AppColors.border, height: 1),
           const SizedBox(height: AppSpacing.sm),
           Text(
-            '연동 서비스',
+            AppLocalizations.of(context).settingsAccountLinkedServices,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w700,
@@ -908,7 +920,9 @@ class _ServiceRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
-              connected ? '연동됨' : '미연동',
+              connected
+                  ? AppLocalizations.of(context).settingsAccountConnected
+                  : AppLocalizations.of(context).settingsAccountDisconnected,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: connected ? AppColors.success : AppColors.textTertiary,
                 fontWeight: FontWeight.w700,
@@ -951,11 +965,11 @@ class _LanguageSection extends StatelessWidget {
             icon: Icons.language_outlined,
             iconColor: const Color(0xFF059669),
             iconBg: const Color(0xFFD1FAE5),
-            title: '언어 설정',
+            title: AppLocalizations.of(context).settingsLanguageSection,
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
-            '변경 즉시 적용됩니다.',
+            AppLocalizations.of(context).settingsLanguageApplyNow,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: AppColors.textSecondary,
             ),
@@ -1112,7 +1126,7 @@ class _SaveBar extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        '저장됐어요',
+                        AppLocalizations.of(context).settingsSavedFeedback,
                         style: Theme.of(context).textTheme.labelMedium?.copyWith(
                           color: AppColors.success,
                           fontWeight: FontWeight.w700,
@@ -1145,7 +1159,7 @@ class _SaveBar extends StatelessWidget {
                     color: AppColors.onPrimary,
                   ),
                 )
-              : const Text('저장', style: TextStyle(fontWeight: FontWeight.w800)),
+              : Text(AppLocalizations.of(context).actionSave, style: const TextStyle(fontWeight: FontWeight.w800)),
         ),
       ],
     );
