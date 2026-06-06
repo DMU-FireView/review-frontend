@@ -33,5 +33,8 @@
       "destination": "/index.html"
     }
   ],
-  "buildCommand": "bash build.sh"
+  "buildCommand": "bash build.sh",
+  "github": {
+    "enabled": false
+  }
 }
