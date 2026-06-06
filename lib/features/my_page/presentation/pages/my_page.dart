@@ -17,6 +17,7 @@ import 'package:re_view_front/features/my_page/presentation/view_models/my_page_
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_item.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/features/wishlist/presentation/view_models/wishlist_state.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
@@ -93,9 +94,9 @@ class _MyPageState extends ConsumerState<MyPage> {
                 AppSpacing.xxxl,
               ),
               child: switch (myPageState) {
-                MyPageLoading() => const SizedBox(
+                MyPageLoading() => SizedBox(
                   height: 360,
-                  child: AppLoadingView(message: '마이페이지 정보를 불러오는 중입니다.'),
+                  child: AppLoadingView(message: AppLocalizations.of(context).myPageLoading),
                 ),
                 MyPageFailure(:final failure) => SizedBox(
                   height: 360,
@@ -268,7 +269,7 @@ class _MyPageBody extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              _SectionHeader(title: '관심 상품', onMore: onWishlistTap),
+              _SectionHeader(title: AppLocalizations.of(context).myPageInterestProducts, onMore: onWishlistTap),
               const SizedBox(height: AppSpacing.md),
               _SavedProductsSection(
                 items: savedItems,
@@ -407,14 +408,14 @@ class _PageTitle extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 minimumSize: Size.zero,
               ),
-              child: const Text('홈'),
+              child: Text(AppLocalizations.of(context).navHome),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: AppSpacing.xs),
               child: Icon(Icons.chevron_right, size: 16),
             ),
             Text(
-              '마이페이지',
+              AppLocalizations.of(context).navMyPage,
               style: Theme.of(context).textTheme.labelMedium?.copyWith(
                 color: AppColors.textSecondary,
                 fontWeight: FontWeight.w700,
@@ -429,7 +430,7 @@ class _PageTitle extends StatelessWidget {
           runSpacing: AppSpacing.xs,
           children: [
             Text(
-              '마이페이지',
+              AppLocalizations.of(context).myPageTitle,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 color: AppColors.textPrimary,
                 fontWeight: FontWeight.w900,
@@ -496,7 +497,7 @@ class _SideNavCard extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Text(
-                  profile.nickname.isEmpty ? '사용자' : profile.nickname,
+                  profile.nickname.isEmpty ? AppLocalizations.of(context).myPageDefaultName : profile.nickname,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -527,8 +528,8 @@ class _SideNavCard extends StatelessWidget {
                     ),
                     child: Text(
                       profile.role.isEmpty
-                          ? '일반 회원 (무료)'
-                          : '${profile.role} 회원',
+                          ? AppLocalizations.of(context).myPageMemberBasic
+                          : AppLocalizations.of(context).settingsAccountMemberLabel(profile.role),
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w900,
@@ -542,33 +543,33 @@ class _SideNavCard extends StatelessWidget {
           const Divider(height: 1, color: AppColors.border),
           _SideNavItem(
             icon: Icons.home_outlined,
-            label: '마이페이지',
+            label: AppLocalizations.of(context).myPageSideNavMyPage,
             selected: true,
             onTap: onTopTap,
           ),
           _SideNavItem(
             icon: Icons.inventory_2_outlined,
-            label: '주문/배송',
+            label: AppLocalizations.of(context).myPageSideNavOrders,
             onTap: onCartTap,
           ),
           _SideNavItem(
             icon: Icons.favorite_border,
-            label: '저장한 상품',
+            label: AppLocalizations.of(context).myPageSideNavWishlist,
             onTap: onWishlistTap,
           ),
           _SideNavItem(
             icon: Icons.history,
-            label: '최근 본 상품',
+            label: AppLocalizations.of(context).myPageSideNavRecentlyViewed,
             onTap: onRecentTap,
           ),
           _SideNavItem(
             icon: Icons.rate_review_outlined,
-            label: '리뷰 활동',
+            label: AppLocalizations.of(context).sideNavReviewActivity,
             onTap: onReviewTap,
           ),
           _SideNavItem(
             icon: Icons.settings_outlined,
-            label: '계정 설정',
+            label: AppLocalizations.of(context).sideNavAccountSettings,
             onTap: () => context.go(RoutePaths.settings),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -666,28 +667,29 @@ class _StatGrid extends StatelessWidget {
         : width < 1100
         ? 2
         : 4;
+    final l10n = AppLocalizations.of(context);
     final stats = [
       _StatItem(
         icon: Icons.favorite_border,
-        label: '저장한 상품',
+        label: l10n.myPageSideNavWishlist,
         value: wishlistCount.toString(),
         onTap: onWishlistTap,
       ),
       _StatItem(
         icon: Icons.history,
-        label: '최근 본 상품',
+        label: l10n.myPageSideNavRecentlyViewed,
         value: recentCount.toString(),
         onTap: onRecentTap,
       ),
       _StatItem(
         icon: Icons.warning_amber_rounded,
-        label: '주의 상품',
+        label: l10n.myPageSideNavRiskyProducts,
         value: riskyCount.toString(),
         onTap: onReviewTap,
       ),
       _StatItem(
         icon: Icons.notifications_none,
-        label: '알림',
+        label: l10n.myPageSideNavAlerts,
         value: notificationCount.toString(),
         onTap: onNotificationTap,
       ),
@@ -782,14 +784,14 @@ class _SavedProductsSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return const SizedBox(
+      return SizedBox(
         height: 180,
-        child: AppLoadingView(message: '저장한 상품을 불러오는 중입니다.'),
+        child: AppLoadingView(message: AppLocalizations.of(context).myPageWishlistLoading),
       );
     }
 
     if (items.isEmpty) {
-      return _EmptyPanel(icon: Icons.favorite_border, message: '저장한 상품이 없습니다.');
+      return _EmptyPanel(icon: Icons.favorite_border, message: AppLocalizations.of(context).myPageWishlistEmpty);
     }
 
     final columns = context.viewportSize.width < 760
@@ -851,7 +853,7 @@ class _RecentActivitySection extends StatelessWidget {
         _ActivityItem(
           icon: Icons.history,
           title: '"${item.name}" 상품을 확인했어요.',
-          trailing: '최근',
+          trailing: AppLocalizations.of(context).myPageRecentLabel,
           onTap: () => onProductTap(item.id),
         ),
     ];
@@ -860,10 +862,10 @@ class _RecentActivitySection extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _PanelTitle(title: '최근 활동'),
+          _PanelTitle(title: AppLocalizations.of(context).myPageRecentActivity),
           const SizedBox(height: AppSpacing.sm),
           if (activities.isEmpty)
-            const _InlineEmpty(message: '최근 활동이 없습니다.')
+            _InlineEmpty(message: AppLocalizations.of(context).myPageRecentActivityEmpty)
           else
             for (final activity in activities) _ActivityTile(item: activity),
         ],
@@ -955,13 +957,13 @@ class _TrustSummaryPanelState extends State<_TrustSummaryPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _PanelTitle(title: '리뷰 신뢰 요약'),
+          _PanelTitle(title: AppLocalizations.of(context).myPageReviewTrustSummary),
           const SizedBox(height: AppSpacing.md),
           Row(
             children: [
               Expanded(
                 child: Text(
-                  '관심 상품 평균 RTI',
+                  AppLocalizations.of(context).myPageAvgRti,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textPrimary,
                     fontWeight: FontWeight.w800,
@@ -988,10 +990,10 @@ class _TrustSummaryPanelState extends State<_TrustSummaryPanel> {
           const SizedBox(height: AppSpacing.xs),
           Text(
             score == null
-                ? '관심 상품을 저장하면 리뷰 신뢰도 요약이 표시됩니다.'
+                ? AppLocalizations.of(context).myPageRtiSaveHint
                 : widget.riskyCount == 0
-                ? '현재 대시보드에 주의가 필요한 상품이 없습니다.'
-                : '주의 상품 ${widget.riskyCount}개를 확인해보세요.',
+                ? AppLocalizations.of(context).myPageRiskyNone
+                : AppLocalizations.of(context).myPageRiskyCount(widget.riskyCount),
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w700,
@@ -999,14 +1001,14 @@ class _TrustSummaryPanelState extends State<_TrustSummaryPanel> {
           ),
           const Divider(color: AppColors.border),
           _SettingRow(
-            label: '주의 상품 먼저 보기',
+            label: AppLocalizations.of(context).myPageHighlightLowRti,
             enabled: _highlightRiskyReviews,
             onChanged: (value) =>
                 setState(() => _highlightRiskyReviews = value),
           ),
           const Divider(color: AppColors.border),
           _SettingRow(
-            label: '저장 상품 알림 받기',
+            label: AppLocalizations.of(context).myPageWishlistAlertLabel,
             enabled: _wishlistNotifications,
             onChanged: (value) =>
                 setState(() => _wishlistNotifications = value),
@@ -1063,45 +1065,46 @@ class _AccountSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final items = [
       _AccountItem(
         icon: Icons.person_outline,
-        title: '계정 정보',
-        subtitle: '개인 정보 및 기본 정보를 관리해요.',
+        title: l10n.myPageAccountInfo,
+        subtitle: l10n.myPageAccountInfoSubtitle,
         onTap: () => _showInfoDialog(
           context,
-          title: '계정 정보',
+          title: l10n.myPageAccountInfo,
           lines: [
-            '닉네임: ${profile.nickname.isEmpty ? '사용자' : profile.nickname}',
-            '이메일: ${profile.email}',
-            '회원 유형: ${profile.role.isEmpty ? '일반 회원' : profile.role}',
+            l10n.myPageAccountNickname(profile.nickname.isEmpty ? l10n.myPageDefaultName : profile.nickname),
+            l10n.myPageAccountEmail(profile.email),
+            l10n.myPageAccountMemberType(profile.role.isEmpty ? l10n.myPageDefaultMemberRole : profile.role),
           ],
         ),
       ),
       _AccountItem(
         icon: Icons.lock_outline,
-        title: '로그인 정보',
-        subtitle: '이메일, 로그인 수단을 관리해요.',
+        title: l10n.myPageLoginInfo,
+        subtitle: l10n.myPageLoginInfoSubtitle,
         onTap: () => _showInfoDialog(
           context,
-          title: '로그인 정보',
+          title: l10n.myPageLoginInfo,
           lines: [
-            '로그인 이메일: ${profile.email}',
-            '인증 상태: 로그인됨',
-            '온보딩: ${profile.onboardingCompleted ? '완료' : '미완료'}',
+            l10n.myPageLoginEmail(profile.email),
+            l10n.myPageLoginStatus,
+            l10n.myPageOnboarding(profile.onboardingCompleted ? l10n.myPageOnboardingComplete : l10n.myPageOnboardingIncomplete),
           ],
         ),
       ),
       _AccountItem(
         icon: Icons.key_outlined,
-        title: '비밀번호 변경',
-        subtitle: '안전한 비밀번호로 관리하세요.',
+        title: l10n.myPageChangePassword,
+        subtitle: l10n.myPageChangePasswordSubtitle,
         onTap: onPasswordTap,
       ),
       _AccountItem(
         icon: Icons.notifications_none,
-        title: '알림 설정',
-        subtitle: '이메일 및 푸시 알림을 설정해요.',
+        title: l10n.myPageNotificationSettings,
+        subtitle: l10n.myPageNotificationSettingsSubtitle,
         onTap: onSettingsTap,
       ),
     ];
@@ -1111,7 +1114,7 @@ class _AccountSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const _SectionHeader(title: '계정 / 보안'),
+        _SectionHeader(title: l10n.myPageAccountSecurity),
         const SizedBox(height: AppSpacing.md),
         GridView.builder(
           itemCount: items.length,
@@ -1153,7 +1156,7 @@ class _AccountSection extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('확인'),
+              child: Text(AppLocalizations.of(context).actionConfirm),
             ),
           ],
         );
@@ -1377,7 +1380,7 @@ class _SectionHeader extends StatelessWidget {
             onPressed: onMore,
             icon: const Icon(Icons.chevron_right, size: 16),
             iconAlignment: IconAlignment.end,
-            label: const Text('전체 보기'),
+            label: Text(AppLocalizations.of(context).actionViewAll),
           ),
       ],
     );
