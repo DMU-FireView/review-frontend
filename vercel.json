@@ -33,5 +33,7 @@
       "destination": "/index.html"
     }
   ],
-  "buildCommand": "flutter build web --release"
+  "github": {
+    "enabled": false
+  }
 }
