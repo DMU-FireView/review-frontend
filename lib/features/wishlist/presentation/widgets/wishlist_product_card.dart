@@ -6,6 +6,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 import 'package:re_view_front/features/search/presentation/widgets/search_product_card.dart';
 import 'package:re_view_front/features/wishlist/domain/entities/wishlist_item.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class WishlistProductCard extends StatelessWidget {
@@ -174,7 +175,7 @@ class WishlistProductCard extends StatelessWidget {
                               ),
                             ),
                             child: Text(
-                              '상품 보기',
+                              AppLocalizations.of(context).wishlistProductView,
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(fontWeight: FontWeight.w900),
                             ),
@@ -217,7 +218,7 @@ class _PriceDropBadge extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             Text(
-              '가격 하락',
+              AppLocalizations.of(context).wishlistProductPriceDrop,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                 color: AppColors.error,
                 fontWeight: FontWeight.w900,

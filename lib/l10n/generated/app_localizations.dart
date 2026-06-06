@@ -263,6 +263,636 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'中文(简体)'**
   String get langChinese;
+
+  /// 사이드 네비게이션 주문/배송
+  ///
+  /// In ko, this message translates to:
+  /// **'주문/배송'**
+  String get sideNavOrders;
+
+  /// 사이드 네비게이션 최근 본 상품
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 본 상품'**
+  String get sideNavRecentlyViewed;
+
+  /// 사이드 네비게이션 리뷰 활동
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 활동'**
+  String get sideNavReviewActivity;
+
+  /// 사이드 네비게이션 계정 설정
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 설정'**
+  String get sideNavAccountSettings;
+
+  /// 설정 페이지 부제목 (비로그인)
+  ///
+  /// In ko, this message translates to:
+  /// **'알림, 필터, 계정 설정을 관리해요.'**
+  String get settingsSubtitle;
+
+  /// 설정 페이지 부제목 (로그인)
+  ///
+  /// In ko, this message translates to:
+  /// **'{nickname}님의 알림, 필터, 계정 설정을 관리해요.'**
+  String settingsSubtitleNamed(String nickname);
+
+  /// 이메일 알림 토글 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 알림 받기'**
+  String get settingsNotificationEmail;
+
+  /// 이메일 알림 토글 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 가격 변동, 리뷰 업데이트를 이메일로 받아요.'**
+  String get settingsNotificationEmailDesc;
+
+  /// 푸시 알림 토글 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'앱 푸시 알림 받기'**
+  String get settingsNotificationPush;
+
+  /// 푸시 알림 토글 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'저장한 상품의 실시간 알림을 브라우저에서 받아요.'**
+  String get settingsNotificationPushDesc;
+
+  /// 광고 이메일 토글 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 광고 수신'**
+  String get settingsNotificationAdEmail;
+
+  /// 광고 이메일 토글 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'프로모션 및 맞춤 혜택 정보를 이메일로 받아요.'**
+  String get settingsNotificationAdEmailDesc;
+
+  /// 주의 상품 강조 토글 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'주의 상품 먼저 보기'**
+  String get settingsFilterHighlightLowRti;
+
+  /// 주의 상품 강조 토글 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 신뢰도가 낮은 상품을 목록 상단에 표시해요.'**
+  String get settingsFilterHighlightLowRtiDesc;
+
+  /// 저장 상품 알림 토글 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 상품 알림 받기'**
+  String get settingsFilterWishlistAlert;
+
+  /// 저장 상품 알림 토글 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 상품의 RTI 변화가 있을 때 알림을 드려요.'**
+  String get settingsFilterWishlistAlertDesc;
+
+  /// 카테고리 필터 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'카테고리 필터'**
+  String get settingsFilterCategory;
+
+  /// 카테고리 필터 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.'**
+  String get settingsFilterCategoryDesc;
+
+  /// 카테고리 전체 선택 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 카테고리'**
+  String get settingsFilterCategoryAll;
+
+  /// 최소 리뷰 개수 필터 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 최소 개수'**
+  String get settingsFilterMinReview;
+
+  /// 최소 리뷰 개수 필터 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'이 개수 이상 리뷰가 있는 상품만 분석 결과에 반영해요.'**
+  String get settingsFilterMinReviewDesc;
+
+  /// 리뷰 개수 단위
+  ///
+  /// In ko, this message translates to:
+  /// **'개'**
+  String get settingsFilterMinReviewSuffix;
+
+  /// 낮은 RTI 경고 기준 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'낮은 RTI 경고 기준'**
+  String get settingsFilterLowRti;
+
+  /// 낮은 RTI 경고 기준 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 점수가 이 값 이하면 주의 상품으로 분류해요.'**
+  String get settingsFilterLowRtiDesc;
+
+  /// RTI 점수 단위
+  ///
+  /// In ko, this message translates to:
+  /// **'점'**
+  String get settingsFilterLowRtiSuffix;
+
+  /// 계정 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'계정'**
+  String get settingsAccountTitle;
+
+  /// 비밀번호 변경 링크
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 변경'**
+  String get settingsAccountChangePassword;
+
+  /// 계정 이름 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'이름'**
+  String get settingsAccountLabelName;
+
+  /// 계정 이메일 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일'**
+  String get settingsAccountLabelEmail;
+
+  /// 계정 가입일 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'가입일'**
+  String get settingsAccountLabelJoinDate;
+
+  /// 회원 유형 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'회원 유형'**
+  String get settingsAccountLabelMemberType;
+
+  /// 닉네임 미설정 시 기본 이름
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자'**
+  String get settingsAccountDefaultName;
+
+  /// 회원 유형 표시 (역할 포함)
+  ///
+  /// In ko, this message translates to:
+  /// **'{role} 회원'**
+  String settingsAccountMemberLabel(String role);
+
+  /// 연동 서비스 섹션 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'연동 서비스'**
+  String get settingsAccountLinkedServices;
+
+  /// 서비스 연동 상태
+  ///
+  /// In ko, this message translates to:
+  /// **'연동됨'**
+  String get settingsAccountConnected;
+
+  /// 서비스 미연동 상태
+  ///
+  /// In ko, this message translates to:
+  /// **'미연동'**
+  String get settingsAccountDisconnected;
+
+  /// 언어 설정 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'언어 설정'**
+  String get settingsLanguageSection;
+
+  /// 언어 변경 즉시 적용 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'변경 즉시 적용됩니다.'**
+  String get settingsLanguageApplyNow;
+
+  /// 설정 저장 완료 피드백 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'저장됐어요'**
+  String get settingsSavedFeedback;
+
+  /// 위시리스트 페이지 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'찜한 상품'**
+  String get wishlistTitle;
+
+  /// 위시리스트 페이지 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'저장된 상품을 한눈에 보고 가격과 리뷰 신뢰도를 확인해보세요.'**
+  String get wishlistSubtitle;
+
+  /// 찜한 상품 개수 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'찜한 상품 {count}개'**
+  String wishlistCount(int count);
+
+  /// 위시리스트 빈 상태 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'찜한 상품이 없습니다'**
+  String get wishlistEmpty;
+
+  /// 위시리스트 빈 상태 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 카드의 하트를 눌러 찜 목록에 추가해보세요.'**
+  String get wishlistEmptyDesc;
+
+  /// 위시리스트 빈 상태 탐색 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 탐색하러 가기'**
+  String get wishlistBrowse;
+
+  /// 필터 결과 없음 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 필터에 해당하는 찜 상품이 없습니다.'**
+  String get wishlistFilteredEmpty;
+
+  /// 위시리스트 요약 카드 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'찜 리스트 요약'**
+  String get wishlistSummaryTitle;
+
+  /// 위시리스트 총 개수
+  ///
+  /// In ko, this message translates to:
+  /// **'총 {count}개'**
+  String wishlistSummaryTotal(int count);
+
+  /// 가격 하락 통계 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'가격 하락'**
+  String get wishlistSummaryPriceDrop;
+
+  /// 신규 알림 통계 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'신규 알림'**
+  String get wishlistSummaryNewAlert;
+
+  /// 총 리뷰 통계 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'총 리뷰'**
+  String get wishlistSummaryTotalReview;
+
+  /// 위시리스트 상품 보기 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 보기'**
+  String get wishlistProductView;
+
+  /// 상품 카드 가격 하락 뱃지
+  ///
+  /// In ko, this message translates to:
+  /// **'가격 하락'**
+  String get wishlistProductPriceDrop;
+
+  /// 최근 저장 순 정렬 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 저장 순'**
+  String get wishlistSortRecent;
+
+  /// 낮은 가격 순 정렬 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'낮은 가격 순'**
+  String get wishlistSortPriceLow;
+
+  /// 높은 가격 순 정렬 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'높은 가격 순'**
+  String get wishlistSortPriceHigh;
+
+  /// RTI 높은 순 정렬 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 높은 순'**
+  String get wishlistSortRti;
+
+  /// 리뷰 많은 순 정렬 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 많은 순'**
+  String get wishlistSortReviewCount;
+
+  /// 전체 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'전체'**
+  String get wishlistFilterAll;
+
+  /// 가격 하락 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'가격 하락'**
+  String get wishlistFilterPriceDrop;
+
+  /// RTI 점수 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 점수'**
+  String get wishlistFilterRti;
+
+  /// 최저 가격 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'최저 가격'**
+  String get wishlistFilterLowestPrice;
+
+  /// 브랜드 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'브랜드'**
+  String get wishlistFilterBrand;
+
+  /// 카테고리 필터 옵션
+  ///
+  /// In ko, this message translates to:
+  /// **'카테고리'**
+  String get wishlistFilterCategory;
+
+  /// 마이페이지 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'마이페이지'**
+  String get myPageTitle;
+
+  /// 마이페이지 로딩 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'마이페이지 정보를 불러오는 중입니다.'**
+  String get myPageLoading;
+
+  /// 위시리스트 로딩 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'저장한 상품을 불러오는 중입니다.'**
+  String get myPageWishlistLoading;
+
+  /// 위시리스트 빈 상태 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'저장한 상품이 없습니다.'**
+  String get myPageWishlistEmpty;
+
+  /// 관심 상품 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 상품'**
+  String get myPageInterestProducts;
+
+  /// 닉네임 미설정 시 기본 이름
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자'**
+  String get myPageDefaultName;
+
+  /// 일반 회원 표시 문구
+  ///
+  /// In ko, this message translates to:
+  /// **'일반 회원 (무료)'**
+  String get myPageMemberBasic;
+
+  /// 사이드 네비게이션 마이페이지
+  ///
+  /// In ko, this message translates to:
+  /// **'마이페이지'**
+  String get myPageSideNavMyPage;
+
+  /// 사이드 네비게이션 주문/배송
+  ///
+  /// In ko, this message translates to:
+  /// **'주문/배송'**
+  String get myPageSideNavOrders;
+
+  /// 사이드 네비게이션 저장한 상품
+  ///
+  /// In ko, this message translates to:
+  /// **'저장한 상품'**
+  String get myPageSideNavWishlist;
+
+  /// 사이드 네비게이션 최근 본 상품
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 본 상품'**
+  String get myPageSideNavRecentlyViewed;
+
+  /// 사이드 네비게이션 주의 상품
+  ///
+  /// In ko, this message translates to:
+  /// **'주의 상품'**
+  String get myPageSideNavRiskyProducts;
+
+  /// 사이드 네비게이션 알림
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get myPageSideNavAlerts;
+
+  /// 최근 활동 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 활동'**
+  String get myPageRecentActivity;
+
+  /// 최근 활동 빈 상태
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 활동이 없습니다.'**
+  String get myPageRecentActivityEmpty;
+
+  /// 최근 날짜 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'최근'**
+  String get myPageRecentLabel;
+
+  /// 리뷰 신뢰 요약 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 신뢰 요약'**
+  String get myPageReviewTrustSummary;
+
+  /// 관심 상품 평균 RTI 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 상품 평균 RTI'**
+  String get myPageAvgRti;
+
+  /// RTI 요약 저장 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'관심 상품을 저장하면 리뷰 신뢰도 요약이 표시됩니다.'**
+  String get myPageRtiSaveHint;
+
+  /// 주의 상품 없음 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 대시보드에 주의가 필요한 상품이 없습니다.'**
+  String get myPageRiskyNone;
+
+  /// 주의 상품 개수 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'주의 상품 {count}개를 확인해보세요.'**
+  String myPageRiskyCount(int count);
+
+  /// 주의 상품 먼저 보기 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'주의 상품 먼저 보기'**
+  String get myPageHighlightLowRti;
+
+  /// 저장 상품 알림 레이블
+  ///
+  /// In ko, this message translates to:
+  /// **'저장 상품 알림 받기'**
+  String get myPageWishlistAlertLabel;
+
+  /// 계정 정보 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 정보'**
+  String get myPageAccountInfo;
+
+  /// 계정 정보 섹션 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'개인 정보 및 기본 정보를 관리해요.'**
+  String get myPageAccountInfoSubtitle;
+
+  /// 닉네임 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'닉네임: {nickname}'**
+  String myPageAccountNickname(String nickname);
+
+  /// 이메일 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일: {email}'**
+  String myPageAccountEmail(String email);
+
+  /// 회원 유형 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'회원 유형: {role}'**
+  String myPageAccountMemberType(String role);
+
+  /// 기본 회원 유형
+  ///
+  /// In ko, this message translates to:
+  /// **'일반 회원'**
+  String get myPageDefaultMemberRole;
+
+  /// 로그인 정보 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인 정보'**
+  String get myPageLoginInfo;
+
+  /// 로그인 정보 섹션 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일, 로그인 수단을 관리해요.'**
+  String get myPageLoginInfoSubtitle;
+
+  /// 로그인 이메일 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인 이메일: {email}'**
+  String myPageLoginEmail(String email);
+
+  /// 로그인 상태 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'인증 상태: 로그인됨'**
+  String get myPageLoginStatus;
+
+  /// 온보딩 완료 상태
+  ///
+  /// In ko, this message translates to:
+  /// **'완료'**
+  String get myPageOnboardingComplete;
+
+  /// 온보딩 미완료 상태
+  ///
+  /// In ko, this message translates to:
+  /// **'미완료'**
+  String get myPageOnboardingIncomplete;
+
+  /// 온보딩 상태 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'온보딩: {status}'**
+  String myPageOnboarding(String status);
+
+  /// 비밀번호 변경 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'비밀번호 변경'**
+  String get myPageChangePassword;
+
+  /// 비밀번호 변경 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'안전한 비밀번호로 관리하세요.'**
+  String get myPageChangePasswordSubtitle;
+
+  /// 알림 설정 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'알림 설정'**
+  String get myPageNotificationSettings;
+
+  /// 알림 설정 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일 및 푸시 알림을 설정해요.'**
+  String get myPageNotificationSettingsSubtitle;
+
+  /// 계정/보안 섹션 헤더
+  ///
+  /// In ko, this message translates to:
+  /// **'계정 / 보안'**
+  String get myPageAccountSecurity;
 }
 
 class _AppLocalizationsDelegate
