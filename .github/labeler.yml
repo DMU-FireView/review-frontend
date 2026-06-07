@@ -1,0 +1,56 @@
+"type: chore":
+  - head-branch:
+      - "^chore/"
+
+"type: docs":
+  - head-branch:
+      - "^docs/"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.md"
+          - "docs/**"
+
+"type: feature":
+  - head-branch:
+      - "^feature/"
+      - "^feat/"
+
+"type: fix":
+  - head-branch:
+      - "^fix/"
+      - "^bugfix/"
+      - "^hotfix/"
+
+"area: github":
+  - changed-files:
+      - any-glob-to-any-file:
+          - ".github/**"
+
+"area: architecture":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/app/**"
+          - "lib/core/**"
+          - "lib/shared/**"
+
+"area: feature":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "lib/features/**"
+          - "test/features/**"
+
+"platform: android":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "android/**"
+
+"platform: ios":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "ios/**"
+
+"platform: web":
+  - changed-files:
+      - any-glob-to-any-file:
+          - "web/**"
+          - "vercel.json"

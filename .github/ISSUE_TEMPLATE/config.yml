@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Re:view Frontend Discussion
+    url: https://github.com/DMU-FireView/review-frontend/discussions
+    about: 질문이나 아이디어 논의는 Discussion을 사용해주세요.
