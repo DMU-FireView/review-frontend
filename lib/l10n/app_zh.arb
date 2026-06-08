@@ -33,6 +33,7 @@
   "sideNavRecentlyViewed": "최근 본 상품",
   "sideNavReviewActivity": "리뷰 활동",
   "sideNavAccountSettings": "계정 설정",
+  "sideNavFeedbackHistory": "反馈记录",
 
   "settingsSubtitle": "알림, 필터, 계정 설정을 관리해요.",
   "settingsSubtitleNamed": "{nickname}님의 알림, 필터, 계정 설정을 관리해요.",
@@ -140,5 +141,16 @@
   "myPageChangePasswordSubtitle": "안전한 비밀번호로 관리하세요.",
   "myPageNotificationSettings": "알림 설정",
   "myPageNotificationSettingsSubtitle": "이메일 및 푸시 알림을 설정해요.",
-  "myPageAccountSecurity": "계정 / 보안"
+  "myPageAccountSecurity": "계정 / 보안",
+
+  "feedbackHistoryTitle": "我的反馈记录",
+  "feedbackHistorySubtitle": "查看您提交的商品/评论反馈记录。",
+  "feedbackHistoryLoading": "正在加载反馈记录。",
+  "feedbackHistoryEmpty": "暂无提交的反馈。",
+  "feedbackHistoryEmptyDesc": "您可以在商品详情页提交评论反馈。",
+  "feedbackHistoryCount": "{count}条反馈",
+  "feedbackHistoryViewProduct": "查看商品",
+  "feedbackStatusPending": "审核中",
+  "feedbackStatusAccepted": "已处理",
+  "feedbackStatusRejected": "已拒绝"
 }

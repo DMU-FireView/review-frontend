@@ -16,6 +16,7 @@ class AppConfig {
     required this.passwordResetRequestPath,
     required this.passwordResetPath,
     required this.userMePath,
+    required this.userFeedbackPath,
     required this.landingStatsPath,
     required this.connectTimeout,
     required this.receiveTimeout,
@@ -84,6 +85,10 @@ class AppConfig {
         'USER_ME_PATH',
         defaultValue: '/api/users/me',
       ),
+      userFeedbackPath: const String.fromEnvironment(
+        'USER_FEEDBACK_PATH',
+        defaultValue: '/api/users/me/feedback',
+      ),
       landingStatsPath: const String.fromEnvironment(
         'LANDING_STATS_PATH',
         defaultValue: '/api/landing/stats',
@@ -107,6 +112,7 @@ class AppConfig {
   final String passwordResetRequestPath;
   final String passwordResetPath;
   final String userMePath;
+  final String userFeedbackPath;
   final String landingStatsPath;
   final Duration connectTimeout;
   final Duration receiveTimeout;

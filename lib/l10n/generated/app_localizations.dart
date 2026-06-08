@@ -288,6 +288,12 @@ abstract class AppLocalizations {
   /// **'계정 설정'**
   String get sideNavAccountSettings;
 
+  /// 사이드 네비게이션 피드백 내역
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 내역'**
+  String get sideNavFeedbackHistory;
+
   /// 설정 페이지 부제목 (비로그인)
   ///
   /// In ko, this message translates to:
@@ -893,6 +899,66 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'계정 / 보안'**
   String get myPageAccountSecurity;
+
+  /// 피드백 내역 페이지 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'내 피드백 내역'**
+  String get feedbackHistoryTitle;
+
+  /// 피드백 내역 페이지 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'제출한 상품/리뷰 피드백 내역을 확인할 수 있습니다.'**
+  String get feedbackHistorySubtitle;
+
+  /// 피드백 내역 로딩 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 내역을 불러오는 중입니다.'**
+  String get feedbackHistoryLoading;
+
+  /// 피드백 내역 없을 때 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'제출한 피드백이 없습니다.'**
+  String get feedbackHistoryEmpty;
+
+  /// 피드백 내역 없을 때 안내 문구
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 상세 페이지에서 리뷰 피드백을 제출할 수 있습니다.'**
+  String get feedbackHistoryEmptyDesc;
+
+  /// 피드백 건수
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}건의 피드백'**
+  String feedbackHistoryCount(int count);
+
+  /// 피드백 카드 상품 보기 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 보기'**
+  String get feedbackHistoryViewProduct;
+
+  /// 피드백 상태: 검토 중
+  ///
+  /// In ko, this message translates to:
+  /// **'검토 중'**
+  String get feedbackStatusPending;
+
+  /// 피드백 상태: 처리됨
+  ///
+  /// In ko, this message translates to:
+  /// **'처리됨'**
+  String get feedbackStatusAccepted;
+
+  /// 피드백 상태: 반려됨
+  ///
+  /// In ko, this message translates to:
+  /// **'반려됨'**
+  String get feedbackStatusRejected;
 }
 
 class _AppLocalizationsDelegate
