@@ -140,5 +140,38 @@
   "myPageChangePasswordSubtitle": "Keep your account secure.",
   "myPageNotificationSettings": "Notifications",
   "myPageNotificationSettingsSubtitle": "Set up email and push notifications.",
-  "myPageAccountSecurity": "Account / Security"
+  "myPageAccountSecurity": "Account / Security",
+
+  "navCategory": "Category",
+  "navWishShort": "Saved",
+  "navMyShort": "My",
+
+  "homeSearchHint": "Search products based on reviews",
+  "homeSearchSuggestionsTitle": "Related Searches",
+  "homeSearchSuggestionsLoading": "Loading related searches...",
+  "homeSearchSuggestionsHint": "Type at least 2 characters to see related searches.",
+  "homeRecentSearchTitle": "Recent Searches",
+  "homeRecentSearchDeleteAll": "Clear All",
+  "homeRecentSearchEmpty": "No recent searches.",
+  "homePopularSearchTitle": "Popular",
+  "homeSearchProductsTitle": "Suggested Products",
+
+  "homeTrendingTitle": "Trending Keywords",
+  "homeKeywordsEmpty": "No keywords to display.",
+  "homeRecommendedTitle": "Editor's Review-Based Picks",
+  "homeViewAll": "View All",
+  "homeLoginRequired": "Login required.",
+
+  "homeBenefitTitle": "Benefits for New Customers",
+  "homeBenefitSubtitle": "Enjoy member benefits when you start review-based shopping.",
+  "homeBenefitButton": "Get Benefits",
+
+  "homeTrustDescription": "We filter promotional and manipulated reviews, analyze genuine reviews, and provide a trust score.",
+  "homeTrustViewMore": "Learn More",
+  "homeTrustLabel1": "Real Review Analysis",
+  "homeTrustLabel2": "Ad/Manipulation Filtering",
+  "homeTrustLabel3": "Trust Score",
+
+  "homePopularCategoryTitle": "Popular Categories",
+  "homeCategoryEmpty": "No categories to display."
 }

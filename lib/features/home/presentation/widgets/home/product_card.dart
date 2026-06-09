@@ -5,6 +5,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 class ProductCard extends StatelessWidget {
@@ -188,7 +189,7 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
     if (!ref.read(isLoggedInProvider)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('로그인이 필요합니다.'),
+          content: Text(AppLocalizations.of(context).homeLoginRequired),
           duration: Duration(seconds: 2),
         ),
       );

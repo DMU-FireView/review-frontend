@@ -7,6 +7,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/storage/web_storage.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 const _recentSearchStorageKey = 'home_recent_search_queries';
@@ -151,7 +152,7 @@ class _SearchBarState extends State<SearchBar> {
                 textInputAction: TextInputAction.search,
                 onSubmitted: _submitQuery,
                 decoration: InputDecoration(
-                  hintText: '찾고 있는 상품을 리뷰 기반으로 검색해보세요',
+                  hintText: AppLocalizations.of(context).homeSearchHint,
                   hintStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.textTertiary,
                   ),
@@ -394,7 +395,7 @@ class _SearchSuggestionPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               _PanelSectionTitle(
-                title: '연관 검색어',
+                title: AppLocalizations.of(context).homeSearchSuggestionsTitle,
                 trailing: const Icon(
                   Icons.refresh,
                   size: 16,
@@ -404,13 +405,13 @@ class _SearchSuggestionPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               if (isLoadingRelated)
                 visibleRelatedKeywords.isEmpty
-                    ? const _PanelEmptyRow(message: '연관 검색어를 불러오는 중입니다.')
+                    ? _PanelEmptyRow(message: AppLocalizations.of(context).homeSearchSuggestionsLoading)
                     : _KeywordWrap(
                         keywords: visibleRelatedKeywords,
                         onKeywordPressed: onKeywordPressed,
                       )
               else if (visibleRelatedKeywords.isEmpty)
-                const _PanelEmptyRow(message: '두 글자 이상 입력하면 연관 검색어가 표시됩니다.')
+                _PanelEmptyRow(message: AppLocalizations.of(context).homeSearchSuggestionsHint)
               else
                 _KeywordWrap(
                   keywords: visibleRelatedKeywords,
@@ -420,13 +421,13 @@ class _SearchSuggestionPanel extends StatelessWidget {
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: AppSpacing.md),
               _PanelSectionTitle(
-                title: '최근 검색',
+                title: AppLocalizations.of(context).homeRecentSearchTitle,
                 trailing: recentQueries.isEmpty
                     ? null
                     : TextButton.icon(
                         onPressed: onRecentQueriesCleared,
                         icon: const Icon(Icons.delete_outline, size: 14),
-                        label: const Text('전체 삭제'),
+                        label: Text(AppLocalizations.of(context).homeRecentSearchDeleteAll),
                         style: TextButton.styleFrom(
                           minimumSize: Size.zero,
                           padding: EdgeInsets.zero,
@@ -439,7 +440,7 @@ class _SearchSuggestionPanel extends StatelessWidget {
               ),
               const SizedBox(height: AppSpacing.sm),
               if (recentQueries.isEmpty)
-                const _PanelEmptyRow(message: '최근 검색어가 없습니다.')
+                _PanelEmptyRow(message: AppLocalizations.of(context).homeRecentSearchEmpty)
               else
                 Wrap(
                   spacing: AppSpacing.xs,
@@ -456,10 +457,10 @@ class _SearchSuggestionPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: AppSpacing.md),
-              const _PanelSectionTitle(title: '인기 검색'),
+              _PanelSectionTitle(title: AppLocalizations.of(context).homePopularSearchTitle),
               const SizedBox(height: AppSpacing.sm),
               if (visiblePopularKeywords.isEmpty)
-                const _PanelEmptyRow(message: '인기 검색 API 연결 대기 중')
+                _PanelEmptyRow(message: AppLocalizations.of(context).homePopularSearchTitle)
               else
                 _KeywordWrap(
                   keywords: visiblePopularKeywords,
@@ -468,7 +469,7 @@ class _SearchSuggestionPanel extends StatelessWidget {
               const SizedBox(height: AppSpacing.md),
               const Divider(height: 1, color: AppColors.border),
               const SizedBox(height: AppSpacing.md),
-              const _PanelSectionTitle(title: '추천 상품'),
+              _PanelSectionTitle(title: AppLocalizations.of(context).homeSearchProductsTitle),
               const SizedBox(height: AppSpacing.sm),
               if (products.isEmpty)
                 const _PanelEmptyRow(message: '추천상품 API 연결 대기 중')
