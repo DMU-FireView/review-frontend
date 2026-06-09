@@ -188,9 +188,9 @@ class _HeartButtonState extends ConsumerState<_HeartButton>
   Future<void> _toggle() async {
     if (!ref.read(isLoggedInProvider)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(AppLocalizations.of(context).homeLoginRequired),
-          duration: Duration(seconds: 2),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;
