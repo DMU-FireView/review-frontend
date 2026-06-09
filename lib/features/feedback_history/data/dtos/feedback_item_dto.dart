@@ -3,11 +3,14 @@ import 'package:re_view_front/features/feedback_history/domain/entities/feedback
 class FeedbackItemDto {
   const FeedbackItemDto({
     required this.id,
-    required this.reviewId,
-    required this.feedbackType,
+    required this.typeLabel,
+    required this.feedbackCategory,
     required this.status,
+    required this.statusDescription,
     required this.productName,
     required this.reviewContent,
+    required this.currentStep,
+    required this.totalSteps,
     this.productId,
     this.createdAt,
   });
@@ -15,12 +18,15 @@ class FeedbackItemDto {
   factory FeedbackItemDto.fromJson(Map<String, dynamic> json) {
     return FeedbackItemDto(
       id: _readInt(json, ['id', 'feedbackId']),
-      reviewId: _readInt(json, ['reviewId', 'review_id']),
+      typeLabel: _readString(json, ['typeLabel', 'feedbackType', 'type']),
+      feedbackCategory: _readString(json, ['feedbackCategory', 'category']),
       productId: _readNullableInt(json, ['productId', 'product_id']),
-      feedbackType: _readString(json, ['feedbackType', 'type']),
       status: _readString(json, ['status', 'feedbackStatus']),
+      statusDescription: _readString(json, ['statusDescription', 'statusLabel']),
       productName: _readString(json, ['productName', 'product_name', 'name']),
       reviewContent: _readString(json, ['reviewContent', 'review_content', 'content']),
+      currentStep: _readInt(json, ['currentStep', 'step']),
+      totalSteps: _readInt(json, ['totalSteps']),
       createdAt: _readDateTime(json, ['createdAt', 'created_at', 'submittedAt']),
     );
   }
@@ -29,22 +35,28 @@ class FeedbackItemDto {
       list.whereType<Map<String, dynamic>>().map(FeedbackItemDto.fromJson).toList();
 
   final int id;
-  final int reviewId;
+  final String typeLabel;
+  final String feedbackCategory;
   final int? productId;
-  final String feedbackType;
   final String status;
+  final String statusDescription;
   final String productName;
   final String reviewContent;
+  final int currentStep;
+  final int totalSteps;
   final DateTime? createdAt;
 
   FeedbackItem toEntity() => FeedbackItem(
     id: id,
-    reviewId: reviewId,
+    typeLabel: typeLabel,
+    feedbackCategory: feedbackCategory,
     productId: productId,
-    feedbackType: feedbackType,
     status: status,
+    statusDescription: statusDescription,
     productName: productName,
     reviewContent: reviewContent,
+    currentStep: currentStep,
+    totalSteps: totalSteps,
     createdAt: createdAt,
   );
 }

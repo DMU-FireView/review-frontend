@@ -446,7 +446,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackHistoryTitle => 'My Feedback History';
 
   @override
-  String get feedbackHistorySubtitle => 'View the history of product/review feedback you\'ve submitted.';
+  String get feedbackHistorySubtitle =>
+      'View the history of product/review feedback you\'ve submitted.';
 
   @override
   String get feedbackHistoryLoading => 'Loading feedback history...';
@@ -455,16 +456,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedbackHistoryEmpty => 'No feedback submitted yet.';
 
   @override
-  String get feedbackHistoryEmptyDesc => 'You can submit review feedback on the product detail page.';
+  String get feedbackHistoryEmptyDesc =>
+      'You can submit review feedback on the product detail page.';
 
   @override
-  String feedbackHistoryCount(int count) => '$count feedback item(s)';
+  String feedbackHistoryCount(int count) {
+    return '$count feedback item(s)';
+  }
 
   @override
   String get feedbackHistoryViewProduct => 'View Product';
 
   @override
-  String get feedbackStatusPending => 'Pending';
+  String get feedbackStatusSubmitted => 'Submitted';
+
+  @override
+  String get feedbackStatusPending => 'Under Review';
 
   @override
   String get feedbackStatusAccepted => 'Accepted';

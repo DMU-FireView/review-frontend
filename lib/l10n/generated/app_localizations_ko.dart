@@ -443,10 +443,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get feedbackHistoryEmptyDesc => '상품 상세 페이지에서 리뷰 피드백을 제출할 수 있습니다.';
 
   @override
-  String feedbackHistoryCount(int count) => '$count건의 피드백';
+  String feedbackHistoryCount(int count) {
+    return '$count건의 피드백';
+  }
 
   @override
   String get feedbackHistoryViewProduct => '상품 보기';
+
+  @override
+  String get feedbackStatusSubmitted => '접수';
 
   @override
   String get feedbackStatusPending => '검토 중';

@@ -476,6 +476,7 @@
   "feedbackHistoryViewProduct": "상품 보기",
   "@feedbackHistoryViewProduct": { "description": "피드백 카드 상품 보기 버튼" },
 
+  "feedbackStatusSubmitted": "접수",
   "feedbackStatusPending": "검토 중",
   "@feedbackStatusPending": { "description": "피드백 상태: 검토 중" },
 

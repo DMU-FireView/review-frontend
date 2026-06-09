@@ -150,7 +150,8 @@
   "feedbackHistoryEmptyDesc": "You can submit review feedback on the product detail page.",
   "feedbackHistoryCount": "{count} feedback item(s)",
   "feedbackHistoryViewProduct": "View Product",
-  "feedbackStatusPending": "Pending",
+  "feedbackStatusSubmitted": "Submitted",
+  "feedbackStatusPending": "Under Review",
   "feedbackStatusAccepted": "Accepted",
   "feedbackStatusRejected": "Rejected"
 }

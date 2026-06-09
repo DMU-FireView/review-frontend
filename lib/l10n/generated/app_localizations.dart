@@ -942,6 +942,12 @@ abstract class AppLocalizations {
   /// **'상품 보기'**
   String get feedbackHistoryViewProduct;
 
+  /// No description provided for @feedbackStatusSubmitted.
+  ///
+  /// In ko, this message translates to:
+  /// **'접수'**
+  String get feedbackStatusSubmitted;
+
   /// 피드백 상태: 검토 중
   ///
   /// In ko, this message translates to:

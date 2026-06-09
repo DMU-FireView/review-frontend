@@ -150,6 +150,7 @@
   "feedbackHistoryEmptyDesc": "商品詳細ページでレビューフィードバックを投稿できます。",
   "feedbackHistoryCount": "{count}件のフィードバック",
   "feedbackHistoryViewProduct": "商品を見る",
+  "feedbackStatusSubmitted": "受付",
   "feedbackStatusPending": "審査中",
   "feedbackStatusAccepted": "処理済み",
   "feedbackStatusRejected": "却下"

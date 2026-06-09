@@ -339,7 +339,7 @@ class _FeedbackCard extends StatelessWidget {
               children: [
                 _StatusChip(status: item.status),
                 const SizedBox(width: AppSpacing.sm),
-                _TypeChip(feedbackType: item.feedbackType),
+                _TypeChip(typeLabel: item.typeLabel),
                 const Spacer(),
                 if (item.createdAt != null)
                   Text(
@@ -432,7 +432,9 @@ class _StatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final (label, color) = switch (status.toUpperCase()) {
-      'ACCEPTED' => (l10n.feedbackStatusAccepted, const Color(0xFF16A34A)),
+      'SUBMITTED' => (l10n.feedbackStatusSubmitted, const Color(0xFF6366F1)),
+      'UNDER_REVIEW' => (l10n.feedbackStatusPending, const Color(0xFFD97706)),
+      'RESOLVED' || 'ACCEPTED' => (l10n.feedbackStatusAccepted, const Color(0xFF16A34A)),
       'REJECTED' => (l10n.feedbackStatusRejected, AppColors.error),
       _ => (l10n.feedbackStatusPending, const Color(0xFFD97706)),
     };
@@ -460,9 +462,9 @@ class _StatusChip extends StatelessWidget {
 }
 
 class _TypeChip extends StatelessWidget {
-  const _TypeChip({required this.feedbackType});
+  const _TypeChip({required this.typeLabel});
 
-  final String feedbackType;
+  final String typeLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -477,7 +479,7 @@ class _TypeChip extends StatelessWidget {
           vertical: AppSpacing.xxs,
         ),
         child: Text(
-          feedbackType,
+          typeLabel,
           style: Theme.of(context).textTheme.labelSmall?.copyWith(
             color: AppColors.primary,
             fontWeight: FontWeight.w800,

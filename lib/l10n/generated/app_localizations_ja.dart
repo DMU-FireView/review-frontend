@@ -443,10 +443,15 @@ class AppLocalizationsJa extends AppLocalizations {
   String get feedbackHistoryEmptyDesc => '商品詳細ページでレビューフィードバックを投稿できます。';
 
   @override
-  String feedbackHistoryCount(int count) => '$count件のフィードバック';
+  String feedbackHistoryCount(int count) {
+    return '$count件のフィードバック';
+  }
 
   @override
   String get feedbackHistoryViewProduct => '商品を見る';
+
+  @override
+  String get feedbackStatusSubmitted => '受付';
 
   @override
   String get feedbackStatusPending => '審査中';

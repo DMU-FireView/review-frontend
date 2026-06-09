@@ -443,10 +443,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get feedbackHistoryEmptyDesc => '您可以在商品详情页提交评论反馈。';
 
   @override
-  String feedbackHistoryCount(int count) => '$count条反馈';
+  String feedbackHistoryCount(int count) {
+    return '$count条反馈';
+  }
 
   @override
   String get feedbackHistoryViewProduct => '查看商品';
+
+  @override
+  String get feedbackStatusSubmitted => '已提交';
 
   @override
   String get feedbackStatusPending => '审核中';
