@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
@@ -12,6 +14,8 @@ void showReviewRtiAnalysisDialog(
   int safeCount = 0,
   int warnCount = 0,
   int dangerCount = 0,
+  int? productId,
+  String productName = '',
 }) {
   showDialog<void>(
     context: context,
@@ -21,6 +25,8 @@ void showReviewRtiAnalysisDialog(
       safeCount: safeCount,
       warnCount: warnCount,
       dangerCount: dangerCount,
+      productId: productId,
+      productName: productName,
     ),
   );
 }
@@ -32,12 +38,16 @@ class ReviewRtiAnalysisDialog extends StatelessWidget {
     this.safeCount = 0,
     this.warnCount = 0,
     this.dangerCount = 0,
+    this.productId,
+    this.productName = '',
   });
 
   final ProductReview review;
   final int safeCount;
   final int warnCount;
   final int dangerCount;
+  final int? productId;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,12 @@ class ReviewRtiAnalysisDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                _DialogFooter(onClose: () => Navigator.of(context).pop()),
+                _DialogFooter(
+            onClose: () => Navigator.of(context).pop(),
+            review: review,
+            productId: productId,
+            productName: productName,
+          ),
               ],
             ),
           ),
@@ -886,9 +901,17 @@ class _ReasonsSection extends StatelessWidget {
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 class _DialogFooter extends StatelessWidget {
-  const _DialogFooter({required this.onClose});
+  const _DialogFooter({
+    required this.onClose,
+    required this.review,
+    this.productId,
+    this.productName = '',
+  });
 
   final VoidCallback onClose;
+  final ProductReview review;
+  final int? productId;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -948,7 +971,20 @@ class _DialogFooter extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pop();
+              context.goNamed(
+                RouteNames.reviewReport,
+                extra: {
+                  'reviewId': review.id,
+                  'productId': productId,
+                  'productName': productName,
+                  'reviewContent': review.content,
+                  'rtiScore': review.rtiScore.toDouble(),
+                  'rtiGrade': review.rtiLabel,
+                },
+              );
+            },
             style: OutlinedButton.styleFrom(
               side: const BorderSide(color: AppColors.error),
               foregroundColor: AppColors.error,
