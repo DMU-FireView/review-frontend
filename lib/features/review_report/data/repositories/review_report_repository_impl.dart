@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/review_report/data/datasources/review_report_remote_data_source.dart';
@@ -26,6 +27,14 @@ class ReviewReportRepositoryImpl implements ReviewReportRepository {
       );
       return Success(dto.toEntity());
     } catch (e) {
+      if (e is DioException && e.response?.data is Map<String, dynamic>) {
+        final data = e.response!.data as Map<String, dynamic>;
+        return FailureResult(Failure(
+          message: data['message']?.toString() ?? e.toString(),
+          code: data['errorCode']?.toString(),
+          statusCode: e.response?.statusCode,
+        ));
+      }
       return FailureResult(Failure(message: e.toString()));
     }
   }

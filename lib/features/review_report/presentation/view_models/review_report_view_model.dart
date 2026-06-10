@@ -35,7 +35,7 @@ class ReviewReportViewModel extends Notifier<ReviewReportState> {
       success: ReviewReportSuccess.new,
       failure: (f) => ReviewReportFailure(
         f.message,
-        isDuplicate: f.message.contains('REPORT_ALREADY_EXISTS'),
+        isDuplicate: f.code == 'REPORT_ALREADY_EXISTS',
       ),
     );
   }
