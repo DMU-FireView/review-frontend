@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/product_review.dart';
 import 'package:re_view_front/features/product_detail/domain/entities/review_rti_detail.dart';
+import 'package:re_view_front/features/review_report/presentation/providers/review_report_dep_providers.dart';
 import 'package:re_view_front/features/search/presentation/utils/search_formatters.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
@@ -900,7 +902,7 @@ class _ReasonsSection extends StatelessWidget {
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
-class _DialogFooter extends StatelessWidget {
+class _DialogFooter extends ConsumerWidget {
   const _DialogFooter({
     required this.onClose,
     required this.review,
@@ -914,7 +916,9 @@ class _DialogFooter extends StatelessWidget {
   final String productName;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final alreadyReported =
+        ref.watch(reportedReviewIdsProvider).contains(review.id);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.lg,
@@ -971,30 +975,56 @@ class _DialogFooter extends StatelessWidget {
           ),
           const SizedBox(width: AppSpacing.xs),
           OutlinedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.goNamed(
-                RouteNames.reviewReport,
-                extra: {
-                  'reviewId': review.id,
-                  'productId': productId,
-                  'productName': productName,
-                  'reviewContent': review.content,
-                  'rtiScore': review.rtiScore.toDouble(),
-                  'rtiGrade': review.rtiLabel,
-                },
-              );
-            },
+            onPressed: alreadyReported
+                ? () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (_) => AlertDialog(
+                        title: const Text('이미 신고한 리뷰'),
+                        content: const Text(
+                          '이 리뷰는 이미 신고하셨습니다.\n중복 신고는 접수되지 않아요.',
+                        ),
+                        actions: [
+                          FilledButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text('확인'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                : () {
+                    Navigator.of(context).pop();
+                    context.goNamed(
+                      RouteNames.reviewReport,
+                      extra: {
+                        'reviewId': review.id,
+                        'productId': productId,
+                        'productName': productName,
+                        'reviewContent': review.content,
+                        'rtiScore': review.rtiScore.toDouble(),
+                        'rtiGrade': review.rtiLabel,
+                      },
+                    );
+                  },
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: AppColors.error),
-              foregroundColor: AppColors.error,
+              side: BorderSide(
+                color: alreadyReported
+                    ? AppColors.textTertiary
+                    : AppColors.error,
+              ),
+              foregroundColor:
+                  alreadyReported ? AppColors.textTertiary : AppColors.error,
               padding: const EdgeInsets.symmetric(
                 horizontal: AppSpacing.md,
                 vertical: AppSpacing.xs,
               ),
               shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
             ),
-            child: const Text('리뷰 신고', style: TextStyle(fontSize: 13)),
+            child: Text(
+              alreadyReported ? '신고 완료' : '리뷰 신고',
+              style: const TextStyle(fontSize: 13),
+            ),
           ),
         ],
       ),

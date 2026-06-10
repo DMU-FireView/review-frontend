@@ -8,6 +8,7 @@ import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
+import 'package:re_view_front/features/review_report/presentation/providers/review_report_dep_providers.dart';
 import 'package:re_view_front/features/review_report/presentation/providers/review_report_providers.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_state.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
@@ -67,14 +68,34 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
       if (next is ReviewReportSuccess) {
         _showSuccessDialog();
       } else if (next is ReviewReportFailure) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              next.isDuplicate ? '이미 신고한 리뷰입니다.' : next.message,
+        if (next.isDuplicate) {
+          ref
+              .read(reportedReviewIdsProvider.notifier)
+              .add(widget.reviewId);
+          showDialog<void>(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text('이미 신고한 리뷰'),
+              content: const Text('이 리뷰는 이미 신고하셨습니다.\n중복 신고는 접수되지 않아요.'),
+              actions: [
+                FilledButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    context.pop();
+                  },
+                  child: const Text('확인'),
+                ),
+              ],
             ),
-            backgroundColor: AppColors.error,
-          ),
-        );
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.message),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
       }
     });
 
