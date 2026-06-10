@@ -132,3 +132,4 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
         .fetchSuggestions(query);
   }
 
+}
