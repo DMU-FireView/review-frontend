@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
 import 'package:re_view_front/features/review_report/presentation/providers/review_report_providers.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_state.dart';
@@ -50,6 +53,15 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(reviewReportViewModelProvider);
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    final nickname = ref.watch(userNicknameProvider).value;
+
+    if (!isLoggedIn) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.go(RoutePaths.login);
+      });
+      return const Scaffold(body: SizedBox.shrink());
+    }
 
     ref.listen(reviewReportViewModelProvider, (_, next) {
       if (next is ReviewReportSuccess) {
@@ -70,25 +82,35 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
       backgroundColor: AppColors.background,
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: AppColors.surface,
-            foregroundColor: AppColors.textPrimary,
-            elevation: 0,
-            surfaceTintColor: Colors.transparent,
-            title: const Text(
-              '리뷰 신고 접수',
-              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => context.go(RoutePaths.myPage),
-                child: const Text(
-                  '내 피드백 내역 보기',
-                  style: TextStyle(fontSize: 13),
-                ),
+          SliverToBoxAdapter(
+            child: HomeHeader(
+              navItems: homeNavItems,
+              selectedNavItem: '',
+              showCategoryNav: false,
+              isLoggedIn: isLoggedIn,
+              nickname: nickname,
+              onLoginPressed: () => context.go(RoutePaths.login),
+              onWishPressed: () => context.go(RoutePaths.wishlist),
+              onCartPressed: () => context.go(RoutePaths.cart),
+              onMyPagePressed: () => context.go(RoutePaths.myPage),
+              onProfileWishPressed: () => context.go(RoutePaths.wishlist),
+              onProfileOrderPressed: () => context.go(RoutePaths.dashboard),
+              onLogoutPressed: () =>
+                  ref.read(authTokenStoreProvider.notifier).clear(),
+              onNavItemPressed: (item) => context.goNamed(
+                RouteNames.search,
+                queryParameters: {'q': item},
               ),
-            ],
+              onSearchSubmitted: (q) {
+                if (q.trim().isNotEmpty) {
+                  context.goNamed(
+                    RouteNames.search,
+                    queryParameters: {'q': q.trim()},
+                  );
+                }
+              },
+              onLogoPressed: () => context.goNamed(RouteNames.home),
+            ),
           ),
           SliverToBoxAdapter(
             child: AppContentView(
@@ -747,10 +769,13 @@ class _ReasonSection extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          // First row: 4 main reasons matching the design
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
+          GridView.count(
+            crossAxisCount: 2,
+            crossAxisSpacing: AppSpacing.sm,
+            mainAxisSpacing: AppSpacing.sm,
+            childAspectRatio: 2.2,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
             children: [
               for (final reason in [
                 ReportReason.fakeReview,
@@ -796,7 +821,6 @@ class _ReasonCard extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 150),
-        width: 160,
         padding: const EdgeInsets.all(AppSpacing.md),
         decoration: BoxDecoration(
           color: isSelected
@@ -860,12 +884,37 @@ class _ReasonCard extends StatelessWidget {
 // Detail section
 // ─────────────────────────────────────────────────────────────
 
-class _DetailSection extends StatelessWidget {
+class _DetailSection extends StatefulWidget {
   const _DetailSection({required this.controller});
   final TextEditingController controller;
 
   @override
+  State<_DetailSection> createState() => _DetailSectionState();
+}
+
+class _DetailSectionState extends State<_DetailSection> {
+  int _charCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _charCount = widget.controller.text.trim().length;
+    widget.controller.addListener(_onTextChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.controller.removeListener(_onTextChanged);
+    super.dispose();
+  }
+
+  void _onTextChanged() {
+    setState(() => _charCount = widget.controller.text.trim().length);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isEnough = _charCount >= 20;
     return _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -885,11 +934,11 @@ class _DetailSection extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
           TextFormField(
-            controller: controller,
+            controller: widget.controller,
             maxLines: 5,
             validator: (v) {
               if (v == null || v.trim().length < 20) {
-                return '최소 20자 이상 입력해주세요. (현재 ${v?.trim().length ?? 0}자)';
+                return '최소 20자 이상 입력해주세요.';
               }
               return null;
             },
@@ -911,11 +960,29 @@ class _DetailSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
-          Text(
-            '최소 20자 이상 입력하면 운영팀 검토에 더 도움이 돼요.',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textTertiary,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  isEnough
+                      ? '최소 20자 이상 입력하면 운영팀 검토에 더 도움이 돼요.'
+                      : '최소 20자 이상 입력해주세요.',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: isEnough
+                            ? AppColors.textTertiary
+                            : AppColors.error,
+                      ),
                 ),
+              ),
+              Text(
+                '$_charCount자',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color:
+                          isEnough ? AppColors.primary : AppColors.textTertiary,
+                      fontWeight: FontWeight.w700,
+                    ),
+              ),
+            ],
           ),
         ],
       ),
