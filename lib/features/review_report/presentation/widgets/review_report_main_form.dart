@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
@@ -30,6 +31,8 @@ class ReviewReportMainForm extends StatelessWidget {
     required this.onIncludeAiChanged,
     required this.onAgreePrivacyChanged,
     required this.onAgreeNotFalseChanged,
+    required this.attachments,
+    required this.onAttachmentsChanged,
     required this.onSubmit,
     required this.isSubmitting,
     this.onSaveDraft,
@@ -53,6 +56,8 @@ class ReviewReportMainForm extends StatelessWidget {
   final ValueChanged<bool> onIncludeAiChanged;
   final ValueChanged<bool> onAgreePrivacyChanged;
   final ValueChanged<bool> onAgreeNotFalseChanged;
+  final List<PlatformFile> attachments;
+  final ValueChanged<List<PlatformFile>> onAttachmentsChanged;
   final VoidCallback onSubmit;
   final VoidCallback? onSaveDraft;
   final bool isSubmitting;
@@ -82,6 +87,8 @@ class ReviewReportMainForm extends StatelessWidget {
           disclosure: disclosure,
           onReportTypeChanged: onReportTypeChanged,
           onDisclosureChanged: onDisclosureChanged,
+          attachments: attachments,
+          onAttachmentsChanged: onAttachmentsChanged,
         ),
         const SizedBox(height: AppSpacing.md),
         AiEvidenceSection(
