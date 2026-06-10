@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/features/review_report/domain/usecases/submit_review_report_use_case.dart';
-import 'package:re_view_front/features/review_report/presentation/providers/review_report_providers.dart';
+import 'package:re_view_front/features/review_report/presentation/providers/review_report_dep_providers.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_state.dart';
 
-class ReviewReportViewModel extends AutoDisposeNotifier<ReviewReportState> {
+class ReviewReportViewModel extends Notifier<ReviewReportState> {
   late final SubmitReviewReportUseCase _submitUseCase;
 
   @override
