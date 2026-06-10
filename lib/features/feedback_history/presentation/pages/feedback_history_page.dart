@@ -9,6 +9,7 @@ import 'package:re_view_front/features/feedback_history/domain/entities/feedback
 import 'package:re_view_front/features/feedback_history/presentation/providers/feedback_history_providers.dart';
 import 'package:re_view_front/features/feedback_history/presentation/view_models/feedback_history_state.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
+import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
