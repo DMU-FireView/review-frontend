@@ -24,3 +24,14 @@ final submitReviewReportUseCaseProvider =
     Provider<SubmitReviewReportUseCase>((ref) {
   return SubmitReviewReportUseCase(ref.watch(reviewReportRepositoryProvider));
 });
+
+// Tracks review IDs already reported this session to prevent duplicate navigation.
+final reportedReviewIdsProvider =
+    NotifierProvider<_ReportedReviewIds, Set<int>>(_ReportedReviewIds.new);
+
+class _ReportedReviewIds extends Notifier<Set<int>> {
+  @override
+  Set<int> build() => {};
+
+  void add(int reviewId) => state = {...state, reviewId};
+}
