@@ -975,23 +975,25 @@ class _LanguageSection extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          GridView.count(
-            crossAxisCount: 2,
+          GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisSpacing: AppSpacing.xs,
-            mainAxisSpacing: AppSpacing.xs,
-            childAspectRatio: 2.6,
-            children: [
-              for (final lang in _langs)
-                _LangChip(
-                  label: lang.label,
-                  sub: lang.sub,
-                  selected:
-                      currentLocale.languageCode == lang.locale.languageCode,
-                  onTap: () => onLocaleChanged(lang.locale),
-                ),
-            ],
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: AppSpacing.xs,
+              mainAxisSpacing: AppSpacing.xs,
+              mainAxisExtent: 56,
+            ),
+            itemCount: _langs.length,
+            itemBuilder: (context, index) {
+              final lang = _langs[index];
+              return _LangChip(
+                label: lang.label,
+                sub: lang.sub,
+                selected: currentLocale.languageCode == lang.locale.languageCode,
+                onTap: () => onLocaleChanged(lang.locale),
+              );
+            },
           ),
         ],
       ),

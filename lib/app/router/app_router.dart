@@ -18,6 +18,7 @@ import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 import 'package:re_view_front/features/review_report/presentation/pages/review_report_page.dart';
 import 'package:re_view_front/features/settings/presentation/pages/settings_page.dart';
+import 'package:re_view_front/features/feedback_history/presentation/pages/feedback_history_page.dart';
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
 
 class _AuthNotifier extends ChangeNotifier {
@@ -56,6 +57,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         RoutePaths.wishlist,
         RoutePaths.cart,
         RoutePaths.settings,
+        RoutePaths.feedbackHistory,
       };
       if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
         return RoutePaths.login;
@@ -184,6 +186,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           );
         },
+      ),
+      GoRoute(
+        path: RoutePaths.feedbackHistory,
+        name: RouteNames.feedbackHistory,
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const FeedbackHistoryPage()),
       ),
     ],
   );

@@ -102,6 +102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sideNavAccountSettings => 'Account Settings';
 
   @override
+  String get sideNavFeedbackHistory => 'Feedback History';
+
+  @override
   String get settingsSubtitle =>
       'Manage your notifications, filters, and account.';
 
@@ -438,4 +441,125 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get myPageAccountSecurity => 'Account / Security';
+
+  @override
+  String get navCategory => 'Category';
+
+  @override
+  String get navWishShort => 'Saved';
+
+  @override
+  String get navMyShort => 'My';
+
+  @override
+  String get homeSearchHint => 'Search products based on reviews';
+
+  @override
+  String get homeSearchSuggestionsTitle => 'Related Searches';
+
+  @override
+  String get homeSearchSuggestionsLoading => 'Loading related searches...';
+
+  @override
+  String get homeSearchSuggestionsHint =>
+      'Type at least 2 characters to see related searches.';
+
+  @override
+  String get homeRecentSearchTitle => 'Recent Searches';
+
+  @override
+  String get homeRecentSearchDeleteAll => 'Clear All';
+
+  @override
+  String get homeRecentSearchEmpty => 'No recent searches.';
+
+  @override
+  String get homePopularSearchTitle => 'Popular';
+
+  @override
+  String get homeSearchProductsTitle => 'Suggested Products';
+
+  @override
+  String get homeTrendingTitle => 'Trending Keywords';
+
+  @override
+  String get homeKeywordsEmpty => 'No keywords to display.';
+
+  @override
+  String get homeRecommendedTitle => 'Editor\'s Review-Based Picks';
+
+  @override
+  String get homeViewAll => 'View All';
+
+  @override
+  String get homeLoginRequired => 'Login required.';
+
+  @override
+  String get homeBenefitTitle => 'Benefits for New Customers';
+
+  @override
+  String get homeBenefitSubtitle =>
+      'Enjoy member benefits when you start review-based shopping.';
+
+  @override
+  String get homeBenefitButton => 'Get Benefits';
+
+  @override
+  String get homeTrustDescription =>
+      'We filter promotional and manipulated reviews, analyze genuine reviews, and provide a trust score.';
+
+  @override
+  String get homeTrustViewMore => 'Learn More';
+
+  @override
+  String get homeTrustLabel1 => 'Real Review Analysis';
+
+  @override
+  String get homeTrustLabel2 => 'Ad/Manipulation Filtering';
+
+  @override
+  String get homeTrustLabel3 => 'Trust Score';
+
+  @override
+  String get homePopularCategoryTitle => 'Popular Categories';
+
+  @override
+  String get homeCategoryEmpty => 'No categories to display.';
+
+  @override
+  String get feedbackHistoryTitle => 'My Feedback History';
+
+  @override
+  String get feedbackHistorySubtitle =>
+      'View the history of product/review feedback you\'ve submitted.';
+
+  @override
+  String get feedbackHistoryLoading => 'Loading feedback history...';
+
+  @override
+  String get feedbackHistoryEmpty => 'No feedback submitted yet.';
+
+  @override
+  String get feedbackHistoryEmptyDesc =>
+      'You can submit review feedback on the product detail page.';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count feedback item(s)';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => 'View Product';
+
+  @override
+  String get feedbackStatusSubmitted => 'Submitted';
+
+  @override
+  String get feedbackStatusPending => 'Under Review';
+
+  @override
+  String get feedbackStatusAccepted => 'Accepted';
+
+  @override
+  String get feedbackStatusRejected => 'Rejected';
 }
