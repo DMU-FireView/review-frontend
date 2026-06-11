@@ -33,6 +33,7 @@
   "sideNavRecentlyViewed": "Recently Viewed",
   "sideNavReviewActivity": "Review Activity",
   "sideNavAccountSettings": "Account Settings",
+  "sideNavFeedbackHistory": "Feedback History",
 
   "settingsSubtitle": "Manage your notifications, filters, and account.",
   "settingsSubtitleNamed": "Manage {nickname}'s notifications, filters, and account.",
@@ -173,5 +174,17 @@
   "homeTrustLabel3": "Trust Score",
 
   "homePopularCategoryTitle": "Popular Categories",
-  "homeCategoryEmpty": "No categories to display."
+  "homeCategoryEmpty": "No categories to display.",
+
+  "feedbackHistoryTitle": "My Feedback History",
+  "feedbackHistorySubtitle": "View the history of product/review feedback you've submitted.",
+  "feedbackHistoryLoading": "Loading feedback history...",
+  "feedbackHistoryEmpty": "No feedback submitted yet.",
+  "feedbackHistoryEmptyDesc": "You can submit review feedback on the product detail page.",
+  "feedbackHistoryCount": "{count} feedback item(s)",
+  "feedbackHistoryViewProduct": "View Product",
+  "feedbackStatusSubmitted": "Submitted",
+  "feedbackStatusPending": "Under Review",
+  "feedbackStatusAccepted": "Accepted",
+  "feedbackStatusRejected": "Rejected"
 }

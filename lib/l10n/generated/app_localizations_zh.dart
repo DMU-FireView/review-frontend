@@ -90,16 +90,19 @@ class AppLocalizationsZh extends AppLocalizations {
   String get langChinese => '中文(简体)';
 
   @override
-  String get sideNavOrders => '订单/配送';
+  String get sideNavOrders => '주문/배송';
 
   @override
-  String get sideNavRecentlyViewed => '最近浏览的商品';
+  String get sideNavRecentlyViewed => '최근 본 상품';
 
   @override
-  String get sideNavReviewActivity => '评价活动';
+  String get sideNavReviewActivity => '리뷰 활동';
 
   @override
-  String get sideNavAccountSettings => '账户设置';
+  String get sideNavAccountSettings => '계정 설정';
+
+  @override
+  String get sideNavFeedbackHistory => '反馈记录';
 
   @override
   String get settingsSubtitle => '管理通知、过滤器和账户设置。';
@@ -290,139 +293,139 @@ class AppLocalizationsZh extends AppLocalizations {
   String get wishlistFilterCategory => '分类';
 
   @override
-  String get myPageTitle => '我的页面';
+  String get myPageTitle => '마이페이지';
 
   @override
-  String get myPageLoading => '正在加载我的页面信息。';
+  String get myPageLoading => '마이페이지 정보를 불러오는 중입니다.';
 
   @override
-  String get myPageWishlistLoading => '正在加载已保存的商品。';
+  String get myPageWishlistLoading => '저장한 상품을 불러오는 중입니다.';
 
   @override
-  String get myPageWishlistEmpty => '暂无已保存的商品。';
+  String get myPageWishlistEmpty => '저장한 상품이 없습니다.';
 
   @override
-  String get myPageInterestProducts => '收藏商品';
+  String get myPageInterestProducts => '관심 상품';
 
   @override
-  String get myPageDefaultName => '用户';
+  String get myPageDefaultName => '사용자';
 
   @override
-  String get myPageMemberBasic => '普通会员（免费）';
+  String get myPageMemberBasic => '일반 회원 (무료)';
 
   @override
-  String get myPageSideNavMyPage => '我的页面';
+  String get myPageSideNavMyPage => '마이페이지';
 
   @override
-  String get myPageSideNavOrders => '订单/配送';
+  String get myPageSideNavOrders => '주문/배송';
 
   @override
-  String get myPageSideNavWishlist => '已保存商品';
+  String get myPageSideNavWishlist => '저장한 상품';
 
   @override
-  String get myPageSideNavRecentlyViewed => '最近浏览的商品';
+  String get myPageSideNavRecentlyViewed => '최근 본 상품';
 
   @override
-  String get myPageSideNavRiskyProducts => '注意商品';
+  String get myPageSideNavRiskyProducts => '주의 상품';
 
   @override
-  String get myPageSideNavAlerts => '通知';
+  String get myPageSideNavAlerts => '알림';
 
   @override
-  String get myPageRecentActivity => '最近活动';
+  String get myPageRecentActivity => '최근 활동';
 
   @override
-  String get myPageRecentActivityEmpty => '暂无最近活动。';
+  String get myPageRecentActivityEmpty => '최근 활동이 없습니다.';
 
   @override
-  String get myPageRecentLabel => '最近';
+  String get myPageRecentLabel => '최근';
 
   @override
-  String get myPageReviewTrustSummary => '评价信任概览';
+  String get myPageReviewTrustSummary => '리뷰 신뢰 요약';
 
   @override
-  String get myPageAvgRti => '收藏商品平均RTI';
+  String get myPageAvgRti => '관심 상품 평균 RTI';
 
   @override
-  String get myPageRtiSaveHint => '保存收藏商品后将显示评价可信度概览。';
+  String get myPageRtiSaveHint => '관심 상품을 저장하면 리뷰 신뢰도 요약이 표시됩니다.';
 
   @override
-  String get myPageRiskyNone => '当前仪表盘中没有需要注意的商品。';
+  String get myPageRiskyNone => '현재 대시보드에 주의가 필요한 상품이 없습니다.';
 
   @override
   String myPageRiskyCount(int count) {
-    return '请查看$count件注意商品。';
+    return '주의 상품 $count개를 확인해보세요.';
   }
 
   @override
-  String get myPageHighlightLowRti => '优先显示注意商品';
+  String get myPageHighlightLowRti => '주의 상품 먼저 보기';
 
   @override
-  String get myPageWishlistAlertLabel => '接收已保存商品通知';
+  String get myPageWishlistAlertLabel => '저장 상품 알림 받기';
 
   @override
-  String get myPageAccountInfo => '账户信息';
+  String get myPageAccountInfo => '계정 정보';
 
   @override
-  String get myPageAccountInfoSubtitle => '管理个人信息和基本信息。';
+  String get myPageAccountInfoSubtitle => '개인 정보 및 기본 정보를 관리해요.';
 
   @override
   String myPageAccountNickname(String nickname) {
-    return '昵称：$nickname';
+    return '닉네임: $nickname';
   }
 
   @override
   String myPageAccountEmail(String email) {
-    return '邮箱：$email';
+    return '이메일: $email';
   }
 
   @override
   String myPageAccountMemberType(String role) {
-    return '会员类型：$role';
+    return '회원 유형: $role';
   }
 
   @override
-  String get myPageDefaultMemberRole => '普通会员';
+  String get myPageDefaultMemberRole => '일반 회원';
 
   @override
-  String get myPageLoginInfo => '登录信息';
+  String get myPageLoginInfo => '로그인 정보';
 
   @override
-  String get myPageLoginInfoSubtitle => '管理邮箱和登录方式。';
+  String get myPageLoginInfoSubtitle => '이메일, 로그인 수단을 관리해요.';
 
   @override
   String myPageLoginEmail(String email) {
-    return '登录邮箱：$email';
+    return '로그인 이메일: $email';
   }
 
   @override
-  String get myPageLoginStatus => '认证状态：已登录';
+  String get myPageLoginStatus => '인증 상태: 로그인됨';
 
   @override
-  String get myPageOnboardingComplete => '已完成';
+  String get myPageOnboardingComplete => '완료';
 
   @override
-  String get myPageOnboardingIncomplete => '未完成';
+  String get myPageOnboardingIncomplete => '미완료';
 
   @override
   String myPageOnboarding(String status) {
-    return '引导：$status';
+    return '온보딩: $status';
   }
 
   @override
-  String get myPageChangePassword => '更改密码';
+  String get myPageChangePassword => '비밀번호 변경';
 
   @override
-  String get myPageChangePasswordSubtitle => '请使用安全密码进行管理。';
+  String get myPageChangePasswordSubtitle => '안전한 비밀번호로 관리하세요.';
 
   @override
-  String get myPageNotificationSettings => '通知设置';
+  String get myPageNotificationSettings => '알림 설정';
 
   @override
-  String get myPageNotificationSettingsSubtitle => '设置邮件和推送通知。';
+  String get myPageNotificationSettingsSubtitle => '이메일 및 푸시 알림을 설정해요.';
 
   @override
-  String get myPageAccountSecurity => '账户 / 安全';
+  String get myPageAccountSecurity => '계정 / 보안';
 
   @override
   String get navCategory => '分类';
@@ -504,4 +507,39 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get homeCategoryEmpty => '暂无可显示的分类。';
+
+  @override
+  String get feedbackHistoryTitle => '我的反馈记录';
+
+  @override
+  String get feedbackHistorySubtitle => '查看您提交的商品/评论反馈记录。';
+
+  @override
+  String get feedbackHistoryLoading => '正在加载反馈记录。';
+
+  @override
+  String get feedbackHistoryEmpty => '暂无提交的反馈。';
+
+  @override
+  String get feedbackHistoryEmptyDesc => '您可以在商品详情页提交评论反馈。';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count条反馈';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => '查看商品';
+
+  @override
+  String get feedbackStatusSubmitted => '已提交';
+
+  @override
+  String get feedbackStatusPending => '审核中';
+
+  @override
+  String get feedbackStatusAccepted => '已处理';
+
+  @override
+  String get feedbackStatusRejected => '已拒绝';
 }

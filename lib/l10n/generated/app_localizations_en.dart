@@ -102,6 +102,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get sideNavAccountSettings => 'Account Settings';
 
   @override
+  String get sideNavFeedbackHistory => 'Feedback History';
+
+  @override
   String get settingsSubtitle =>
       'Manage your notifications, filters, and account.';
 
@@ -522,4 +525,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeCategoryEmpty => 'No categories to display.';
+
+  @override
+  String get feedbackHistoryTitle => 'My Feedback History';
+
+  @override
+  String get feedbackHistorySubtitle =>
+      'View the history of product/review feedback you\'ve submitted.';
+
+  @override
+  String get feedbackHistoryLoading => 'Loading feedback history...';
+
+  @override
+  String get feedbackHistoryEmpty => 'No feedback submitted yet.';
+
+  @override
+  String get feedbackHistoryEmptyDesc =>
+      'You can submit review feedback on the product detail page.';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count feedback item(s)';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => 'View Product';
+
+  @override
+  String get feedbackStatusSubmitted => 'Submitted';
+
+  @override
+  String get feedbackStatusPending => 'Under Review';
+
+  @override
+  String get feedbackStatusAccepted => 'Accepted';
+
+  @override
+  String get feedbackStatusRejected => 'Rejected';
 }
