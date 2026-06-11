@@ -900,6 +900,168 @@ abstract class AppLocalizations {
   /// **'계정 / 보안'**
   String get myPageAccountSecurity;
 
+  /// 모바일 하단 네비게이션 카테고리
+  ///
+  /// In ko, this message translates to:
+  /// **'카테고리'**
+  String get navCategory;
+
+  /// 모바일 하단 네비게이션 찜 (짧은 표현)
+  ///
+  /// In ko, this message translates to:
+  /// **'찜'**
+  String get navWishShort;
+
+  /// 모바일 하단 네비게이션 마이페이지 (짧은 표현)
+  ///
+  /// In ko, this message translates to:
+  /// **'마이'**
+  String get navMyShort;
+
+  /// 홈 검색바 힌트 텍스트
+  ///
+  /// In ko, this message translates to:
+  /// **'찾고 있는 상품을 리뷰 기반으로 검색해보세요'**
+  String get homeSearchHint;
+
+  /// 검색 패널 연관 검색어 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'연관 검색어'**
+  String get homeSearchSuggestionsTitle;
+
+  /// 연관 검색어 로딩 중 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'연관 검색어를 불러오는 중입니다.'**
+  String get homeSearchSuggestionsLoading;
+
+  /// 연관 검색어 입력 유도 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'두 글자 이상 입력하면 연관 검색어가 표시됩니다.'**
+  String get homeSearchSuggestionsHint;
+
+  /// 최근 검색 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 검색'**
+  String get homeRecentSearchTitle;
+
+  /// 최근 검색어 전체 삭제 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 삭제'**
+  String get homeRecentSearchDeleteAll;
+
+  /// 최근 검색어 없음 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'최근 검색어가 없습니다.'**
+  String get homeRecentSearchEmpty;
+
+  /// 인기 검색 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'인기 검색'**
+  String get homePopularSearchTitle;
+
+  /// 검색 패널 추천 상품 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'추천 상품'**
+  String get homeSearchProductsTitle;
+
+  /// 트렌딩 키워드 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'지금 많이 찾는 키워드'**
+  String get homeTrendingTitle;
+
+  /// 트렌딩 키워드 빈 상태 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'표시할 키워드가 없습니다.'**
+  String get homeKeywordsEmpty;
+
+  /// 추천 상품 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'에디터가 고른 리뷰 기반 추천 상품'**
+  String get homeRecommendedTitle;
+
+  /// 전체보기 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'전체보기'**
+  String get homeViewAll;
+
+  /// 로그인 필요 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인이 필요합니다.'**
+  String get homeLoginRequired;
+
+  /// 혜택 카드 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'첫 구매 고객을 위한 혜택'**
+  String get homeBenefitTitle;
+
+  /// 혜택 카드 부제목
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 기반 쇼핑을 시작하면 받을 수 있는 회원 혜택입니다.'**
+  String get homeBenefitSubtitle;
+
+  /// 혜택 받기 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'혜택 받기'**
+  String get homeBenefitButton;
+
+  /// 리뷰 신뢰도 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'광고·조작 리뷰를 필터링하고 실사용 리뷰를 분석해 신뢰도를 제공합니다.'**
+  String get homeTrustDescription;
+
+  /// 자세히 보기 링크
+  ///
+  /// In ko, this message translates to:
+  /// **'자세히 보기'**
+  String get homeTrustViewMore;
+
+  /// 신뢰도 기능 레이블 1
+  ///
+  /// In ko, this message translates to:
+  /// **'실사용 리뷰 분석'**
+  String get homeTrustLabel1;
+
+  /// 신뢰도 기능 레이블 2
+  ///
+  /// In ko, this message translates to:
+  /// **'광고/조작 필터링'**
+  String get homeTrustLabel2;
+
+  /// 신뢰도 기능 레이블 3
+  ///
+  /// In ko, this message translates to:
+  /// **'신뢰도 점수 제공'**
+  String get homeTrustLabel3;
+
+  /// 인기 카테고리 섹션 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'인기 카테고리'**
+  String get homePopularCategoryTitle;
+
+  /// 카테고리 빈 상태 메시지
+  ///
+  /// In ko, this message translates to:
+  /// **'표시할 카테고리가 없습니다.'**
+  String get homeCategoryEmpty;
+
   /// 피드백 내역 페이지 제목
   ///
   /// In ko, this message translates to:

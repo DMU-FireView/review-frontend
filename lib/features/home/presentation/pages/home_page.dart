@@ -24,6 +24,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/quick_cate
 import 'package:re_view_front/features/home/presentation/widgets/home/review_trust_info_card.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/trending_keyword_chips.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
@@ -44,7 +45,8 @@ class _HomePageState extends ConsumerState<HomePage> {
   final _recommendationKey = GlobalKey();
   final _benefitKey = GlobalKey();
   final _popularCategoryKey = GlobalKey();
-  String _selectedNavItem = '홈';
+  // locale-independent: 'home' = main content; anything else = placeholder tab label
+  String _selectedNavItem = 'home';
 
   @override
   void dispose() {
@@ -106,7 +108,7 @@ class _HomePageState extends ConsumerState<HomePage> {
               onLogoutPressed: _handleLogout,
             ),
           ),
-          if (_selectedNavItem == '홈') ...[
+          if (_selectedNavItem == 'home') ...[
             SliverToBoxAdapter(
               child: Padding(
                 padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
@@ -174,7 +176,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(
                               child: Text(
-                                '에디터가 고른 리뷰 기반 추천 상품',
+                                AppLocalizations.of(context).homeRecommendedTitle,
                                 style: Theme.of(context).textTheme.titleMedium,
                               ),
                             ),
@@ -193,7 +195,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    '전체보기',
+                                    AppLocalizations.of(context).homeViewAll,
                                     style: Theme.of(context)
                                         .textTheme
                                         .labelMedium
@@ -296,7 +298,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       bottomNavigationBar: context.isMobile
           ? _HomeBottomTabs(
-              onHomePressed: () => _handleNavItemPressed('홈'),
+              onHomePressed: () => _handleNavItemPressed('home'),
               onCategoryPressed: () => _scrollTo(_categoryKey),
               onSearchPressed: () => _searchFocusNode.requestFocus(),
               onWishPressed: () => context.go(RoutePaths.wishlist),
@@ -339,7 +341,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _handleCategoryPressed(String label) {
-    if (label == '전체보기') {
+    if (label == AppLocalizations.of(context).homeViewAll) {
       _scrollTo(_popularCategoryKey);
       return;
     }
@@ -551,12 +553,13 @@ class _HomeBottomTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const items = [
-      (Icons.home_filled, '홈'),
-      (Icons.grid_view_outlined, '카테고리'),
-      (Icons.search, '검색'),
-      (Icons.favorite_border, '찜'),
-      (Icons.person_outline, '마이'),
+    final l10n = AppLocalizations.of(context);
+    final items = [
+      (Icons.home_filled, l10n.navHome),
+      (Icons.grid_view_outlined, l10n.navCategory),
+      (Icons.search, l10n.navSearch),
+      (Icons.favorite_border, l10n.navWishShort),
+      (Icons.person_outline, l10n.navMyShort),
     ];
     final callbacks = [
       onHomePressed,
@@ -591,7 +594,7 @@ class _HomeBottomTabs extends StatelessWidget {
                   children: [
                     Icon(
                       items[i].$1,
-                      color: items[i].$2 == '홈'
+                      color: i == 0
                           ? AppColors.textPrimary
                           : AppColors.textSecondary,
                       size: 27,
@@ -600,10 +603,10 @@ class _HomeBottomTabs extends StatelessWidget {
                     Text(
                       items[i].$2,
                       style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: items[i].$2 == '홈'
+                        color: i == 0
                             ? AppColors.textPrimary
                             : AppColors.textSecondary,
-                        fontWeight: items[i].$2 == '홈'
+                        fontWeight: i == 0
                             ? FontWeight.w900
                             : FontWeight.w700,
                       ),

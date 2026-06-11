@@ -428,6 +428,87 @@ class AppLocalizationsKo extends AppLocalizations {
   String get myPageAccountSecurity => '계정 / 보안';
 
   @override
+  String get navCategory => '카테고리';
+
+  @override
+  String get navWishShort => '찜';
+
+  @override
+  String get navMyShort => '마이';
+
+  @override
+  String get homeSearchHint => '찾고 있는 상품을 리뷰 기반으로 검색해보세요';
+
+  @override
+  String get homeSearchSuggestionsTitle => '연관 검색어';
+
+  @override
+  String get homeSearchSuggestionsLoading => '연관 검색어를 불러오는 중입니다.';
+
+  @override
+  String get homeSearchSuggestionsHint => '두 글자 이상 입력하면 연관 검색어가 표시됩니다.';
+
+  @override
+  String get homeRecentSearchTitle => '최근 검색';
+
+  @override
+  String get homeRecentSearchDeleteAll => '전체 삭제';
+
+  @override
+  String get homeRecentSearchEmpty => '최근 검색어가 없습니다.';
+
+  @override
+  String get homePopularSearchTitle => '인기 검색';
+
+  @override
+  String get homeSearchProductsTitle => '추천 상품';
+
+  @override
+  String get homeTrendingTitle => '지금 많이 찾는 키워드';
+
+  @override
+  String get homeKeywordsEmpty => '표시할 키워드가 없습니다.';
+
+  @override
+  String get homeRecommendedTitle => '에디터가 고른 리뷰 기반 추천 상품';
+
+  @override
+  String get homeViewAll => '전체보기';
+
+  @override
+  String get homeLoginRequired => '로그인이 필요합니다.';
+
+  @override
+  String get homeBenefitTitle => '첫 구매 고객을 위한 혜택';
+
+  @override
+  String get homeBenefitSubtitle => '리뷰 기반 쇼핑을 시작하면 받을 수 있는 회원 혜택입니다.';
+
+  @override
+  String get homeBenefitButton => '혜택 받기';
+
+  @override
+  String get homeTrustDescription => '광고·조작 리뷰를 필터링하고 실사용 리뷰를 분석해 신뢰도를 제공합니다.';
+
+  @override
+  String get homeTrustViewMore => '자세히 보기';
+
+  @override
+  String get homeTrustLabel1 => '실사용 리뷰 분석';
+
+  @override
+  String get homeTrustLabel2 => '광고/조작 필터링';
+
+  @override
+  String get homeTrustLabel3 => '신뢰도 점수 제공';
+
+  @override
+  String get homePopularCategoryTitle => '인기 카테고리';
+
+  @override
+  String get homeCategoryEmpty => '표시할 카테고리가 없습니다.';
+
+  @override
   String get feedbackHistoryTitle => '내 피드백 내역';
 
   @override
