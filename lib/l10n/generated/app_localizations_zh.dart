@@ -102,6 +102,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sideNavAccountSettings => '계정 설정';
 
   @override
+  String get sideNavFeedbackHistory => '反馈记录';
+
+  @override
   String get settingsSubtitle => '알림, 필터, 계정 설정을 관리해요.';
 
   @override
@@ -423,4 +426,39 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get myPageAccountSecurity => '계정 / 보안';
+
+  @override
+  String get feedbackHistoryTitle => '我的反馈记录';
+
+  @override
+  String get feedbackHistorySubtitle => '查看您提交的商品/评论反馈记录。';
+
+  @override
+  String get feedbackHistoryLoading => '正在加载反馈记录。';
+
+  @override
+  String get feedbackHistoryEmpty => '暂无提交的反馈。';
+
+  @override
+  String get feedbackHistoryEmptyDesc => '您可以在商品详情页提交评论反馈。';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count条反馈';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => '查看商品';
+
+  @override
+  String get feedbackStatusSubmitted => '已提交';
+
+  @override
+  String get feedbackStatusPending => '审核中';
+
+  @override
+  String get feedbackStatusAccepted => '已处理';
+
+  @override
+  String get feedbackStatusRejected => '已拒绝';
 }

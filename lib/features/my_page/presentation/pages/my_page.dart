@@ -568,6 +568,11 @@ class _SideNavCard extends StatelessWidget {
             onTap: onReviewTap,
           ),
           _SideNavItem(
+            icon: Icons.feedback_outlined,
+            label: AppLocalizations.of(context).sideNavFeedbackHistory,
+            onTap: () => context.go(RoutePaths.feedbackHistory),
+          ),
+          _SideNavItem(
             icon: Icons.settings_outlined,
             label: AppLocalizations.of(context).sideNavAccountSettings,
             onTap: () => context.go(RoutePaths.settings),

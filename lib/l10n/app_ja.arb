@@ -33,6 +33,7 @@
   "sideNavRecentlyViewed": "최근 본 상품",
   "sideNavReviewActivity": "리뷰 활동",
   "sideNavAccountSettings": "계정 설정",
+  "sideNavFeedbackHistory": "フィードバック履歴",
 
   "settingsSubtitle": "알림, 필터, 계정 설정을 관리해요.",
   "settingsSubtitleNamed": "{nickname}님의 알림, 필터, 계정 설정을 관리해요.",
@@ -140,5 +141,17 @@
   "myPageChangePasswordSubtitle": "안전한 비밀번호로 관리하세요.",
   "myPageNotificationSettings": "알림 설정",
   "myPageNotificationSettingsSubtitle": "이메일 및 푸시 알림을 설정해요.",
-  "myPageAccountSecurity": "계정 / 보안"
+  "myPageAccountSecurity": "계정 / 보안",
+
+  "feedbackHistoryTitle": "フィードバック履歴",
+  "feedbackHistorySubtitle": "投稿した商品・レビューのフィードバック履歴を確認できます。",
+  "feedbackHistoryLoading": "フィードバック履歴を読み込んでいます。",
+  "feedbackHistoryEmpty": "投稿したフィードバックがありません。",
+  "feedbackHistoryEmptyDesc": "商品詳細ページでレビューフィードバックを投稿できます。",
+  "feedbackHistoryCount": "{count}件のフィードバック",
+  "feedbackHistoryViewProduct": "商品を見る",
+  "feedbackStatusSubmitted": "受付",
+  "feedbackStatusPending": "審査中",
+  "feedbackStatusAccepted": "処理済み",
+  "feedbackStatusRejected": "却下"
 }
