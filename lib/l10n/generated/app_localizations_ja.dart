@@ -102,6 +102,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sideNavAccountSettings => '계정 설정';
 
   @override
+  String get sideNavFeedbackHistory => 'フィードバック履歴';
+
+  @override
   String get settingsSubtitle => '알림, 필터, 계정 설정을 관리해요.';
 
   @override
@@ -423,4 +426,39 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get myPageAccountSecurity => '계정 / 보안';
+
+  @override
+  String get feedbackHistoryTitle => 'フィードバック履歴';
+
+  @override
+  String get feedbackHistorySubtitle => '投稿した商品・レビューのフィードバック履歴を確認できます。';
+
+  @override
+  String get feedbackHistoryLoading => 'フィードバック履歴を読み込んでいます。';
+
+  @override
+  String get feedbackHistoryEmpty => '投稿したフィードバックがありません。';
+
+  @override
+  String get feedbackHistoryEmptyDesc => '商品詳細ページでレビューフィードバックを投稿できます。';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count件のフィードバック';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => '商品を見る';
+
+  @override
+  String get feedbackStatusSubmitted => '受付';
+
+  @override
+  String get feedbackStatusPending => '審査中';
+
+  @override
+  String get feedbackStatusAccepted => '処理済み';
+
+  @override
+  String get feedbackStatusRejected => '却下';
 }

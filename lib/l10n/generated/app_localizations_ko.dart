@@ -102,6 +102,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get sideNavAccountSettings => '계정 설정';
 
   @override
+  String get sideNavFeedbackHistory => '피드백 내역';
+
+  @override
   String get settingsSubtitle => '알림, 필터, 계정 설정을 관리해요.';
 
   @override
@@ -423,4 +426,39 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get myPageAccountSecurity => '계정 / 보안';
+
+  @override
+  String get feedbackHistoryTitle => '내 피드백 내역';
+
+  @override
+  String get feedbackHistorySubtitle => '제출한 상품/리뷰 피드백 내역을 확인할 수 있습니다.';
+
+  @override
+  String get feedbackHistoryLoading => '피드백 내역을 불러오는 중입니다.';
+
+  @override
+  String get feedbackHistoryEmpty => '제출한 피드백이 없습니다.';
+
+  @override
+  String get feedbackHistoryEmptyDesc => '상품 상세 페이지에서 리뷰 피드백을 제출할 수 있습니다.';
+
+  @override
+  String feedbackHistoryCount(int count) {
+    return '$count건의 피드백';
+  }
+
+  @override
+  String get feedbackHistoryViewProduct => '상품 보기';
+
+  @override
+  String get feedbackStatusSubmitted => '접수';
+
+  @override
+  String get feedbackStatusPending => '검토 중';
+
+  @override
+  String get feedbackStatusAccepted => '처리됨';
+
+  @override
+  String get feedbackStatusRejected => '반려됨';
 }

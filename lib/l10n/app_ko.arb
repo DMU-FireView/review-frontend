@@ -94,6 +94,9 @@
   "sideNavAccountSettings": "계정 설정",
   "@sideNavAccountSettings": { "description": "사이드 네비게이션 계정 설정" },
 
+  "sideNavFeedbackHistory": "피드백 내역",
+  "@sideNavFeedbackHistory": { "description": "사이드 네비게이션 피드백 내역" },
+
   "settingsSubtitle": "알림, 필터, 계정 설정을 관리해요.",
   "@settingsSubtitle": { "description": "설정 페이지 부제목 (비로그인)" },
 
@@ -445,5 +448,41 @@
   "@myPageNotificationSettingsSubtitle": { "description": "알림 설정 부제목" },
 
   "myPageAccountSecurity": "계정 / 보안",
-  "@myPageAccountSecurity": { "description": "계정/보안 섹션 헤더" }
+  "@myPageAccountSecurity": { "description": "계정/보안 섹션 헤더" },
+
+  "feedbackHistoryTitle": "내 피드백 내역",
+  "@feedbackHistoryTitle": { "description": "피드백 내역 페이지 제목" },
+
+  "feedbackHistorySubtitle": "제출한 상품/리뷰 피드백 내역을 확인할 수 있습니다.",
+  "@feedbackHistorySubtitle": { "description": "피드백 내역 페이지 부제목" },
+
+  "feedbackHistoryLoading": "피드백 내역을 불러오는 중입니다.",
+  "@feedbackHistoryLoading": { "description": "피드백 내역 로딩 메시지" },
+
+  "feedbackHistoryEmpty": "제출한 피드백이 없습니다.",
+  "@feedbackHistoryEmpty": { "description": "피드백 내역 없을 때 메시지" },
+
+  "feedbackHistoryEmptyDesc": "상품 상세 페이지에서 리뷰 피드백을 제출할 수 있습니다.",
+  "@feedbackHistoryEmptyDesc": { "description": "피드백 내역 없을 때 안내 문구" },
+
+  "feedbackHistoryCount": "{count}건의 피드백",
+  "@feedbackHistoryCount": {
+    "description": "피드백 건수",
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "feedbackHistoryViewProduct": "상품 보기",
+  "@feedbackHistoryViewProduct": { "description": "피드백 카드 상품 보기 버튼" },
+
+  "feedbackStatusSubmitted": "접수",
+  "feedbackStatusPending": "검토 중",
+  "@feedbackStatusPending": { "description": "피드백 상태: 검토 중" },
+
+  "feedbackStatusAccepted": "처리됨",
+  "@feedbackStatusAccepted": { "description": "피드백 상태: 처리됨" },
+
+  "feedbackStatusRejected": "반려됨",
+  "@feedbackStatusRejected": { "description": "피드백 상태: 반려됨" }
 }
