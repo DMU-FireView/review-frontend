@@ -450,6 +450,87 @@
   "myPageAccountSecurity": "계정 / 보안",
   "@myPageAccountSecurity": { "description": "계정/보안 섹션 헤더" },
 
+  "navCategory": "카테고리",
+  "@navCategory": { "description": "모바일 하단 네비게이션 카테고리" },
+
+  "navWishShort": "찜",
+  "@navWishShort": { "description": "모바일 하단 네비게이션 찜 (짧은 표현)" },
+
+  "navMyShort": "마이",
+  "@navMyShort": { "description": "모바일 하단 네비게이션 마이페이지 (짧은 표현)" },
+
+  "homeSearchHint": "찾고 있는 상품을 리뷰 기반으로 검색해보세요",
+  "@homeSearchHint": { "description": "홈 검색바 힌트 텍스트" },
+
+  "homeSearchSuggestionsTitle": "연관 검색어",
+  "@homeSearchSuggestionsTitle": { "description": "검색 패널 연관 검색어 섹션 제목" },
+
+  "homeSearchSuggestionsLoading": "연관 검색어를 불러오는 중입니다.",
+  "@homeSearchSuggestionsLoading": { "description": "연관 검색어 로딩 중 메시지" },
+
+  "homeSearchSuggestionsHint": "두 글자 이상 입력하면 연관 검색어가 표시됩니다.",
+  "@homeSearchSuggestionsHint": { "description": "연관 검색어 입력 유도 메시지" },
+
+  "homeRecentSearchTitle": "최근 검색",
+  "@homeRecentSearchTitle": { "description": "최근 검색 섹션 제목" },
+
+  "homeRecentSearchDeleteAll": "전체 삭제",
+  "@homeRecentSearchDeleteAll": { "description": "최근 검색어 전체 삭제 버튼" },
+
+  "homeRecentSearchEmpty": "최근 검색어가 없습니다.",
+  "@homeRecentSearchEmpty": { "description": "최근 검색어 없음 메시지" },
+
+  "homePopularSearchTitle": "인기 검색",
+  "@homePopularSearchTitle": { "description": "인기 검색 섹션 제목" },
+
+  "homeSearchProductsTitle": "추천 상품",
+  "@homeSearchProductsTitle": { "description": "검색 패널 추천 상품 섹션 제목" },
+
+  "homeTrendingTitle": "지금 많이 찾는 키워드",
+  "@homeTrendingTitle": { "description": "트렌딩 키워드 섹션 제목" },
+
+  "homeKeywordsEmpty": "표시할 키워드가 없습니다.",
+  "@homeKeywordsEmpty": { "description": "트렌딩 키워드 빈 상태 메시지" },
+
+  "homeRecommendedTitle": "에디터가 고른 리뷰 기반 추천 상품",
+  "@homeRecommendedTitle": { "description": "추천 상품 섹션 제목" },
+
+  "homeViewAll": "전체보기",
+  "@homeViewAll": { "description": "전체보기 버튼" },
+
+  "homeLoginRequired": "로그인이 필요합니다.",
+  "@homeLoginRequired": { "description": "로그인 필요 메시지" },
+
+  "homeBenefitTitle": "첫 구매 고객을 위한 혜택",
+  "@homeBenefitTitle": { "description": "혜택 카드 제목" },
+
+  "homeBenefitSubtitle": "리뷰 기반 쇼핑을 시작하면 받을 수 있는 회원 혜택입니다.",
+  "@homeBenefitSubtitle": { "description": "혜택 카드 부제목" },
+
+  "homeBenefitButton": "혜택 받기",
+  "@homeBenefitButton": { "description": "혜택 받기 버튼" },
+
+  "homeTrustDescription": "광고·조작 리뷰를 필터링하고 실사용 리뷰를 분석해 신뢰도를 제공합니다.",
+  "@homeTrustDescription": { "description": "리뷰 신뢰도 설명" },
+
+  "homeTrustViewMore": "자세히 보기",
+  "@homeTrustViewMore": { "description": "자세히 보기 링크" },
+
+  "homeTrustLabel1": "실사용 리뷰 분석",
+  "@homeTrustLabel1": { "description": "신뢰도 기능 레이블 1" },
+
+  "homeTrustLabel2": "광고/조작 필터링",
+  "@homeTrustLabel2": { "description": "신뢰도 기능 레이블 2" },
+
+  "homeTrustLabel3": "신뢰도 점수 제공",
+  "@homeTrustLabel3": { "description": "신뢰도 기능 레이블 3" },
+
+  "homePopularCategoryTitle": "인기 카테고리",
+  "@homePopularCategoryTitle": { "description": "인기 카테고리 섹션 제목" },
+
+  "homeCategoryEmpty": "표시할 카테고리가 없습니다.",
+  "@homeCategoryEmpty": { "description": "카테고리 빈 상태 메시지" },
+
   "feedbackHistoryTitle": "내 피드백 내역",
   "@feedbackHistoryTitle": { "description": "피드백 내역 페이지 제목" },
 

@@ -105,192 +105,192 @@ class AppLocalizationsJa extends AppLocalizations {
   String get sideNavFeedbackHistory => 'フィードバック履歴';
 
   @override
-  String get settingsSubtitle => '알림, 필터, 계정 설정을 관리해요.';
+  String get settingsSubtitle => '通知、フィルター、アカウント設定を管理します。';
 
   @override
   String settingsSubtitleNamed(String nickname) {
-    return '$nickname님의 알림, 필터, 계정 설정을 관리해요.';
+    return '$nicknameさんの通知、フィルター、アカウント設定を管理します。';
   }
 
   @override
-  String get settingsNotificationEmail => '이메일 알림 받기';
+  String get settingsNotificationEmail => 'メール通知を受け取る';
 
   @override
-  String get settingsNotificationEmailDesc => '상품 가격 변동, 리뷰 업데이트를 이메일로 받아요.';
+  String get settingsNotificationEmailDesc => '商品価格の変動、レビュー更新をメールで受け取ります。';
 
   @override
-  String get settingsNotificationPush => '앱 푸시 알림 받기';
+  String get settingsNotificationPush => 'アプリプッシュ通知を受け取る';
 
   @override
-  String get settingsNotificationPushDesc => '저장한 상품의 실시간 알림을 브라우저에서 받아요.';
+  String get settingsNotificationPushDesc => '保存した商品のリアルタイム通知をブラウザで受け取ります。';
 
   @override
-  String get settingsNotificationAdEmail => '이메일 광고 수신';
+  String get settingsNotificationAdEmail => 'メール広告の受信';
 
   @override
-  String get settingsNotificationAdEmailDesc => '프로모션 및 맞춤 혜택 정보를 이메일로 받아요.';
+  String get settingsNotificationAdEmailDesc => 'プロモーションやカスタム特典情報をメールで受け取ります。';
 
   @override
-  String get settingsFilterHighlightLowRti => '주의 상품 먼저 보기';
+  String get settingsFilterHighlightLowRti => '注意商品を先に表示';
 
   @override
-  String get settingsFilterHighlightLowRtiDesc => '리뷰 신뢰도가 낮은 상품을 목록 상단에 표시해요.';
+  String get settingsFilterHighlightLowRtiDesc => 'レビュー信頼度が低い商品をリストの上部に表示します。';
 
   @override
-  String get settingsFilterWishlistAlert => '저장 상품 알림 받기';
+  String get settingsFilterWishlistAlert => '保存商品の通知を受け取る';
 
   @override
-  String get settingsFilterWishlistAlertDesc => '관심 상품의 RTI 변화가 있을 때 알림을 드려요.';
+  String get settingsFilterWishlistAlertDesc => 'お気に入り商品のRTI変化があるときに通知します。';
 
   @override
-  String get settingsFilterCategory => '카테고리 필터';
+  String get settingsFilterCategory => 'カテゴリフィルター';
 
   @override
-  String get settingsFilterCategoryDesc => '선택한 카테고리 상품을 기준으로 분석 결과를 우선 표시해요.';
+  String get settingsFilterCategoryDesc => '選択したカテゴリの商品を基準に分析結果を優先表示します。';
 
   @override
-  String get settingsFilterCategoryAll => '전체 카테고리';
+  String get settingsFilterCategoryAll => '全カテゴリ';
 
   @override
-  String get settingsFilterMinReview => '리뷰 최소 개수';
+  String get settingsFilterMinReview => 'レビュー最小件数';
 
   @override
-  String get settingsFilterMinReviewDesc => '이 개수 이상 리뷰가 있는 상품만 분석 결과에 반영해요.';
+  String get settingsFilterMinReviewDesc => 'この件数以上のレビューがある商品のみ分析結果に反映します。';
 
   @override
-  String get settingsFilterMinReviewSuffix => '개';
+  String get settingsFilterMinReviewSuffix => '件';
 
   @override
-  String get settingsFilterLowRti => '낮은 RTI 경고 기준';
+  String get settingsFilterLowRti => '低RTI警告基準';
 
   @override
-  String get settingsFilterLowRtiDesc => 'RTI 점수가 이 값 이하면 주의 상품으로 분류해요.';
+  String get settingsFilterLowRtiDesc => 'RTIスコアがこの値以下の場合、注意商品として分類します。';
 
   @override
-  String get settingsFilterLowRtiSuffix => '점';
+  String get settingsFilterLowRtiSuffix => '点';
 
   @override
-  String get settingsAccountTitle => '계정';
+  String get settingsAccountTitle => 'アカウント';
 
   @override
-  String get settingsAccountChangePassword => '비밀번호 변경';
+  String get settingsAccountChangePassword => 'パスワード変更';
 
   @override
-  String get settingsAccountLabelName => '이름';
+  String get settingsAccountLabelName => '名前';
 
   @override
-  String get settingsAccountLabelEmail => '이메일';
+  String get settingsAccountLabelEmail => 'メール';
 
   @override
-  String get settingsAccountLabelJoinDate => '가입일';
+  String get settingsAccountLabelJoinDate => '登録日';
 
   @override
-  String get settingsAccountLabelMemberType => '회원 유형';
+  String get settingsAccountLabelMemberType => '会員種別';
 
   @override
-  String get settingsAccountDefaultName => '사용자';
+  String get settingsAccountDefaultName => 'ユーザー';
 
   @override
   String settingsAccountMemberLabel(String role) {
-    return '$role 회원';
+    return '$role会員';
   }
 
   @override
-  String get settingsAccountLinkedServices => '연동 서비스';
+  String get settingsAccountLinkedServices => '連携サービス';
 
   @override
-  String get settingsAccountConnected => '연동됨';
+  String get settingsAccountConnected => '連携済み';
 
   @override
-  String get settingsAccountDisconnected => '미연동';
+  String get settingsAccountDisconnected => '未連携';
 
   @override
-  String get settingsLanguageSection => '언어 설정';
+  String get settingsLanguageSection => '言語設定';
 
   @override
-  String get settingsLanguageApplyNow => '변경 즉시 적용됩니다.';
+  String get settingsLanguageApplyNow => '変更はすぐに適用されます。';
 
   @override
-  String get settingsSavedFeedback => '저장됐어요';
+  String get settingsSavedFeedback => '保存しました';
 
   @override
-  String get wishlistTitle => '찜한 상품';
+  String get wishlistTitle => 'お気に入り';
 
   @override
-  String get wishlistSubtitle => '저장된 상품을 한눈에 보고 가격과 리뷰 신뢰도를 확인해보세요.';
+  String get wishlistSubtitle => '保存した商品を一目で確認し、価格とレビュー信頼度をチェックしましょう。';
 
   @override
   String wishlistCount(int count) {
-    return '찜한 상품 $count개';
+    return 'お気に入り$count件';
   }
 
   @override
-  String get wishlistEmpty => '찜한 상품이 없습니다';
+  String get wishlistEmpty => 'お気に入りはありません';
 
   @override
-  String get wishlistEmptyDesc => '상품 카드의 하트를 눌러 찜 목록에 추가해보세요.';
+  String get wishlistEmptyDesc => '商品カードのハートを押してお気に入りに追加しましょう。';
 
   @override
-  String get wishlistBrowse => '상품 탐색하러 가기';
+  String get wishlistBrowse => '商品を探す';
 
   @override
-  String get wishlistFilteredEmpty => '선택한 필터에 해당하는 찜 상품이 없습니다.';
+  String get wishlistFilteredEmpty => '選択したフィルターに該当するお気に入りはありません。';
 
   @override
-  String get wishlistSummaryTitle => '찜 리스트 요약';
+  String get wishlistSummaryTitle => 'お気に入りリスト概要';
 
   @override
   String wishlistSummaryTotal(int count) {
-    return '총 $count개';
+    return '合計$count件';
   }
 
   @override
-  String get wishlistSummaryPriceDrop => '가격 하락';
+  String get wishlistSummaryPriceDrop => '価格下落';
 
   @override
-  String get wishlistSummaryNewAlert => '신규 알림';
+  String get wishlistSummaryNewAlert => '新着通知';
 
   @override
-  String get wishlistSummaryTotalReview => '총 리뷰';
+  String get wishlistSummaryTotalReview => '総レビュー';
 
   @override
-  String get wishlistProductView => '상품 보기';
+  String get wishlistProductView => '商品を見る';
 
   @override
-  String get wishlistProductPriceDrop => '가격 하락';
+  String get wishlistProductPriceDrop => '価格下落';
 
   @override
-  String get wishlistSortRecent => '최근 저장 순';
+  String get wishlistSortRecent => '最近保存順';
 
   @override
-  String get wishlistSortPriceLow => '낮은 가격 순';
+  String get wishlistSortPriceLow => '低価格順';
 
   @override
-  String get wishlistSortPriceHigh => '높은 가격 순';
+  String get wishlistSortPriceHigh => '高価格順';
 
   @override
-  String get wishlistSortRti => 'RTI 높은 순';
+  String get wishlistSortRti => 'RTI高い順';
 
   @override
-  String get wishlistSortReviewCount => '리뷰 많은 순';
+  String get wishlistSortReviewCount => 'レビュー多い順';
 
   @override
-  String get wishlistFilterAll => '전체';
+  String get wishlistFilterAll => '全体';
 
   @override
-  String get wishlistFilterPriceDrop => '가격 하락';
+  String get wishlistFilterPriceDrop => '価格下落';
 
   @override
-  String get wishlistFilterRti => 'RTI 점수';
+  String get wishlistFilterRti => 'RTIスコア';
 
   @override
-  String get wishlistFilterLowestPrice => '최저 가격';
+  String get wishlistFilterLowestPrice => '最安値';
 
   @override
-  String get wishlistFilterBrand => '브랜드';
+  String get wishlistFilterBrand => 'ブランド';
 
   @override
-  String get wishlistFilterCategory => '카테고리';
+  String get wishlistFilterCategory => 'カテゴリ';
 
   @override
   String get myPageTitle => '마이페이지';
@@ -426,6 +426,88 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get myPageAccountSecurity => '계정 / 보안';
+
+  @override
+  String get navCategory => 'カテゴリ';
+
+  @override
+  String get navWishShort => '保存済み';
+
+  @override
+  String get navMyShort => 'マイ';
+
+  @override
+  String get homeSearchHint => 'レビューを基準に商品を検索してみましょう';
+
+  @override
+  String get homeSearchSuggestionsTitle => '関連検索語';
+
+  @override
+  String get homeSearchSuggestionsLoading => '関連検索語を読み込んでいます。';
+
+  @override
+  String get homeSearchSuggestionsHint => '2文字以上入力すると関連検索語が表示されます。';
+
+  @override
+  String get homeRecentSearchTitle => '最近の検索';
+
+  @override
+  String get homeRecentSearchDeleteAll => '全て削除';
+
+  @override
+  String get homeRecentSearchEmpty => '最近の検索語がありません。';
+
+  @override
+  String get homePopularSearchTitle => '人気検索';
+
+  @override
+  String get homeSearchProductsTitle => 'おすすめ商品';
+
+  @override
+  String get homeTrendingTitle => '今よく検索されているキーワード';
+
+  @override
+  String get homeKeywordsEmpty => '表示するキーワードがありません。';
+
+  @override
+  String get homeRecommendedTitle => 'エディターが選んだレビュー基準のおすすめ商品';
+
+  @override
+  String get homeViewAll => '全て見る';
+
+  @override
+  String get homeLoginRequired => 'ログインが必要です。';
+
+  @override
+  String get homeBenefitTitle => '初回購入のお客様へのご特典';
+
+  @override
+  String get homeBenefitSubtitle => 'レビュー基準のショッピングを始めると受け取れる会員特典です。';
+
+  @override
+  String get homeBenefitButton => '特典を受け取る';
+
+  @override
+  String get homeTrustDescription =>
+      '広告・操作レビューをフィルタリングし、実使用レビューを分析して信頼度を提供します。';
+
+  @override
+  String get homeTrustViewMore => '詳しく見る';
+
+  @override
+  String get homeTrustLabel1 => '実使用レビュー分析';
+
+  @override
+  String get homeTrustLabel2 => '広告/操作フィルタリング';
+
+  @override
+  String get homeTrustLabel3 => '信頼度スコア提供';
+
+  @override
+  String get homePopularCategoryTitle => '人気カテゴリ';
+
+  @override
+  String get homeCategoryEmpty => '表示するカテゴリがありません。';
 
   @override
   String get feedbackHistoryTitle => 'フィードバック履歴';
