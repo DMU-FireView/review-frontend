@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +51,7 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
   bool _includeAiEvidence = false;
   bool _agreePrivacy = false;
   bool _agreeNotFalse = false;
+  List<PlatformFile> _attachments = const [];
 
   @override
   void initState() {
@@ -309,6 +311,8 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
       onIncludeAiChanged: (v) => setState(() => _includeAiEvidence = v),
       onAgreePrivacyChanged: (v) => setState(() => _agreePrivacy = v),
       onAgreeNotFalseChanged: (v) => setState(() => _agreeNotFalse = v),
+      attachments: _attachments,
+      onAttachmentsChanged: (v) => setState(() => _attachments = v),
       onSubmit: _submit,
       isSubmitting: isSubmitting,
     );

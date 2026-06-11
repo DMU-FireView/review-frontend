@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
@@ -11,7 +12,8 @@ class DetailInputSection extends StatefulWidget {
     required this.disclosure,
     required this.onReportTypeChanged,
     required this.onDisclosureChanged,
-    this.onAttach,
+    required this.attachments,
+    required this.onAttachmentsChanged,
   });
 
   final TextEditingController controller;
@@ -19,13 +21,17 @@ class DetailInputSection extends StatefulWidget {
   final String? disclosure;
   final ValueChanged<String?> onReportTypeChanged;
   final ValueChanged<String?> onDisclosureChanged;
-  final VoidCallback? onAttach;
+  final List<PlatformFile> attachments;
+  final ValueChanged<List<PlatformFile>> onAttachmentsChanged;
 
   @override
   State<DetailInputSection> createState() => _DetailInputSectionState();
 }
 
 class _DetailInputSectionState extends State<DetailInputSection> {
+  static const _maxFiles = 4;
+  static const _maxBytes = 10 * 1024 * 1024;
+
   int _charCount = 0;
 
   @override
@@ -45,9 +51,52 @@ class _DetailInputSectionState extends State<DetailInputSection> {
     setState(() => _charCount = widget.controller.text.trim().length);
   }
 
+  Future<void> _pickFiles() async {
+    final remaining = _maxFiles - widget.attachments.length;
+    if (remaining <= 0) {
+      _showSnack('최대 $_maxFiles개까지만 첨부할 수 있어요.');
+      return;
+    }
+
+    final result = await FilePicker.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: const ['png', 'jpg', 'jpeg', 'pdf'],
+      allowMultiple: true,
+      withData: true,
+    );
+    if (result == null || result.files.isEmpty) return;
+
+    final added = <PlatformFile>[];
+    for (final f in result.files) {
+      if (added.length + widget.attachments.length >= _maxFiles) break;
+      if (f.size > _maxBytes) {
+        _showSnack('${f.name}은 10MB를 초과합니다.');
+        continue;
+      }
+      final exists = widget.attachments.any(
+        (e) => e.name == f.name && e.size == f.size,
+      );
+      if (!exists) added.add(f);
+    }
+    if (added.isEmpty) return;
+    widget.onAttachmentsChanged([...widget.attachments, ...added]);
+  }
+
+  void _removeFile(int index) {
+    final next = [...widget.attachments];
+    next.removeAt(index);
+    widget.onAttachmentsChanged(next);
+  }
+
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     final isEnough = _charCount >= 20;
+    final canAddMore = widget.attachments.length < _maxFiles;
 
     return SectionCard(
       title: '상세 근거 입력',
@@ -145,15 +194,52 @@ class _DetailInputSectionState extends State<DetailInputSection> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(
-            '첨부 자료 (선택)',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
+          Row(
+            children: [
+              Text(
+                '첨부 자료 ',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              Text(
+                '(선택)',
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  color: AppColors.textTertiary,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                '${widget.attachments.length} / $_maxFiles',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: AppColors.textTertiary,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          _AttachmentBox(onAttach: widget.onAttach),
+          _AttachmentBox(onAttach: canAddMore ? _pickFiles : null),
+          if (widget.attachments.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sm),
+            Column(
+              children: [
+                for (var i = 0; i < widget.attachments.length; i++)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: i == widget.attachments.length - 1
+                          ? 0
+                          : AppSpacing.xs,
+                    ),
+                    child: _AttachmentRow(
+                      file: widget.attachments[i],
+                      onRemove: () => _removeFile(i),
+                    ),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );
@@ -191,10 +277,7 @@ class _LabeledDropdown extends StatelessWidget {
           isExpanded: true,
           hint: const Text(
             '선택해주세요',
-            style: TextStyle(
-              color: AppColors.textTertiary,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
           ),
           items: items
               .map(
@@ -246,6 +329,7 @@ class _AttachmentBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final disabled = onAttach == null;
     return InkWell(
       onTap: onAttach,
       borderRadius: BorderRadius.circular(10),
@@ -257,10 +341,7 @@ class _AttachmentBox extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColors.background,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: AppColors.border,
-            style: BorderStyle.solid,
-          ),
+          border: Border.all(color: AppColors.border),
         ),
         child: Row(
           children: [
@@ -273,10 +354,12 @@ class _AttachmentBox extends StatelessWidget {
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(color: AppColors.border),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.upload_outlined,
                 size: 18,
-                color: AppColors.textSecondary,
+                color: disabled
+                    ? AppColors.textTertiary
+                    : AppColors.textSecondary,
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -285,20 +368,22 @@ class _AttachmentBox extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '스크린샷이나 추가 근거를 첨부해주세요',
+                    disabled
+                        ? '첨부 가능한 개수를 모두 채웠어요'
+                        : '스크린샷이나 추가 근거를 첨부해주세요',
                     style: Theme.of(
                       context,
                     ).textTheme.labelMedium?.copyWith(
                       fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary,
+                      color: disabled
+                          ? AppColors.textTertiary
+                          : AppColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'PNG, JPG, PDF · 최대 10MB · 최대 4개',
-                    style: Theme.of(
-                      context,
-                    ).textTheme.labelSmall?.copyWith(
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: AppColors.textTertiary,
                       fontSize: 11,
                     ),
@@ -322,14 +407,84 @@ class _AttachmentBox extends StatelessWidget {
               ),
               child: const Text(
                 '파일 선택',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _AttachmentRow extends StatelessWidget {
+  const _AttachmentRow({required this.file, required this.onRemove});
+
+  final PlatformFile file;
+  final VoidCallback onRemove;
+
+  static String _formatSize(int bytes) {
+    if (bytes < 1024) return '${bytes}B';
+    final kb = bytes / 1024;
+    if (kb < 1024) return '${kb.toStringAsFixed(0)}KB';
+    final mb = kb / 1024;
+    return '${mb.toStringAsFixed(1)}MB';
+  }
+
+  IconData get _icon {
+    final ext = file.extension?.toLowerCase();
+    if (ext == 'pdf') return Icons.picture_as_pdf_outlined;
+    return Icons.image_outlined;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Icon(_icon, size: 18, color: AppColors.primary),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  file.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 12,
+                  ),
+                ),
+                Text(
+                  _formatSize(file.size),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textTertiary,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            onPressed: onRemove,
+            icon: const Icon(Icons.close, size: 16),
+            color: AppColors.textTertiary,
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(minWidth: 28, minHeight: 28),
+          ),
+        ],
       ),
     );
   }
