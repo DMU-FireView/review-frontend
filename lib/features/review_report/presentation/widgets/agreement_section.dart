@@ -18,9 +18,13 @@ class AgreementSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.lg + AppSpacing.md,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
         _AgreementRow(
           checked: agreePrivacy,
           onChanged: onPrivacyChanged,
@@ -34,7 +38,8 @@ class AgreementSection extends StatelessWidget {
           title: '허위 신고가 아님을 확인합니다.',
           subtitle: '신고 내용이 사실과 다를 경우 처리 우선순위가 낮아질 수 있습니다.',
         ),
-      ],
+        ],
+      ),
     );
   }
 }
