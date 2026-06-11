@@ -71,8 +71,17 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
   }
 
   ReportStep get _currentStep {
-    if (_agreePrivacy && _agreeNotFalse) return ReportStep.submit;
-    if (_detailController.text.trim().length >= 20) return ReportStep.detail;
+    final hasDetailInput = _detailController.text.trim().isNotEmpty ||
+        _reportType != null ||
+        _disclosure != null ||
+        _attachments.isNotEmpty;
+    final detailReady = _detailController.text.trim().length >= 20;
+
+    if (_agreePrivacy && _agreeNotFalse && detailReady &&
+        _selectedReasons.isNotEmpty) {
+      return ReportStep.submit;
+    }
+    if (hasDetailInput) return ReportStep.detail;
     if (_selectedReasons.isNotEmpty) return ReportStep.reason;
     return ReportStep.target;
   }
