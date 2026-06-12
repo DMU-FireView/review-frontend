@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/section_card.dart';
+import 'package:re_view_front/features/review_report/presentation/widgets/trendy_dropdown.dart';
 
 class DetailInputSection extends StatefulWidget {
   const DetailInputSection({
@@ -107,7 +108,7 @@ class _DetailInputSectionState extends State<DetailInputSection> {
           Row(
             children: [
               Expanded(
-                child: _LabeledDropdown(
+                child: TrendyDropdown(
                   label: '신고 유형',
                   value: widget.reportType,
                   items: const ['반복 문구', '계정 생성 직후', '유사 리뷰 군집', '기타'],
@@ -116,7 +117,7 @@ class _DetailInputSectionState extends State<DetailInputSection> {
               ),
               const SizedBox(width: AppSpacing.md),
               Expanded(
-                child: _LabeledDropdown(
+                child: TrendyDropdown(
                   label: '처리 결과 공개 범위',
                   value: widget.disclosure,
                   items: const ['비공개', '나에게만 공개', '운영팀 공유'],
@@ -242,82 +243,6 @@ class _DetailInputSectionState extends State<DetailInputSection> {
           ],
         ],
       ),
-    );
-  }
-}
-
-class _LabeledDropdown extends StatelessWidget {
-  const _LabeledDropdown({
-    required this.label,
-    required this.value,
-    required this.items,
-    required this.onChanged,
-  });
-
-  final String label;
-  final String? value;
-  final List<String> items;
-  final ValueChanged<String?> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelMedium?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        DropdownButtonFormField<String>(
-          initialValue: value,
-          isExpanded: true,
-          hint: const Text(
-            '선택해주세요',
-            style: TextStyle(color: AppColors.textTertiary, fontSize: 14),
-          ),
-          items: items
-              .map(
-                (e) => DropdownMenuItem<String>(
-                  value: e,
-                  child: Text(e, style: const TextStyle(fontSize: 14)),
-                ),
-              )
-              .toList(),
-          onChanged: onChanged,
-          icon: const Icon(
-            Icons.keyboard_arrow_down,
-            color: AppColors.textTertiary,
-            size: 20,
-          ),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppColors.background,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.md,
-              vertical: AppSpacing.sm,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: AppColors.border),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: AppColors.primary,
-                width: 1.5,
-              ),
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
