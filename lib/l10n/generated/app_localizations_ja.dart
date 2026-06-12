@@ -90,16 +90,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get langChinese => '中文(简体)';
 
   @override
-  String get sideNavOrders => '주문/배송';
+  String get sideNavOrders => '注文/配送';
 
   @override
-  String get sideNavRecentlyViewed => '최근 본 상품';
+  String get sideNavRecentlyViewed => '最近見た商品';
 
   @override
-  String get sideNavReviewActivity => '리뷰 활동';
+  String get sideNavReviewActivity => 'レビュー活動';
 
   @override
-  String get sideNavAccountSettings => '계정 설정';
+  String get sideNavAccountSettings => 'アカウント設定';
 
   @override
   String get sideNavFeedbackHistory => 'フィードバック履歴';
@@ -293,139 +293,139 @@ class AppLocalizationsJa extends AppLocalizations {
   String get wishlistFilterCategory => 'カテゴリ';
 
   @override
-  String get myPageTitle => '마이페이지';
+  String get myPageTitle => 'マイページ';
 
   @override
-  String get myPageLoading => '마이페이지 정보를 불러오는 중입니다.';
+  String get myPageLoading => 'マイページ情報を読み込み中です。';
 
   @override
-  String get myPageWishlistLoading => '저장한 상품을 불러오는 중입니다.';
+  String get myPageWishlistLoading => '保存した商品を読み込み中です。';
 
   @override
-  String get myPageWishlistEmpty => '저장한 상품이 없습니다.';
+  String get myPageWishlistEmpty => '保存した商品はありません。';
 
   @override
-  String get myPageInterestProducts => '관심 상품';
+  String get myPageInterestProducts => 'お気に入り商品';
 
   @override
-  String get myPageDefaultName => '사용자';
+  String get myPageDefaultName => 'ユーザー';
 
   @override
-  String get myPageMemberBasic => '일반 회원 (무료)';
+  String get myPageMemberBasic => '一般会員（無料）';
 
   @override
-  String get myPageSideNavMyPage => '마이페이지';
+  String get myPageSideNavMyPage => 'マイページ';
 
   @override
-  String get myPageSideNavOrders => '주문/배송';
+  String get myPageSideNavOrders => '注文/配送';
 
   @override
-  String get myPageSideNavWishlist => '저장한 상품';
+  String get myPageSideNavWishlist => '保存した商品';
 
   @override
-  String get myPageSideNavRecentlyViewed => '최근 본 상품';
+  String get myPageSideNavRecentlyViewed => '最近見た商品';
 
   @override
-  String get myPageSideNavRiskyProducts => '주의 상품';
+  String get myPageSideNavRiskyProducts => '注意商品';
 
   @override
-  String get myPageSideNavAlerts => '알림';
+  String get myPageSideNavAlerts => '通知';
 
   @override
-  String get myPageRecentActivity => '최근 활동';
+  String get myPageRecentActivity => '最近の活動';
 
   @override
-  String get myPageRecentActivityEmpty => '최근 활동이 없습니다.';
+  String get myPageRecentActivityEmpty => '最近の活動はありません。';
 
   @override
-  String get myPageRecentLabel => '최근';
+  String get myPageRecentLabel => '最近';
 
   @override
-  String get myPageReviewTrustSummary => '리뷰 신뢰 요약';
+  String get myPageReviewTrustSummary => 'レビュー信頼サマリー';
 
   @override
-  String get myPageAvgRti => '관심 상품 평균 RTI';
+  String get myPageAvgRti => 'お気に入り商品の平均RTI';
 
   @override
-  String get myPageRtiSaveHint => '관심 상품을 저장하면 리뷰 신뢰도 요약이 표시됩니다.';
+  String get myPageRtiSaveHint => 'お気に入りを保存するとレビュー信頼度サマリーが表示されます。';
 
   @override
-  String get myPageRiskyNone => '현재 대시보드에 주의가 필요한 상품이 없습니다.';
+  String get myPageRiskyNone => '現在ダッシュボードに注意が必要な商品はありません。';
 
   @override
   String myPageRiskyCount(int count) {
-    return '주의 상품 $count개를 확인해보세요.';
+    return '注意商品$count件を確認してください。';
   }
 
   @override
-  String get myPageHighlightLowRti => '주의 상품 먼저 보기';
+  String get myPageHighlightLowRti => '注意商品を先に表示';
 
   @override
-  String get myPageWishlistAlertLabel => '저장 상품 알림 받기';
+  String get myPageWishlistAlertLabel => '保存商品の通知を受け取る';
 
   @override
-  String get myPageAccountInfo => '계정 정보';
+  String get myPageAccountInfo => 'アカウント情報';
 
   @override
-  String get myPageAccountInfoSubtitle => '개인 정보 및 기본 정보를 관리해요.';
+  String get myPageAccountInfoSubtitle => '個人情報および基本情報を管理します。';
 
   @override
   String myPageAccountNickname(String nickname) {
-    return '닉네임: $nickname';
+    return 'ニックネーム: $nickname';
   }
 
   @override
   String myPageAccountEmail(String email) {
-    return '이메일: $email';
+    return 'メール: $email';
   }
 
   @override
   String myPageAccountMemberType(String role) {
-    return '회원 유형: $role';
+    return '会員種別: $role';
   }
 
   @override
-  String get myPageDefaultMemberRole => '일반 회원';
+  String get myPageDefaultMemberRole => '一般会員';
 
   @override
-  String get myPageLoginInfo => '로그인 정보';
+  String get myPageLoginInfo => 'ログイン情報';
 
   @override
-  String get myPageLoginInfoSubtitle => '이메일, 로그인 수단을 관리해요.';
+  String get myPageLoginInfoSubtitle => 'メール、ログイン手段を管理します。';
 
   @override
   String myPageLoginEmail(String email) {
-    return '로그인 이메일: $email';
+    return 'ログインメール: $email';
   }
 
   @override
-  String get myPageLoginStatus => '인증 상태: 로그인됨';
+  String get myPageLoginStatus => '認証状態: ログイン済み';
 
   @override
-  String get myPageOnboardingComplete => '완료';
+  String get myPageOnboardingComplete => '完了';
 
   @override
-  String get myPageOnboardingIncomplete => '미완료';
+  String get myPageOnboardingIncomplete => '未完了';
 
   @override
   String myPageOnboarding(String status) {
-    return '온보딩: $status';
+    return 'オンボーディング: $status';
   }
 
   @override
-  String get myPageChangePassword => '비밀번호 변경';
+  String get myPageChangePassword => 'パスワード変更';
 
   @override
-  String get myPageChangePasswordSubtitle => '안전한 비밀번호로 관리하세요.';
+  String get myPageChangePasswordSubtitle => '安全なパスワードで管理してください。';
 
   @override
-  String get myPageNotificationSettings => '알림 설정';
+  String get myPageNotificationSettings => '通知設定';
 
   @override
-  String get myPageNotificationSettingsSubtitle => '이메일 및 푸시 알림을 설정해요.';
+  String get myPageNotificationSettingsSubtitle => 'メールおよびプッシュ通知を設定します。';
 
   @override
-  String get myPageAccountSecurity => '계정 / 보안';
+  String get myPageAccountSecurity => 'アカウント / セキュリティ';
 
   @override
   String get navCategory => 'カテゴリ';
