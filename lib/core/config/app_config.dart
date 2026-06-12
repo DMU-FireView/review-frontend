@@ -9,6 +9,7 @@ class AppConfig {
     required this.analysisPath,
     required this.analysisHealthPath,
     required this.reviewFeedbackBasePath,
+    required this.reportBasePath,
     required this.loginPath,
     required this.signupPath,
     required this.naverOAuthPath,
@@ -56,6 +57,10 @@ class AppConfig {
       reviewFeedbackBasePath: const String.fromEnvironment(
         'REVIEW_FEEDBACK_BASE_PATH',
         defaultValue: '/api/reviews',
+      ),
+      reportBasePath: const String.fromEnvironment(
+        'REPORT_BASE_PATH',
+        defaultValue: '/api/reports',
       ),
       loginPath: const String.fromEnvironment(
         'LOGIN_PATH',
@@ -105,6 +110,7 @@ class AppConfig {
   final String analysisPath;
   final String analysisHealthPath;
   final String reviewFeedbackBasePath;
+  final String reportBasePath;
   final String loginPath;
   final String signupPath;
   final String naverOAuthPath;

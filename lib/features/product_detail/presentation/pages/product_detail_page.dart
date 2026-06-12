@@ -215,6 +215,8 @@ class _DetailContent extends StatelessWidget {
                   warnCount: warnCount,
                   dangerCount: dangerCount,
                   onFeedback: onFeedback,
+                  productId: detail.id,
+                  productName: detail.name,
                 )
               : _DesktopReviewSection(
                   reviews: reviews,
@@ -223,6 +225,8 @@ class _DetailContent extends StatelessWidget {
                   warnCount: warnCount,
                   dangerCount: dangerCount,
                   onFeedback: onFeedback,
+                  productId: detail.id,
+                  productName: detail.name,
                 )
         else if (selectedTab == _ProductDetailTab.priceComparison)
           PriceComparisonTable(
@@ -629,6 +633,8 @@ class _DesktopReviewSection extends StatelessWidget {
     required this.warnCount,
     required this.dangerCount,
     this.onFeedback,
+    this.productId,
+    this.productName = '',
   });
 
   final List<ProductReview> reviews;
@@ -637,6 +643,8 @@ class _DesktopReviewSection extends StatelessWidget {
   final int warnCount;
   final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
+  final int? productId;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -651,6 +659,8 @@ class _DesktopReviewSection extends StatelessWidget {
             warnCount: warnCount,
             dangerCount: dangerCount,
             onFeedback: onFeedback,
+            productId: productId,
+            productName: productName,
           ),
         ),
         const SizedBox(width: AppSpacing.lg),
@@ -671,6 +681,8 @@ class _MobileReviewSection extends StatelessWidget {
     required this.warnCount,
     required this.dangerCount,
     this.onFeedback,
+    this.productId,
+    this.productName = '',
   });
 
   final List<ProductReview> reviews;
@@ -679,6 +691,8 @@ class _MobileReviewSection extends StatelessWidget {
   final int warnCount;
   final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
+  final int? productId;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -692,6 +706,8 @@ class _MobileReviewSection extends StatelessWidget {
           warnCount: warnCount,
           dangerCount: dangerCount,
           onFeedback: onFeedback,
+          productId: productId,
+          productName: productName,
         ),
       ],
     );
