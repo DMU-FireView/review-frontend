@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/side_panel_header.dart';
 
 class ReportSummaryCard extends StatelessWidget {
   const ReportSummaryCard({
@@ -28,28 +29,11 @@ class ReportSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.assignment_outlined,
-                size: 16,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '접수 요약',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            '제출 전 신고 정보를 확인하세요.',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textTertiary,
-            ),
+          const SidePanelHeader(
+            icon: Icons.assignment_outlined,
+            title: '접수 요약',
+            description: '제출 전 입력한 내용을 확인하세요.',
+            badgeLabel: '실시간',
           ),
           const SizedBox(height: AppSpacing.md),
           Row(
@@ -58,6 +42,7 @@ class ReportSummaryCard extends StatelessWidget {
                 child: _MetricBox(
                   value: '$selectedCount',
                   label: '선택 사유',
+                  highlight: selectedCount > 0,
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
@@ -65,6 +50,7 @@ class ReportSummaryCard extends StatelessWidget {
                 child: _MetricBox(
                   value: '$evidenceCount',
                   label: 'AI 근거',
+                  highlight: evidenceCount > 0,
                 ),
               ),
             ],
@@ -94,22 +80,34 @@ class ReportSummaryCard extends StatelessWidget {
 }
 
 class _MetricBox extends StatelessWidget {
-  const _MetricBox({required this.value, required this.label});
+  const _MetricBox({
+    required this.value,
+    required this.label,
+    this.highlight = false,
+  });
 
   final String value;
   final String label;
+  final bool highlight;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOutCubic,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sm,
         vertical: AppSpacing.sm,
       ),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: highlight
+            ? AppColors.primary.withValues(alpha: 0.06)
+            : AppColors.background,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(
+          color: highlight ? AppColors.primary : AppColors.border,
+          width: highlight ? 1.2 : 1,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -118,7 +116,7 @@ class _MetricBox extends StatelessWidget {
             value,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: highlight ? AppColors.primary : AppColors.textPrimary,
               height: 1.2,
             ),
           ),
@@ -126,7 +124,7 @@ class _MetricBox extends StatelessWidget {
           Text(
             label,
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textTertiary,
+              color: AppColors.textSecondary,
               fontSize: 11,
             ),
           ),
