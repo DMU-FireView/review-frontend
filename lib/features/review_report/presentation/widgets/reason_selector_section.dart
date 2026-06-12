@@ -26,9 +26,11 @@ class ReasonSelectorSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasSelection = selectedReasons.isNotEmpty;
+
     return SectionCard(
       title: '신고 사유 선택',
-      description: '복수 선택 가능 · 가장 가까운 유형을 선택해주세요.',
+      description: '카드를 탭해서 선택하세요 · 여러 개 선택 가능합니다.',
       trailing: TextButton(
         onPressed: onShowCriteria,
         style: TextButton.styleFrom(
@@ -42,26 +44,62 @@ class ReasonSelectorSection extends StatelessWidget {
           style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700),
         ),
       ),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final crossAxisCount = constraints.maxWidth >= 720 ? 4 : 2;
-          return GridView.count(
-            crossAxisCount: crossAxisCount,
-            crossAxisSpacing: AppSpacing.sm,
-            mainAxisSpacing: AppSpacing.sm,
-            childAspectRatio: crossAxisCount == 4 ? 1.4 : 2.2,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            children: [
-              for (final reason in _reasons)
-                ReasonCard(
-                  reason: reason,
-                  isSelected: selectedReasons.contains(reason),
-                  onTap: () => onToggled(reason),
-                ),
-            ],
-          );
-        },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AnimatedSize(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
+            alignment: Alignment.topLeft,
+            child: hasSelection
+                ? Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.sm,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(999),
+                        ),
+                        child: Text(
+                          '${selectedReasons.length}개 선택됨',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final crossAxisCount = constraints.maxWidth >= 720 ? 4 : 2;
+              return GridView.count(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: AppSpacing.sm,
+                mainAxisSpacing: AppSpacing.sm,
+                childAspectRatio: crossAxisCount == 4 ? 1.0 : 1.6,
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  for (final reason in _reasons)
+                    ReasonCard(
+                      reason: reason,
+                      isSelected: selectedReasons.contains(reason),
+                      onTap: () => onToggled(reason),
+                    ),
+                ],
+              );
+            },
+          ),
+        ],
       ),
     );
   }

@@ -3,7 +3,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
 
-class ReasonCard extends StatelessWidget {
+class ReasonCard extends StatefulWidget {
   const ReasonCard({
     super.key,
     required this.reason,
@@ -15,7 +15,14 @@ class ReasonCard extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  IconData get _icon => switch (reason) {
+  @override
+  State<ReasonCard> createState() => _ReasonCardState();
+}
+
+class _ReasonCardState extends State<ReasonCard> {
+  bool _hovering = false;
+
+  IconData get _icon => switch (widget.reason) {
     ReportReason.fakeReview => Icons.warning_amber_outlined,
     ReportReason.aiGenerated => Icons.smart_toy_outlined,
     ReportReason.irrelevantContent => Icons.link_off_outlined,
@@ -27,104 +34,141 @@ class ReasonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
-        curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.all(AppSpacing.md),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.06)
-              : AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1,
+    final selected = widget.isSelected;
+
+    final borderColor = selected
+        ? AppColors.primary
+        : _hovering
+        ? AppColors.borderStrong
+        : AppColors.border;
+
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.all(AppSpacing.md),
+          decoration: BoxDecoration(
+            color: selected
+                ? AppColors.primary.withValues(alpha: 0.06)
+                : AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: borderColor,
+              width: selected ? 1.5 : 1,
+            ),
+            boxShadow: selected
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.12),
+                      blurRadius: 14,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : null,
           ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.12),
-                    blurRadius: 14,
-                    offset: const Offset(0, 4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : AppColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Icon(
+                      _icon,
+                      size: 18,
+                      color: selected
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                    ),
                   ),
-                ]
-              : const [],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                Container(
-                  width: 32,
-                  height: 32,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? AppColors.primary.withValues(alpha: 0.1)
-                        : AppColors.background,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(
-                    _icon,
-                    size: 18,
-                    color: isSelected
-                        ? AppColors.primary
-                        : AppColors.textSecondary,
-                  ),
-                ),
-                const Spacer(),
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 180),
-                  transitionBuilder: (child, anim) =>
-                      ScaleTransition(scale: anim, child: child),
-                  child: isSelected
-                      ? const Icon(
-                          Icons.check_circle,
-                          key: ValueKey('checked'),
-                          size: 18,
-                          color: AppColors.primary,
-                        )
-                      : const SizedBox(
-                          key: ValueKey('empty'),
-                          width: 18,
-                          height: 18,
-                        ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              reason.label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                fontWeight: FontWeight.w800,
-                color: isSelected
-                    ? AppColors.primary
-                    : AppColors.textPrimary,
-                fontSize: 13,
+                  const Spacer(),
+                  _SelectionCheckbox(selected: selected),
+                ],
               ),
-            ),
-            const SizedBox(height: AppSpacing.xxs),
-            Flexible(
-              child: Text(
-                reason.description,
-                maxLines: 3,
+              const SizedBox(height: AppSpacing.sm),
+              Text(
+                widget.reason.label,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textSecondary,
-                  height: 1.4,
-                  fontSize: 11,
+                style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                  color: selected
+                      ? AppColors.primary
+                      : AppColors.textPrimary,
+                  fontSize: 13,
+                  height: 1.3,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: AppSpacing.xxs),
+              Flexible(
+                child: Text(
+                  widget.reason.description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                    height: 1.4,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class _SelectionCheckbox extends StatelessWidget {
+  const _SelectionCheckbox({required this.selected});
+
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 160),
+      curve: Curves.easeOutCubic,
+      width: 20,
+      height: 20,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: selected ? AppColors.primary : Colors.transparent,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(
+          color: selected ? AppColors.primary : AppColors.borderStrong,
+          width: 1.5,
+        ),
+      ),
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 160),
+        transitionBuilder: (child, anim) =>
+            ScaleTransition(scale: anim, child: child),
+        child: selected
+            ? const Icon(
+                Icons.check_rounded,
+                key: ValueKey('checked'),
+                size: 14,
+                color: Colors.white,
+              )
+            : const SizedBox.shrink(key: ValueKey('empty')),
       ),
     );
   }
