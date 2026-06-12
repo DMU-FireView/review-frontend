@@ -5,9 +5,16 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 enum ReportStep { target, reason, detail, submit }
 
 class ReviewReportStepIndicator extends StatelessWidget {
-  const ReviewReportStepIndicator({super.key, required this.currentStep});
+  const ReviewReportStepIndicator({
+    super.key,
+    required this.currentStep,
+    required this.maxReachedStep,
+    this.onStepTapped,
+  });
 
   final ReportStep currentStep;
+  final ReportStep maxReachedStep;
+  final ValueChanged<ReportStep>? onStepTapped;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +26,8 @@ class ReviewReportStepIndicator extends StatelessWidget {
     ];
 
     final activeIndex = currentStep.index;
+    final maxIndex = maxReachedStep.index;
+
     return Row(
       children: [
         for (var i = 0; i < items.length; i++) ...[
@@ -32,6 +41,9 @@ class ReviewReportStepIndicator extends StatelessWidget {
                   : i < activeIndex
                   ? _StepState.done
                   : _StepState.upcoming,
+              onTap: (onStepTapped != null && i <= maxIndex && i != activeIndex)
+                  ? () => onStepTapped!(ReportStep.values[i])
+                  : null,
             ),
           ),
           if (i < items.length - 1) const SizedBox(width: AppSpacing.sm),
@@ -43,25 +55,39 @@ class ReviewReportStepIndicator extends StatelessWidget {
 
 enum _StepState { upcoming, active, done }
 
-class _StepItem extends StatelessWidget {
+class _StepItem extends StatefulWidget {
   const _StepItem({
     required this.number,
     required this.title,
     required this.subtitle,
     required this.state,
+    this.onTap,
   });
 
   final int number;
   final String title;
   final String subtitle;
   final _StepState state;
+  final VoidCallback? onTap;
+
+  @override
+  State<_StepItem> createState() => _StepItemState();
+}
+
+class _StepItemState extends State<_StepItem> {
+  bool _hovering = false;
 
   @override
   Widget build(BuildContext context) {
-    final isActive = state == _StepState.active;
-    final isDone = state == _StepState.done;
+    final isActive = widget.state == _StepState.active;
+    final isDone = widget.state == _StepState.done;
+    final isTappable = widget.onTap != null;
 
-    final borderColor = isActive ? AppColors.primary : AppColors.border;
+    final borderColor = isActive
+        ? AppColors.primary
+        : _hovering && isTappable
+        ? AppColors.primary.withValues(alpha: 0.6)
+        : AppColors.border;
     final numberBg = isActive
         ? AppColors.primary
         : isDone
@@ -79,77 +105,89 @@ class _StepItem extends StatelessWidget {
         ? AppColors.textSecondary
         : AppColors.textTertiary;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 220),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.md,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: borderColor, width: isActive ? 1.5 : 1),
-        boxShadow: isActive
-            ? [
-                BoxShadow(
-                  color: AppColors.primary.withValues(alpha: 0.18),
-                  blurRadius: 22,
-                  offset: const Offset(0, 8),
-                ),
-              ]
-            : const [],
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 220),
-            width: 28,
-            height: 28,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(color: numberBg, shape: BoxShape.circle),
-            child: isDone
-                ? Icon(Icons.check, size: 16, color: numberFg)
-                : Text(
-                    '$number',
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w800,
-                      color: numberFg,
+    return MouseRegion(
+      cursor: isTappable ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      onEnter: (_) => setState(() => _hovering = true),
+      onExit: (_) => setState(() => _hovering = false),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
+          curve: Curves.easeOutCubic,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: AppSpacing.md,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: borderColor, width: isActive ? 1.5 : 1),
+            boxShadow: isActive
+                ? [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.18),
+                      blurRadius: 22,
+                      offset: const Offset(0, 8),
                     ),
-                  ),
+                  ]
+                : null,
           ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                    color: titleColor,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 13,
-                  ),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 220),
+                width: 28,
+                height: 28,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: numberBg,
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  subtitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: subtitleColor,
-                    fontSize: 11,
-                  ),
+                child: isDone
+                    ? Icon(Icons.check, size: 16, color: numberFg)
+                    : Text(
+                        '${widget.number}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: numberFg,
+                        ),
+                      ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                        color: titleColor,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.subtitle,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: subtitleColor,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

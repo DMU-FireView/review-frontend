@@ -7,8 +7,6 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
-import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
-
 import 'package:re_view_front/features/review_report/presentation/providers/review_report_providers.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_draft.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_state.dart';
@@ -45,6 +43,9 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
   final _detailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
+  ReportStep _activeStep = ReportStep.target;
+  ReportStep _maxReachedStep = ReportStep.target;
+
   @override
   void initState() {
     super.initState();
@@ -59,6 +60,11 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
           selection: TextSelection.collapsed(offset: draft.detail.length),
         );
       }
+      final derived = _deriveStep(draft);
+      setState(() {
+        _activeStep = derived;
+        _maxReachedStep = derived;
+      });
       _detailController.addListener(_onDetailChanged);
     });
   }
@@ -76,22 +82,30 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
         .setDetail(_detailController.text);
   }
 
-  ReportStep _currentStepOf(ReviewReportDraft draft) {
-    final hasDetailInput = draft.detail.trim().isNotEmpty ||
-        draft.reportType != null ||
-        draft.disclosure != null ||
-        draft.attachments.isNotEmpty;
-    final detailReady = draft.detail.trim().length >= 20;
-
+  ReportStep _deriveStep(ReviewReportDraft draft) {
     if (draft.agreePrivacy &&
         draft.agreeNotFalse &&
-        detailReady &&
-        draft.reasons.isNotEmpty) {
+        draft.reasons.isNotEmpty &&
+        draft.detail.trim().length >= 20) {
       return ReportStep.submit;
     }
-    if (hasDetailInput) return ReportStep.detail;
+    if (draft.detail.trim().isNotEmpty ||
+        draft.reportType != null ||
+        draft.disclosure != null ||
+        draft.attachments.isNotEmpty) {
+      return ReportStep.detail;
+    }
     if (draft.reasons.isNotEmpty) return ReportStep.reason;
     return ReportStep.target;
+  }
+
+  void _handleStepChanged(ReportStep step) {
+    setState(() {
+      _activeStep = step;
+      if (step.index > _maxReachedStep.index) {
+        _maxReachedStep = step;
+      }
+    });
   }
 
   void _submit(ReviewReportDraft draft) {
@@ -220,7 +234,6 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
 
     final isSubmitting = state is ReviewReportSubmitting;
     final draftNotifier = ref.read(reviewReportDraftProvider.notifier);
-    final currentStep = _currentStepOf(draft);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -280,12 +293,7 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              _mainForm(
-                                isSubmitting,
-                                draft,
-                                draftNotifier,
-                                currentStep,
-                              ),
+                              _mainForm(isSubmitting, draft, draftNotifier),
                               const SizedBox(height: AppSpacing.lg),
                               ReportSidePanel(
                                 selectedCount: draft.reasons.length,
@@ -303,7 +311,6 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
                                   isSubmitting,
                                   draft,
                                   draftNotifier,
-                                  currentStep,
                                 ),
                               ),
                               const SizedBox(width: AppSpacing.xl),
@@ -331,7 +338,6 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
     bool isSubmitting,
     ReviewReportDraft draft,
     ReviewReportDraftNotifier draftNotifier,
-    ReportStep currentStep,
   ) {
     return ReviewReportMainForm(
       productName: widget.productName,
@@ -345,7 +351,9 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
       includeAiEvidence: draft.includeAiEvidence,
       agreePrivacy: draft.agreePrivacy,
       agreeNotFalse: draft.agreeNotFalse,
-      currentStep: currentStep,
+      currentStep: _activeStep,
+      maxReachedStep: _maxReachedStep,
+      onStepChanged: _handleStepChanged,
       onReasonToggled: draftNotifier.toggleReason,
       onReportTypeChanged: draftNotifier.setReportType,
       onDisclosureChanged: draftNotifier.setDisclosure,
