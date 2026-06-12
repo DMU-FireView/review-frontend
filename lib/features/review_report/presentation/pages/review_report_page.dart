@@ -1,4 +1,3 @@
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +10,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/home_heade
 import 'package:re_view_front/features/review_report/domain/entities/review_report.dart';
 
 import 'package:re_view_front/features/review_report/presentation/providers/review_report_providers.dart';
+import 'package:re_view_front/features/review_report/presentation/view_models/review_report_draft.dart';
 import 'package:re_view_front/features/review_report/presentation/view_models/review_report_state.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/review_report_main_form.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/review_report_page_header.dart';
@@ -45,65 +45,63 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
   final _detailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final Set<ReportReason> _selectedReasons = {};
-  String? _reportType;
-  String? _disclosure;
-  bool _includeAiEvidence = false;
-  bool _agreePrivacy = false;
-  bool _agreeNotFalse = false;
-  List<PlatformFile> _attachments = const [];
-
   @override
   void initState() {
     super.initState();
-    _detailController.addListener(_rebuild);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final notifier = ref.read(reviewReportDraftProvider.notifier);
+      notifier.bind(widget.reviewId);
+      final draft = ref.read(reviewReportDraftProvider);
+      if (_detailController.text != draft.detail) {
+        _detailController.value = TextEditingValue(
+          text: draft.detail,
+          selection: TextSelection.collapsed(offset: draft.detail.length),
+        );
+      }
+      _detailController.addListener(_onDetailChanged);
+    });
   }
 
   @override
   void dispose() {
-    _detailController.removeListener(_rebuild);
+    _detailController.removeListener(_onDetailChanged);
     _detailController.dispose();
     super.dispose();
   }
 
-  void _rebuild() {
-    if (mounted) setState(() {});
+  void _onDetailChanged() {
+    ref
+        .read(reviewReportDraftProvider.notifier)
+        .setDetail(_detailController.text);
   }
 
-  ReportStep get _currentStep {
-    final hasDetailInput = _detailController.text.trim().isNotEmpty ||
-        _reportType != null ||
-        _disclosure != null ||
-        _attachments.isNotEmpty;
-    final detailReady = _detailController.text.trim().length >= 20;
+  ReportStep _currentStepOf(ReviewReportDraft draft) {
+    final hasDetailInput = draft.detail.trim().isNotEmpty ||
+        draft.reportType != null ||
+        draft.disclosure != null ||
+        draft.attachments.isNotEmpty;
+    final detailReady = draft.detail.trim().length >= 20;
 
-    if (_agreePrivacy && _agreeNotFalse && detailReady &&
-        _selectedReasons.isNotEmpty) {
+    if (draft.agreePrivacy &&
+        draft.agreeNotFalse &&
+        detailReady &&
+        draft.reasons.isNotEmpty) {
       return ReportStep.submit;
     }
     if (hasDetailInput) return ReportStep.detail;
-    if (_selectedReasons.isNotEmpty) return ReportStep.reason;
+    if (draft.reasons.isNotEmpty) return ReportStep.reason;
     return ReportStep.target;
   }
 
-  void _toggleReason(ReportReason reason) {
-    setState(() {
-      if (_selectedReasons.contains(reason)) {
-        _selectedReasons.remove(reason);
-      } else {
-        _selectedReasons.add(reason);
-      }
-    });
-  }
-
-  void _submit() {
-    if (_selectedReasons.isEmpty) {
+  void _submit(ReviewReportDraft draft) {
+    if (draft.reasons.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('신고 사유를 1개 이상 선택해주세요.')),
       );
       return;
     }
-    if (!_agreePrivacy || !_agreeNotFalse) {
+    if (!draft.agreePrivacy || !draft.agreeNotFalse) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('동의 항목을 모두 확인해주세요.')),
       );
@@ -111,17 +109,16 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
     }
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    ref
-        .read(reviewReportViewModelProvider.notifier)
-        .submit(
+    ref.read(reviewReportViewModelProvider.notifier).submit(
           reviewId: widget.reviewId,
-          reason: _selectedReasons.first.code,
-          detail: _detailController.text.trim(),
-          includeAiEvidence: _includeAiEvidence,
+          reason: draft.reasons.first.code,
+          detail: draft.detail.trim(),
+          includeAiEvidence: draft.includeAiEvidence,
         );
   }
 
   void _showSuccessDialog() {
+    ref.read(reviewReportDraftProvider.notifier).clear();
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -157,6 +154,7 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
 
   void _showDuplicateDialog() {
     ref.read(reportedReviewIdsProvider.notifier).add(widget.reviewId);
+    ref.read(reviewReportDraftProvider.notifier).clear();
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
@@ -180,12 +178,27 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
     final state = ref.watch(reviewReportViewModelProvider);
     final isLoggedIn = ref.watch(isLoggedInProvider);
     final nickname = ref.watch(userNicknameProvider).value;
+    final draft = ref.watch(reviewReportDraftProvider);
 
     if (!isLoggedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         context.go(RoutePaths.login);
       });
       return const Scaffold(body: SizedBox.shrink());
+    }
+
+    final isMatchedDraft = draft.reviewId == widget.reviewId;
+    final draftDetail = isMatchedDraft ? draft.detail : '';
+    if (_detailController.text != draftDetail) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        if (_detailController.text != draftDetail) {
+          _detailController.value = TextEditingValue(
+            text: draftDetail,
+            selection: TextSelection.collapsed(offset: draftDetail.length),
+          );
+        }
+      });
     }
 
     ref.listen(reviewReportViewModelProvider, (_, next) {
@@ -206,6 +219,8 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
     });
 
     final isSubmitting = state is ReviewReportSubmitting;
+    final draftNotifier = ref.read(reviewReportDraftProvider.notifier);
+    final currentStep = _currentStepOf(draft);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -265,11 +280,17 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
                         ? Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              _mainForm(isSubmitting),
+                              _mainForm(
+                                isSubmitting,
+                                draft,
+                                draftNotifier,
+                                currentStep,
+                              ),
                               const SizedBox(height: AppSpacing.lg),
                               ReportSidePanel(
-                                selectedCount: _selectedReasons.length,
-                                evidenceCount: _includeAiEvidence ? 4 : 0,
+                                selectedCount: draft.reasons.length,
+                                evidenceCount:
+                                    draft.includeAiEvidence ? 4 : 0,
                               ),
                             ],
                           )
@@ -278,14 +299,20 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
                             children: [
                               Expanded(
                                 flex: 65,
-                                child: _mainForm(isSubmitting),
+                                child: _mainForm(
+                                  isSubmitting,
+                                  draft,
+                                  draftNotifier,
+                                  currentStep,
+                                ),
                               ),
                               const SizedBox(width: AppSpacing.xl),
                               SizedBox(
                                 width: 300,
                                 child: ReportSidePanel(
-                                  selectedCount: _selectedReasons.length,
-                                  evidenceCount: _includeAiEvidence ? 4 : 0,
+                                  selectedCount: draft.reasons.length,
+                                  evidenceCount:
+                                      draft.includeAiEvidence ? 4 : 0,
                                 ),
                               ),
                             ],
@@ -300,29 +327,34 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
     );
   }
 
-  Widget _mainForm(bool isSubmitting) {
+  Widget _mainForm(
+    bool isSubmitting,
+    ReviewReportDraft draft,
+    ReviewReportDraftNotifier draftNotifier,
+    ReportStep currentStep,
+  ) {
     return ReviewReportMainForm(
       productName: widget.productName,
       reviewContent: widget.reviewContent,
       rtiScore: widget.rtiScore,
       rtiGrade: widget.rtiGrade,
-      selectedReasons: _selectedReasons,
+      selectedReasons: draft.reasons,
       detailController: _detailController,
-      reportType: _reportType,
-      disclosure: _disclosure,
-      includeAiEvidence: _includeAiEvidence,
-      agreePrivacy: _agreePrivacy,
-      agreeNotFalse: _agreeNotFalse,
-      currentStep: _currentStep,
-      onReasonToggled: _toggleReason,
-      onReportTypeChanged: (v) => setState(() => _reportType = v),
-      onDisclosureChanged: (v) => setState(() => _disclosure = v),
-      onIncludeAiChanged: (v) => setState(() => _includeAiEvidence = v),
-      onAgreePrivacyChanged: (v) => setState(() => _agreePrivacy = v),
-      onAgreeNotFalseChanged: (v) => setState(() => _agreeNotFalse = v),
-      attachments: _attachments,
-      onAttachmentsChanged: (v) => setState(() => _attachments = v),
-      onSubmit: _submit,
+      reportType: draft.reportType,
+      disclosure: draft.disclosure,
+      includeAiEvidence: draft.includeAiEvidence,
+      agreePrivacy: draft.agreePrivacy,
+      agreeNotFalse: draft.agreeNotFalse,
+      currentStep: currentStep,
+      onReasonToggled: draftNotifier.toggleReason,
+      onReportTypeChanged: draftNotifier.setReportType,
+      onDisclosureChanged: draftNotifier.setDisclosure,
+      onIncludeAiChanged: draftNotifier.setIncludeAiEvidence,
+      onAgreePrivacyChanged: draftNotifier.setAgreePrivacy,
+      onAgreeNotFalseChanged: draftNotifier.setAgreeNotFalse,
+      attachments: draft.attachments,
+      onAttachmentsChanged: draftNotifier.setAttachments,
+      onSubmit: () => _submit(draft),
       isSubmitting: isSubmitting,
     );
   }
