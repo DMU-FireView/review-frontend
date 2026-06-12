@@ -110,15 +110,18 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
 
   void _submit(ReviewReportDraft draft) {
     if (draft.reasons.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('신고 사유를 1개 이상 선택해주세요.')),
-      );
+      _showSnack('신고 사유를 1개 이상 선택해주세요.');
+      setState(() => _activeStep = ReportStep.reason);
+      return;
+    }
+    if (draft.detail.trim().length < 20) {
+      _showSnack('상세 설명을 20자 이상 입력해주세요.');
+      setState(() => _activeStep = ReportStep.detail);
       return;
     }
     if (!draft.agreePrivacy || !draft.agreeNotFalse) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('동의 항목을 모두 확인해주세요.')),
-      );
+      _showSnack('동의 항목을 모두 확인해주세요.');
+      setState(() => _activeStep = ReportStep.submit);
       return;
     }
     if (!(_formKey.currentState?.validate() ?? false)) return;
@@ -131,8 +134,18 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
         );
   }
 
-  void _showSuccessDialog() {
+  void _showSnack(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _clearDraftAndGo(VoidCallback navigate) {
+    Navigator.of(context).pop();
     ref.read(reviewReportDraftProvider.notifier).clear();
+    navigate();
+  }
+
+  void _showSuccessDialog() {
     showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -141,15 +154,13 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
         content: const Text('신고가 접수되었습니다.\n처리 결과는 피드백 내역에서 확인할 수 있어요.'),
         actions: [
           TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              context.go(RoutePaths.myPage);
-            },
+            onPressed: () => _clearDraftAndGo(
+              () => context.go(RoutePaths.myPage),
+            ),
             child: const Text('피드백 내역 보기'),
           ),
           FilledButton(
-            onPressed: () {
-              Navigator.pop(context);
+            onPressed: () => _clearDraftAndGo(() {
               if (widget.productId != null) {
                 context.goNamed(
                   RouteNames.productDetail,
@@ -158,7 +169,7 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
               } else {
                 context.go(RoutePaths.home);
               }
-            },
+            }),
             child: const Text('확인'),
           ),
         ],
@@ -168,7 +179,6 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
 
   void _showDuplicateDialog() {
     ref.read(reportedReviewIdsProvider.notifier).add(widget.reviewId);
-    ref.read(reviewReportDraftProvider.notifier).clear();
     showDialog<void>(
       context: context,
       builder: (_) => AlertDialog(
@@ -176,10 +186,7 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
         content: const Text('이 리뷰는 이미 신고하셨습니다.\n중복 신고는 접수되지 않아요.'),
         actions: [
           FilledButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              context.pop();
-            },
+            onPressed: () => _clearDraftAndGo(() => context.pop()),
             child: const Text('확인'),
           ),
         ],
@@ -196,26 +203,28 @@ class _ReviewReportPageState extends ConsumerState<ReviewReportPage> {
 
     if (!isLoggedIn) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
         context.go(RoutePaths.login);
       });
       return const Scaffold(body: SizedBox.shrink());
     }
 
-    final isMatchedDraft = draft.reviewId == widget.reviewId;
-    final draftDetail = isMatchedDraft ? draft.detail : '';
-    if (_detailController.text != draftDetail) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    ref.listen<String>(
+      reviewReportDraftProvider.select(
+        (d) => d.reviewId == widget.reviewId ? d.detail : '',
+      ),
+      (prev, next) {
         if (!mounted) return;
-        if (_detailController.text != draftDetail) {
-          _detailController.value = TextEditingValue(
-            text: draftDetail,
-            selection: TextSelection.collapsed(offset: draftDetail.length),
-          );
-        }
-      });
-    }
+        if (_detailController.text == next) return;
+        _detailController.value = TextEditingValue(
+          text: next,
+          selection: TextSelection.collapsed(offset: next.length),
+        );
+      },
+    );
 
     ref.listen(reviewReportViewModelProvider, (_, next) {
+      if (!mounted) return;
       if (next is ReviewReportSuccess) {
         _showSuccessDialog();
       } else if (next is ReviewReportFailure) {

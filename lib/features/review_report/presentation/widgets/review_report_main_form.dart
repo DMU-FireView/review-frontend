@@ -71,7 +71,8 @@ class ReviewReportMainForm extends StatelessWidget {
         ReportStep.target => true,
         ReportStep.reason => selectedReasons.isNotEmpty,
         ReportStep.detail => _detailReady,
-        ReportStep.submit => _agreed,
+        ReportStep.submit =>
+          _agreed && selectedReasons.isNotEmpty && _detailReady,
       };
 
   void _goNext() {
