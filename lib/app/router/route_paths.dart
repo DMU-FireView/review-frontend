@@ -14,6 +14,7 @@ abstract final class RoutePaths {
   static const cart = '/cart';
   static const analysisReport = '/product/:id/analysis';
   static const settings = '/settings';
+  static const reviewReport = '/report/review';
   static const feedbackHistory = '/feedback-history';
 }
 
@@ -33,5 +34,6 @@ abstract final class RouteNames {
   static const cart = 'cart';
   static const analysisReport = 'analysisReport';
   static const settings = 'settings';
+  static const reviewReport = 'reviewReport';
   static const feedbackHistory = 'feedbackHistory';
 }

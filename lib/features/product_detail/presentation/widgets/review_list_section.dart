@@ -16,6 +16,8 @@ class ReviewListSection extends StatefulWidget {
     this.warnCount = 0,
     this.dangerCount = 0,
     this.onFeedback,
+    this.productId,
+    this.productName = '',
   });
 
   final List<ProductReview> reviews;
@@ -23,6 +25,8 @@ class ReviewListSection extends StatefulWidget {
   final int warnCount;
   final int dangerCount;
   final Future<bool> Function(int reviewId, String feedbackType)? onFeedback;
+  final int? productId;
+  final String productName;
 
   @override
   State<ReviewListSection> createState() => _ReviewListSectionState();
@@ -111,6 +115,8 @@ class _ReviewListSectionState extends State<ReviewListSection> {
                     ? (feedbackType) =>
                           widget.onFeedback!(review.id, feedbackType)
                     : null,
+                productId: widget.productId,
+                productName: widget.productName,
               ),
             ),
           ),
@@ -265,6 +271,8 @@ class ReviewCard extends StatelessWidget {
     this.warnCount = 0,
     this.dangerCount = 0,
     this.onFeedback,
+    this.productId,
+    this.productName = '',
   });
 
   final ProductReview review;
@@ -272,6 +280,8 @@ class ReviewCard extends StatelessWidget {
   final int warnCount;
   final int dangerCount;
   final Future<bool> Function(String feedbackType)? onFeedback;
+  final int? productId;
+  final String productName;
 
   @override
   Widget build(BuildContext context) {
@@ -348,6 +358,8 @@ class ReviewCard extends StatelessWidget {
                     safeCount: safeCount,
                     warnCount: warnCount,
                     dangerCount: dangerCount,
+                    productId: productId,
+                    productName: productName,
                   ),
                   child: _RtiBadgeSmall(
                     score: review.rtiScore,

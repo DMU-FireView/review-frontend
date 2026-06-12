@@ -16,6 +16,7 @@ import 'package:re_view_front/features/product_detail/presentation/pages/analysi
 import 'package:re_view_front/features/product_detail/presentation/pages/product_detail_page.dart';
 import 'package:re_view_front/features/cart/presentation/pages/cart_page.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
+import 'package:re_view_front/features/review_report/presentation/pages/review_report_page.dart';
 import 'package:re_view_front/features/settings/presentation/pages/settings_page.dart';
 import 'package:re_view_front/features/feedback_history/presentation/pages/feedback_history_page.dart';
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
@@ -167,6 +168,24 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.settings,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const SettingsPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.reviewReport,
+        name: RouteNames.reviewReport,
+        pageBuilder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          return _buildTransitionPage(
+            state,
+            ReviewReportPage(
+              reviewId: extra['reviewId'] as int? ?? 0,
+              productId: extra['productId'] as int?,
+              productName: extra['productName'] as String? ?? '',
+              reviewContent: extra['reviewContent'] as String? ?? '',
+              rtiScore: extra['rtiScore'] as double? ?? 0,
+              rtiGrade: extra['rtiGrade'] as String? ?? '',
+            ),
+          );
+        },
       ),
       GoRoute(
         path: RoutePaths.feedbackHistory,
