@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/recent_reports_card.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/report_guide_card.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/report_process_card.dart';
 import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/report_summary_card.dart';
@@ -28,8 +27,6 @@ class ReportSidePanel extends StatelessWidget {
         const ReportProcessCard(),
         const SizedBox(height: AppSpacing.md),
         const ReportGuideCard(),
-        const SizedBox(height: AppSpacing.md),
-        const RecentReportsCard(),
       ],
     );
   }

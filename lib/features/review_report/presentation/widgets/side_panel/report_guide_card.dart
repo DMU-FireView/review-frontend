@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/side_panel_header.dart';
 
 class ReportGuideCard extends StatelessWidget {
   const ReportGuideCard({super.key});
@@ -23,28 +24,10 @@ class ReportGuideCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.lightbulb_outline,
-                size: 16,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '신고 가이드',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            '이런 경우 신고가 더 잘 처리돼요.',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textTertiary,
-            ),
+          const SidePanelHeader(
+            icon: Icons.lightbulb_outline,
+            title: '신고 가이드',
+            description: '이런 경우 신고가 더 잘 처리돼요.',
           ),
           const SizedBox(height: AppSpacing.md),
           for (var i = 0; i < items.length; i++) ...[
@@ -88,13 +71,14 @@ class _GuideRow extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 12,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textTertiary,
+                  color: AppColors.textSecondary,
                   fontSize: 11,
                   height: 1.4,
                 ),

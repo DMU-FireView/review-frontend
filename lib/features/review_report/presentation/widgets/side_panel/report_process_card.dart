@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/features/review_report/presentation/widgets/side_panel/side_panel_header.dart';
 
 class ReportProcessCard extends StatelessWidget {
   const ReportProcessCard({super.key});
@@ -24,28 +25,10 @@ class ReportProcessCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.task_alt,
-                size: 16,
-                color: AppColors.primary,
-              ),
-              const SizedBox(width: AppSpacing.xs),
-              Text(
-                '처리 절차',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xxs),
-          Text(
-            '신고 후 상태는 피드백 내역에서 확인할 수 있어요.',
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textTertiary,
-            ),
+          const SidePanelHeader(
+            icon: Icons.task_alt,
+            title: '처리 절차',
+            description: '신고 접수 후 운영팀이 검토하는 흐름이에요.',
           ),
           const SizedBox(height: AppSpacing.md),
           for (var i = 0; i < steps.length; i++) ...[
@@ -105,13 +88,14 @@ class _ProcessRow extends StatelessWidget {
                 style: Theme.of(context).textTheme.labelMedium?.copyWith(
                   fontWeight: FontWeight.w800,
                   fontSize: 12,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
               Text(
                 subtitle,
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: AppColors.textTertiary,
+                  color: AppColors.textSecondary,
                   fontSize: 11,
                   height: 1.4,
                 ),
