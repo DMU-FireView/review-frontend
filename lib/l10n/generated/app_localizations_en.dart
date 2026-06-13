@@ -562,4 +562,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get feedbackStatusRejected => 'Rejected';
+
+  @override
+  String get adminSidebarTitle => 'Admin';
+
+  @override
+  String get adminMenuDashboard => 'Dashboard';
+
+  @override
+  String get adminMenuSuspiciousReviews => 'Suspicious Reviews';
+
+  @override
+  String get adminMenuReports => 'Reports';
+
+  @override
+  String get adminMenuAnalysisFeedbacks => 'Analysis Feedback';
+
+  @override
+  String get adminMenuUsers => 'Users';
+
+  @override
+  String get adminMenuLogout => 'Log out';
+
+  @override
+  String get adminDashboardTitle => 'Operations Dashboard';
+
+  @override
+  String get adminPlaceholderMessage => 'This screen is coming soon.';
 }

@@ -1127,6 +1127,60 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'반려됨'**
   String get feedbackStatusRejected;
+
+  /// 관리자 사이드바 타이틀
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자'**
+  String get adminSidebarTitle;
+
+  /// 관리자 메뉴 — 대시보드
+  ///
+  /// In ko, this message translates to:
+  /// **'대시보드'**
+  String get adminMenuDashboard;
+
+  /// 관리자 메뉴 — 의심 리뷰 목록
+  ///
+  /// In ko, this message translates to:
+  /// **'의심 리뷰'**
+  String get adminMenuSuspiciousReviews;
+
+  /// 관리자 메뉴 — 신고 관리
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 관리'**
+  String get adminMenuReports;
+
+  /// 관리자 메뉴 — 분석 피드백 검수
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 피드백'**
+  String get adminMenuAnalysisFeedbacks;
+
+  /// 관리자 메뉴 — 유저 목록
+  ///
+  /// In ko, this message translates to:
+  /// **'유저'**
+  String get adminMenuUsers;
+
+  /// 관리자 사이드바 로그아웃 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'로그아웃'**
+  String get adminMenuLogout;
+
+  /// 관리자 대시보드 페이지 타이틀
+  ///
+  /// In ko, this message translates to:
+  /// **'운영 대시보드'**
+  String get adminDashboardTitle;
+
+  /// 구현 대기 중인 관리자 페이지 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'준비 중인 화면입니다.'**
+  String get adminPlaceholderMessage;
 }
 
 class _AppLocalizationsDelegate

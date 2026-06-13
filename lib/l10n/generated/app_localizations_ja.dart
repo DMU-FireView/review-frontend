@@ -543,4 +543,31 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get feedbackStatusRejected => '却下';
+
+  @override
+  String get adminSidebarTitle => '管理者';
+
+  @override
+  String get adminMenuDashboard => 'ダッシュボード';
+
+  @override
+  String get adminMenuSuspiciousReviews => '不審なレビュー';
+
+  @override
+  String get adminMenuReports => '通報管理';
+
+  @override
+  String get adminMenuAnalysisFeedbacks => '分析フィードバック';
+
+  @override
+  String get adminMenuUsers => 'ユーザー';
+
+  @override
+  String get adminMenuLogout => 'ログアウト';
+
+  @override
+  String get adminDashboardTitle => '運営ダッシュボード';
+
+  @override
+  String get adminPlaceholderMessage => '現在準備中の画面です。';
 }

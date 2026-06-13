@@ -542,4 +542,31 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get feedbackStatusRejected => '반려됨';
+
+  @override
+  String get adminSidebarTitle => '관리자';
+
+  @override
+  String get adminMenuDashboard => '대시보드';
+
+  @override
+  String get adminMenuSuspiciousReviews => '의심 리뷰';
+
+  @override
+  String get adminMenuReports => '신고 관리';
+
+  @override
+  String get adminMenuAnalysisFeedbacks => '분석 피드백';
+
+  @override
+  String get adminMenuUsers => '유저';
+
+  @override
+  String get adminMenuLogout => '로그아웃';
+
+  @override
+  String get adminDashboardTitle => '운영 대시보드';
+
+  @override
+  String get adminPlaceholderMessage => '준비 중인 화면입니다.';
 }

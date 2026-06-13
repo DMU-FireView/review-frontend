@@ -5,7 +5,6 @@ import 'package:re_view_front/app/responsive/breakpoints.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/auth/presentation/providers/auth_providers.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
