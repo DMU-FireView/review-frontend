@@ -449,29 +449,22 @@ class _ItemActions extends StatelessWidget {
     required this.onSaveForLater,
     required this.onMoveToWishlist,
     required this.onRemove,
-    this.vertical = false,
   });
 
   final VoidCallback onSaveForLater;
   final VoidCallback onMoveToWishlist;
   final VoidCallback onRemove;
-  final bool vertical;
 
   @override
   Widget build(BuildContext context) {
-    final actions = [
-      _ActionButton(icon: Icons.bookmark_border, label: '나중에 담기', onTap: onSaveForLater),
-      _ActionButton(icon: Icons.favorite_border, label: '찜하기', onTap: onMoveToWishlist),
-      _ActionButton(icon: Icons.delete_outline, label: '삭제', onTap: onRemove),
-    ];
-
-    return vertical
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: actions,
-          )
-        : Row(mainAxisSize: MainAxisSize.min, children: actions);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _ActionButton(icon: Icons.bookmark_border, label: '나중에 담기', onTap: onSaveForLater),
+        _ActionButton(icon: Icons.favorite_border, label: '찜하기', onTap: onMoveToWishlist),
+        _ActionButton(icon: Icons.delete_outline, label: '삭제', onTap: onRemove),
+      ],
+    );
   }
 }
 

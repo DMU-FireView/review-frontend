@@ -652,7 +652,7 @@ class _FilterSection extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sm),
           DropdownButtonFormField<String>(
-            value: data.categoryFilterId,
+            initialValue: data.categoryFilterId,
             decoration: _inputDecoration(),
             hint: Text(AppLocalizations.of(context).settingsFilterCategoryAll),
             items: [
@@ -1277,7 +1277,7 @@ class _ToggleRow extends StatelessWidget {
               Switch(
                 value: value,
                 onChanged: onChanged,
-                activeColor: AppColors.primary,
+                activeThumbColor: AppColors.primary,
               ),
             ],
           ),
@@ -1325,5 +1325,5 @@ String _formatPrice(int price) {
     if (i > 0 && (digits.length - i) % 3 == 0) buf.write(',');
     buf.write(digits[i]);
   }
-  return '${buf}원';
+  return '$buf원';
 }

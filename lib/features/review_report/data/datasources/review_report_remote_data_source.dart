@@ -35,7 +35,7 @@ class ReviewReportRemoteDataSourceImpl implements ReviewReportRemoteDataSource {
       'reason': reason,
       'detail': detail,
       'includeAiEvidence': includeAiEvidence,
-      if (attachmentUrl != null) 'attachmentUrl': attachmentUrl,
+      'attachmentUrl': ?attachmentUrl,
     };
 
     final response = await _apiClient.post(
