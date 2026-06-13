@@ -3,6 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/admin/presentation/pages/admin_analysis_feedbacks_page.dart';
+import 'package:re_view_front/features/admin/presentation/pages/admin_dashboard_page.dart';
+import 'package:re_view_front/features/admin/presentation/pages/admin_reports_page.dart';
+import 'package:re_view_front/features/admin/presentation/pages/admin_suspicious_reviews_page.dart';
+import 'package:re_view_front/features/admin/presentation/pages/admin_users_page.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_shell.dart';
 import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/password_reset_page.dart';
@@ -61,6 +67,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       };
       if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
         return RoutePaths.login;
+      }
+      const adminPages = {
+        RoutePaths.admin,
+        RoutePaths.adminReviews,
+        RoutePaths.adminReports,
+        RoutePaths.adminAnalysisFeedbacks,
+        RoutePaths.adminUsers,
+      };
+      if (adminPages.contains(state.matchedLocation)) {
+        if (!isLoggedIn) return RoutePaths.login;
+        if (!tokenStore.isAdmin) return RoutePaths.home;
       }
       return null;
     },
@@ -192,6 +209,45 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.feedbackHistory,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const FeedbackHistoryPage()),
+      ),
+      ShellRoute(
+        builder: (context, state, child) => AdminShell(child: child),
+        routes: [
+          GoRoute(
+            path: RoutePaths.admin,
+            name: RouteNames.admin,
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminDashboardPage()),
+          ),
+          GoRoute(
+            path: RoutePaths.adminReviews,
+            name: RouteNames.adminReviews,
+            pageBuilder: (context, state) => _buildTransitionPage(
+              state,
+              const AdminSuspiciousReviewsPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.adminReports,
+            name: RouteNames.adminReports,
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminReportsPage()),
+          ),
+          GoRoute(
+            path: RoutePaths.adminAnalysisFeedbacks,
+            name: RouteNames.adminAnalysisFeedbacks,
+            pageBuilder: (context, state) => _buildTransitionPage(
+              state,
+              const AdminAnalysisFeedbacksPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.adminUsers,
+            name: RouteNames.adminUsers,
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminUsersPage()),
+          ),
+        ],
       ),
     ],
   );

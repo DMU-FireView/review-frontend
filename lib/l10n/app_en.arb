@@ -186,5 +186,15 @@
   "feedbackStatusSubmitted": "Submitted",
   "feedbackStatusPending": "Under Review",
   "feedbackStatusAccepted": "Accepted",
-  "feedbackStatusRejected": "Rejected"
+  "feedbackStatusRejected": "Rejected",
+
+  "adminSidebarTitle": "Admin",
+  "adminMenuDashboard": "Dashboard",
+  "adminMenuSuspiciousReviews": "Suspicious Reviews",
+  "adminMenuReports": "Reports",
+  "adminMenuAnalysisFeedbacks": "Analysis Feedback",
+  "adminMenuUsers": "Users",
+  "adminMenuLogout": "Log out",
+  "adminDashboardTitle": "Operations Dashboard",
+  "adminPlaceholderMessage": "This screen is coming soon."
 }

@@ -6,17 +6,21 @@ class AuthTokenStore extends Notifier<bool> {
   static const _keyTokenType = 'review_token_type';
   static const _keyOnboardingCompleted = 'review_onboarding_completed';
   static const _keyNickname = 'review_nickname';
+  static const _keyRole = 'review_role';
 
   String? _accessToken = WebStorage.read(_keyAccessToken);
   String? _tokenType = WebStorage.read(_keyTokenType);
   bool _onboardingCompleted =
       WebStorage.read(_keyOnboardingCompleted) == 'true';
   String? _nickname = WebStorage.read(_keyNickname);
+  String? _role = WebStorage.read(_keyRole);
 
   String? get accessToken => _accessToken;
   String? get tokenType => _tokenType;
   bool get onboardingCompleted => _onboardingCompleted;
   String? get nickname => _nickname;
+  String? get role => _role;
+  bool get isAdmin => _role?.toUpperCase() == 'ADMIN';
 
   @override
   bool build() => _accessToken != null;
@@ -26,11 +30,13 @@ class AuthTokenStore extends Notifier<bool> {
     required String tokenType,
     bool onboardingCompleted = false,
     String? nickname,
+    String? role,
   }) {
     _accessToken = accessToken;
     _tokenType = tokenType;
     _onboardingCompleted = onboardingCompleted;
     _nickname = nickname;
+    _role = role;
     WebStorage.write(_keyAccessToken, accessToken);
     WebStorage.write(_keyTokenType, tokenType);
     if (onboardingCompleted) {
@@ -39,12 +45,22 @@ class AuthTokenStore extends Notifier<bool> {
     if (nickname != null && nickname.isNotEmpty) {
       WebStorage.write(_keyNickname, nickname);
     }
+    if (role != null && role.isNotEmpty) {
+      WebStorage.write(_keyRole, role);
+    } else {
+      WebStorage.remove(_keyRole);
+    }
     state = true;
   }
 
   void saveNickname(String nickname) {
     _nickname = nickname;
     WebStorage.write(_keyNickname, nickname);
+  }
+
+  void saveRole(String role) {
+    _role = role;
+    WebStorage.write(_keyRole, role);
   }
 
   void completeOnboarding() {
@@ -57,10 +73,12 @@ class AuthTokenStore extends Notifier<bool> {
     _tokenType = null;
     _onboardingCompleted = false;
     _nickname = null;
+    _role = null;
     WebStorage.remove(_keyAccessToken);
     WebStorage.remove(_keyTokenType);
     WebStorage.remove(_keyOnboardingCompleted);
     WebStorage.remove(_keyNickname);
+    WebStorage.remove(_keyRole);
     state = false;
   }
 }

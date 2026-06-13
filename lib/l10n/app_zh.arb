@@ -170,5 +170,15 @@
   "feedbackStatusSubmitted": "已提交",
   "feedbackStatusPending": "审核中",
   "feedbackStatusAccepted": "已处理",
-  "feedbackStatusRejected": "已拒绝"
+  "feedbackStatusRejected": "已拒绝",
+
+  "adminSidebarTitle": "管理员",
+  "adminMenuDashboard": "仪表盘",
+  "adminMenuSuspiciousReviews": "可疑评论",
+  "adminMenuReports": "举报管理",
+  "adminMenuAnalysisFeedbacks": "分析反馈",
+  "adminMenuUsers": "用户",
+  "adminMenuLogout": "退出登录",
+  "adminDashboardTitle": "运营仪表盘",
+  "adminPlaceholderMessage": "页面正在准备中。"
 }
