@@ -573,17 +573,17 @@
   "adminMenuDashboard": "대시보드",
   "@adminMenuDashboard": { "description": "관리자 메뉴 — 대시보드" },
 
-  "adminMenuSuspiciousReviews": "의심 리뷰",
-  "@adminMenuSuspiciousReviews": { "description": "관리자 메뉴 — 의심 리뷰 목록" },
+  "adminMenuSuspiciousReviews": "의심 리뷰 관리",
+  "@adminMenuSuspiciousReviews": { "description": "관리자 메뉴 — 의심 리뷰 관리" },
 
   "adminMenuReports": "신고 관리",
   "@adminMenuReports": { "description": "관리자 메뉴 — 신고 관리" },
 
-  "adminMenuAnalysisFeedbacks": "분석 피드백",
-  "@adminMenuAnalysisFeedbacks": { "description": "관리자 메뉴 — 분석 피드백 검수" },
+  "adminMenuAnalysisFeedbacks": "분석 피드백 관리",
+  "@adminMenuAnalysisFeedbacks": { "description": "관리자 메뉴 — 분석 피드백 관리" },
 
-  "adminMenuUsers": "유저",
-  "@adminMenuUsers": { "description": "관리자 메뉴 — 유저 목록" },
+  "adminMenuUsers": "사용자 관리",
+  "@adminMenuUsers": { "description": "관리자 메뉴 — 사용자 관리" },
 
   "adminMenuLogout": "로그아웃",
   "@adminMenuLogout": { "description": "관리자 사이드바 로그아웃 버튼" },
@@ -592,5 +592,11 @@
   "@adminDashboardTitle": { "description": "관리자 대시보드 페이지 타이틀" },
 
   "adminPlaceholderMessage": "준비 중인 화면입니다.",
-  "@adminPlaceholderMessage": { "description": "구현 대기 중인 관리자 페이지 안내" }
+  "@adminPlaceholderMessage": { "description": "구현 대기 중인 관리자 페이지 안내" },
+
+  "adminTopBarSearchHint": "사용자, 리뷰, 신고 ID로 검색",
+  "@adminTopBarSearchHint": { "description": "관리자 상단 검색바 안내 문구" },
+
+  "adminTopBarNotifications": "알림",
+  "@adminTopBarNotifications": { "description": "관리자 상단 알림 벨 툴팁" }
 }

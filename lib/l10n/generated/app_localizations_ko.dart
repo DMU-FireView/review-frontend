@@ -550,16 +550,16 @@ class AppLocalizationsKo extends AppLocalizations {
   String get adminMenuDashboard => '대시보드';
 
   @override
-  String get adminMenuSuspiciousReviews => '의심 리뷰';
+  String get adminMenuSuspiciousReviews => '의심 리뷰 관리';
 
   @override
   String get adminMenuReports => '신고 관리';
 
   @override
-  String get adminMenuAnalysisFeedbacks => '분석 피드백';
+  String get adminMenuAnalysisFeedbacks => '분석 피드백 관리';
 
   @override
-  String get adminMenuUsers => '유저';
+  String get adminMenuUsers => '사용자 관리';
 
   @override
   String get adminMenuLogout => '로그아웃';
@@ -569,4 +569,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get adminPlaceholderMessage => '준비 중인 화면입니다.';
+
+  @override
+  String get adminTopBarSearchHint => '사용자, 리뷰, 신고 ID로 검색';
+
+  @override
+  String get adminTopBarNotifications => '알림';
 }

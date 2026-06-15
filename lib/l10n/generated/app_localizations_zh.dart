@@ -550,16 +550,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adminMenuDashboard => '仪表盘';
 
   @override
-  String get adminMenuSuspiciousReviews => '可疑评论';
+  String get adminMenuSuspiciousReviews => '可疑评论管理';
 
   @override
   String get adminMenuReports => '举报管理';
 
   @override
-  String get adminMenuAnalysisFeedbacks => '分析反馈';
+  String get adminMenuAnalysisFeedbacks => '分析反馈管理';
 
   @override
-  String get adminMenuUsers => '用户';
+  String get adminMenuUsers => '用户管理';
 
   @override
   String get adminMenuLogout => '退出登录';
@@ -569,4 +569,10 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminPlaceholderMessage => '页面正在准备中。';
+
+  @override
+  String get adminTopBarSearchHint => '搜索用户、评论、举报 ID';
+
+  @override
+  String get adminTopBarNotifications => '通知';
 }

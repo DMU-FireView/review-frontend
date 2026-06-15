@@ -589,4 +589,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminPlaceholderMessage => 'This screen is coming soon.';
+
+  @override
+  String get adminTopBarSearchHint => 'Search users, reviews, report IDs';
+
+  @override
+  String get adminTopBarNotifications => 'Notifications';
 }

@@ -174,11 +174,13 @@
 
   "adminSidebarTitle": "管理者",
   "adminMenuDashboard": "ダッシュボード",
-  "adminMenuSuspiciousReviews": "不審なレビュー",
+  "adminMenuSuspiciousReviews": "不審なレビュー管理",
   "adminMenuReports": "通報管理",
-  "adminMenuAnalysisFeedbacks": "分析フィードバック",
-  "adminMenuUsers": "ユーザー",
+  "adminMenuAnalysisFeedbacks": "分析フィードバック管理",
+  "adminMenuUsers": "ユーザー管理",
   "adminMenuLogout": "ログアウト",
   "adminDashboardTitle": "運営ダッシュボード",
-  "adminPlaceholderMessage": "現在準備中の画面です。"
+  "adminPlaceholderMessage": "現在準備中の画面です。",
+  "adminTopBarSearchHint": "ユーザー、レビュー、通報IDで検索",
+  "adminTopBarNotifications": "通知"
 }

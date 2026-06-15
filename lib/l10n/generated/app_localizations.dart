@@ -1140,10 +1140,10 @@ abstract class AppLocalizations {
   /// **'대시보드'**
   String get adminMenuDashboard;
 
-  /// 관리자 메뉴 — 의심 리뷰 목록
+  /// 관리자 메뉴 — 의심 리뷰 관리
   ///
   /// In ko, this message translates to:
-  /// **'의심 리뷰'**
+  /// **'의심 리뷰 관리'**
   String get adminMenuSuspiciousReviews;
 
   /// 관리자 메뉴 — 신고 관리
@@ -1152,16 +1152,16 @@ abstract class AppLocalizations {
   /// **'신고 관리'**
   String get adminMenuReports;
 
-  /// 관리자 메뉴 — 분석 피드백 검수
+  /// 관리자 메뉴 — 분석 피드백 관리
   ///
   /// In ko, this message translates to:
-  /// **'분석 피드백'**
+  /// **'분석 피드백 관리'**
   String get adminMenuAnalysisFeedbacks;
 
-  /// 관리자 메뉴 — 유저 목록
+  /// 관리자 메뉴 — 사용자 관리
   ///
   /// In ko, this message translates to:
-  /// **'유저'**
+  /// **'사용자 관리'**
   String get adminMenuUsers;
 
   /// 관리자 사이드바 로그아웃 버튼
@@ -1181,6 +1181,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'준비 중인 화면입니다.'**
   String get adminPlaceholderMessage;
+
+  /// 관리자 상단 검색바 안내 문구
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자, 리뷰, 신고 ID로 검색'**
+  String get adminTopBarSearchHint;
+
+  /// 관리자 상단 알림 벨 툴팁
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get adminTopBarNotifications;
 }
 
 class _AppLocalizationsDelegate

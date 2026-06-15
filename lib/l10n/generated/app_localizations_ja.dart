@@ -551,16 +551,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get adminMenuDashboard => 'ダッシュボード';
 
   @override
-  String get adminMenuSuspiciousReviews => '不審なレビュー';
+  String get adminMenuSuspiciousReviews => '不審なレビュー管理';
 
   @override
   String get adminMenuReports => '通報管理';
 
   @override
-  String get adminMenuAnalysisFeedbacks => '分析フィードバック';
+  String get adminMenuAnalysisFeedbacks => '分析フィードバック管理';
 
   @override
-  String get adminMenuUsers => 'ユーザー';
+  String get adminMenuUsers => 'ユーザー管理';
 
   @override
   String get adminMenuLogout => 'ログアウト';
@@ -570,4 +570,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get adminPlaceholderMessage => '現在準備中の画面です。';
+
+  @override
+  String get adminTopBarSearchHint => 'ユーザー、レビュー、通報IDで検索';
+
+  @override
+  String get adminTopBarNotifications => '通知';
 }

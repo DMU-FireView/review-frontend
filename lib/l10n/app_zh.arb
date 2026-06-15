@@ -174,11 +174,13 @@
 
   "adminSidebarTitle": "管理员",
   "adminMenuDashboard": "仪表盘",
-  "adminMenuSuspiciousReviews": "可疑评论",
+  "adminMenuSuspiciousReviews": "可疑评论管理",
   "adminMenuReports": "举报管理",
-  "adminMenuAnalysisFeedbacks": "分析反馈",
-  "adminMenuUsers": "用户",
+  "adminMenuAnalysisFeedbacks": "分析反馈管理",
+  "adminMenuUsers": "用户管理",
   "adminMenuLogout": "退出登录",
   "adminDashboardTitle": "运营仪表盘",
-  "adminPlaceholderMessage": "页面正在准备中。"
+  "adminPlaceholderMessage": "页面正在准备中。",
+  "adminTopBarSearchHint": "搜索用户、评论、举报 ID",
+  "adminTopBarNotifications": "通知"
 }
