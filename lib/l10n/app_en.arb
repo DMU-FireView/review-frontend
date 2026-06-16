@@ -196,5 +196,7 @@
   "adminMenuUsers": "Users",
   "adminMenuLogout": "Log out",
   "adminDashboardTitle": "Operations Dashboard",
-  "adminPlaceholderMessage": "This screen is coming soon."
+  "adminPlaceholderMessage": "This screen is coming soon.",
+  "adminTopBarSearchHint": "Search users, reviews, report IDs",
+  "adminTopBarNotifications": "Notifications"
 }
