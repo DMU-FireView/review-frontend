@@ -35,7 +35,7 @@ class ProductDetailDto {
   final double avgRating;
   final int? lowestPrice;
   final String? lowestPlatform;
-  final List<_PlatformEntry> platforms;
+  final List<PlatformEntry> platforms;
 
   factory ProductDetailDto.fromJson(Map<String, dynamic> json) {
     final rawPlatforms = json['platforms'] as List? ?? [];
@@ -55,7 +55,7 @@ class ProductDetailDto {
       lowestPrice: (json['lowestPrice'] as num?)?.toInt(),
       lowestPlatform: json['lowestPlatform'] as String?,
       platforms: rawPlatforms
-          .map((e) => _PlatformEntry.fromJson(e as Map<String, dynamic>))
+          .map((e) => PlatformEntry.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -171,8 +171,8 @@ class ProductDetailDto {
   };
 }
 
-class _PlatformEntry {
-  const _PlatformEntry({
+class PlatformEntry {
+  const PlatformEntry({
     required this.platform,
     required this.price,
     required this.url,
@@ -182,8 +182,8 @@ class _PlatformEntry {
   final int price;
   final String url;
 
-  factory _PlatformEntry.fromJson(Map<String, dynamic> json) {
-    return _PlatformEntry(
+  factory PlatformEntry.fromJson(Map<String, dynamic> json) {
+    return PlatformEntry(
       platform: json['platform'] as String? ?? '',
       price: (json['price'] as num?)?.toInt() ?? 0,
       url: json['url'] as String? ?? '',

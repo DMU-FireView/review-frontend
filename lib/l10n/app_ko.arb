@@ -565,5 +565,32 @@
   "@feedbackStatusAccepted": { "description": "피드백 상태: 처리됨" },
 
   "feedbackStatusRejected": "반려됨",
-  "@feedbackStatusRejected": { "description": "피드백 상태: 반려됨" }
+  "@feedbackStatusRejected": { "description": "피드백 상태: 반려됨" },
+
+  "adminSidebarTitle": "관리자",
+  "@adminSidebarTitle": { "description": "관리자 사이드바 타이틀" },
+
+  "adminMenuDashboard": "대시보드",
+  "@adminMenuDashboard": { "description": "관리자 메뉴 — 대시보드" },
+
+  "adminMenuSuspiciousReviews": "의심 리뷰",
+  "@adminMenuSuspiciousReviews": { "description": "관리자 메뉴 — 의심 리뷰 목록" },
+
+  "adminMenuReports": "신고 관리",
+  "@adminMenuReports": { "description": "관리자 메뉴 — 신고 관리" },
+
+  "adminMenuAnalysisFeedbacks": "분석 피드백",
+  "@adminMenuAnalysisFeedbacks": { "description": "관리자 메뉴 — 분석 피드백 검수" },
+
+  "adminMenuUsers": "유저",
+  "@adminMenuUsers": { "description": "관리자 메뉴 — 유저 목록" },
+
+  "adminMenuLogout": "로그아웃",
+  "@adminMenuLogout": { "description": "관리자 사이드바 로그아웃 버튼" },
+
+  "adminDashboardTitle": "운영 대시보드",
+  "@adminDashboardTitle": { "description": "관리자 대시보드 페이지 타이틀" },
+
+  "adminPlaceholderMessage": "준비 중인 화면입니다.",
+  "@adminPlaceholderMessage": { "description": "구현 대기 중인 관리자 페이지 안내" }
 }

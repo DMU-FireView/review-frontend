@@ -9,7 +9,7 @@ class HomeDashboardViewModel extends Notifier<HomeDashboardState> {
   @override
   HomeDashboardState build() {
     // ref.watch 대신 ref.listen 사용 — 로그인 상태 변화 시 notifier 재빌드 없이 load()만 재호출
-    ref.listen<bool>(isLoggedInProvider, (_, __) => Future.microtask(load));
+    ref.listen<bool>(isLoggedInProvider, (_, _) => Future.microtask(load));
     Future.microtask(load);
     return const HomeDashboardLoading();
   }

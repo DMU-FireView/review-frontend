@@ -542,4 +542,31 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get feedbackStatusRejected => '已拒绝';
+
+  @override
+  String get adminSidebarTitle => '管理员';
+
+  @override
+  String get adminMenuDashboard => '仪表盘';
+
+  @override
+  String get adminMenuSuspiciousReviews => '可疑评论';
+
+  @override
+  String get adminMenuReports => '举报管理';
+
+  @override
+  String get adminMenuAnalysisFeedbacks => '分析反馈';
+
+  @override
+  String get adminMenuUsers => '用户';
+
+  @override
+  String get adminMenuLogout => '退出登录';
+
+  @override
+  String get adminDashboardTitle => '运营仪表盘';
+
+  @override
+  String get adminPlaceholderMessage => '页面正在准备中。';
 }

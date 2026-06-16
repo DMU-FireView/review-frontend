@@ -170,5 +170,15 @@
   "feedbackStatusSubmitted": "受付",
   "feedbackStatusPending": "審査中",
   "feedbackStatusAccepted": "処理済み",
-  "feedbackStatusRejected": "却下"
+  "feedbackStatusRejected": "却下",
+
+  "adminSidebarTitle": "管理者",
+  "adminMenuDashboard": "ダッシュボード",
+  "adminMenuSuspiciousReviews": "不審なレビュー",
+  "adminMenuReports": "通報管理",
+  "adminMenuAnalysisFeedbacks": "分析フィードバック",
+  "adminMenuUsers": "ユーザー",
+  "adminMenuLogout": "ログアウト",
+  "adminDashboardTitle": "運営ダッシュボード",
+  "adminPlaceholderMessage": "現在準備中の画面です。"
 }

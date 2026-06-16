@@ -16,6 +16,12 @@ final isLoggedInProvider = Provider<bool>((ref) {
   return ref.watch(authTokenStoreProvider);
 });
 
+final isAdminProvider = Provider<bool>((ref) {
+  final loggedIn = ref.watch(authTokenStoreProvider);
+  if (!loggedIn) return false;
+  return ref.read(authTokenStoreProvider.notifier).isAdmin;
+});
+
 final apiClientProvider = Provider<ApiClient>((ref) {
   return ApiClient(
     ref.watch(appConfigProvider),

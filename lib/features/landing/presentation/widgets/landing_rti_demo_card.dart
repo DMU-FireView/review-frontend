@@ -32,7 +32,7 @@ class LandingRtiDemoCard extends ConsumerWidget {
           productAsync.when(
             data: (product) => _ProductCard(product: product),
             loading: () => const _ProductCardSkeleton(),
-            error: (_, __) => const _ProductCardSkeleton(),
+            error: (_, _) => const _ProductCardSkeleton(),
           ),
           const SizedBox(height: AppSpacing.md),
           const _RtiSummarySection(),
