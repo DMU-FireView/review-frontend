@@ -69,6 +69,14 @@ class ApiClient {
     return dio.put(path, data: data, queryParameters: queryParameters);
   }
 
+  Future<Response<dynamic>> patch(
+    String path, {
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return dio.patch(path, data: data, queryParameters: queryParameters);
+  }
+
   Future<Response<dynamic>> delete(
     String path, {
     Map<String, dynamic>? queryParameters,
