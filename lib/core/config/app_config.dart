@@ -10,6 +10,8 @@ class AppConfig {
     required this.analysisHealthPath,
     required this.reviewFeedbackBasePath,
     required this.reportBasePath,
+    required this.analysisFeedbackBasePath,
+    required this.adminBasePath,
     required this.loginPath,
     required this.signupPath,
     required this.naverOAuthPath,
@@ -62,6 +64,14 @@ class AppConfig {
         'REPORT_BASE_PATH',
         defaultValue: '/api/reports',
       ),
+      analysisFeedbackBasePath: const String.fromEnvironment(
+        'ANALYSIS_FEEDBACK_BASE_PATH',
+        defaultValue: '/api/analysis-feedbacks',
+      ),
+      adminBasePath: const String.fromEnvironment(
+        'ADMIN_BASE_PATH',
+        defaultValue: '/api/admin',
+      ),
       loginPath: const String.fromEnvironment(
         'LOGIN_PATH',
         defaultValue: '/api/auth/login',
@@ -111,6 +121,8 @@ class AppConfig {
   final String analysisHealthPath;
   final String reviewFeedbackBasePath;
   final String reportBasePath;
+  final String analysisFeedbackBasePath;
+  final String adminBasePath;
   final String loginPath;
   final String signupPath;
   final String naverOAuthPath;
