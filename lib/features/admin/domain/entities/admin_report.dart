@@ -56,6 +56,7 @@ class AdminReport {
     ReportStatus? status,
     String? statusDescription,
     String? adminComment,
+    bool clearAdminComment = false,
     DateTime? updatedAt,
   }) {
     return AdminReport(
@@ -70,7 +71,8 @@ class AdminReport {
       includeAiEvidence: includeAiEvidence,
       status: status ?? this.status,
       statusDescription: statusDescription ?? this.statusDescription,
-      adminComment: adminComment ?? this.adminComment,
+      adminComment:
+          clearAdminComment ? null : (adminComment ?? this.adminComment),
       createdAt: createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

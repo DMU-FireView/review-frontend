@@ -54,10 +54,12 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
     final status = _targetStatus;
     if (status == null) return;
     final comment = _commentController.text.trim();
+    final unchanged = comment == (widget.report.adminComment ?? '');
     final ok = await ref.read(adminReportViewModelProvider.notifier).updateStatus(
           reportId: widget.report.reportId,
           status: status,
-          adminComment: comment.isEmpty ? null : comment,
+          // null이면 메모를 보내지 않고, 빈 문자열이면 기존 메모를 지운다.
+          adminComment: unchanged ? null : comment,
         );
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(

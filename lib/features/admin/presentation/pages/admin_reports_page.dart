@@ -160,6 +160,21 @@ class _BulkBar extends StatelessWidget {
   final AdminReportState state;
   final AdminReportViewModel vm;
 
+  Future<void> _bulkUpdate(BuildContext context, ReportStatus status) async {
+    final total = state.selectedIds.length;
+    final messenger = ScaffoldMessenger.of(context);
+    final failed = await vm.bulkUpdateStatus(status);
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(
+          failed == 0
+              ? '$total건을 처리했습니다.'
+              : '$total건 중 $failed건 처리에 실패했습니다. 실패한 항목은 선택된 상태로 남겨 두었습니다.',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final enabled = state.selectedIds.isNotEmpty && !state.isUpdating;
@@ -170,19 +185,19 @@ class _BulkBar extends StatelessWidget {
           icon: Icons.check_circle_outline_rounded,
           label: '접수 처리',
           enabled: enabled,
-          onPressed: () => vm.bulkUpdateStatus(ReportStatus.accepted),
+          onPressed: () => _bulkUpdate(context, ReportStatus.accepted),
         ),
         AdminBulkActionButton(
           icon: Icons.cancel_outlined,
           label: '기각 처리',
           enabled: enabled,
-          onPressed: () => vm.bulkUpdateStatus(ReportStatus.rejected),
+          onPressed: () => _bulkUpdate(context, ReportStatus.rejected),
         ),
         AdminBulkActionButton(
           icon: Icons.person_search_outlined,
           label: '검토 중',
           enabled: enabled,
-          onPressed: () => vm.bulkUpdateStatus(ReportStatus.underReview),
+          onPressed: () => _bulkUpdate(context, ReportStatus.underReview),
         ),
       ],
     );

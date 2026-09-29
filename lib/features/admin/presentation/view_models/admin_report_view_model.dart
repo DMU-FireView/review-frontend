@@ -96,11 +96,13 @@ class AdminReportViewModel extends Notifier<AdminReportState> {
     loadCounts();
   }
 
+  /// [comment]가 null이면 메모 유지, 빈 문자열이면 메모 삭제.
   AdminReport _merge(AdminReport r, ReportStatus status, String? comment) =>
       r.copyWith(
         status: status,
         statusDescription: status.label,
         adminComment: comment,
+        clearAdminComment: comment != null && comment.isEmpty,
         updatedAt: DateTime.now(),
       );
 
@@ -144,12 +146,13 @@ class AdminReportViewModel extends Notifier<AdminReportState> {
   }
 
   /// 선택된 신고들을 [status]로 일괄 변경. 일괄 PATCH 엔드포인트가 없어 순차 호출한다.
-  Future<bool> bulkUpdateStatus(ReportStatus status) async {
+  /// 실패 건수를 반환하고, 실패한 항목은 재시도할 수 있도록 선택 상태로 남긴다.
+  Future<int> bulkUpdateStatus(ReportStatus status) async {
     final ids = state.selectedIds.toList();
-    if (ids.isEmpty) return false;
+    if (ids.isEmpty) return 0;
     state = state.copyWith(isUpdating: true, clearError: true);
 
-    var allOk = true;
+    final failedIds = <int>{};
     for (final id in ids) {
       final result = await _repository.updateStatus(
         reportId: id,
@@ -157,15 +160,18 @@ class AdminReportViewModel extends Notifier<AdminReportState> {
       );
       result.when(
         success: (_) {},
-        failure: (_) {
-          allOk = false;
-        },
+        failure: (_) => failedIds.add(id),
       );
     }
 
-    state = state.copyWith(isUpdating: false, selectedIds: const {});
+    state = state.copyWith(isUpdating: false);
     await loadList();
     await loadCounts();
-    return allOk;
+    // loadList가 선택을 비우므로, 재조회 후 목록에 남아 있는 실패 항목만 다시 선택한다.
+    final visibleIds = {for (final item in state.items) item.reportId};
+    state = state.copyWith(
+      selectedIds: failedIds.intersection(visibleIds),
+    );
+    return failedIds.length;
   }
 }
