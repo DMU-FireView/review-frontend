@@ -133,10 +133,14 @@ class _CategoryForm extends StatelessWidget {
             const SizedBox(height: AppSpacing.lg),
           const Divider(color: AppColors.border),
           const SizedBox(height: AppSpacing.lg),
-          Row(
+          // 폼 폭이 좁아지면(태블릿 폭 + 미리보기 패널) 버튼을 세로로 쌓는다.
+          OverflowBar(
+            alignment: MainAxisAlignment.spaceBetween,
+            overflowAlignment: OverflowBarAlignment.end,
+            spacing: AppSpacing.sm,
+            overflowSpacing: AppSpacing.sm,
             children: [
               OutlinedButton(onPressed: onSkip, child: const Text('나중에 할게요')),
-              const Spacer(),
               FilledButton.icon(
                 onPressed: onNext,
                 icon: const Icon(Icons.arrow_forward, size: 18),
