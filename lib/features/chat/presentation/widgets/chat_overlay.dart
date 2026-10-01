@@ -118,7 +118,15 @@ class _ChatLauncherLayout extends ConsumerWidget {
     return Stack(
       children: [
         if (isOpen && isMobile)
-          Positioned.fill(child: SafeArea(child: panel))
+          Positioned.fill(
+            child: SafeArea(
+              child: ChatPanel(
+                productId: productId,
+                onLoginPressed: panel.onLoginPressed,
+                fullScreen: true,
+              ),
+            ),
+          )
         else if (isOpen)
           Positioned(
             right: edge,

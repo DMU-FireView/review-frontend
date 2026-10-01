@@ -17,11 +17,15 @@ class ChatPanel extends ConsumerWidget {
     super.key,
     required this.productId,
     required this.onLoginPressed,
+    this.fullScreen = false,
   });
 
   /// 현재 화면의 상품. 상품 상세가 아니면 null.
   final int? productId;
   final VoidCallback onLoginPressed;
+
+  /// 모바일 전체 화면이면 모서리와 그림자를 없앤다.
+  final bool fullScreen;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,9 +43,9 @@ class ChatPanel extends ConsumerWidget {
           autofocus: true,
           child: Material(
             color: AppColors.surface,
-            elevation: 12,
+            elevation: fullScreen ? 0 : 12,
             shadowColor: AppColors.shadow,
-            borderRadius: AppRadius.large,
+            borderRadius: fullScreen ? null : AppRadius.large,
             clipBehavior: Clip.antiAlias,
             child: Column(
               children: [

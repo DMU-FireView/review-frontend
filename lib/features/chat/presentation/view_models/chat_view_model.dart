@@ -10,11 +10,15 @@ import 'package:re_view_front/features/chat/presentation/view_models/chat_state.
 class ChatViewModel extends Notifier<ChatState> {
   ChatRepository get _repository => ref.read(chatRepositoryProvider);
 
+  /// 대화를 초기화할 때마다 올린다. 응답이 늦게 와도 이미 지운 대화에 붙지 않게 한다.
+  int _generation = 0;
+
   @override
   ChatState build() {
     // 로그아웃하거나 토큰이 만료되면 이전 계정의 대화를 지운다.
     ref.listen(isLoggedInProvider, (previous, next) {
       if (previous == true && !next) {
+        _generation++;
         state = ChatState(isOpen: state.isOpen);
       }
     });
@@ -30,6 +34,7 @@ class ChatViewModel extends Notifier<ChatState> {
   /// 대화를 비우고, 다음 질문부터 [productId] 기준의 새 세션을 시작한다.
   void startNew({int? productId}) {
     if (state.isSending) return;
+    _generation++;
     state = ChatState(isOpen: state.isOpen, sessionProductId: productId);
   }
 
@@ -39,10 +44,12 @@ class ChatViewModel extends Notifier<ChatState> {
     if (text.isEmpty || state.isSending) return;
 
     final isNewSession = state.sessionId == null;
+    final generation = _generation;
+    final questionMessage = ChatMessage(role: ChatRole.user, content: text);
     state = state.copyWith(
       messages: [
         ...state.messages.where((m) => m.error == null),
-        ChatMessage(role: ChatRole.user, content: text),
+        questionMessage,
       ],
       isSending: true,
       sessionProductId: isNewSession ? productId : null,
@@ -54,7 +61,12 @@ class ChatViewModel extends Notifier<ChatState> {
       sessionId: state.sessionId,
       productId: isNewSession ? productId : null,
     );
-    if (!ref.mounted) return;
+    // 로그아웃 알림이 응답보다 늦게 올 수 있어 로그인 상태를 직접 확인한다.
+    if (!ref.mounted ||
+        generation != _generation ||
+        !ref.read(isLoggedInProvider)) {
+      return;
+    }
 
     result.when(
       success: (reply) => state = state.copyWith(
@@ -75,7 +87,7 @@ class ChatViewModel extends Notifier<ChatState> {
         lastFailedQuestion: text,
         messages: [
           // 실패한 질문은 다시 시도할 때 새로 붙이므로 목록에서 뺀다.
-          ...state.messages.sublist(0, state.messages.length - 1),
+          ...state.messages.where((m) => !identical(m, questionMessage)),
           ChatMessage(
             role: ChatRole.assistant,
             content: failure.message,
