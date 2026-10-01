@@ -408,7 +408,8 @@ class _ComposerState extends State<_Composer> {
                   // multiline이 아니면 여러 줄 입력창에서도 Enter가 전송으로 동작한다.
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.send,
-                  onSubmitted: (_) => _submit(),
+                  // onSubmitted만 두면 전송 뒤 포커스가 빠져 이어서 입력할 수 없다.
+                  onEditingComplete: _submit,
                   decoration: InputDecoration(
                     hintText: l10n.chatInputHint,
                     counterText: '',
