@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
-import 'package:re_view_front/app/theme/app_theme.dart';
 import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
@@ -15,7 +14,15 @@ import 'package:re_view_front/features/home/domain/usecases/get_home_dashboard_u
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/home/presentation/widgets/home/banners/hero_banner_carousel.dart';
+import 'package:re_view_front/features/home/presentation/widgets/home/brand/home_logo.dart';
+import 'package:re_view_front/features/search/domain/entities/search_response.dart';
+import 'package:re_view_front/features/search/domain/repositories/search_repository.dart';
+import 'package:re_view_front/features/search/domain/usecases/search_products_use_case.dart';
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
+import 'package:re_view_front/features/search/presentation/providers/search_providers.dart';
+import 'package:re_view_front/shared/widgets/product_card_skeleton.dart';
+
+import '../../../../helpers/pump_app.dart';
 
 void main() {
   late GoRouter router;
@@ -50,14 +57,16 @@ void main() {
         ),
       ],
     );
+    addTearDown(router.dispose);
 
     return ProviderScope(
       overrides: [
+        searchRepositoryProvider.overrideWithValue(_SearchRepositoryFake()),
         getHomeDashboardUseCaseProvider.overrideWithValue(
           GetHomeDashboardUseCase(_HomeRepositoryFake(result, pending)),
         ),
       ],
-      child: MaterialApp.router(theme: AppTheme.light, routerConfig: router),
+      child: localizedApp(router: router),
     );
   }
 
@@ -65,7 +74,7 @@ void main() {
     await tester.pumpWidget(buildSubject());
     await tester.pumpAndSettle();
 
-    expect(find.text('Re:view'), findsOneWidget);
+    expect(find.byType(HomeLogo), findsOneWidget);
     expect(find.byType(HeroBannerCarousel), findsOneWidget);
     expect(find.byType(Image), findsWidgets);
     expect(find.text('Re:view가 더 믿을 수 있는 이유'), findsOneWidget);
@@ -81,7 +90,7 @@ void main() {
   ) async {
     await tester.pumpWidget(buildSubject(pending: true));
 
-    expect(find.text('홈 데이터를 불러오는 중입니다.'), findsOneWidget);
+    expect(find.byType(ProductCardGridSkeleton), findsOneWidget);
   });
 
   testWidgets('renders retry UI when dashboard load fails', (tester) async {
@@ -117,7 +126,7 @@ void main() {
     await tester.pumpWidget(buildSubject());
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('로그인').first);
+    await tester.tap(find.byTooltip('로그인'));
     await tester.pumpAndSettle();
 
     expect(router.routeInformationProvider.value.uri.path, RoutePaths.login);
@@ -138,7 +147,8 @@ void main() {
       '크림',
     );
     expect(find.text('크림'), findsWidgets);
-    expect(find.text('검색 결과'), findsWidgets);
+    expect(find.byType(SearchResultsPage), findsOneWidget);
+    expect(find.text('검색 결과가 없어요'), findsOneWidget);
   });
 
   testWidgets('shows RTI search panel with two dashboard products on focus', (
@@ -198,7 +208,8 @@ void main() {
       const ValueKey('search-suggestion-product-1'),
     );
 
-    expect(find.text('인기 검색 추천상품'), findsOneWidget);
+    expect(find.text('인기 검색'), findsWidgets);
+    expect(find.text('추천 상품'), findsOneWidget);
     expect(firstSuggestion, findsOneWidget);
     expect(secondSuggestion, findsOneWidget);
     expect(
@@ -256,5 +267,12 @@ class _HomeRepositoryFake implements HomeRepository {
     }
 
     return result;
+  }
+}
+
+class _SearchRepositoryFake implements SearchRepository {
+  @override
+  Future<Result<SearchResponse>> searchProducts(SearchParams params) async {
+    return const Success(SearchResponse(products: [], totalCount: 0));
   }
 }
