@@ -46,8 +46,12 @@
       display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
       transition: opacity 200ms ease-out;
+      pointer-events: none;
     }
-    #app-loading.is-hidden { opacity: 0; pointer-events: none; }
+    #app-loading.is-hidden { opacity: 0; }
+    #app-loading .retry { display: none; pointer-events: auto; font-size: 14px; color: #6B7280; }
+    #app-loading .retry a { color: #2563EB; }
+    #app-loading.is-slow .retry { display: block; }
     #app-loading .wordmark { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; color: #111827; }
     #app-loading .wordmark span { color: #2563EB; }
     #app-loading .bar { width: 120px; height: 3px; border-radius: 3px; background: #E5E7EB; overflow: hidden; }
@@ -63,14 +67,19 @@
   <div id="app-loading" role="progressbar" aria-label="Re:view 불러오는 중">
     <div class="wordmark">Re<span>:</span>view</div>
     <div class="bar"></div>
+    <p class="retry">불러오는 데 시간이 걸리고 있어요. <a href="" onclick="location.reload(); return false;">새로고침</a></p>
   </div>
   <script>
-    window.addEventListener('flutter-first-frame', function () {
+    (function () {
       var el = document.getElementById('app-loading');
-      if (!el) return;
-      el.classList.add('is-hidden');
-      setTimeout(function () { el.remove(); }, 250);
-    }, { once: true });
+      // 로딩이 15초를 넘기면 새로고침 안내를 보여 준다.
+      var slowTimer = setTimeout(function () { el.classList.add('is-slow'); }, 15000);
+      window.addEventListener('flutter-first-frame', function () {
+        clearTimeout(slowTimer);
+        el.classList.add('is-hidden');
+        setTimeout(function () { el.remove(); }, 250);
+      }, { once: true });
+    })();
   </script>
   <!--
     You can customize the "flutter_bootstrap.js" script.
