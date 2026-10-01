@@ -58,10 +58,12 @@ class _ChatLayer extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(appRouterProvider);
-    return ValueListenableBuilder<RouteInformation>(
-      valueListenable: router.routeInformationProvider,
-      builder: (context, info, _) {
-        final path = info.uri.path;
+    // redirect가 적용된 최종 위치를 써야 한다. routeInformationProvider는
+    // 브라우저가 요청한 위치(예: 로그인 상태의 /landing)를 그대로 들고 있다.
+    return ListenableBuilder(
+      listenable: router.routerDelegate,
+      builder: (context, _) {
+        final path = router.routerDelegate.currentConfiguration.uri.path;
         final hidden = _hiddenPathPrefixes.any(
           (prefix) => path == prefix || path.startsWith('$prefix/'),
         );
