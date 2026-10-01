@@ -45,6 +45,8 @@ dependencies:
   shimmer: ^3.0.0
   flutter_localizations:
     sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
   intl: ^0.20.1
   file_picker: ^11.0.2
 
