@@ -575,4 +575,85 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get adminTopBarNotifications => '알림';
+
+  @override
+  String get chatLauncherTooltip => 'AI 리뷰 상담';
+
+  @override
+  String get chatTitle => 'Re:view AI';
+
+  @override
+  String get chatSubtitle => '리뷰 신뢰도에 대해 물어보세요';
+
+  @override
+  String get chatNewConversation => '새 대화';
+
+  @override
+  String get chatClose => '닫기';
+
+  @override
+  String get chatInputHint => '질문을 입력하세요';
+
+  @override
+  String get chatSend => '보내기';
+
+  @override
+  String get chatProductContext => '이 상품의 리뷰를 바탕으로 답해요';
+
+  @override
+  String get chatOtherProductNotice => '다른 상품에 대한 대화가 이어지고 있어요';
+
+  @override
+  String get chatStartWithThisProduct => '이 상품으로 새 대화';
+
+  @override
+  String get chatEmptyTitle => '무엇이든 물어보세요';
+
+  @override
+  String get chatEmptyBody => '리뷰 신뢰도와 광고성 리뷰 판단을 도와드려요.';
+
+  @override
+  String get chatSuggestProduct1 => '이 상품 리뷰 믿을 만해?';
+
+  @override
+  String get chatSuggestProduct2 => '광고성 리뷰가 많아?';
+
+  @override
+  String get chatSuggestProduct3 => '실사용자들이 말하는 단점은?';
+
+  @override
+  String get chatSuggestGeneral1 => 'RTI 점수는 어떻게 매겨져?';
+
+  @override
+  String get chatSuggestGeneral2 => '광고성 리뷰는 어떻게 구별해?';
+
+  @override
+  String get chatThinking => '답변을 준비하고 있어요';
+
+  @override
+  String get chatLoginTitle => '로그인하고 AI에게 물어보세요';
+
+  @override
+  String get chatLoginBody => '대화 내용은 내 계정에 저장돼요.';
+
+  @override
+  String get chatLoginButton => '로그인';
+
+  @override
+  String get chatErrorUnavailable => '챗봇이 잠시 응답할 수 없어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get chatErrorTimeout => '답변이 너무 오래 걸리고 있어요. 다시 시도해 주세요.';
+
+  @override
+  String get chatErrorNetwork => '네트워크 연결을 확인해 주세요.';
+
+  @override
+  String get chatErrorUnknown => '답변을 받지 못했어요.';
+
+  @override
+  String get chatRetry => '다시 시도';
+
+  @override
+  String get chatDisclaimer => 'AI 답변은 참고용이며 틀릴 수 있어요.';
 }

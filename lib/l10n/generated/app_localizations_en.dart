@@ -595,4 +595,90 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminTopBarNotifications => 'Notifications';
+
+  @override
+  String get chatLauncherTooltip => 'AI review assistant';
+
+  @override
+  String get chatTitle => 'Re:view AI';
+
+  @override
+  String get chatSubtitle => 'Ask about review trust';
+
+  @override
+  String get chatNewConversation => 'New chat';
+
+  @override
+  String get chatClose => 'Close';
+
+  @override
+  String get chatInputHint => 'Type your question';
+
+  @override
+  String get chatSend => 'Send';
+
+  @override
+  String get chatProductContext =>
+      'Answers are based on this product\'s reviews';
+
+  @override
+  String get chatOtherProductNotice =>
+      'You\'re continuing a chat about another product';
+
+  @override
+  String get chatStartWithThisProduct => 'New chat for this product';
+
+  @override
+  String get chatEmptyTitle => 'Ask me anything';
+
+  @override
+  String get chatEmptyBody =>
+      'I can help you judge review trust and spot sponsored reviews.';
+
+  @override
+  String get chatSuggestProduct1 => 'Are this product\'s reviews trustworthy?';
+
+  @override
+  String get chatSuggestProduct2 => 'Are there many sponsored reviews?';
+
+  @override
+  String get chatSuggestProduct3 => 'What downsides do real buyers mention?';
+
+  @override
+  String get chatSuggestGeneral1 => 'How is the RTI score calculated?';
+
+  @override
+  String get chatSuggestGeneral2 => 'How do I spot sponsored reviews?';
+
+  @override
+  String get chatThinking => 'Preparing an answer';
+
+  @override
+  String get chatLoginTitle => 'Log in to ask the AI';
+
+  @override
+  String get chatLoginBody => 'Your chats are saved to your account.';
+
+  @override
+  String get chatLoginButton => 'Log in';
+
+  @override
+  String get chatErrorUnavailable =>
+      'The assistant is temporarily unavailable. Please try again shortly.';
+
+  @override
+  String get chatErrorTimeout =>
+      'The answer is taking too long. Please try again.';
+
+  @override
+  String get chatErrorNetwork => 'Please check your network connection.';
+
+  @override
+  String get chatErrorUnknown => 'Couldn\'t get an answer.';
+
+  @override
+  String get chatRetry => 'Retry';
+
+  @override
+  String get chatDisclaimer => 'AI answers are for reference and may be wrong.';
 }

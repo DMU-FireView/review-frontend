@@ -61,8 +61,14 @@ class ApiClient {
     String path, {
     Object? data,
     Map<String, dynamic>? queryParameters,
+    Options? options,
   }) {
-    return dio.post(path, data: data, queryParameters: queryParameters);
+    return dio.post(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: options,
+    );
   }
 
   Future<Response<dynamic>> put(

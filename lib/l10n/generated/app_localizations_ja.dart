@@ -576,4 +576,85 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get adminTopBarNotifications => '通知';
+
+  @override
+  String get chatLauncherTooltip => 'AIレビュー相談';
+
+  @override
+  String get chatTitle => 'Re:view AI';
+
+  @override
+  String get chatSubtitle => 'レビューの信頼度について聞いてみましょう';
+
+  @override
+  String get chatNewConversation => '新しい会話';
+
+  @override
+  String get chatClose => '閉じる';
+
+  @override
+  String get chatInputHint => '質問を入力してください';
+
+  @override
+  String get chatSend => '送信';
+
+  @override
+  String get chatProductContext => 'この商品のレビューをもとに回答します';
+
+  @override
+  String get chatOtherProductNotice => '別の商品についての会話が続いています';
+
+  @override
+  String get chatStartWithThisProduct => 'この商品で新しい会話';
+
+  @override
+  String get chatEmptyTitle => '何でも聞いてください';
+
+  @override
+  String get chatEmptyBody => 'レビューの信頼度や広告レビューの見分け方をお手伝いします。';
+
+  @override
+  String get chatSuggestProduct1 => 'この商品のレビューは信頼できる？';
+
+  @override
+  String get chatSuggestProduct2 => '広告っぽいレビューは多い？';
+
+  @override
+  String get chatSuggestProduct3 => '実際の購入者が挙げる欠点は？';
+
+  @override
+  String get chatSuggestGeneral1 => 'RTIスコアはどう決まる？';
+
+  @override
+  String get chatSuggestGeneral2 => '広告レビューはどう見分ける？';
+
+  @override
+  String get chatThinking => '回答を準備しています';
+
+  @override
+  String get chatLoginTitle => 'ログインしてAIに質問しましょう';
+
+  @override
+  String get chatLoginBody => '会話はアカウントに保存されます。';
+
+  @override
+  String get chatLoginButton => 'ログイン';
+
+  @override
+  String get chatErrorUnavailable => 'チャットボットが一時的に応答できません。しばらくしてから再度お試しください。';
+
+  @override
+  String get chatErrorTimeout => '回答に時間がかかっています。もう一度お試しください。';
+
+  @override
+  String get chatErrorNetwork => 'ネットワーク接続を確認してください。';
+
+  @override
+  String get chatErrorUnknown => '回答を取得できませんでした。';
+
+  @override
+  String get chatRetry => '再試行';
+
+  @override
+  String get chatDisclaimer => 'AIの回答は参考情報であり、誤りを含む場合があります。';
 }

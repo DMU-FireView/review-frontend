@@ -575,4 +575,85 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adminTopBarNotifications => '通知';
+
+  @override
+  String get chatLauncherTooltip => 'AI 评论咨询';
+
+  @override
+  String get chatTitle => 'Re:view AI';
+
+  @override
+  String get chatSubtitle => '询问评论可信度';
+
+  @override
+  String get chatNewConversation => '新对话';
+
+  @override
+  String get chatClose => '关闭';
+
+  @override
+  String get chatInputHint => '请输入问题';
+
+  @override
+  String get chatSend => '发送';
+
+  @override
+  String get chatProductContext => '基于该商品的评论回答';
+
+  @override
+  String get chatOtherProductNotice => '正在继续关于其他商品的对话';
+
+  @override
+  String get chatStartWithThisProduct => '以此商品开始新对话';
+
+  @override
+  String get chatEmptyTitle => '尽管问吧';
+
+  @override
+  String get chatEmptyBody => '帮助您判断评论可信度并识别广告评论。';
+
+  @override
+  String get chatSuggestProduct1 => '这个商品的评论可信吗？';
+
+  @override
+  String get chatSuggestProduct2 => '广告评论多吗？';
+
+  @override
+  String get chatSuggestProduct3 => '真实用户提到的缺点是什么？';
+
+  @override
+  String get chatSuggestGeneral1 => 'RTI 分数是如何计算的？';
+
+  @override
+  String get chatSuggestGeneral2 => '如何识别广告评论？';
+
+  @override
+  String get chatThinking => '正在准备回答';
+
+  @override
+  String get chatLoginTitle => '登录后向 AI 提问';
+
+  @override
+  String get chatLoginBody => '对话会保存到您的账户。';
+
+  @override
+  String get chatLoginButton => '登录';
+
+  @override
+  String get chatErrorUnavailable => '聊天机器人暂时无法响应，请稍后再试。';
+
+  @override
+  String get chatErrorTimeout => '回答耗时过长，请重试。';
+
+  @override
+  String get chatErrorNetwork => '请检查网络连接。';
+
+  @override
+  String get chatErrorUnknown => '未能获取回答。';
+
+  @override
+  String get chatRetry => '重试';
+
+  @override
+  String get chatDisclaimer => 'AI 回答仅供参考，可能有误。';
 }
