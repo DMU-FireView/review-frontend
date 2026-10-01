@@ -89,6 +89,12 @@
     For more details:
     * https://docs.flutter.dev/platform-integration/web/initialization
   -->
+  <script>
+    // 해시 URL(#/product/1)로 저장된 기존 링크를 경로 URL로 옮긴다.
+    if (location.hash.indexOf('#/') === 0) {
+      history.replaceState(null, '', location.hash.slice(1));
+    }
+  </script>
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
