@@ -13,6 +13,7 @@ import 'package:re_view_front/features/chat/domain/repositories/chat_repository.
 import 'package:re_view_front/features/chat/presentation/providers/chat_providers.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/chat_overlay.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/chat_panel.dart';
+import 'package:re_view_front/features/chat/presentation/widgets/popup_route_tracker.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 import '../../../../helpers/pump_app.dart';
@@ -42,6 +43,27 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('hides the launcher while a dialog is open', (tester) async {
+    final subject = await _pumpOverlay(tester, path: RoutePaths.home);
+    final l10n = _localizations(tester);
+    final launcher = find.byTooltip(l10n.chatLauncherTooltip);
+    expect(launcher, findsOneWidget);
+
+    unawaited(
+      showDialog<void>(
+        context: subject.router.routerDelegate.navigatorKey.currentContext!,
+        builder: (_) => const AlertDialog(content: Text('dialog')),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(launcher, findsNothing);
+
+    subject.router.routerDelegate.navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(launcher, findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 
   testWidgets('shows a login prompt when opened while logged out', (
     tester,
@@ -204,6 +226,7 @@ _pumpOverlay(
 
   final router = GoRouter(
     initialLocation: path,
+    observers: [popupRouteTracker],
     routes: [
       for (final route in [
         RoutePaths.home,

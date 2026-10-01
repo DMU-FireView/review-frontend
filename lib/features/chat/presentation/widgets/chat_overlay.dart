@@ -8,6 +8,7 @@ import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/features/chat/presentation/providers/chat_providers.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/chat_panel.dart';
+import 'package:re_view_front/features/chat/presentation/widgets/popup_route_tracker.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 /// 앱 전체 위에 떠 있는 챗봇 런처와 패널.
@@ -61,13 +62,16 @@ class _ChatLayer extends ConsumerWidget {
     // redirect가 적용된 최종 위치를 써야 한다. routeInformationProvider는
     // 브라우저가 요청한 위치(예: 로그인 상태의 /landing)를 그대로 들고 있다.
     return ListenableBuilder(
-      listenable: router.routerDelegate,
+      listenable: Listenable.merge([router.routerDelegate, popupRouteTracker]),
       builder: (context, _) {
         final path = router.routerDelegate.currentConfiguration.uri.path;
         final hidden = _hiddenPathPrefixes.any(
           (prefix) => path == prefix || path.startsWith('$prefix/'),
         );
-        if (hidden) return const SizedBox.shrink();
+        // 다이얼로그·바텀시트가 열려 있으면 모달 위로 올라오지 않게 숨긴다.
+        if (hidden || popupRouteTracker.hasPopup) {
+          return const SizedBox.shrink();
+        }
 
         final match = _productPathPattern.firstMatch(path);
         final productId = match == null ? null : int.tryParse(match.group(1)!);
