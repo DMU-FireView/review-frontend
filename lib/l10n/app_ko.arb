@@ -598,5 +598,86 @@
   "@adminTopBarSearchHint": { "description": "관리자 상단 검색바 안내 문구" },
 
   "adminTopBarNotifications": "알림",
-  "@adminTopBarNotifications": { "description": "관리자 상단 알림 벨 툴팁" }
+  "@adminTopBarNotifications": { "description": "관리자 상단 알림 벨 툴팁" },
+
+  "chatLauncherTooltip": "AI 리뷰 상담",
+  "@chatLauncherTooltip": { "description": "우측 하단 챗봇 버튼 툴팁" },
+
+  "chatTitle": "Re:view AI",
+  "@chatTitle": { "description": "챗봇 패널 제목" },
+
+  "chatSubtitle": "리뷰 신뢰도에 대해 물어보세요",
+  "@chatSubtitle": { "description": "챗봇 패널 부제" },
+
+  "chatNewConversation": "새 대화",
+  "@chatNewConversation": { "description": "새 대화 시작 버튼" },
+
+  "chatClose": "닫기",
+  "@chatClose": { "description": "패널 닫기 버튼" },
+
+  "chatInputHint": "질문을 입력하세요",
+  "@chatInputHint": { "description": "질문 입력창 힌트" },
+
+  "chatSend": "보내기",
+  "@chatSend": { "description": "전송 버튼" },
+
+  "chatProductContext": "이 상품의 리뷰를 바탕으로 답해요",
+  "@chatProductContext": { "description": "상품 상세에서 연 대화 안내" },
+
+  "chatOtherProductNotice": "다른 상품에 대한 대화가 이어지고 있어요",
+  "@chatOtherProductNotice": { "description": "현재 화면 상품과 대화 상품이 다를 때 안내" },
+
+  "chatStartWithThisProduct": "이 상품으로 새 대화",
+  "@chatStartWithThisProduct": { "description": "현재 상품으로 새 대화 시작" },
+
+  "chatEmptyTitle": "무엇이든 물어보세요",
+  "@chatEmptyTitle": { "description": "대화가 없을 때 제목" },
+
+  "chatEmptyBody": "리뷰 신뢰도와 광고성 리뷰 판단을 도와드려요.",
+  "@chatEmptyBody": { "description": "대화가 없을 때 설명" },
+
+  "chatSuggestProduct1": "이 상품 리뷰 믿을 만해?",
+  "@chatSuggestProduct1": { "description": "상품 대화 추천 질문 1" },
+
+  "chatSuggestProduct2": "광고성 리뷰가 많아?",
+  "@chatSuggestProduct2": { "description": "상품 대화 추천 질문 2" },
+
+  "chatSuggestProduct3": "실사용자들이 말하는 단점은?",
+  "@chatSuggestProduct3": { "description": "상품 대화 추천 질문 3" },
+
+  "chatSuggestGeneral1": "RTI 점수는 어떻게 매겨져?",
+  "@chatSuggestGeneral1": { "description": "일반 대화 추천 질문 1" },
+
+  "chatSuggestGeneral2": "광고성 리뷰는 어떻게 구별해?",
+  "@chatSuggestGeneral2": { "description": "일반 대화 추천 질문 2" },
+
+  "chatThinking": "답변을 준비하고 있어요",
+  "@chatThinking": { "description": "응답 대기 중 표시" },
+
+  "chatLoginTitle": "로그인하고 AI에게 물어보세요",
+  "@chatLoginTitle": { "description": "비로그인 안내 제목" },
+
+  "chatLoginBody": "대화 내용은 내 계정에 저장돼요.",
+  "@chatLoginBody": { "description": "비로그인 안내 설명" },
+
+  "chatLoginButton": "로그인",
+  "@chatLoginButton": { "description": "비로그인 안내 버튼" },
+
+  "chatErrorUnavailable": "챗봇이 잠시 응답할 수 없어요. 잠시 후 다시 시도해 주세요.",
+  "@chatErrorUnavailable": { "description": "503 오류" },
+
+  "chatErrorTimeout": "답변이 너무 오래 걸리고 있어요. 다시 시도해 주세요.",
+  "@chatErrorTimeout": { "description": "응답 시간 초과" },
+
+  "chatErrorNetwork": "네트워크 연결을 확인해 주세요.",
+  "@chatErrorNetwork": { "description": "네트워크 오류" },
+
+  "chatErrorUnknown": "답변을 받지 못했어요.",
+  "@chatErrorUnknown": { "description": "기타 오류" },
+
+  "chatRetry": "다시 시도",
+  "@chatRetry": { "description": "다시 시도 버튼" },
+
+  "chatDisclaimer": "AI 답변은 참고용이며 틀릴 수 있어요.",
+  "@chatDisclaimer": { "description": "입력창 아래 안내" }
 }

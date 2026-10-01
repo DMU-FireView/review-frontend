@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/app/router/app_router.dart';
 import 'package:re_view_front/app/theme/app_theme.dart';
 import 'package:re_view_front/core/providers/locale_provider.dart';
+import 'package:re_view_front/features/chat/presentation/widgets/chat_overlay.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class ReViewApp extends ConsumerWidget {
@@ -19,6 +20,7 @@ class ReViewApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       routerConfig: router,
+      builder: (context, child) => ChatOverlay(child: child!),
       locale: locale,
       supportedLocales: supportedLocales,
       localizationsDelegates: const [

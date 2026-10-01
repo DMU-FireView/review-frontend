@@ -1193,6 +1193,168 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'알림'**
   String get adminTopBarNotifications;
+
+  /// 우측 하단 챗봇 버튼 툴팁
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 리뷰 상담'**
+  String get chatLauncherTooltip;
+
+  /// 챗봇 패널 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'Re:view AI'**
+  String get chatTitle;
+
+  /// 챗봇 패널 부제
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 신뢰도에 대해 물어보세요'**
+  String get chatSubtitle;
+
+  /// 새 대화 시작 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'새 대화'**
+  String get chatNewConversation;
+
+  /// 패널 닫기 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'닫기'**
+  String get chatClose;
+
+  /// 질문 입력창 힌트
+  ///
+  /// In ko, this message translates to:
+  /// **'질문을 입력하세요'**
+  String get chatInputHint;
+
+  /// 전송 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'보내기'**
+  String get chatSend;
+
+  /// 상품 상세에서 연 대화 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'이 상품의 리뷰를 바탕으로 답해요'**
+  String get chatProductContext;
+
+  /// 현재 화면 상품과 대화 상품이 다를 때 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'다른 상품에 대한 대화가 이어지고 있어요'**
+  String get chatOtherProductNotice;
+
+  /// 현재 상품으로 새 대화 시작
+  ///
+  /// In ko, this message translates to:
+  /// **'이 상품으로 새 대화'**
+  String get chatStartWithThisProduct;
+
+  /// 대화가 없을 때 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'무엇이든 물어보세요'**
+  String get chatEmptyTitle;
+
+  /// 대화가 없을 때 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 신뢰도와 광고성 리뷰 판단을 도와드려요.'**
+  String get chatEmptyBody;
+
+  /// 상품 대화 추천 질문 1
+  ///
+  /// In ko, this message translates to:
+  /// **'이 상품 리뷰 믿을 만해?'**
+  String get chatSuggestProduct1;
+
+  /// 상품 대화 추천 질문 2
+  ///
+  /// In ko, this message translates to:
+  /// **'광고성 리뷰가 많아?'**
+  String get chatSuggestProduct2;
+
+  /// 상품 대화 추천 질문 3
+  ///
+  /// In ko, this message translates to:
+  /// **'실사용자들이 말하는 단점은?'**
+  String get chatSuggestProduct3;
+
+  /// 일반 대화 추천 질문 1
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 점수는 어떻게 매겨져?'**
+  String get chatSuggestGeneral1;
+
+  /// 일반 대화 추천 질문 2
+  ///
+  /// In ko, this message translates to:
+  /// **'광고성 리뷰는 어떻게 구별해?'**
+  String get chatSuggestGeneral2;
+
+  /// 응답 대기 중 표시
+  ///
+  /// In ko, this message translates to:
+  /// **'답변을 준비하고 있어요'**
+  String get chatThinking;
+
+  /// 비로그인 안내 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인하고 AI에게 물어보세요'**
+  String get chatLoginTitle;
+
+  /// 비로그인 안내 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'대화 내용은 내 계정에 저장돼요.'**
+  String get chatLoginBody;
+
+  /// 비로그인 안내 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인'**
+  String get chatLoginButton;
+
+  /// 503 오류
+  ///
+  /// In ko, this message translates to:
+  /// **'챗봇이 잠시 응답할 수 없어요. 잠시 후 다시 시도해 주세요.'**
+  String get chatErrorUnavailable;
+
+  /// 응답 시간 초과
+  ///
+  /// In ko, this message translates to:
+  /// **'답변이 너무 오래 걸리고 있어요. 다시 시도해 주세요.'**
+  String get chatErrorTimeout;
+
+  /// 네트워크 오류
+  ///
+  /// In ko, this message translates to:
+  /// **'네트워크 연결을 확인해 주세요.'**
+  String get chatErrorNetwork;
+
+  /// 기타 오류
+  ///
+  /// In ko, this message translates to:
+  /// **'답변을 받지 못했어요.'**
+  String get chatErrorUnknown;
+
+  /// 다시 시도 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get chatRetry;
+
+  /// 입력창 아래 안내
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 답변은 참고용이며 틀릴 수 있어요.'**
+  String get chatDisclaimer;
 }
 
 class _AppLocalizationsDelegate

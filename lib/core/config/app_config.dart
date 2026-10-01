@@ -21,6 +21,8 @@ class AppConfig {
     required this.userMePath,
     required this.userFeedbackPath,
     required this.landingStatsPath,
+    required this.chatBasePath,
+    required this.chatReceiveTimeout,
     required this.connectTimeout,
     required this.receiveTimeout,
   });
@@ -108,6 +110,12 @@ class AppConfig {
         'LANDING_STATS_PATH',
         defaultValue: '/api/landing/stats',
       ),
+      chatBasePath: const String.fromEnvironment(
+        'CHAT_BASE_PATH',
+        defaultValue: '/api/chat',
+      ),
+      // 서버가 LLM 응답을 최대 70초 기다리므로 그보다 길게 잡는다.
+      chatReceiveTimeout: const Duration(seconds: 75),
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 15),
     );
@@ -132,6 +140,8 @@ class AppConfig {
   final String userMePath;
   final String userFeedbackPath;
   final String landingStatsPath;
+  final String chatBasePath;
+  final Duration chatReceiveTimeout;
   final Duration connectTimeout;
   final Duration receiveTimeout;
 }

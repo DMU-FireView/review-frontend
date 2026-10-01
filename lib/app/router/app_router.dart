@@ -26,6 +26,7 @@ import 'package:re_view_front/features/review_report/presentation/pages/review_r
 import 'package:re_view_front/features/settings/presentation/pages/settings_page.dart';
 import 'package:re_view_front/features/feedback_history/presentation/pages/feedback_history_page.dart';
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
+import 'package:re_view_front/features/chat/presentation/widgets/popup_route_tracker.dart';
 
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(Ref ref) {
@@ -39,6 +40,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: RoutePaths.landing,
     refreshListenable: authNotifier,
+    observers: [popupRouteTracker],
     redirect: (context, state) {
       final isLoggedIn = ref.read(isLoggedInProvider);
       final tokenStore = ref.read(authTokenStoreProvider.notifier);
