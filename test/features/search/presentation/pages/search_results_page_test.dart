@@ -12,6 +12,8 @@ import 'package:re_view_front/features/search/domain/usecases/search_products_us
 import 'package:re_view_front/features/search/presentation/pages/search_results_page.dart';
 import 'package:re_view_front/features/search/presentation/providers/search_providers.dart';
 
+import '../../../../helpers/pump_app.dart';
+
 void main() {
   late GoRouter router;
 
@@ -39,9 +41,9 @@ void main() {
       overrides: [
         searchRepositoryProvider.overrideWithValue(_FakeSearchRepository()),
       ],
-      child: MaterialApp.router(
+      child: localizedApp(
         theme: AppTheme.light.copyWith(splashFactory: NoSplash.splashFactory),
-        routerConfig: router,
+        router: router,
       ),
     );
   }
