@@ -37,6 +37,14 @@ jobs:
         run: |
           cat > build/web/vercel.json << 'EOF'
           {
+            "headers": [
+              {
+                "source": "/assets/:path*",
+                "headers": [
+                  { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+                ]
+              }
+            ],
             "rewrites": [
               { "source": "/api/:path*", "destination": "https://api.beens.kr/api/:path*" },
               { "source": "/oauth2/:path*", "destination": "https://api.beens.kr/oauth2/:path*" },
@@ -79,6 +87,14 @@ jobs:
         run: |
           cat > build/web/vercel.json << 'EOF'
           {
+            "headers": [
+              {
+                "source": "/assets/:path*",
+                "headers": [
+                  { "key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800" }
+                ]
+              }
+            ],
             "rewrites": [
               { "source": "/api/:path*", "destination": "https://api.beens.kr/api/:path*" },
               { "source": "/oauth2/:path*", "destination": "https://api.beens.kr/oauth2/:path*" },
