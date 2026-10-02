@@ -1,4 +1,5 @@
 import 'package:re_view_front/features/chat/domain/entities/chat_message.dart';
+import 'package:re_view_front/features/chat/domain/entities/chat_session.dart';
 
 class ChatState {
   const ChatState({
@@ -8,6 +9,13 @@ class ChatState {
     this.sessionProductId,
     this.isSending = false,
     this.lastFailedQuestion,
+    this.isHistoryOpen = false,
+    this.sessions = const [],
+    this.sessionsPage = 0,
+    this.isLastSessionPage = true,
+    this.isLoadingSessions = false,
+    this.isLoadingMessages = false,
+    this.historyError,
   });
 
   final bool isOpen;
@@ -23,6 +31,14 @@ class ChatState {
   /// 마지막으로 전송에 실패한 질문. 다시 시도할 때 쓴다.
   final String? lastFailedQuestion;
 
+  final bool isHistoryOpen;
+  final List<ChatSession> sessions;
+  final int sessionsPage;
+  final bool isLastSessionPage;
+  final bool isLoadingSessions;
+  final bool isLoadingMessages;
+  final String? historyError;
+
   bool get hasConversation => messages.isNotEmpty;
 
   ChatState copyWith({
@@ -34,9 +50,26 @@ class ChatState {
     bool? isSending,
     String? lastFailedQuestion,
     bool clearLastFailedQuestion = false,
+    bool? isHistoryOpen,
+    List<ChatSession>? sessions,
+    int? sessionsPage,
+    bool? isLastSessionPage,
+    bool? isLoadingSessions,
+    bool? isLoadingMessages,
+    String? historyError,
+    bool clearHistoryError = false,
   }) {
     return ChatState(
       isOpen: isOpen ?? this.isOpen,
+      isHistoryOpen: isHistoryOpen ?? this.isHistoryOpen,
+      sessions: sessions ?? this.sessions,
+      sessionsPage: sessionsPage ?? this.sessionsPage,
+      isLastSessionPage: isLastSessionPage ?? this.isLastSessionPage,
+      isLoadingSessions: isLoadingSessions ?? this.isLoadingSessions,
+      isLoadingMessages: isLoadingMessages ?? this.isLoadingMessages,
+      historyError: clearHistoryError
+          ? null
+          : historyError ?? this.historyError,
       messages: messages ?? this.messages,
       sessionId: clearSession ? null : (sessionId ?? this.sessionId),
       sessionProductId: clearSession

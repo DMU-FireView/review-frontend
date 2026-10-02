@@ -251,5 +251,12 @@
   "notificationsLoading": "正在加载通知",
   "notificationsEmpty": "暂无通知",
   "notificationsEmptyBody": "举报、反馈处理结果和分析完成通知会显示在这里。",
-  "headerNotifications": "通知"
+  "headerNotifications": "通知",
+  "chatPreviousConversations": "历史对话",
+  "chatBackToConversation": "返回对话",
+  "chatHistoryLoading": "正在加载历史对话。",
+  "chatHistoryEmpty": "暂无历史对话。",
+  "chatHistoryLoadError": "无法加载历史对话，请重试。",
+  "chatHistoryLoadMore": "加载更多",
+  "chatHistoryUntitled": "无标题对话"
 }

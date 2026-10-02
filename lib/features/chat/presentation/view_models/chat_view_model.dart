@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/chat/domain/entities/chat_message.dart';
+import 'package:re_view_front/features/chat/domain/entities/chat_session.dart';
 import 'package:re_view_front/features/chat/domain/repositories/chat_repository.dart';
 import 'package:re_view_front/features/chat/presentation/providers/chat_providers.dart';
 import 'package:re_view_front/features/chat/presentation/view_models/chat_state.dart';
@@ -12,6 +13,7 @@ class ChatViewModel extends Notifier<ChatState> {
 
   /// 대화를 초기화할 때마다 올린다. 응답이 늦게 와도 이미 지운 대화에 붙지 않게 한다.
   int _generation = 0;
+  int _historyRequest = 0;
 
   @override
   ChatState build() {
@@ -41,7 +43,13 @@ class ChatViewModel extends Notifier<ChatState> {
   /// [productId]는 새 대화를 시작할 때만 서버에 반영된다.
   Future<void> send(String question, {int? productId}) async {
     final text = question.trim();
-    if (text.isEmpty || state.isSending) return;
+    if (text.isEmpty ||
+        state.isSending ||
+        state.isHistoryOpen ||
+        state.isLoadingMessages ||
+        !ref.read(isLoggedInProvider)) {
+      return;
+    }
 
     final isNewSession = state.sessionId == null;
     final generation = _generation;
@@ -94,6 +102,108 @@ class ChatViewModel extends Notifier<ChatState> {
             error: _errorKindOf(failure),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> showHistory() async {
+    if (!ref.read(isLoggedInProvider) ||
+        state.isSending ||
+        state.isLoadingMessages ||
+        state.isLoadingSessions) {
+      return;
+    }
+    state = state.copyWith(
+      isHistoryOpen: true,
+      sessions: [],
+      sessionsPage: 0,
+      isLastSessionPage: true,
+      clearHistoryError: true,
+    );
+    await _loadSessions(0);
+  }
+
+  Future<void> loadMoreSessions() async {
+    if (!state.isHistoryOpen ||
+        state.isLastSessionPage ||
+        state.isLoadingSessions ||
+        state.isLoadingMessages ||
+        !ref.read(isLoggedInProvider)) {
+      return;
+    }
+    await _loadSessions(state.sessionsPage + 1);
+  }
+
+  Future<void> _loadSessions(int page) async {
+    final generation = _generation;
+    final request = ++_historyRequest;
+    state = state.copyWith(isLoadingSessions: true, clearHistoryError: true);
+    final result = await _repository.getSessions(page: page, size: 20);
+    if (!ref.mounted ||
+        generation != _generation ||
+        request != _historyRequest ||
+        !ref.read(isLoggedInProvider)) {
+      return;
+    }
+    result.when(
+      success: (loaded) {
+        final items = page == 0
+            ? loaded.items
+            : [...state.sessions, ...loaded.items];
+        final seen = <int>{};
+        state = state.copyWith(
+          sessions: [
+            for (final session in items)
+              if (seen.add(session.id)) session,
+          ],
+          sessionsPage: loaded.page,
+          isLastSessionPage: loaded.isLast,
+          isLoadingSessions: false,
+        );
+      },
+      failure: (failure) => state = state.copyWith(
+        isLoadingSessions: false,
+        historyError: failure.message,
+      ),
+    );
+  }
+
+  void closeHistory() {
+    ++_historyRequest;
+    if (state.isLoadingMessages) ++_generation;
+    state = state.copyWith(
+      isHistoryOpen: false,
+      isLoadingSessions: false,
+      isLoadingMessages: false,
+      clearHistoryError: true,
+    );
+  }
+
+  Future<void> resumeSession(ChatSession session) async {
+    if (!ref.read(isLoggedInProvider) || state.isSending) return;
+    final generation = ++_generation;
+    state = state.copyWith(
+      isHistoryOpen: true,
+      isLoadingMessages: true,
+      isLoadingSessions: false,
+      clearHistoryError: true,
+    );
+    final result = await _repository.getSessionMessages(session.id);
+    if (!ref.mounted ||
+        generation != _generation ||
+        !ref.read(isLoggedInProvider)) {
+      return;
+    }
+    result.when(
+      success: (messages) => state = ChatState(
+        isOpen: state.isOpen,
+        sessionId: session.id,
+        sessionProductId: int.tryParse(session.productId ?? ''),
+        messages: messages,
+      ),
+      failure: (failure) => state = state.copyWith(
+        isLoadingMessages: false,
+        historyError: failure.message,
       ),
     );
   }

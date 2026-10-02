@@ -783,4 +783,25 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get headerNotifications => '通知';
+
+  @override
+  String get chatPreviousConversations => '以前の会話';
+
+  @override
+  String get chatBackToConversation => '会話に戻る';
+
+  @override
+  String get chatHistoryLoading => '以前の会話を読み込んでいます。';
+
+  @override
+  String get chatHistoryEmpty => '以前の会話はありません。';
+
+  @override
+  String get chatHistoryLoadError => '以前の会話を読み込めませんでした。もう一度お試しください。';
+
+  @override
+  String get chatHistoryLoadMore => 'さらに読み込む';
+
+  @override
+  String get chatHistoryUntitled => 'タイトルのない会話';
 }

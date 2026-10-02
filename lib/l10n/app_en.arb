@@ -267,5 +267,12 @@
   "notificationsLoading": "Loading notifications",
   "notificationsEmpty": "No notifications yet",
   "notificationsEmptyBody": "We'll let you know here when reports, feedback, or analyses are processed.",
-  "headerNotifications": "Alerts"
+  "headerNotifications": "Alerts",
+  "chatPreviousConversations": "Previous conversations",
+  "chatBackToConversation": "Back to conversation",
+  "chatHistoryLoading": "Loading previous conversations.",
+  "chatHistoryEmpty": "No previous conversations.",
+  "chatHistoryLoadError": "Could not load previous conversations. Please try again.",
+  "chatHistoryLoadMore": "Load more",
+  "chatHistoryUntitled": "Untitled conversation"
 }

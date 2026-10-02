@@ -782,4 +782,25 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get headerNotifications => '通知';
+
+  @override
+  String get chatPreviousConversations => '历史对话';
+
+  @override
+  String get chatBackToConversation => '返回对话';
+
+  @override
+  String get chatHistoryLoading => '正在加载历史对话。';
+
+  @override
+  String get chatHistoryEmpty => '暂无历史对话。';
+
+  @override
+  String get chatHistoryLoadError => '无法加载历史对话，请重试。';
+
+  @override
+  String get chatHistoryLoadMore => '加载更多';
+
+  @override
+  String get chatHistoryUntitled => '无标题对话';
 }

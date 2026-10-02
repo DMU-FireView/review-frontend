@@ -816,4 +816,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get headerNotifications => 'Alerts';
+
+  @override
+  String get chatPreviousConversations => 'Previous conversations';
+
+  @override
+  String get chatBackToConversation => 'Back to conversation';
+
+  @override
+  String get chatHistoryLoading => 'Loading previous conversations.';
+
+  @override
+  String get chatHistoryEmpty => 'No previous conversations.';
+
+  @override
+  String get chatHistoryLoadError =>
+      'Could not load previous conversations. Please try again.';
+
+  @override
+  String get chatHistoryLoadMore => 'Load more';
+
+  @override
+  String get chatHistoryUntitled => 'Untitled conversation';
 }
