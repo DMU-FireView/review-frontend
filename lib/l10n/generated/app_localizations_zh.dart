@@ -196,15 +196,6 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get settingsAccountLinkedServices => '关联服务';
-
-  @override
-  String get settingsAccountConnected => '已关联';
-
-  @override
-  String get settingsAccountDisconnected => '未关联';
-
-  @override
   String get settingsLanguageSection => '语言设置';
 
   @override

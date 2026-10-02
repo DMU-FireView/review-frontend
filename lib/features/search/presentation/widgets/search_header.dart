@@ -13,6 +13,8 @@ import 'package:re_view_front/features/home/presentation/widgets/home/search_bar
     as home;
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
+import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 
 class SearchHeader extends ConsumerWidget {
   const SearchHeader({
@@ -130,15 +132,14 @@ class DesktopSearchHeader extends StatelessWidget {
             children: [
               HomeLogo(onTap: () => context.go(RoutePaths.home)),
               const SizedBox(width: AppSpacing.lg),
-              const HeaderLink(label: '카테고리'),
-              const SizedBox(width: AppSpacing.md),
-              const HeaderLink(label: '랭킹'),
-              const SizedBox(width: AppSpacing.md),
-              const HeaderLink(label: '기획전'),
-              const SizedBox(width: AppSpacing.md),
-              const HeaderLink(label: '브랜드'),
-              const SizedBox(width: AppSpacing.md),
-              const HeaderLink(label: '리뷰 인사이트'),
+              // 홈 상단 메뉴와 같은 항목·이동을 쓴다.
+              for (final item in homeNavItems.skip(1)) ...[
+                HeaderLink(
+                  label: item,
+                  onTap: () => openHomeNavItem(context, item),
+                ),
+                const SizedBox(width: AppSpacing.md),
+              ],
             ],
           ),
         ),
@@ -254,17 +255,25 @@ class MobileSearchHeader extends StatelessWidget {
 }
 
 class HeaderLink extends StatelessWidget {
-  const HeaderLink({super.key, required this.label});
+  const HeaderLink({super.key, required this.label, this.onTap});
 
   final String label;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-        color: AppColors.textSecondary,
-        fontWeight: FontWeight.w700,
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.xs),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: AppColors.textSecondary,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ),
     );
   }

@@ -67,9 +67,6 @@
   "settingsAccountLabelMemberType": "Member Type",
   "settingsAccountDefaultName": "User",
   "settingsAccountMemberLabel": "{role} Member",
-  "settingsAccountLinkedServices": "Connected Services",
-  "settingsAccountConnected": "Connected",
-  "settingsAccountDisconnected": "Not connected",
 
   "settingsLanguageSection": "Language",
   "settingsLanguageApplyNow": "Changes apply immediately.",

@@ -205,15 +205,6 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get settingsAccountLinkedServices => 'Connected Services';
-
-  @override
-  String get settingsAccountConnected => 'Connected';
-
-  @override
-  String get settingsAccountDisconnected => 'Not connected';
-
-  @override
   String get settingsLanguageSection => 'Language';
 
   @override
