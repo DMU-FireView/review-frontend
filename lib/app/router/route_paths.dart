@@ -16,6 +16,7 @@ abstract final class RoutePaths {
   static const settings = '/settings';
   static const reviewReport = '/report/review';
   static const feedbackHistory = '/feedback-history';
+  static const notifications = '/notifications';
 
   static const admin = '/admin';
   static const adminReviews = '/admin/reviews';
@@ -42,6 +43,7 @@ abstract final class RouteNames {
   static const settings = 'settings';
   static const reviewReport = 'reviewReport';
   static const feedbackHistory = 'feedbackHistory';
+  static const notifications = 'notifications';
 
   static const admin = 'admin';
   static const adminReviews = 'adminReviews';

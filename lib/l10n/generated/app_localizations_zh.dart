@@ -656,4 +656,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AI 回答仅供参考，可能有误。';
+
+  @override
+  String get notificationsTitle => '通知';
+
+  @override
+  String get notificationsMarkAllRead => '全部已读';
+
+  @override
+  String get notificationsLoading => '正在加载通知';
+
+  @override
+  String get notificationsEmpty => '暂无通知';
+
+  @override
+  String get notificationsEmptyBody => '举报、反馈处理结果和分析完成通知会显示在这里。';
+
+  @override
+  String get headerNotifications => '通知';
 }

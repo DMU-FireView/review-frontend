@@ -656,4 +656,22 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AI 답변은 참고용이며 틀릴 수 있어요.';
+
+  @override
+  String get notificationsTitle => '알림';
+
+  @override
+  String get notificationsMarkAllRead => '모두 읽음';
+
+  @override
+  String get notificationsLoading => '알림을 불러오는 중이에요';
+
+  @override
+  String get notificationsEmpty => '새 알림이 없어요';
+
+  @override
+  String get notificationsEmptyBody => '신고·피드백 처리 결과와 분석 완료 소식을 여기서 알려드려요.';
+
+  @override
+  String get headerNotifications => '알림';
 }

@@ -15,6 +15,10 @@ import 'package:re_view_front/features/home/presentation/widgets/home/search_bar
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
+import 'package:re_view_front/features/notifications/presentation/providers/notification_providers.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 typedef SearchSuggestionsRequested =
     Future<List<String>> Function(String query);
@@ -209,6 +213,10 @@ class HomeHeader extends ConsumerWidget {
         cartCount ?? ref.watch(cartItemCountProvider).value ?? 0;
     final effectiveWishlistCount =
         wishlistCount ?? ref.watch(wishlistItemCountProvider).value ?? 0;
+    final unreadNotificationCount = isLoggedIn
+        ? ref.watch(unreadNotificationCountProvider).value ?? 0
+        : 0;
+    void openNotifications() => context.go(RoutePaths.notifications);
 
     return DecoratedBox(
       decoration: const BoxDecoration(
@@ -228,7 +236,8 @@ class HomeHeader extends ConsumerWidget {
               ? _MobileHeader(
                   onLogoPressed: onLogoPressed,
                   onLoginPressed: onLoginPressed,
-                  onNotificationPressed: onLoginPressed,
+                  onNotificationPressed: openNotifications,
+                  unreadNotificationCount: unreadNotificationCount,
                   onCartPressed: onCartPressed,
                   onSearchSubmitted: onSearchSubmitted,
                   searchKeywords: searchKeywords,
@@ -258,6 +267,8 @@ class HomeHeader extends ConsumerWidget {
                   searchFocusNode: searchFocusNode,
                   cartCount: effectiveCartCount,
                   wishlistCount: effectiveWishlistCount,
+                  onNotificationPressed: openNotifications,
+                  unreadNotificationCount: unreadNotificationCount,
                   isLoggedIn: isLoggedIn,
                   nickname: nickname,
                   onMyPagePressed: onMyPagePressed,
@@ -288,6 +299,8 @@ class _DesktopHeader extends StatelessWidget {
     this.searchFocusNode,
     this.cartCount,
     this.wishlistCount,
+    this.onNotificationPressed,
+    this.unreadNotificationCount = 0,
     this.isLoggedIn = false,
     this.nickname,
     this.onMyPagePressed,
@@ -311,6 +324,8 @@ class _DesktopHeader extends StatelessWidget {
   final FocusNode? searchFocusNode;
   final int? cartCount;
   final int? wishlistCount;
+  final VoidCallback? onNotificationPressed;
+  final int unreadNotificationCount;
   final bool isLoggedIn;
   final String? nickname;
   final VoidCallback? onMyPagePressed;
@@ -355,7 +370,7 @@ class _DesktopHeader extends StatelessWidget {
               ),
             ),
             SizedBox(
-              width: 240,
+              width: isLoggedIn ? 300 : 240,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -366,6 +381,12 @@ class _DesktopHeader extends StatelessWidget {
                       onProfileWishPressed: onProfileWishPressed,
                       onProfileOrderPressed: onProfileOrderPressed,
                       onLogoutPressed: onLogoutPressed,
+                    ),
+                    _HeaderAction(
+                      icon: Icons.notifications_none,
+                      label: AppLocalizations.of(context).headerNotifications,
+                      onTap: onNotificationPressed,
+                      badge: _badgeLabel(unreadNotificationCount),
                     ),
                     _HeaderAction(
                       icon: Icons.favorite_border,
@@ -1553,6 +1574,7 @@ class _MobileHeader extends StatelessWidget {
     this.onLogoPressed,
     required this.onLoginPressed,
     required this.onNotificationPressed,
+    this.unreadNotificationCount = 0,
     required this.onCartPressed,
     this.onSearchSubmitted,
     this.searchKeywords = const [],
@@ -1570,6 +1592,7 @@ class _MobileHeader extends StatelessWidget {
   final VoidCallback? onLogoPressed;
   final VoidCallback onLoginPressed;
   final VoidCallback onNotificationPressed;
+  final int unreadNotificationCount;
   final VoidCallback onCartPressed;
   final ValueChanged<String>? onSearchSubmitted;
   final List<String> searchKeywords;
@@ -1605,6 +1628,16 @@ class _MobileHeader extends StatelessWidget {
                 tooltip: '로그인',
                 onPressed: onLoginPressed,
                 icon: const Icon(Icons.person_outline),
+              ),
+            if (isLoggedIn)
+              IconButton(
+                tooltip: AppLocalizations.of(context).headerNotifications,
+                onPressed: onNotificationPressed,
+                icon: Badge(
+                  isLabelVisible: unreadNotificationCount > 0,
+                  label: Text(_badgeLabel(unreadNotificationCount) ?? ''),
+                  child: const Icon(Icons.notifications_none),
+                ),
               ),
             IconButton(
               tooltip: '장바구니',
@@ -1759,15 +1792,21 @@ class _HeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          displayName,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: _isOpen
-                                    ? AppColors.primary
-                                    : AppColors.textPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
+                        // 긴 닉네임이 헤더 액션 줄을 밀어내지 않게 폭을 제한한다.
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 64),
+                          child: Text(
+                            displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: _isOpen
+                                      ? AppColors.primary
+                                      : AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
                         ),
                         const SizedBox(width: 2),
                         Icon(
@@ -1991,4 +2030,10 @@ class _HeaderAction extends StatelessWidget {
       ),
     );
   }
+}
+
+/// 배지 숫자. 0이면 표시하지 않고, 100 이상은 99+로 줄인다.
+String? _badgeLabel(int count) {
+  if (count <= 0) return null;
+  return count > 99 ? '99+' : '$count';
 }
