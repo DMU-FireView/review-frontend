@@ -97,12 +97,6 @@ flutter:
   fonts:
     - family: Freesentation
       fonts:
-        - asset: assets/fonts/Freesentation-1Thin.ttf
-          weight: 100
-        - asset: assets/fonts/Freesentation-2ExtraLight.ttf
-          weight: 200
-        - asset: assets/fonts/Freesentation-3Light.ttf
-          weight: 300
         - asset: assets/fonts/Freesentation-4Regular.ttf
           weight: 400
         - asset: assets/fonts/Freesentation-5Medium.ttf
