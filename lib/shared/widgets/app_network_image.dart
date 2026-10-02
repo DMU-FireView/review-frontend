@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
+import 'package:re_view_front/core/platform/web_image_element.dart';
 
 class AppNetworkImage extends StatelessWidget {
   const AppNetworkImage({
@@ -38,17 +39,10 @@ class AppNetworkImage extends StatelessWidget {
       child = _Placeholder(icon: placeholderIcon, iconSize: iconSize);
     } else if (kIsWeb) {
       // HtmlElementView로 <img> 태그 직접 렌더링 → 외부 CDN 이미지 CORS 우회
-      final objectFit = _objectFit;
-      child = HtmlElementView.fromTagName(
-        tagName: 'img',
-        onElementCreated: (Object element) {
-          final img = element as dynamic;
-          img.src = url;
-          img.style.width = '100%';
-          img.style.height = '100%';
-          img.style.objectFit = objectFit;
-          img.style.display = 'block';
-        },
+      child = _WebImage(
+        url: url,
+        objectFit: _objectFit,
+        placeholder: _Placeholder(icon: placeholderIcon, iconSize: iconSize),
       );
     } else {
       child = Image.network(
@@ -68,6 +62,53 @@ class AppNetworkImage extends StatelessWidget {
       return ClipRRect(borderRadius: borderRadius!, child: child);
     }
     return child;
+  }
+}
+
+/// 웹 `<img>` 렌더링. 받는 동안에는 배경색을 깔고, 실패하면 [placeholder]로 바꾼다.
+class _WebImage extends StatefulWidget {
+  const _WebImage({
+    required this.url,
+    required this.objectFit,
+    required this.placeholder,
+  });
+
+  final String url;
+  final String objectFit;
+  final Widget placeholder;
+
+  @override
+  State<_WebImage> createState() => _WebImageState();
+}
+
+class _WebImageState extends State<_WebImage> {
+  bool _failed = false;
+
+  @override
+  void didUpdateWidget(_WebImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) _failed = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_failed) return widget.placeholder;
+    return ColoredBox(
+      color: AppColors.surfaceMuted,
+      child: HtmlElementView.fromTagName(
+        // url이 바뀌면 새 <img>를 만들어 이전 오류 리스너가 남지 않게 한다.
+        key: ValueKey(widget.url),
+        tagName: 'img',
+        onElementCreated: (element) => configureWebImageElement(
+          element,
+          url: widget.url,
+          objectFit: widget.objectFit,
+          onError: () {
+            if (mounted) setState(() => _failed = true);
+          },
+        ),
+      ),
+    );
   }
 }
 
