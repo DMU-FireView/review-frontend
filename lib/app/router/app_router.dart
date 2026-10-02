@@ -74,7 +74,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         RoutePaths.notifications,
       };
       if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
-        return RoutePaths.login;
+        return _loginRedirect(state.uri);
       }
       const adminPages = {
         RoutePaths.admin,
@@ -84,7 +84,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         RoutePaths.adminUsers,
       };
       if (adminPages.contains(state.matchedLocation)) {
-        if (!isLoggedIn) return RoutePaths.login;
+        if (!isLoggedIn) return _loginRedirect(state.uri);
         if (!tokenStore.isAdmin) return RoutePaths.home;
       }
       return null;
@@ -106,7 +106,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: RoutePaths.login,
         name: RouteNames.login,
         pageBuilder: (context, state) =>
-            _buildTransitionPage(state, const LoginPage()),
+            _buildTransitionPage(
+              state,
+              LoginPage(from: state.uri.queryParameters['from']),
+            ),
       ),
       GoRoute(
         path: RoutePaths.signup,
@@ -315,4 +318,12 @@ Widget _buildTransition(
       child: child,
     ),
   );
+}
+
+/// 로그인이 필요한 화면에서 로그인 화면으로 보낼 때, 로그인 후 돌아올 위치를 담는다.
+String _loginRedirect(Uri target) {
+  return Uri(
+    path: RoutePaths.login,
+    queryParameters: {'from': target.toString()},
+  ).toString();
 }

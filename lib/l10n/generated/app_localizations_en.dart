@@ -1236,6 +1236,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDismissed => 'Dismissed';
 
   @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
+
+  @override
+  String get sessionExpiredLogin => 'Log in';
+
+  @override
   String get settingsAccountLabelLoginMethod => 'Sign-in method';
 
   @override

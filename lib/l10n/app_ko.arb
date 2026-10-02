@@ -873,6 +873,12 @@
   "adminDismissed": "기각",
 
 
+  "sessionExpiredMessage": "로그인이 만료됐어요. 다시 로그인해 주세요.",
+  "@sessionExpiredMessage": { "description": "401로 로그아웃됐을 때 알림" },
+
+  "sessionExpiredLogin": "로그인",
+  "@sessionExpiredLogin": { "description": "로그인 만료 알림의 이동 버튼" },
+
   "settingsAccountLabelLoginMethod": "로그인 방식",
   "@settingsAccountLabelLoginMethod": { "description": "계정 카드 로그인 방식 라벨" },
 

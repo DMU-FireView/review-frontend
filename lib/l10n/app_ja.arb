@@ -381,6 +381,8 @@
   "adminResolutionRate": "対応率{percent}%",
   "adminApplied": "反映済み",
   "adminDismissed": "却下",
+  "sessionExpiredMessage": "ログインの有効期限が切れました。もう一度ログインしてください。",
+  "sessionExpiredLogin": "ログイン",
   "settingsAccountLabelLoginMethod": "ログイン方法",
   "settingsLoginMethodEmail": "メール",
   "settingsLoginMethodNaver": "NAVER"

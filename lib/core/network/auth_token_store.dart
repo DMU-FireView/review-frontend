@@ -68,6 +68,13 @@ class AuthTokenStore extends Notifier<bool> {
     WebStorage.write(_keyOnboardingCompleted, 'true');
   }
 
+  /// 저장된 토큰으로 보낸 요청이 401을 받았을 때 부른다. 로그아웃하고 만료를 알린다.
+  void expireSession() {
+    if (_accessToken == null) return;
+    clear();
+    ref.read(sessionExpiredProvider.notifier).notify();
+  }
+
   void clear() {
     _accessToken = null;
     _tokenType = null;
@@ -81,4 +88,16 @@ class AuthTokenStore extends Notifier<bool> {
     WebStorage.remove(_keyRole);
     state = false;
   }
+}
+
+/// 로그인 만료 알림. 값은 만료가 일어난 횟수이며, 화면은 변화만 구독한다.
+final sessionExpiredProvider = NotifierProvider<SessionExpiredNotifier, int>(
+  SessionExpiredNotifier.new,
+);
+
+class SessionExpiredNotifier extends Notifier<int> {
+  @override
+  int build() => 0;
+
+  void notify() => state++;
 }

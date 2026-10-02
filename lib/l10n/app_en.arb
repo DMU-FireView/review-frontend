@@ -397,6 +397,8 @@
   "adminResolutionRate": "Resolution rate {percent}%",
   "adminApplied": "Applied",
   "adminDismissed": "Dismissed",
+  "sessionExpiredMessage": "Your session has expired. Please log in again.",
+  "sessionExpiredLogin": "Log in",
   "settingsAccountLabelLoginMethod": "Sign-in method",
   "settingsLoginMethodEmail": "Email",
   "settingsLoginMethodNaver": "Naver"

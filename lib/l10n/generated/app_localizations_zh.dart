@@ -1197,6 +1197,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adminDismissed => '已驳回';
 
   @override
+  String get sessionExpiredMessage => '登录已过期，请重新登录。';
+
+  @override
+  String get sessionExpiredLogin => '登录';
+
+  @override
   String get settingsAccountLabelLoginMethod => '登录方式';
 
   @override
