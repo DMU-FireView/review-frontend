@@ -1355,6 +1355,42 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'AI 답변은 참고용이며 틀릴 수 있어요.'**
   String get chatDisclaimer;
+
+  /// 알림 화면 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get notificationsTitle;
+
+  /// 모두 읽음 처리 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'모두 읽음'**
+  String get notificationsMarkAllRead;
+
+  /// 알림 로딩 문구
+  ///
+  /// In ko, this message translates to:
+  /// **'알림을 불러오는 중이에요'**
+  String get notificationsLoading;
+
+  /// 알림이 없을 때 제목
+  ///
+  /// In ko, this message translates to:
+  /// **'새 알림이 없어요'**
+  String get notificationsEmpty;
+
+  /// 알림이 없을 때 설명
+  ///
+  /// In ko, this message translates to:
+  /// **'신고·피드백 처리 결과와 분석 완료 소식을 여기서 알려드려요.'**
+  String get notificationsEmptyBody;
+
+  /// 헤더 알림 버튼 라벨
+  ///
+  /// In ko, this message translates to:
+  /// **'알림'**
+  String get headerNotifications;
 }
 
 class _AppLocalizationsDelegate

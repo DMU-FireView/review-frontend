@@ -225,5 +225,11 @@
   "chatErrorNetwork": "Please check your network connection.",
   "chatErrorUnknown": "Couldn't get an answer.",
   "chatRetry": "Retry",
-  "chatDisclaimer": "AI answers are for reference and may be wrong."
+  "chatDisclaimer": "AI answers are for reference and may be wrong.",
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsLoading": "Loading notifications",
+  "notificationsEmpty": "No notifications yet",
+  "notificationsEmptyBody": "We'll let you know here when reports, feedback, or analyses are processed.",
+  "headerNotifications": "Alerts"
 }

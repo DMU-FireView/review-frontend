@@ -657,4 +657,22 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AIの回答は参考情報であり、誤りを含む場合があります。';
+
+  @override
+  String get notificationsTitle => '通知';
+
+  @override
+  String get notificationsMarkAllRead => 'すべて既読';
+
+  @override
+  String get notificationsLoading => '通知を読み込んでいます';
+
+  @override
+  String get notificationsEmpty => '通知はありません';
+
+  @override
+  String get notificationsEmptyBody => '通報・フィードバックの処理結果や分析完了をここでお知らせします。';
+
+  @override
+  String get headerNotifications => '通知';
 }

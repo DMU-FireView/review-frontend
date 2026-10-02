@@ -209,5 +209,11 @@
   "chatErrorNetwork": "请检查网络连接。",
   "chatErrorUnknown": "未能获取回答。",
   "chatRetry": "重试",
-  "chatDisclaimer": "AI 回答仅供参考，可能有误。"
+  "chatDisclaimer": "AI 回答仅供参考，可能有误。",
+  "notificationsTitle": "通知",
+  "notificationsMarkAllRead": "全部已读",
+  "notificationsLoading": "正在加载通知",
+  "notificationsEmpty": "暂无通知",
+  "notificationsEmptyBody": "举报、反馈处理结果和分析完成通知会显示在这里。",
+  "headerNotifications": "通知"
 }

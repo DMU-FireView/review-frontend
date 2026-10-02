@@ -26,6 +26,7 @@ import 'package:re_view_front/features/review_report/presentation/pages/review_r
 import 'package:re_view_front/features/settings/presentation/pages/settings_page.dart';
 import 'package:re_view_front/features/feedback_history/presentation/pages/feedback_history_page.dart';
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
+import 'package:re_view_front/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/popup_route_tracker.dart';
 
 class _AuthNotifier extends ChangeNotifier {
@@ -66,6 +67,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         RoutePaths.cart,
         RoutePaths.settings,
         RoutePaths.feedbackHistory,
+        RoutePaths.notifications,
       };
       if (!isLoggedIn && protectedPages.contains(state.matchedLocation)) {
         return RoutePaths.login;
@@ -211,6 +213,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         name: RouteNames.feedbackHistory,
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const FeedbackHistoryPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.notifications,
+        name: RouteNames.notifications,
+        pageBuilder: (context, state) =>
+            _buildTransitionPage(state, const NotificationsPage()),
       ),
       ShellRoute(
         builder: (context, state, child) => AdminShell(child: child),

@@ -23,6 +23,7 @@ import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/loading_view.dart';
+import 'package:re_view_front/features/notifications/presentation/providers/notification_providers.dart';
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
@@ -253,15 +254,18 @@ class _MyPageBody extends StatelessWidget {
     final mainContent = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _StatGrid(
-          wishlistCount: wishlistCount,
-          recentCount: recentProducts.length,
-          riskyCount: riskyProducts.length,
-          notificationCount: _notificationCount,
-          onWishlistTap: onWishlistTap,
-          onRecentTap: onRecentTap,
-          onReviewTap: onReviewTap,
-          onNotificationTap: onSettingsTap,
+        Consumer(
+          builder: (context, ref, _) => _StatGrid(
+            wishlistCount: wishlistCount,
+            recentCount: recentProducts.length,
+            riskyCount: riskyProducts.length,
+            notificationCount:
+                ref.watch(unreadNotificationCountProvider).value ?? 0,
+            onWishlistTap: onWishlistTap,
+            onRecentTap: onRecentTap,
+            onReviewTap: onReviewTap,
+            onNotificationTap: () => context.go(RoutePaths.notifications),
+          ),
         ),
         const SizedBox(height: AppSpacing.xl),
         KeyedSubtree(
@@ -382,10 +386,6 @@ class _MyPageBody extends StatelessWidget {
 
     final total = scoredItems.fold<double>(0, (sum, item) => sum + item.avgRti);
     return total / scoredItems.length;
-  }
-
-  int get _notificationCount {
-    return _wishlistItems.where((item) => item.isNewAlert).length;
   }
 }
 
@@ -833,7 +833,7 @@ class _SavedProductsSection extends StatelessWidget {
   }
 }
 
-class _RecentActivitySection extends StatelessWidget {
+class _RecentActivitySection extends ConsumerWidget {
   const _RecentActivitySection({
     required this.savedItems,
     required this.recentProducts,
@@ -845,22 +845,41 @@ class _RecentActivitySection extends StatelessWidget {
   final ValueChanged<String> onProductTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 서버 활동 기록을 우선 쓰고, 불러오지 못하면 찜·최근 본 상품으로 대신한다.
+    final serverActivities = ref.watch(myActivitiesProvider).value;
     final activities = <_ActivityItem>[
-      for (final item in savedItems.take(2))
-        _ActivityItem(
-          icon: Icons.favorite_border,
-          title: '"${item.name}" 상품을 저장했어요.',
-          trailing: _relativeDate(item.savedAt),
-          onTap: () => onProductTap(item.productId.toString()),
-        ),
-      for (final item in recentProducts.take(2))
-        _ActivityItem(
-          icon: Icons.history,
-          title: '"${item.name}" 상품을 확인했어요.',
-          trailing: AppLocalizations.of(context).myPageRecentLabel,
-          onTap: () => onProductTap(item.id),
-        ),
+      if (serverActivities != null)
+        for (final activity in serverActivities)
+          _ActivityItem(
+            icon: activity.type == 'FEEDBACK_SUBMIT'
+                ? Icons.rate_review_outlined
+                : Icons.favorite_border,
+            title: activity.description,
+            trailing: _relativeDate(activity.createdAt),
+            onTap: () => switch (activity.type) {
+              'WISHLIST_ADD' when activity.targetId != null =>
+                onProductTap(activity.targetId!),
+              'FEEDBACK_SUBMIT' => context.go(RoutePaths.feedbackHistory),
+              _ => null,
+            },
+          )
+      else ...[
+        for (final item in savedItems.take(2))
+          _ActivityItem(
+            icon: Icons.favorite_border,
+            title: '"${item.name}" 상품을 저장했어요.',
+            trailing: _relativeDate(item.savedAt),
+            onTap: () => onProductTap(item.productId.toString()),
+          ),
+        for (final item in recentProducts.take(2))
+          _ActivityItem(
+            icon: Icons.history,
+            title: '"${item.name}" 상품을 확인했어요.',
+            trailing: AppLocalizations.of(context).myPageRecentLabel,
+            onTap: () => onProductTap(item.id),
+          ),
+      ],
     ];
 
     return _Panel(

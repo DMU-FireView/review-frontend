@@ -22,6 +22,7 @@ class AppConfig {
     required this.userFeedbackPath,
     required this.landingStatsPath,
     required this.chatBasePath,
+    required this.notificationBasePath,
     required this.chatReceiveTimeout,
     required this.connectTimeout,
     required this.receiveTimeout,
@@ -110,6 +111,10 @@ class AppConfig {
         'LANDING_STATS_PATH',
         defaultValue: '/api/landing/stats',
       ),
+      notificationBasePath: const String.fromEnvironment(
+        'NOTIFICATION_BASE_PATH',
+        defaultValue: '/api/notifications',
+      ),
       chatBasePath: const String.fromEnvironment(
         'CHAT_BASE_PATH',
         defaultValue: '/api/chat',
@@ -141,6 +146,7 @@ class AppConfig {
   final String userFeedbackPath;
   final String landingStatsPath;
   final String chatBasePath;
+  final String notificationBasePath;
   final Duration chatReceiveTimeout;
   final Duration connectTimeout;
   final Duration receiveTimeout;
