@@ -6,7 +6,6 @@ import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
-import 'package:re_view_front/features/category/domain/entities/product_category_resolver.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/home/domain/entities/trending_keyword.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
@@ -29,6 +28,7 @@ import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/product_card_skeleton.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -46,7 +46,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   final _benefitKey = GlobalKey();
   final _popularCategoryKey = GlobalKey();
   // locale-independent: 'home' = main content; anything else = placeholder tab label
-  String _selectedNavItem = 'home';
 
   @override
   void dispose() {
@@ -86,7 +85,7 @@ class _HomePageState extends ConsumerState<HomePage> {
           SliverToBoxAdapter(
             child: HomeHeader(
               navItems: homeNavItems,
-              selectedNavItem: _selectedNavItem,
+              selectedNavItem: '홈',
               onLoginPressed: () => context.go(RoutePaths.login),
               onWishPressed: () => context.go(RoutePaths.wishlist),
               onCartPressed: () => context.go(RoutePaths.cart),
@@ -108,197 +107,191 @@ class _HomePageState extends ConsumerState<HomePage> {
               onLogoutPressed: _handleLogout,
             ),
           ),
-          if (_selectedNavItem == 'home') ...[
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
-                child: _FadeUp(
-                  key: _heroKey,
-                  delay: 0,
-                  child: HeroBannerCarousel(
-                    items: banners,
-                    onBannerPressed: _handleBannerPressed,
-                  ),
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: EdgeInsets.only(top: context.isMobile ? 20 : 28),
+              child: _FadeUp(
+                key: _heroKey,
+                delay: 0,
+                child: HeroBannerCarousel(
+                  items: banners,
+                  onBannerPressed: _handleBannerPressed,
                 ),
               ),
             ),
-            SliverToBoxAdapter(
-              child: AppContentView(
-                maxWidth: 1440,
-                padding: _homeContentPadding(context),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _FadeUp(
-                      key: _categoryKey,
-                      delay: 60,
-                      child: QuickCategoryRow(
-                        items: quickCategories,
-                        onCategoryPressed: _handleCategoryPressed,
+          ),
+          SliverToBoxAdapter(
+            child: AppContentView(
+              maxWidth: 1440,
+              padding: _homeContentPadding(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _FadeUp(
+                    key: _categoryKey,
+                    delay: 60,
+                    child: QuickCategoryRow(
+                      items: quickCategories,
+                      onCategoryPressed: _handleCategoryPressed,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.xl),
+                  if (dashboardState is HomeDashboardLoading) ...[
+                    const ProductCardGridSkeleton(itemCount: 5),
+                    const SizedBox(height: AppSpacing.xl),
+                  ] else if (dashboardState is HomeDashboardFailure) ...[
+                    SizedBox(
+                      height: 280,
+                      child: AppErrorView(
+                        message: dashboardState.failure.message,
+                        onRetry: () => ref
+                            .read(homeDashboardViewModelProvider.notifier)
+                            .refresh(),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.xl),
-                    if (dashboardState is HomeDashboardLoading) ...[
-                      const ProductCardGridSkeleton(itemCount: 5),
-                      const SizedBox(height: AppSpacing.xl),
-                    ] else if (dashboardState is HomeDashboardFailure) ...[
-                      SizedBox(
-                        height: 280,
-                        child: AppErrorView(
-                          message: dashboardState.failure.message,
-                          onRetry: () => ref
-                              .read(homeDashboardViewModelProvider.notifier)
-                              .refresh(),
-                        ),
+                  ] else ...[
+                    _FadeUp(
+                      delay: 120,
+                      child: TrendingKeywordChips(
+                        keywords: dashboardKeywords,
+                        onKeywordTap: _handleKeywordSearch,
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-                    ] else ...[
-                      _FadeUp(
-                        delay: 120,
-                        child: TrendingKeywordChips(
-                          keywords: dashboardKeywords,
-                          onKeywordTap: _handleKeywordSearch,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xl),
-                    ],
-                    if (useWideCommerceGrid) ...[
-                      _FadeUp(
-                        key: _recommendationKey,
-                        delay: 180,
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.verified_outlined,
-                              color: AppColors.primary,
-                              size: 22,
-                            ),
-                            const SizedBox(width: AppSpacing.xs),
-                            Expanded(
-                              child: Text(
-                                AppLocalizations.of(context).homeRecommendedTitle,
-                                style: Theme.of(context).textTheme.titleMedium,
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () {},
-                              style: TextButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.xs,
-                                  vertical: AppSpacing.xxs,
-                                ),
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                foregroundColor: AppColors.textSecondary,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    AppLocalizations.of(context).homeViewAll,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .labelMedium
-                                        ?.copyWith(
-                                          color: AppColors.textSecondary,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                  ),
-                                  const SizedBox(width: 2),
-                                  const Icon(Icons.chevron_right, size: 16),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      ProductRecommendationSection(
-                        showHeader: false,
-                        products: dashboardProducts,
-                        onProductTap: _handleProductPressed,
-                      ),
-                      const SizedBox(height: 20),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                  ],
+                  if (useWideCommerceGrid) ...[
+                    _FadeUp(
+                      key: _recommendationKey,
+                      delay: 180,
+                      child: Row(
                         children: [
-                          const Expanded(
-                            child: _FadeUp(
-                              delay: 240,
-                              child: ReviewTrustInfoCard(),
+                          const Icon(
+                            Icons.verified_outlined,
+                            color: AppColors.primary,
+                            size: 22,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          Expanded(
+                            child: Text(
+                              AppLocalizations.of(context).homeRecommendedTitle,
+                              style: Theme.of(context).textTheme.titleMedium,
                             ),
                           ),
-                          const SizedBox(width: 20),
-                          Expanded(
-                            child: _FadeUp(
-                              key: _benefitKey,
-                              delay: 300,
-                              child: BenefitCTA(
-                                items: benefitItems,
-                                onBenefitPressed: () =>
-                                    context.go(RoutePaths.login),
+                          TextButton(
+                            onPressed: () {},
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.xs,
+                                vertical: AppSpacing.xxs,
                               ),
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              foregroundColor: AppColors.textSecondary,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  AppLocalizations.of(context).homeViewAll,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelMedium
+                                      ?.copyWith(
+                                        color: AppColors.textSecondary,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                ),
+                                const SizedBox(width: 2),
+                                const Icon(Icons.chevron_right, size: 16),
+                              ],
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20),
-                      _FadeUp(
-                        key: _popularCategoryKey,
-                        delay: 360,
-                        child: PopularCategorySection(
-                          items: popularCategories,
-                          onCategoryPressed: _handleCategoryPressed,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    ProductRecommendationSection(
+                      showHeader: false,
+                      products: dashboardProducts,
+                      onProductTap: _handleProductPressed,
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Expanded(
+                          child: _FadeUp(
+                            delay: 240,
+                            child: ReviewTrustInfoCard(),
+                          ),
                         ),
-                      ),
-                    ] else ...[
-                      _FadeUp(
-                        key: _recommendationKey,
-                        delay: 180,
-                        child: ProductRecommendationSection(
-                          products: dashboardProducts,
-                          onProductTap: _handleProductPressed,
+                        const SizedBox(width: 20),
+                        Expanded(
+                          child: _FadeUp(
+                            key: _benefitKey,
+                            delay: 300,
+                            child: BenefitCTA(
+                              items: benefitItems,
+                              onBenefitPressed: () =>
+                                  context.go(RoutePaths.login),
+                            ),
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    _FadeUp(
+                      key: _popularCategoryKey,
+                      delay: 360,
+                      child: PopularCategorySection(
+                        items: popularCategories,
+                        onCategoryPressed: _handleCategoryPressed,
                       ),
-                      const SizedBox(height: AppSpacing.xl),
-                      const _FadeUp(delay: 240, child: ReviewTrustInfoCard()),
-                      const SizedBox(height: AppSpacing.xl),
-                      _FadeUp(
-                        key: _benefitKey,
-                        delay: 300,
-                        child: BenefitCTA(
-                          items: benefitItems,
-                          onBenefitPressed: () => context.go(RoutePaths.login),
-                        ),
+                    ),
+                  ] else ...[
+                    _FadeUp(
+                      key: _recommendationKey,
+                      delay: 180,
+                      child: ProductRecommendationSection(
+                        products: dashboardProducts,
+                        onProductTap: _handleProductPressed,
                       ),
-                    ],
-                    if (!useWideCommerceGrid) ...[
-                      const SizedBox(height: AppSpacing.xl),
-                      _FadeUp(
-                        key: _popularCategoryKey,
-                        delay: 360,
-                        child: PopularCategorySection(
-                          items: popularCategories,
-                          onCategoryPressed: _handleCategoryPressed,
-                        ),
+                    ),
+                    const SizedBox(height: AppSpacing.xl),
+                    const _FadeUp(delay: 240, child: ReviewTrustInfoCard()),
+                    const SizedBox(height: AppSpacing.xl),
+                    _FadeUp(
+                      key: _benefitKey,
+                      delay: 300,
+                      child: BenefitCTA(
+                        items: benefitItems,
+                        onBenefitPressed: () => context.go(RoutePaths.login),
                       ),
-                    ],
-                    SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
+                    ),
                   ],
-                ),
+                  if (!useWideCommerceGrid) ...[
+                    const SizedBox(height: AppSpacing.xl),
+                    _FadeUp(
+                      key: _popularCategoryKey,
+                      delay: 360,
+                      child: PopularCategorySection(
+                        items: popularCategories,
+                        onCategoryPressed: _handleCategoryPressed,
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: context.isMobile ? 96 : AppSpacing.xxxl),
+                ],
               ),
             ),
-          ] else ...[
-            SliverToBoxAdapter(
-              child: _HomeTabPlaceholder(tab: _selectedNavItem),
-            ),
-          ],
+          ),
           const SliverToBoxAdapter(child: HomeFooter()),
         ],
       ),
       bottomNavigationBar: context.isMobile
           ? _HomeBottomTabs(
-              onHomePressed: () => _handleNavItemPressed('home'),
+              onHomePressed: () => _handleNavItemPressed('홈'),
               onCategoryPressed: () => _scrollTo(_categoryKey),
               onSearchPressed: () => _searchFocusNode.requestFocus(),
               onWishPressed: () => context.go(RoutePaths.wishlist),
@@ -324,20 +317,11 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   void _handleNavItemPressed(String item) {
-    final category = resolveProductCategory(item);
-    if (category != null) {
-      context.goNamed(
-        RouteNames.search,
-        queryParameters: {
-          'categoryId': category.id,
-          'category': category.label,
-        },
-      );
+    if (item == '홈') {
+      _scrollController.jumpTo(0);
       return;
     }
-
-    setState(() => _selectedNavItem = item);
-    _scrollController.jumpTo(0);
+    openHomeNavItem(context, item);
   }
 
   void _handleCategoryPressed(String label) {
@@ -494,44 +478,6 @@ class _FadeUpState extends State<_FadeUp> with SingleTickerProviderStateMixin {
     return FadeTransition(
       opacity: _opacity,
       child: SlideTransition(position: _offset, child: widget.child),
-    );
-  }
-}
-
-class _HomeTabPlaceholder extends StatelessWidget {
-  const _HomeTabPlaceholder({required this.tab});
-
-  final String tab;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: AppSpacing.xxxl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.construction_outlined,
-            size: 48,
-            color: AppColors.textTertiary,
-          ),
-          const SizedBox(height: AppSpacing.md),
-          Text(
-            tab,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            '준비 중인 콘텐츠입니다.',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: AppColors.textSecondary),
-          ),
-        ],
-      ),
     );
   }
 }

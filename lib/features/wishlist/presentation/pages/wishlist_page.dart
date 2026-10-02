@@ -21,6 +21,7 @@ import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/shimmer_box.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class WishlistPage extends ConsumerStatefulWidget {
   const WishlistPage({super.key});
@@ -62,7 +63,7 @@ class _WishlistPageState extends ConsumerState<WishlistPage> {
               onLoginPressed: () => context.go(RoutePaths.login),
               onWishPressed: () {},
               onCartPressed: () => context.go(RoutePaths.login),
-              onNavItemPressed: (_) => context.go(RoutePaths.home),
+              onNavItemPressed: (item) => openHomeNavItem(context, item),
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {

@@ -468,24 +468,6 @@ abstract class AppLocalizations {
   /// **'{role} 회원'**
   String settingsAccountMemberLabel(String role);
 
-  /// 연동 서비스 섹션 레이블
-  ///
-  /// In ko, this message translates to:
-  /// **'연동 서비스'**
-  String get settingsAccountLinkedServices;
-
-  /// 서비스 연동 상태
-  ///
-  /// In ko, this message translates to:
-  /// **'연동됨'**
-  String get settingsAccountConnected;
-
-  /// 서비스 미연동 상태
-  ///
-  /// In ko, this message translates to:
-  /// **'미연동'**
-  String get settingsAccountDisconnected;
-
   /// 언어 설정 섹션 제목
   ///
   /// In ko, this message translates to:

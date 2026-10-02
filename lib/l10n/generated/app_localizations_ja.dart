@@ -196,15 +196,6 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get settingsAccountLinkedServices => '連携サービス';
-
-  @override
-  String get settingsAccountConnected => '連携済み';
-
-  @override
-  String get settingsAccountDisconnected => '未連携';
-
-  @override
   String get settingsLanguageSection => '言語設定';
 
   @override

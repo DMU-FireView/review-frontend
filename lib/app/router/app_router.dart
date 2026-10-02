@@ -13,7 +13,6 @@ import 'package:re_view_front/features/auth/presentation/pages/login_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/oauth_callback_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/password_reset_page.dart';
 import 'package:re_view_front/features/auth/presentation/pages/signup_page.dart';
-import 'package:re_view_front/features/home/presentation/pages/home_dashboard_page.dart';
 import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/my_page/presentation/pages/my_page.dart';
@@ -28,6 +27,7 @@ import 'package:re_view_front/features/feedback_history/presentation/pages/feedb
 import 'package:re_view_front/features/wishlist/presentation/pages/wishlist_page.dart';
 import 'package:re_view_front/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/popup_route_tracker.dart';
+import 'package:re_view_front/features/search/presentation/view_models/search_results_state.dart';
 
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(Ref ref) {
@@ -43,6 +43,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: authNotifier,
     observers: [popupRouteTracker],
     redirect: (context, state) {
+      if (state.matchedLocation == RoutePaths.passwordReset ||
+          state.matchedLocation == RoutePaths.resetPassword) {
+        return null;
+      }
       final isLoggedIn = ref.read(isLoggedInProvider);
       final tokenStore = ref.read(authTokenStoreProvider.notifier);
       const authPages = {
@@ -116,11 +120,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) =>
             _buildTransitionPage(state, const OnboardingPage()),
       ),
+      // 예전에 쓰던 빈 대시보드 경로. 북마크 등으로 들어오면 마이페이지로 보낸다.
       GoRoute(
         path: RoutePaths.dashboard,
-        name: RouteNames.dashboard,
-        pageBuilder: (context, state) =>
-            _buildTransitionPage(state, const HomeDashboardPage()),
+        redirect: (context, state) => RoutePaths.myPage,
       ),
       GoRoute(
         path: RoutePaths.myPage,
@@ -137,6 +140,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             query: state.uri.queryParameters['q'] ?? '',
             categoryId: state.uri.queryParameters['categoryId'],
             categoryLabel: state.uri.queryParameters['category'],
+            initialSort: SearchSortOption.values
+                .where((o) => o.name == state.uri.queryParameters['sort'])
+                .firstOrNull,
           ),
         ),
       ),
@@ -169,8 +175,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.passwordReset,
         name: RouteNames.passwordReset,
-        pageBuilder: (context, state) =>
-            _buildTransitionPage(state, const PasswordResetPage()),
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          PasswordResetPage(resetToken: state.uri.queryParameters['token']),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.resetPassword,
+        name: RouteNames.resetPassword,
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          PasswordResetPage(resetToken: state.uri.queryParameters['token']),
+        ),
       ),
       GoRoute(
         path: RoutePaths.wishlist,
@@ -232,10 +248,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.adminReviews,
             name: RouteNames.adminReviews,
-            pageBuilder: (context, state) => _buildTransitionPage(
-              state,
-              const AdminSuspiciousReviewsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminSuspiciousReviewsPage()),
           ),
           GoRoute(
             path: RoutePaths.adminReports,
@@ -246,10 +260,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.adminAnalysisFeedbacks,
             name: RouteNames.adminAnalysisFeedbacks,
-            pageBuilder: (context, state) => _buildTransitionPage(
-              state,
-              const AdminAnalysisFeedbacksPage(),
-            ),
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminAnalysisFeedbacksPage()),
           ),
           GoRoute(
             path: RoutePaths.adminUsers,

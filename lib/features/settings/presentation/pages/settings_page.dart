@@ -22,6 +22,7 @@ import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -83,7 +84,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               onLoginPressed: () => context.go(RoutePaths.login),
               onWishPressed: () => context.go(RoutePaths.wishlist),
               onCartPressed: () => context.go(RoutePaths.cart),
-              onNavItemPressed: (_) => context.go(RoutePaths.home),
+              onNavItemPressed: (item) => openHomeNavItem(context, item),
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: _handleSearchSubmitted,
               searchKeywords: _keywordsFrom(dashboardState),
@@ -897,20 +898,6 @@ class _AccountPanel extends StatelessWidget {
                     context,
                   ).settingsAccountMemberLabel(profile!.role),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: AppSpacing.sm),
-          Text(
-            AppLocalizations.of(context).settingsAccountLinkedServices,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          _ServiceRow(label: '네이버 쇼핑', connected: true),
-          _ServiceRow(label: '쿠팡', connected: true),
-          _ServiceRow(label: '11번가', connected: false),
         ],
       ),
     );
@@ -952,52 +939,6 @@ class _InfoRow extends StatelessWidget {
     );
   }
 }
-
-class _ServiceRow extends StatelessWidget {
-  const _ServiceRow({required this.label, required this.connected});
-  final String label;
-  final bool connected;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              label,
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.textPrimary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            decoration: BoxDecoration(
-              color: connected ? AppColors.successSoft : AppColors.surfaceMuted,
-              borderRadius: BorderRadius.circular(999),
-            ),
-            child: Text(
-              connected
-                  ? AppLocalizations.of(context).settingsAccountConnected
-                  : AppLocalizations.of(context).settingsAccountDisconnected,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: connected ? AppColors.success : AppColors.textTertiary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────
-// Language section (right column bottom)
-// ─────────────────────────────────────────────────────────────
 
 class _LanguageSection extends StatelessWidget {
   const _LanguageSection({

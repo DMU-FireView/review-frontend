@@ -24,6 +24,7 @@ import 'package:re_view_front/shared/widgets/app_network_image.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/loading_view.dart';
 import 'package:re_view_front/features/notifications/presentation/providers/notification_providers.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class MyPage extends ConsumerStatefulWidget {
   const MyPage({super.key});
@@ -73,7 +74,7 @@ class _MyPageState extends ConsumerState<MyPage> {
               onLoginPressed: () => context.go(RoutePaths.login),
               onWishPressed: () => context.go(RoutePaths.wishlist),
               onCartPressed: () => context.go(RoutePaths.cart),
-              onNavItemPressed: (_) => context.go(RoutePaths.home),
+              onNavItemPressed: (item) => openHomeNavItem(context, item),
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: _handleSearchSubmitted,
               searchKeywords: _keywordsFrom(dashboardState),

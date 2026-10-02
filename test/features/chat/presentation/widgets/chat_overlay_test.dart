@@ -141,7 +141,13 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  for (final path in [RoutePaths.landing, RoutePaths.login, RoutePaths.admin]) {
+  for (final path in [
+    RoutePaths.landing,
+    RoutePaths.login,
+    RoutePaths.admin,
+    RoutePaths.resetPassword,
+    RoutePaths.passwordReset,
+  ]) {
     testWidgets('hides the launcher on $path', (tester) async {
       await _pumpOverlay(tester, path: path);
 
@@ -355,6 +361,8 @@ _pumpOverlay(
         RoutePaths.landing,
         RoutePaths.login,
         RoutePaths.admin,
+        RoutePaths.resetPassword,
+        RoutePaths.passwordReset,
         RoutePaths.productDetail,
       ])
         GoRoute(

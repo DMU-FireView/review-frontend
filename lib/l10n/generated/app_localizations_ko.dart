@@ -196,15 +196,6 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get settingsAccountLinkedServices => '연동 서비스';
-
-  @override
-  String get settingsAccountConnected => '연동됨';
-
-  @override
-  String get settingsAccountDisconnected => '미연동';
-
-  @override
   String get settingsLanguageSection => '언어 설정';
 
   @override

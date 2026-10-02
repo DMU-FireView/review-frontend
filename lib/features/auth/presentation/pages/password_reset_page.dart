@@ -13,9 +13,12 @@ import 'package:re_view_front/features/home/presentation/data/home_content.dart'
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class PasswordResetPage extends ConsumerStatefulWidget {
-  const PasswordResetPage({super.key});
+  const PasswordResetPage({this.resetToken, super.key});
+
+  final String? resetToken;
 
   @override
   ConsumerState<PasswordResetPage> createState() => _PasswordResetPageState();
@@ -38,6 +41,22 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
   }
 
   @override
+  void didUpdateWidget(covariant PasswordResetPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.resetToken != widget.resetToken) {
+      _emailController.removeListener(_onEmailChanged);
+      _newPasswordController.removeListener(_onNewPasswordChanged);
+      _confirmPasswordController.removeListener(_onConfirmPasswordChanged);
+      _emailController.clear();
+      _newPasswordController.clear();
+      _confirmPasswordController.clear();
+      _emailController.addListener(_onEmailChanged);
+      _newPasswordController.addListener(_onNewPasswordChanged);
+      _confirmPasswordController.addListener(_onConfirmPasswordChanged);
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.removeListener(_onEmailChanged);
     _newPasswordController.removeListener(_onNewPasswordChanged);
@@ -50,25 +69,25 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
 
   void _onEmailChanged() {
     ref
-        .read(passwordResetViewModelProvider.notifier)
+        .read(passwordResetViewModelProvider(widget.resetToken).notifier)
         .emailChanged(_emailController.text);
   }
 
   void _onNewPasswordChanged() {
     ref
-        .read(passwordResetViewModelProvider.notifier)
+        .read(passwordResetViewModelProvider(widget.resetToken).notifier)
         .newPasswordChanged(_newPasswordController.text);
   }
 
   void _onConfirmPasswordChanged() {
     ref
-        .read(passwordResetViewModelProvider.notifier)
+        .read(passwordResetViewModelProvider(widget.resetToken).notifier)
         .confirmPasswordChanged(_confirmPasswordController.text);
   }
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(passwordResetViewModelProvider);
+    final state = ref.watch(passwordResetViewModelProvider(widget.resetToken));
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -80,7 +99,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
             onLoginPressed: () => context.go(RoutePaths.login),
             onWishPressed: () => context.go(RoutePaths.home),
             onCartPressed: () => context.go(RoutePaths.home),
-            onNavItemPressed: (_) => context.go(RoutePaths.home),
+            onNavItemPressed: (item) => openHomeNavItem(context, item),
             onLogoPressed: () => context.go(RoutePaths.home),
           ),
           Expanded(
@@ -143,19 +162,27 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
       onSendCode: state.isLoading
           ? null
           : () => ref
-              .read(passwordResetViewModelProvider.notifier)
-              .sendVerificationCode(),
+                .read(
+                  passwordResetViewModelProvider(widget.resetToken).notifier,
+                )
+                .sendVerificationCode(),
       onProceed: state.isLoading
           ? null
           : () => ref
-              .read(passwordResetViewModelProvider.notifier)
-              .proceedToNewPassword(),
+                .read(
+                  passwordResetViewModelProvider(widget.resetToken).notifier,
+                )
+                .proceedToNewPassword(),
       onResetPassword: state.isLoading
           ? null
-          : () =>
-              ref.read(passwordResetViewModelProvider.notifier).resetPassword(),
-      onResendCode: () =>
-          ref.read(passwordResetViewModelProvider.notifier).resendCode(),
+          : () => ref
+                .read(
+                  passwordResetViewModelProvider(widget.resetToken).notifier,
+                )
+                .resetPassword(),
+      onResendCode: () => ref
+          .read(passwordResetViewModelProvider(widget.resetToken).notifier)
+          .resendCode(),
       onToggleNewPasswordVisibility: () =>
           setState(() => _obscureNewPassword = !_obscureNewPassword),
       onToggleConfirmPasswordVisibility: () =>
@@ -193,13 +220,11 @@ class _FadeUpState extends State<_FadeUp> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 420),
     );
-    _opacity =
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
+    _opacity = CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
     _offset = Tween<Offset>(
       begin: const Offset(0, 0.04),
       end: Offset.zero,
-    ).animate(
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     Future<void>.delayed(Duration(milliseconds: widget.delay), () {
       if (mounted) _controller.forward();
