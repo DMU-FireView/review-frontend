@@ -1197,4 +1197,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get adminDismissed => '却下';
+
+  @override
+  String get sessionExpiredMessage => 'ログインの有効期限が切れました。もう一度ログインしてください。';
+
+  @override
+  String get sessionExpiredLogin => 'ログイン';
 }

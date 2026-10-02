@@ -2381,6 +2381,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'기각'**
   String get adminDismissed;
+
+  /// 401로 로그아웃됐을 때 알림
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인이 만료됐어요. 다시 로그인해 주세요.'**
+  String get sessionExpiredMessage;
+
+  /// 로그인 만료 알림의 이동 버튼
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인'**
+  String get sessionExpiredLogin;
 }
 
 class _AppLocalizationsDelegate

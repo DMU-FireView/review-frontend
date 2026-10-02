@@ -18,7 +18,10 @@ import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.from});
+
+  /// 로그인 후 돌아갈 앱 내부 경로. 로그인이 필요한 화면에서 넘어왔을 때만 있다.
+  final String? from;
 
   @override
   ConsumerState<LoginPage> createState() => _LoginPageState();
@@ -51,10 +54,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     ref.listen<LoginState>(loginViewModelProvider, (previous, next) {
       if (next.status == LoginSubmissionStatus.success) {
+        final from = widget.from;
+        // 외부 주소로 보내지 않도록 앱 내부 경로만 허용한다.
+        final canReturn =
+            from != null &&
+            from.startsWith('/') &&
+            !from.startsWith('//') &&
+            !from.startsWith(RoutePaths.login);
         context.go(
-          next.onboardingCompleted
-              ? RoutePaths.home
-              : RoutePaths.onboarding,
+          !next.onboardingCompleted
+              ? RoutePaths.onboarding
+              : canReturn
+              ? from
+              : RoutePaths.home,
         );
       }
     });

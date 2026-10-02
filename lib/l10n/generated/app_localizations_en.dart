@@ -1234,4 +1234,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adminDismissed => 'Dismissed';
+
+  @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
+
+  @override
+  String get sessionExpiredLogin => 'Log in';
 }

@@ -380,5 +380,7 @@
   "adminFeedbackStats": "分析フィードバックの対応状況",
   "adminResolutionRate": "対応率{percent}%",
   "adminApplied": "反映済み",
-  "adminDismissed": "却下"
+  "adminDismissed": "却下",
+  "sessionExpiredMessage": "ログインの有効期限が切れました。もう一度ログインしてください。",
+  "sessionExpiredLogin": "ログイン"
 }

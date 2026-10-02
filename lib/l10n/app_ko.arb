@@ -870,5 +870,12 @@
   "adminResolutionRate": "처리율 {percent}%",
   "@adminResolutionRate": {"placeholders":{"percent":{"type":"String"}}},
   "adminApplied": "반영",
-  "adminDismissed": "기각"
+  "adminDismissed": "기각",
+
+
+  "sessionExpiredMessage": "로그인이 만료됐어요. 다시 로그인해 주세요.",
+  "@sessionExpiredMessage": { "description": "401로 로그아웃됐을 때 알림" },
+
+  "sessionExpiredLogin": "로그인",
+  "@sessionExpiredLogin": { "description": "로그인 만료 알림의 이동 버튼" }
 }
