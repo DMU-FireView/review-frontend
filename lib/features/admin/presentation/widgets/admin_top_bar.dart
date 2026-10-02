@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/responsive/breakpoints.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/notifications/presentation/providers/notification_providers.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class AdminTopBar extends ConsumerWidget implements PreferredSizeWidget {
@@ -19,6 +22,9 @@ class AdminTopBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final unreadCount = ref.watch(isLoggedInProvider)
+        ? ref.watch(unreadNotificationCountProvider).value ?? 0
+        : 0;
     final tokenStore = ref.read(authTokenStoreProvider.notifier);
     final nickname = tokenStore.nickname ?? l10n.adminSidebarTitle;
     final width = MediaQuery.sizeOf(context).width;
@@ -47,95 +53,21 @@ class AdminTopBar extends ConsumerWidget implements PreferredSizeWidget {
                   tooltip: l10n.adminSidebarTitle,
                 ),
               ),
-            Expanded(
-              child: _SearchField(hint: l10n.adminTopBarSearchHint),
-            ),
-            const SizedBox(width: AppSpacing.md),
-            _IconBadgeButton(
-              icon: Icons.notifications_none_rounded,
+            const Spacer(),
+            IconButton(
               tooltip: l10n.adminTopBarNotifications,
-              onTap: () {},
+              onPressed: () => context.go(RoutePaths.notifications),
+              icon: Badge(
+                isLabelVisible: unreadCount > 0,
+                label: Text(unreadCount > 99 ? '99+' : '$unreadCount'),
+                child: const Icon(Icons.notifications_none_rounded),
+              ),
+              color: AppColors.textSecondary,
             ),
             const SizedBox(width: AppSpacing.sm),
-            if (!isCompact) _ProfileBadge(nickname: nickname),
+            if (!isCompact) Flexible(child: _ProfileBadge(nickname: nickname)),
             if (isCompact) _ProfileAvatar(nickname: nickname),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SearchField extends StatelessWidget {
-  const _SearchField({required this.hint});
-
-  final String hint;
-
-  @override
-  Widget build(BuildContext context) {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 520),
-      child: TextField(
-        decoration: InputDecoration(
-          isDense: true,
-          hintText: hint,
-          hintStyle: const TextStyle(
-            color: AppColors.textTertiary,
-            fontSize: 14,
-          ),
-          prefixIcon: const Icon(
-            Icons.search_rounded,
-            size: 20,
-            color: AppColors.textSecondary,
-          ),
-          filled: true,
-          fillColor: AppColors.surfaceMuted,
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: AppSpacing.sm,
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(AppRadius.md),
-            borderSide: const BorderSide(color: AppColors.primary),
-          ),
-        ),
-        style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
-      ),
-    );
-  }
-}
-
-class _IconBadgeButton extends StatelessWidget {
-  const _IconBadgeButton({
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(AppRadius.sm),
-        child: Container(
-          width: 40,
-          height: 40,
-          alignment: Alignment.center,
-          child: Icon(icon, size: 22, color: AppColors.textSecondary),
         ),
       ),
     );
@@ -164,12 +96,16 @@ class _ProfileBadge extends StatelessWidget {
         children: [
           _ProfileAvatar(nickname: nickname),
           const SizedBox(width: AppSpacing.xs),
-          Text(
-            nickname,
-            style: const TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
+          Flexible(
+            child: Text(
+              nickname,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
         ],

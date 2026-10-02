@@ -100,7 +100,7 @@ class AdminReportViewModel extends Notifier<AdminReportState> {
   AdminReport _merge(AdminReport r, ReportStatus status, String? comment) =>
       r.copyWith(
         status: status,
-        statusDescription: status.label,
+        statusDescription: status.code,
         adminComment: comment,
         clearAdminComment: comment != null && comment.isEmpty,
         updatedAt: DateTime.now(),

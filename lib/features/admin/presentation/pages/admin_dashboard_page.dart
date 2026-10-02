@@ -25,11 +25,11 @@ class AdminDashboardPage extends ConsumerWidget {
 
     return AdminPageScaffold(
       title: l10n.adminDashboardTitle,
-      subtitle: '리뷰 분석 현황과 처리 대기 업무를 한눈에 확인하세요.',
+      subtitle: l10n.adminDashboardSubtitle,
       scrollable: true,
       actions: [
         IconButton(
-          tooltip: '새로고침',
+          tooltip: l10n.adminRefresh,
           onPressed: vm.refresh,
           icon: const Icon(
             Icons.refresh_rounded,
@@ -54,8 +54,8 @@ class AdminDashboardPage extends ConsumerWidget {
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.sm,
             children: [
-              const Text(
-                'AI 모델 성능',
+              Text(
+                l10n.adminModelPerformance,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
@@ -65,7 +65,10 @@ class AdminDashboardPage extends ConsumerWidget {
               SegmentedButton<int>(
                 segments: [
                   for (final days in _periodOptions)
-                    ButtonSegment(value: days, label: Text('$days일')),
+                    ButtonSegment(
+                      value: days,
+                      label: Text(l10n.adminPeriodDays(days)),
+                    ),
                 ],
                 selected: {state.days},
                 showSelectedIcon: false,
@@ -104,6 +107,7 @@ class _AsyncSection<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return switch (value) {
       AsyncData(:final value) => builder(value),
       AsyncError(:final error) => SizedBox(
@@ -117,7 +121,7 @@ class _AsyncSection<T> extends StatelessWidget {
                 style: const TextStyle(color: AppColors.textSecondary),
               ),
               const SizedBox(height: AppSpacing.sm),
-              OutlinedButton(onPressed: onRetry, child: const Text('다시 시도')),
+              OutlinedButton(onPressed: onRetry, child: Text(l10n.adminRetry)),
             ],
           ),
         ),
@@ -137,46 +141,47 @@ class _SummaryGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final cards = [
       _KpiItem(
         icon: Icons.rate_review_outlined,
         color: AppColors.primary,
-        label: '전체 리뷰',
+        label: l10n.adminTotalReviews,
         value: summary.totalReviews,
-        helper: '분석 대상 리뷰 전체',
+        helper: l10n.adminTotalReviewsHelper,
       ),
       _KpiItem(
         icon: Icons.report_gmailerrorred_outlined,
         color: AppColors.warning,
-        label: '의심 리뷰',
+        label: l10n.adminSuspiciousReviews,
         value: summary.suspiciousReviewCount,
         route: RoutePaths.adminReviews,
       ),
       _KpiItem(
         icon: Icons.dangerous_outlined,
         color: AppColors.error,
-        label: '위험 리뷰',
+        label: l10n.adminRiskyReviews,
         value: summary.dangerReviewCount,
         route: RoutePaths.adminReviews,
       ),
       _KpiItem(
         icon: Icons.flag_outlined,
         color: AppColors.warning,
-        label: '처리 대기 신고',
+        label: l10n.adminPendingReports,
         value: summary.pendingReports,
         route: RoutePaths.adminReports,
       ),
       _KpiItem(
         icon: Icons.feedback_outlined,
         color: AppColors.info,
-        label: '처리 대기 분석 피드백',
+        label: l10n.adminPendingFeedbacks,
         value: summary.pendingAnalysisFeedbacks,
         route: RoutePaths.adminAnalysisFeedbacks,
       ),
       _KpiItem(
         icon: Icons.group_outlined,
         color: AppColors.success,
-        label: '전체 사용자',
+        label: l10n.adminTotalUsers,
         value: summary.totalUsers,
         route: RoutePaths.adminUsers,
       ),
@@ -204,7 +209,7 @@ class _SummaryGrid extends StatelessWidget {
                     iconColor: item.color,
                     label: item.label,
                     value: formatAdminCount(item.value),
-                    helper: item.helper ?? '눌러서 바로가기',
+                    helper: item.helper ?? l10n.adminOpenSection,
                   ),
                 ),
               ),
@@ -341,6 +346,7 @@ class _RatioRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Row(
@@ -370,7 +376,10 @@ class _RatioRow extends StatelessWidget {
           SizedBox(
             width: 120,
             child: Text(
-              '${formatAdminCount(count)}건 · ${percent.toStringAsFixed(1)}%',
+              l10n.adminCountPercent(
+                formatAdminCount(count),
+                percent.toStringAsFixed(1),
+              ),
               textAlign: TextAlign.end,
               style: const TextStyle(
                 fontSize: 13,
@@ -393,28 +402,29 @@ class _DistributionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _Card(
-      title: 'RTI 등급 분포',
+      title: l10n.adminRtiDistribution,
       trailing: Text(
-        '분석 리뷰 ${formatAdminCount(total)}건',
+        l10n.adminAnalyzedCount(formatAdminCount(total)),
         style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
       ),
       child: Column(
         children: [
           _RatioRow(
-            label: '안전',
+            label: l10n.adminSafe,
             color: AppColors.success,
             count: distribution.safeCount,
             percent: distribution.safePercent,
           ),
           _RatioRow(
-            label: '의심',
+            label: l10n.adminSuspicious,
             color: AppColors.warning,
             count: distribution.suspiciousCount,
             percent: distribution.suspiciousPercent,
           ),
           _RatioRow(
-            label: '위험',
+            label: l10n.adminDanger,
             color: AppColors.error,
             count: distribution.dangerCount,
             percent: distribution.dangerPercent,
@@ -432,8 +442,9 @@ class _AverageRtiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _Card(
-      title: '전체 평균 RTI',
+      title: l10n.adminAverageRti,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -461,14 +472,15 @@ class _TrendCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return _Card(
-      title: '일별 평균 RTI · 분석 건수 (최근 $days일)',
+      title: l10n.adminDailyTrendTitle(days),
       child: trend.isEmpty
-          ? const SizedBox(
+          ? SizedBox(
               height: 160,
               child: Center(
                 child: Text(
-                  '기간 내 분석된 리뷰가 없습니다.',
+                  l10n.adminTrendEmpty,
                   style: TextStyle(color: AppColors.textSecondary),
                 ),
               ),
@@ -488,6 +500,7 @@ class _TrendChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     // 막대가 많으면 날짜 라벨을 건너뛰어 겹치지 않게 한다.
     final labelEvery = (trend.length / 10).ceil().clamp(1, 30);
     return SizedBox(
@@ -498,8 +511,11 @@ class _TrendChart extends StatelessWidget {
           for (final (index, point) in trend.indexed)
             Expanded(
               child: Tooltip(
-                message:
-                    '${formatAdminDate(point.date)}\n평균 RTI ${point.averageRti.toStringAsFixed(1)} · ${formatAdminCount(point.reviewCount)}건',
+                message: l10n.adminTrendTooltip(
+                  formatAdminDate(point.date),
+                  point.averageRti.toStringAsFixed(1),
+                  formatAdminCount(point.reviewCount),
+                ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: Column(
@@ -556,25 +572,26 @@ class _AgreementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final disagreeRate = stats.totalFeedbacks == 0
         ? 0.0
         : 100 - stats.agreementRate;
     return _Card(
-      title: '사용자 판정 동의율',
+      title: l10n.adminUserAgreement,
       trailing: Text(
-        '피드백 ${formatAdminCount(stats.totalFeedbacks)}건',
+        l10n.adminFeedbackCount(formatAdminCount(stats.totalFeedbacks)),
         style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
       ),
       child: Column(
         children: [
           _RatioRow(
-            label: '동의',
+            label: l10n.adminAgree,
             color: AppColors.primary,
             count: stats.agreementCount,
             percent: stats.agreementRate,
           ),
           _RatioRow(
-            label: '이의',
+            label: l10n.adminDisagree,
             color: AppColors.textTertiary,
             count: stats.disagreementCount,
             percent: disagreeRate,
@@ -592,13 +609,14 @@ class _FeedbackStatsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final total =
         stats.submitted + stats.underReview + stats.resolved + stats.rejected;
     double percent(int count) => total == 0 ? 0 : count * 100 / total;
     return _Card(
-      title: '분석 피드백 처리 현황',
+      title: l10n.adminFeedbackStats,
       trailing: Text(
-        '처리율 ${stats.resolutionRate.toStringAsFixed(1)}%',
+        l10n.adminResolutionRate(stats.resolutionRate.toStringAsFixed(1)),
         style: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
@@ -608,25 +626,25 @@ class _FeedbackStatsCard extends StatelessWidget {
       child: Column(
         children: [
           _RatioRow(
-            label: '접수',
+            label: l10n.adminFeedbackSubmitted,
             color: AppColors.info,
             count: stats.submitted,
             percent: percent(stats.submitted),
           ),
           _RatioRow(
-            label: '검토 중',
+            label: l10n.adminUnderReview,
             color: AppColors.warning,
             count: stats.underReview,
             percent: percent(stats.underReview),
           ),
           _RatioRow(
-            label: '반영',
+            label: l10n.adminApplied,
             color: AppColors.success,
             count: stats.resolved,
             percent: percent(stats.resolved),
           ),
           _RatioRow(
-            label: '기각',
+            label: l10n.adminDismissed,
             color: AppColors.textTertiary,
             count: stats.rejected,
             percent: percent(stats.rejected),
