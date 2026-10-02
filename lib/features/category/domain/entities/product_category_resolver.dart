@@ -129,6 +129,10 @@ const _categoryAliases = {
   '디지털가전': 'digital-appliance',
   '가전디지털': 'digital-appliance',
   '가전': 'digital-appliance',
+  // 홈 빠른 카테고리 라벨
+  '인테리어': 'furniture-interior',
+  '푸드': 'food',
+  '스포츠': 'sports-leisure',
   'pc주변기기': 'pc-peripheral',
   '컴퓨터': 'pc-peripheral',
   '노트북': 'pc-peripheral',

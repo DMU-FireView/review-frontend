@@ -97,24 +97,8 @@ const banners = [
 
 const quickCategories = [
   QuickCategoryData(
-    label: '오늘출발',
-    iconAssetPath: 'assets/images/home/icons/icon-quick-delivery.webp',
-  ),
-  QuickCategoryData(
-    label: '브랜드데이',
-    iconAssetPath: 'assets/images/home/icons/icon-brand-day.webp',
-  ),
-  QuickCategoryData(
-    label: '타임딜',
-    iconAssetPath: 'assets/images/home/icons/icon-time-deal.webp',
-  ),
-  QuickCategoryData(
     label: '리뷰랭킹',
     iconAssetPath: 'assets/images/home/icons/icon-review-ranking.webp',
-  ),
-  QuickCategoryData(
-    label: '선물하기',
-    iconAssetPath: 'assets/images/home/icons/icon-gift.webp',
   ),
   QuickCategoryData(
     label: '뷰티',
