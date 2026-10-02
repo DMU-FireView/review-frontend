@@ -1,19 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/features/category/domain/entities/product_category_master.dart';
 
-const homeNavItems = [
-  '홈',
-  '브랜드데이',
-  '베스트',
-  '신상품',
-  '타임딜',
-  '리뷰 LIVE',
-  '리뷰랭킹',
-  '기획전',
-  '선물하기',
-  '반려동물',
-  '여행/레저',
-];
+// 서버 데이터로 채울 수 있는 메뉴만 둔다. 정렬 메뉴는 home_navigation.dart 참고.
+const homeNavItems = ['홈', '베스트', '신상품', '리뷰랭킹', '반려동물'];
 
 const banners = [
   HomeBannerData(

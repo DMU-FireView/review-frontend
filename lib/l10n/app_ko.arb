@@ -194,15 +194,6 @@
     }
   },
 
-  "settingsAccountLinkedServices": "연동 서비스",
-  "@settingsAccountLinkedServices": { "description": "연동 서비스 섹션 레이블" },
-
-  "settingsAccountConnected": "연동됨",
-  "@settingsAccountConnected": { "description": "서비스 연동 상태" },
-
-  "settingsAccountDisconnected": "미연동",
-  "@settingsAccountDisconnected": { "description": "서비스 미연동 상태" },
-
   "settingsLanguageSection": "언어 설정",
   "@settingsLanguageSection": { "description": "언어 설정 섹션 제목" },
 

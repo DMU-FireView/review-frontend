@@ -17,6 +17,7 @@ import 'package:re_view_front/features/product_detail/presentation/providers/pro
 import 'package:re_view_front/features/product_detail/presentation/view_models/product_detail_state.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/app_network_image.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class AnalysisReportPage extends ConsumerWidget {
   const AnalysisReportPage({super.key, required this.productId});
@@ -45,13 +46,10 @@ class AnalysisReportPage extends ConsumerWidget {
               onCartPressed: () => context.go(RoutePaths.cart),
               onMyPagePressed: () => context.go(RoutePaths.myPage),
               onProfileWishPressed: () => context.go(RoutePaths.wishlist),
-              onProfileOrderPressed: () => context.go(RoutePaths.dashboard),
+              onProfileOrderPressed: () => context.go(RoutePaths.cart),
               onLogoutPressed: () =>
                   ref.read(authTokenStoreProvider.notifier).clear(),
-              onNavItemPressed: (item) => context.goNamed(
-                RouteNames.search,
-                queryParameters: {'q': item},
-              ),
+              onNavItemPressed: (item) => openHomeNavItem(context, item),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {
                   context.goNamed(

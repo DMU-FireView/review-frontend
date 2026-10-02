@@ -13,6 +13,7 @@ import 'package:re_view_front/features/home/presentation/data/home_content.dart'
 import 'package:re_view_front/features/home/presentation/widgets/home/home_header.dart';
 import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class PasswordResetPage extends ConsumerStatefulWidget {
   const PasswordResetPage({super.key});
@@ -80,7 +81,7 @@ class _PasswordResetPageState extends ConsumerState<PasswordResetPage> {
             onLoginPressed: () => context.go(RoutePaths.login),
             onWishPressed: () => context.go(RoutePaths.home),
             onCartPressed: () => context.go(RoutePaths.home),
-            onNavItemPressed: (_) => context.go(RoutePaths.home),
+            onNavItemPressed: (item) => openHomeNavItem(context, item),
             onLogoPressed: () => context.go(RoutePaths.home),
           ),
           Expanded(

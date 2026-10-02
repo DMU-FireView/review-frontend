@@ -16,6 +16,7 @@ import 'package:re_view_front/shared/extensions/context_extensions.dart';
 import 'package:re_view_front/shared/widgets/app_content_view.dart';
 import 'package:re_view_front/shared/widgets/error_view.dart';
 import 'package:re_view_front/shared/widgets/loading_view.dart';
+import 'package:re_view_front/features/home/presentation/home_navigation.dart';
 
 class FeedbackHistoryPage extends ConsumerStatefulWidget {
   const FeedbackHistoryPage({super.key});
@@ -52,7 +53,7 @@ class _FeedbackHistoryPageState extends ConsumerState<FeedbackHistoryPage> {
               onLoginPressed: () => context.go(RoutePaths.login),
               onWishPressed: () => context.go(RoutePaths.wishlist),
               onCartPressed: () => context.go(RoutePaths.cart),
-              onNavItemPressed: (_) => context.go(RoutePaths.home),
+              onNavItemPressed: (item) => openHomeNavItem(context, item),
               onLogoPressed: () => context.go(RoutePaths.home),
               onSearchSubmitted: (q) {
                 if (q.trim().isNotEmpty) {

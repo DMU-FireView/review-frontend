@@ -20,12 +20,16 @@ class SearchResultsPage extends ConsumerStatefulWidget {
     required this.query,
     this.categoryId,
     this.categoryLabel,
+    this.initialSort,
     super.key,
   });
 
   final String query;
   final String? categoryId;
   final String? categoryLabel;
+
+  /// 헤더 정렬 메뉴(베스트·신상품·리뷰랭킹)로 들어오면 그 정렬로 시작한다.
+  final SearchSortOption? initialSort;
 
   @override
   ConsumerState<SearchResultsPage> createState() => _SearchResultsPageState();
@@ -40,7 +44,8 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
   late final TextEditingController _maxPriceController;
   String _selectedQuickFilter = '전체';
   String? _selectedBrand;
-  SearchSortOption _sortOption = SearchSortOption.accuracy;
+  late SearchSortOption _sortOption =
+      widget.initialSort ?? SearchSortOption.accuracy;
   SearchViewMode _viewMode = SearchViewMode.grid;
   double _selectedRtiMinimum = 50;
   bool _isPriceFilterActive = false;
@@ -62,7 +67,8 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.query != widget.query ||
         oldWidget.categoryId != widget.categoryId ||
-        oldWidget.categoryLabel != widget.categoryLabel) {
+        oldWidget.categoryLabel != widget.categoryLabel ||
+        oldWidget.initialSort != widget.initialSort) {
       _resetFilters();
       _triggerSearch();
     }
@@ -79,7 +85,10 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
     Future.microtask(
       () => ref
           .read(searchViewModelProvider.notifier)
-          .search(_effectiveSearchQuery, allowEmpty: widget.categoryId != null),
+          .search(
+            _effectiveSearchQuery,
+            allowEmpty: widget.categoryId != null || widget.initialSort != null,
+          ),
     );
   }
 
@@ -356,7 +365,7 @@ class _SearchResultsPageState extends ConsumerState<SearchResultsPage> {
       _selectedAttributeFilters.clear();
       _selectedReviewConditions.clear();
       _selectedQuickFilter = '전체';
-      _sortOption = SearchSortOption.accuracy;
+      _sortOption = widget.initialSort ?? SearchSortOption.accuracy;
       _viewMode = SearchViewMode.grid;
       _selectedRtiMinimum = 50;
       _isRtiFilterActive = false;

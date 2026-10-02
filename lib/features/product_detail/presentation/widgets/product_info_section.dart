@@ -163,18 +163,6 @@ class _RatingRow extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
-        Container(
-          width: 1,
-          height: 12,
-          color: AppColors.borderStrong,
-        ),
-        Text(
-          'Q&A ${detail.qaCount}',
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.textSecondary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
       ],
     );
   }
