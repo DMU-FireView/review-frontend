@@ -797,4 +797,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get settingsDataAnalysisDesc =>
       'Allow your data to be used for review analysis.';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsLoading => 'Loading notifications';
+
+  @override
+  String get notificationsEmpty => 'No notifications yet';
+
+  @override
+  String get notificationsEmptyBody =>
+      'We\'ll let you know here when reports, feedback, or analyses are processed.';
+
+  @override
+  String get headerNotifications => 'Alerts';
 }

@@ -715,5 +715,24 @@
   "settingsAutoAnalysis": "분석 팝업 자동 열기",
   "settingsAutoAnalysisDesc": "위험 리뷰를 클릭하면 분석 상세를 자동으로 엽니다.",
   "settingsDataAnalysis": "리뷰 분석 데이터 활용 동의",
-  "settingsDataAnalysisDesc": "리뷰 분석을 위한 데이터 활용에 동의합니다."
+  "settingsDataAnalysisDesc": "리뷰 분석을 위한 데이터 활용에 동의합니다.",
+
+
+  "notificationsTitle": "알림",
+  "@notificationsTitle": { "description": "알림 화면 제목" },
+
+  "notificationsMarkAllRead": "모두 읽음",
+  "@notificationsMarkAllRead": { "description": "모두 읽음 처리 버튼" },
+
+  "notificationsLoading": "알림을 불러오는 중이에요",
+  "@notificationsLoading": { "description": "알림 로딩 문구" },
+
+  "notificationsEmpty": "새 알림이 없어요",
+  "@notificationsEmpty": { "description": "알림이 없을 때 제목" },
+
+  "notificationsEmptyBody": "신고·피드백 처리 결과와 분석 완료 소식을 여기서 알려드려요.",
+  "@notificationsEmptyBody": { "description": "알림이 없을 때 설명" },
+
+  "headerNotifications": "알림",
+  "@headerNotifications": { "description": "헤더 알림 버튼 라벨" }
 }

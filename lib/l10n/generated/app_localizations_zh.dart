@@ -764,4 +764,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get settingsDataAnalysisDesc => '同意将数据用于评论分析。';
+
+  @override
+  String get notificationsTitle => '通知';
+
+  @override
+  String get notificationsMarkAllRead => '全部已读';
+
+  @override
+  String get notificationsLoading => '正在加载通知';
+
+  @override
+  String get notificationsEmpty => '暂无通知';
+
+  @override
+  String get notificationsEmptyBody => '举报、反馈处理结果和分析完成通知会显示在这里。';
+
+  @override
+  String get headerNotifications => '通知';
 }

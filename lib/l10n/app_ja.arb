@@ -245,5 +245,11 @@
   "settingsAutoAnalysis": "分析ポップアップを自動表示",
   "settingsAutoAnalysisDesc": "危険なレビューをクリックすると分析詳細を開きます。",
   "settingsDataAnalysis": "レビュー分析データの利用に同意",
-  "settingsDataAnalysisDesc": "レビュー分析のためのデータ利用に同意します。"
+  "settingsDataAnalysisDesc": "レビュー分析のためのデータ利用に同意します。",
+  "notificationsTitle": "通知",
+  "notificationsMarkAllRead": "すべて既読",
+  "notificationsLoading": "通知を読み込んでいます",
+  "notificationsEmpty": "通知はありません",
+  "notificationsEmptyBody": "通報・フィードバックの処理結果や分析完了をここでお知らせします。",
+  "headerNotifications": "通知"
 }

@@ -261,5 +261,11 @@
   "settingsAutoAnalysis": "Open analysis automatically",
   "settingsAutoAnalysisDesc": "Open analysis details when a risky review is clicked.",
   "settingsDataAnalysis": "Allow review data analysis",
-  "settingsDataAnalysisDesc": "Allow your data to be used for review analysis."
+  "settingsDataAnalysisDesc": "Allow your data to be used for review analysis.",
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsLoading": "Loading notifications",
+  "notificationsEmpty": "No notifications yet",
+  "notificationsEmptyBody": "We'll let you know here when reports, feedback, or analyses are processed.",
+  "headerNotifications": "Alerts"
 }

@@ -245,5 +245,11 @@
   "settingsAutoAnalysis": "自动打开分析弹窗",
   "settingsAutoAnalysisDesc": "点击风险评论时自动打开分析详情。",
   "settingsDataAnalysis": "允许使用评论分析数据",
-  "settingsDataAnalysisDesc": "同意将数据用于评论分析。"
+  "settingsDataAnalysisDesc": "同意将数据用于评论分析。",
+  "notificationsTitle": "通知",
+  "notificationsMarkAllRead": "全部已读",
+  "notificationsLoading": "正在加载通知",
+  "notificationsEmpty": "暂无通知",
+  "notificationsEmptyBody": "举报、反馈处理结果和分析完成通知会显示在这里。",
+  "headerNotifications": "通知"
 }
