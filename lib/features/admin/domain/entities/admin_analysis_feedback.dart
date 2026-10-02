@@ -1,14 +1,13 @@
 /// 분석 피드백(RTI 이의 제기) 처리 상태.
 enum AnalysisFeedbackStatus {
-  submitted('SUBMITTED', '접수'),
-  underReview('UNDER_REVIEW', '검토 중'),
-  resolved('RESOLVED', '처리 완료'),
-  rejected('REJECTED', '반려');
+  submitted('SUBMITTED'),
+  underReview('UNDER_REVIEW'),
+  resolved('RESOLVED'),
+  rejected('REJECTED');
 
-  const AnalysisFeedbackStatus(this.code, this.label);
+  const AnalysisFeedbackStatus(this.code);
 
   final String code;
-  final String label;
 
   static AnalysisFeedbackStatus? fromCode(String? code) {
     for (final value in values) {
@@ -17,14 +16,6 @@ enum AnalysisFeedbackStatus {
     return null;
   }
 }
-
-/// 사용자의 신뢰 판단(userJudgment) 표시용 라벨 매핑.
-String analysisUserJudgmentLabel(String? code) => switch (code) {
-      'MORE_TRUSTWORTHY' => '신뢰도가 더 높아요',
-      'MORE_RISKY' => '위험도가 더 높아요',
-      'UNDECIDED' => '판단 보류',
-      _ => '-',
-    };
 
 /// 관리자 검수용 분석 피드백 항목.
 class AdminAnalysisFeedback {
@@ -61,8 +52,6 @@ class AdminAnalysisFeedback {
   final String statusDescription;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-
-  String get userJudgmentLabel => analysisUserJudgmentLabel(userJudgment);
 
   AdminAnalysisFeedback copyWith({
     AnalysisFeedbackStatus? status,

@@ -13,24 +13,29 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_status_b
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/analysis_feedback_detail_panel.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/analysis_feedback_status_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class AdminAnalysisFeedbacksPage extends ConsumerWidget {
   const AdminAnalysisFeedbacksPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(adminAnalysisFeedbackViewModelProvider);
     final vm = ref.read(adminAnalysisFeedbackViewModelProvider.notifier);
 
     return AdminPageScaffold(
-      title: '분석 피드백 관리',
-      subtitle: '사용자가 RTI 분석 결과에 대해 제공한 피드백을 검토하고 처리하세요.',
+      title: l10n.adminMenuAnalysisFeedbacks,
+      subtitle: l10n.adminFeedbacksSubtitle,
       actions: [
         IconButton(
-          tooltip: '새로고침',
+          tooltip: l10n.adminRefresh,
           onPressed: vm.refresh,
-          icon:
-              const Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
+          icon: const Icon(
+            Icons.refresh_rounded,
+            color: AppColors.textSecondary,
+          ),
         ),
       ],
       body: Row(
@@ -72,9 +77,11 @@ class _StatusTabs extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final tabs = <(String, AnalysisFeedbackStatus?)>[
-      ('전체', null),
-      for (final s in AnalysisFeedbackStatus.values) (s.code, s),
+      (l10n.adminAll, null),
+      for (final s in AnalysisFeedbackStatus.values)
+        (s.localizedLabel(l10n), s),
     ];
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xxs),
@@ -142,6 +149,7 @@ class _KpiRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     String valueFor(AnalysisFeedbackStatus? s) {
       final count = state.countFor(s);
       return count == null ? '-' : formatAdminCount(count);
@@ -151,37 +159,37 @@ class _KpiRow extends StatelessWidget {
       AdminKpiCard(
         icon: Icons.description_outlined,
         iconColor: AppColors.primary,
-        label: '전체 피드백',
+        label: l10n.adminTotalFeedbacks,
         value: valueFor(null),
-        helper: '전체 기간 기준',
+        helper: l10n.adminAllTime,
       ),
       AdminKpiCard(
         icon: Icons.outbox_outlined,
         iconColor: AppColors.info,
-        label: 'SUBMITTED',
+        label: l10n.adminFeedbackSubmitted,
         value: valueFor(AnalysisFeedbackStatus.submitted),
-        helper: '접수',
+        helper: l10n.adminFeedbackSubmitted,
       ),
       AdminKpiCard(
         icon: Icons.hourglass_empty_rounded,
         iconColor: AppColors.warning,
-        label: 'UNDER_REVIEW',
+        label: l10n.adminUnderReview,
         value: valueFor(AnalysisFeedbackStatus.underReview),
-        helper: '검토 중',
+        helper: l10n.adminUnderReview,
       ),
       AdminKpiCard(
         icon: Icons.check_circle_outline_rounded,
         iconColor: AppColors.success,
-        label: 'RESOLVED',
+        label: l10n.adminFeedbackResolved,
         value: valueFor(AnalysisFeedbackStatus.resolved),
-        helper: '처리 완료',
+        helper: l10n.adminFeedbackResolved,
       ),
       AdminKpiCard(
         icon: Icons.cancel_outlined,
         iconColor: AppColors.error,
-        label: 'REJECTED',
+        label: l10n.adminFeedbackRejected,
         value: valueFor(AnalysisFeedbackStatus.rejected),
-        helper: '반려',
+        helper: l10n.adminFeedbackRejected,
       ),
     ];
 
@@ -204,6 +212,7 @@ class _TableArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -218,23 +227,20 @@ class _TableArea extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
-            OutlinedButton(
-              onPressed: vm.refresh,
-              child: const Text('다시 시도'),
-            ),
+            OutlinedButton(onPressed: vm.refresh, child: Text(l10n.adminRetry)),
           ],
         ),
       );
     }
 
-    const columns = [
-      AdminTableColumn(label: '피드백 ID', flex: 3),
-      AdminTableColumn(label: '리뷰 ID', flex: 3),
-      AdminTableColumn(label: '상품명', flex: 3),
-      AdminTableColumn(label: '피드백 유형', flex: 3),
-      AdminTableColumn(label: '사용자 판단', flex: 3),
-      AdminTableColumn(label: '상태', flex: 2),
-      AdminTableColumn(label: '등록일', flex: 3),
+    final columns = [
+      AdminTableColumn(label: l10n.adminFeedbackId, flex: 3),
+      AdminTableColumn(label: l10n.adminReviewId, flex: 3),
+      AdminTableColumn(label: l10n.adminProductName, flex: 3),
+      AdminTableColumn(label: l10n.adminFeedbackType, flex: 3),
+      AdminTableColumn(label: l10n.adminUserJudgment, flex: 3),
+      AdminTableColumn(label: l10n.adminStatus, flex: 2),
+      AdminTableColumn(label: l10n.adminCreatedAt, flex: 3),
     ];
 
     final rows = [
@@ -245,16 +251,18 @@ class _TableArea extends StatelessWidget {
             _cell('FB-${f.feedbackId}', strong: true),
             _cell('RWV-${f.reviewId}'),
             _cell(f.productName),
-            _cell(f.feedbackTypeDescription.isEmpty
-                ? f.feedbackType
-                : f.feedbackTypeDescription),
-            _cell(f.userJudgmentLabel),
+            _cell(
+              f.feedbackTypeDescription.isEmpty
+                  ? f.feedbackType
+                  : f.feedbackTypeDescription,
+            ),
+            _cell(analysisUserJudgmentLabel(f.userJudgment, l10n)),
             f.status == null
                 ? _cell('-')
                 : Align(
                     alignment: Alignment.centerLeft,
                     child: AdminStatusBadge(
-                      label: f.status!.label,
+                      label: f.status!.localizedLabel(l10n),
                       tone: f.status!.tone,
                     ),
                   ),
@@ -275,7 +283,7 @@ class _TableArea extends StatelessWidget {
         totalPages: state.totalPages,
         currentPage: state.page,
         onPageChanged: vm.changePage,
-        emptyMessage: '표시할 분석 피드백이 없습니다.',
+        emptyMessage: l10n.adminFeedbacksEmpty,
       ),
     );
   }

@@ -13,24 +13,29 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_status_b
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/suspicious_review_detail_panel.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/trust_grade_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class AdminSuspiciousReviewsPage extends ConsumerWidget {
   const AdminSuspiciousReviewsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(adminSuspiciousReviewViewModelProvider);
     final vm = ref.read(adminSuspiciousReviewViewModelProvider.notifier);
 
     return AdminPageScaffold(
-      title: '의심 리뷰 관리',
-      subtitle: 'RTI 분석을 통해 탐지된 의심 리뷰를 검토하고 적절한 조치를 취하세요.',
+      title: l10n.adminMenuSuspiciousReviews,
+      subtitle: l10n.adminSuspiciousReviewsSubtitle,
       actions: [
         IconButton(
-          tooltip: '새로고침',
+          tooltip: l10n.adminRefresh,
           onPressed: vm.refresh,
-          icon:
-              const Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
+          icon: const Icon(
+            Icons.refresh_rounded,
+            color: AppColors.textSecondary,
+          ),
         ),
       ],
       body: Row(
@@ -69,17 +74,18 @@ class _FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         AdminDropdownField<int>(
-          label: 'RTI 점수 상한',
+          label: l10n.adminRtiUpperBound,
           value: state.maxRti,
           width: 180,
-          items: const [
-            AdminDropdownItem(value: 50, label: '50점 미만'),
-            AdminDropdownItem(value: 70, label: '70점 미만'),
-            AdminDropdownItem(value: 85, label: '85점 미만'),
-            AdminDropdownItem(value: 100, label: '전체'),
+          items: [
+            AdminDropdownItem(value: 50, label: l10n.adminScoreBelow(50)),
+            AdminDropdownItem(value: 70, label: l10n.adminScoreBelow(70)),
+            AdminDropdownItem(value: 85, label: l10n.adminScoreBelow(85)),
+            AdminDropdownItem(value: 100, label: l10n.adminAll),
           ],
           onChanged: (v) => vm.setMaxRti(v ?? 50),
         ),
@@ -96,6 +102,7 @@ class _KpiRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         SizedBox(
@@ -103,9 +110,9 @@ class _KpiRow extends StatelessWidget {
           child: AdminKpiCard(
             icon: Icons.flag_outlined,
             iconColor: AppColors.warning,
-            label: '전체 의심 리뷰',
+            label: l10n.adminTotalSuspiciousReviews,
             value: isLoading ? '-' : formatAdminCount(total),
-            helper: '현재 조회 기준',
+            helper: l10n.adminCurrentFilter,
           ),
         ),
       ],
@@ -121,6 +128,7 @@ class _TableArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -135,20 +143,20 @@ class _TableArea extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
-            OutlinedButton(onPressed: vm.refresh, child: const Text('다시 시도')),
+            OutlinedButton(onPressed: vm.refresh, child: Text(l10n.adminRetry)),
           ],
         ),
       );
     }
 
-    const columns = [
-      AdminTableColumn(label: 'RTI 점수', flex: 2),
-      AdminTableColumn(label: '신뢰 등급', flex: 2),
-      AdminTableColumn(label: '리뷰 내용', flex: 5),
-      AdminTableColumn(label: '상품명', flex: 3),
-      AdminTableColumn(label: '별점', flex: 2),
-      AdminTableColumn(label: '구매 인증', flex: 2),
-      AdminTableColumn(label: '작성일', flex: 3),
+    final columns = [
+      AdminTableColumn(label: l10n.adminRtiScore, flex: 2),
+      AdminTableColumn(label: l10n.adminTrustGrade, flex: 2),
+      AdminTableColumn(label: l10n.adminReviewContent, flex: 5),
+      AdminTableColumn(label: l10n.adminProductName, flex: 3),
+      AdminTableColumn(label: l10n.adminRating, flex: 2),
+      AdminTableColumn(label: l10n.adminVerifiedPurchase, flex: 2),
+      AdminTableColumn(label: l10n.adminWrittenAt, flex: 3),
     ];
 
     final rows = [
@@ -162,7 +170,7 @@ class _TableArea extends StatelessWidget {
                 : Align(
                     alignment: Alignment.centerLeft,
                     child: AdminStatusBadge(
-                      label: r.trustGrade!.label,
+                      label: r.trustGrade!.localizedLabel(l10n),
                       tone: r.trustGrade!.tone,
                     ),
                   ),
@@ -172,7 +180,9 @@ class _TableArea extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: AdminStatusBadge(
-                label: r.isVerifiedPurchase ? '인증됨' : '인증 안됨',
+                label: r.isVerifiedPurchase
+                    ? l10n.adminVerified
+                    : l10n.adminNotVerified,
                 tone: r.isVerifiedPurchase
                     ? AdminBadgeTone.success
                     : AdminBadgeTone.neutral,
@@ -195,7 +205,7 @@ class _TableArea extends StatelessWidget {
         totalPages: state.totalPages,
         currentPage: state.page,
         onPageChanged: vm.changePage,
-        emptyMessage: '표시할 의심 리뷰가 없습니다.',
+        emptyMessage: l10n.adminSuspiciousReviewsEmpty,
       ),
     );
   }

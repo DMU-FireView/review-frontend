@@ -1,13 +1,12 @@
 /// 리뷰 신뢰 등급.
 enum TrustGrade {
-  danger('DANGER', '위험'),
-  warning('WARNING', '경고'),
-  safe('SAFE', '안전');
+  danger('DANGER'),
+  warning('WARNING'),
+  safe('SAFE');
 
-  const TrustGrade(this.code, this.label);
+  const TrustGrade(this.code);
 
   final String code;
-  final String label;
 
   static TrustGrade? fromCode(String? code) {
     for (final value in values) {

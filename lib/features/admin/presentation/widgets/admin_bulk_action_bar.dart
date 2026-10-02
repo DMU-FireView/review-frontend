@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 /// 테이블 위에 놓이는 일괄 처리 툴바.
 ///
@@ -17,11 +18,12 @@ class AdminBulkActionBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final hasSelection = selectedCount > 0;
     return Row(
       children: [
         Text(
-          '$selectedCount개 선택됨',
+          l10n.adminSelectedCount(selectedCount),
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w600,

@@ -831,6 +831,411 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chatHistoryUntitled => 'Untitled conversation';
 
   @override
+  String get adminUsersSubtitle => 'View registered users, newest first.';
+
+  @override
+  String get adminRefresh => 'Refresh';
+
+  @override
+  String get adminTotalUsers => 'Total users';
+
+  @override
+  String get adminRetry => 'Retry';
+
+  @override
+  String get adminEmail => 'Email';
+
+  @override
+  String get adminNickname => 'Nickname';
+
+  @override
+  String get adminRole => 'Role';
+
+  @override
+  String get adminSignupProvider => 'Sign-up method';
+
+  @override
+  String get adminAtiScore => 'ATI score';
+
+  @override
+  String get adminJoinedAt => 'Joined';
+
+  @override
+  String get adminUserRole => 'User';
+
+  @override
+  String get adminUsersEmpty => 'No registered users.';
+
+  @override
+  String get adminNaver => 'Naver';
+
+  @override
+  String get adminReportPending => 'Awaiting review';
+
+  @override
+  String get adminUnderReview => 'Under review';
+
+  @override
+  String get adminReportAccepted => 'Accepted';
+
+  @override
+  String get adminReportRejected => 'Rejected';
+
+  @override
+  String get adminDanger => 'Risky';
+
+  @override
+  String get adminWarning => 'Warning';
+
+  @override
+  String get adminSafe => 'Safe';
+
+  @override
+  String get adminFeedbackSubmitted => 'Submitted';
+
+  @override
+  String get adminFeedbackResolved => 'Resolved';
+
+  @override
+  String get adminFeedbackRejected => 'Rejected';
+
+  @override
+  String get adminJudgmentTrustworthy => 'More trustworthy';
+
+  @override
+  String get adminJudgmentRisky => 'More risky';
+
+  @override
+  String get adminJudgmentUndecided => 'Undecided';
+
+  @override
+  String get adminReviewDetails => 'Review details';
+
+  @override
+  String get adminViewProduct => 'View product';
+
+  @override
+  String get adminRtiAnalysis => 'RTI analysis';
+
+  @override
+  String get adminScoreUnit => 'points';
+
+  @override
+  String get adminReviewContent => 'Review content';
+
+  @override
+  String adminDetectedSignals(int count) {
+    return 'Detected signals ($count)';
+  }
+
+  @override
+  String get adminVerifiedPurchase => 'Verified purchase';
+
+  @override
+  String get adminVerified => 'Verified';
+
+  @override
+  String get adminNotVerified => 'Not verified';
+
+  @override
+  String get adminReviewerInfo => 'Reviewer information';
+
+  @override
+  String get adminReviewer => 'Reviewer';
+
+  @override
+  String get adminRating => 'Rating';
+
+  @override
+  String get adminWrittenAt => 'Written';
+
+  @override
+  String adminSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String get adminSaved => 'Changes saved.';
+
+  @override
+  String get adminSaveFailed => 'Could not save changes.';
+
+  @override
+  String get adminFeedbackDetails => 'Feedback details';
+
+  @override
+  String get adminSaveChanges => 'Save changes';
+
+  @override
+  String get adminFeedbackId => 'Feedback ID';
+
+  @override
+  String get adminReviewId => 'Review ID';
+
+  @override
+  String get adminProductName => 'Product';
+
+  @override
+  String get adminCreatedAt => 'Created';
+
+  @override
+  String get adminUpdatedAt => 'Updated';
+
+  @override
+  String get adminFeedbackType => 'Feedback type';
+
+  @override
+  String get adminUserJudgment => 'User judgment';
+
+  @override
+  String adminRelatedSignals(int count) {
+    return 'Related signals ($count)';
+  }
+
+  @override
+  String get adminFeedbackContent => 'Feedback content';
+
+  @override
+  String get adminAttachmentLink => 'Attachment / link';
+
+  @override
+  String get adminReplyEmail => 'Reply email';
+
+  @override
+  String get adminComment => 'Admin note';
+
+  @override
+  String get adminCommentHint => 'Enter review notes or actions taken...';
+
+  @override
+  String get adminChangeStatus => 'Change status';
+
+  @override
+  String get adminReportDetails => 'Report details';
+
+  @override
+  String get adminSave => 'Save';
+
+  @override
+  String get adminReportInfo => 'Report information';
+
+  @override
+  String get adminReportId => 'Report ID';
+
+  @override
+  String get adminReportReason => 'Report reason';
+
+  @override
+  String get adminReportedAt => 'Reported';
+
+  @override
+  String get adminUpdatedTime => 'Updated';
+
+  @override
+  String get adminReportedReview => 'Reported review';
+
+  @override
+  String get adminReportContent => 'Report content';
+
+  @override
+  String get adminAttachment => 'Attachment';
+
+  @override
+  String get adminEvidenceIncluded => 'AI evidence included';
+
+  @override
+  String get adminIncluded => 'Included';
+
+  @override
+  String get adminNotIncluded => 'Not included';
+
+  @override
+  String get adminOptionalCommentHint => 'Enter a note (optional).';
+
+  @override
+  String get adminSuspiciousReviewsSubtitle =>
+      'Review suspicious reviews detected by RTI analysis and take appropriate action.';
+
+  @override
+  String get adminRtiUpperBound => 'RTI score limit';
+
+  @override
+  String adminScoreBelow(int score) {
+    return 'Below $score';
+  }
+
+  @override
+  String get adminAll => 'All';
+
+  @override
+  String get adminTotalSuspiciousReviews => 'Total suspicious reviews';
+
+  @override
+  String get adminCurrentFilter => 'Current filter';
+
+  @override
+  String get adminRtiScore => 'RTI score';
+
+  @override
+  String get adminTrustGrade => 'Trust grade';
+
+  @override
+  String get adminSuspiciousReviewsEmpty => 'No suspicious reviews to show.';
+
+  @override
+  String get adminFeedbacksSubtitle =>
+      'Review and handle user feedback on RTI analysis results.';
+
+  @override
+  String get adminTotalFeedbacks => 'Total feedback';
+
+  @override
+  String get adminAllTime => 'All time';
+
+  @override
+  String get adminStatus => 'Status';
+
+  @override
+  String get adminFeedbacksEmpty => 'No analysis feedback to show.';
+
+  @override
+  String get adminReportsSubtitle =>
+      'Review user reports and update their status.';
+
+  @override
+  String get adminTotalReports => 'Total reports';
+
+  @override
+  String get adminReportsCountHelper => 'All reports';
+
+  @override
+  String get adminPendingReportsHelper => 'Reports awaiting review';
+
+  @override
+  String get adminUnderReviewReportsHelper => 'Reports under review';
+
+  @override
+  String get adminAcceptedReportsHelper => 'Accepted reports';
+
+  @override
+  String get adminRejectedReportsHelper => 'Rejected reports';
+
+  @override
+  String adminBulkSuccess(int total) {
+    return 'Processed $total items.';
+  }
+
+  @override
+  String adminBulkFailure(int total, int failed) {
+    return 'Failed to process $failed of $total items. Failed items remain selected.';
+  }
+
+  @override
+  String get adminAcceptReports => 'Accept';
+
+  @override
+  String get adminRejectReports => 'Reject';
+
+  @override
+  String get adminEvidence => 'AI evidence';
+
+  @override
+  String get adminReportsEmpty => 'No reports to show.';
+
+  @override
+  String get adminDashboardSubtitle =>
+      'See review analysis and pending tasks at a glance.';
+
+  @override
+  String get adminModelPerformance => 'AI model performance';
+
+  @override
+  String adminPeriodDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get adminTotalReviews => 'Total reviews';
+
+  @override
+  String get adminTotalReviewsHelper => 'All reviews for analysis';
+
+  @override
+  String get adminSuspiciousReviews => 'Suspicious reviews';
+
+  @override
+  String get adminRiskyReviews => 'Risky reviews';
+
+  @override
+  String get adminPendingReports => 'Pending reports';
+
+  @override
+  String get adminPendingFeedbacks => 'Pending analysis feedback';
+
+  @override
+  String get adminOpenSection => 'Click to open';
+
+  @override
+  String adminCountPercent(String count, String percent) {
+    return '$count · $percent%';
+  }
+
+  @override
+  String get adminRtiDistribution => 'RTI grade distribution';
+
+  @override
+  String adminAnalyzedCount(String count) {
+    return '$count analyzed reviews';
+  }
+
+  @override
+  String get adminSuspicious => 'Suspicious';
+
+  @override
+  String get adminAverageRti => 'Overall average RTI';
+
+  @override
+  String adminDailyTrendTitle(int days) {
+    return 'Daily average RTI · analysis count (last $days days)';
+  }
+
+  @override
+  String get adminTrendEmpty => 'No reviews analyzed in this period.';
+
+  @override
+  String adminTrendTooltip(String date, String score, String count) {
+    return '$date\nAverage RTI $score · $count reviews';
+  }
+
+  @override
+  String get adminUserAgreement => 'User agreement rate';
+
+  @override
+  String adminFeedbackCount(String count) {
+    return '$count feedback items';
+  }
+
+  @override
+  String get adminAgree => 'Agree';
+
+  @override
+  String get adminDisagree => 'Disagree';
+
+  @override
+  String get adminFeedbackStats => 'Analysis feedback status';
+
+  @override
+  String adminResolutionRate(String percent) {
+    return 'Resolution rate $percent%';
+  }
+
+  @override
+  String get adminApplied => 'Applied';
+
+  @override
+  String get adminDismissed => 'Dismissed';
+
+  @override
   String get sessionExpiredMessage =>
       'Your session has expired. Please log in again.';
 
