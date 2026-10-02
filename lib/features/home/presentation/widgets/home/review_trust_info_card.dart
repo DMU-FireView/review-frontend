@@ -121,7 +121,7 @@ class _TrustMain extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Image.asset(
-                'assets/images/home/brand/RTI.png',
+                'assets/images/home/brand/RTI.webp',
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) => Icon(
                   Icons.shield_outlined,
@@ -145,15 +145,15 @@ class _TrustFeatures extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final items = [
       _FeatureItem(
-        iconAssetPath: 'assets/images/home/icons/icon-review-analysis.png',
+        iconAssetPath: 'assets/images/home/icons/icon-review-analysis.webp',
         label: l10n.homeTrustLabel1,
       ),
       _FeatureItem(
-        iconAssetPath: 'assets/images/home/icons/icon-fraud-filter.png',
+        iconAssetPath: 'assets/images/home/icons/icon-fraud-filter.webp',
         label: l10n.homeTrustLabel2,
       ),
       _FeatureItem(
-        iconAssetPath: 'assets/images/home/icons/icon-trust-score.png',
+        iconAssetPath: 'assets/images/home/icons/icon-trust-score.webp',
         label: l10n.homeTrustLabel3,
       ),
     ];

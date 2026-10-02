@@ -23,107 +23,107 @@ const _categoryImageBasePath = 'assets/images/categories/category_images';
 
 const _categoryImageAssets = {
   'digital-appliance':
-      '$_categoryImageBasePath/58_digital_mobile_tablet_camera.png',
+      '$_categoryImageBasePath/58_digital_mobile_tablet_camera.webp',
   'fashion-clothing':
-      '$_categoryImageBasePath/59_fashion_womens_clothing_jacket.png',
-  'fashion-accessory': '$_categoryImageBasePath/60_fashion_bag_handbag.png',
-  'beauty': '$_categoryImageBasePath/61_beauty_skincare_cosmetics.png',
-  'food': '$_categoryImageBasePath/62_food_fresh_fruits.png',
+      '$_categoryImageBasePath/59_fashion_womens_clothing_jacket.webp',
+  'fashion-accessory': '$_categoryImageBasePath/60_fashion_bag_handbag.webp',
+  'beauty': '$_categoryImageBasePath/61_beauty_skincare_cosmetics.webp',
+  'food': '$_categoryImageBasePath/62_food_fresh_fruits.webp',
   'living-kitchen':
-      '$_categoryImageBasePath/63_living_kitchen_supplies_cookware.png',
-  'furniture-interior': '$_categoryImageBasePath/64_home_furniture_chair.png',
+      '$_categoryImageBasePath/63_living_kitchen_supplies_cookware.webp',
+  'furniture-interior': '$_categoryImageBasePath/64_home_furniture_chair.webp',
   'sports-leisure':
-      '$_categoryImageBasePath/65_sports_camping_hiking_character.png',
-  'car-tools': '$_categoryImageBasePath/35_car_accessories_cleaning_tools.png',
-  'baby-kids': '$_categoryImageBasePath/66_baby_clothing_baby.png',
-  'pet': '$_categoryImageBasePath/67_pet_dog_supplies_retriever.png',
+      '$_categoryImageBasePath/65_sports_camping_hiking_character.webp',
+  'car-tools': '$_categoryImageBasePath/35_car_accessories_cleaning_tools.webp',
+  'baby-kids': '$_categoryImageBasePath/66_baby_clothing_baby.webp',
+  'pet': '$_categoryImageBasePath/67_pet_dog_supplies_retriever.webp',
   'book-stationery-hobby':
-      '$_categoryImageBasePath/08_books_stack_open_book.png',
+      '$_categoryImageBasePath/08_books_stack_open_book.webp',
   'travel-service':
-      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.png',
-  'luxury-brand': '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.png',
+      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.webp',
+  'luxury-brand': '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.webp',
   'mobile-tablet':
-      '$_categoryImageBasePath/41_digital_mobile_tablet_smartphone.png',
+      '$_categoryImageBasePath/41_digital_mobile_tablet_smartphone.webp',
   'pc-peripheral':
-      '$_categoryImageBasePath/42_digital_pc_laptop_keyboard_mouse.png',
-  'video-audio': '$_categoryImageBasePath/43_digital_video_audio_tv.png',
+      '$_categoryImageBasePath/42_digital_pc_laptop_keyboard_mouse.webp',
+  'video-audio': '$_categoryImageBasePath/43_digital_video_audio_tv.webp',
   'living-appliance':
-      '$_categoryImageBasePath/44_digital_life_appliance_air_purifier.png',
+      '$_categoryImageBasePath/44_digital_life_appliance_air_purifier.webp',
   'kitchen-appliance':
-      '$_categoryImageBasePath/45_digital_kitchen_appliance_air_fryer.png',
+      '$_categoryImageBasePath/45_digital_kitchen_appliance_air_fryer.webp',
   'women-clothing':
-      '$_categoryImageBasePath/46_fashion_womens_clothing_jacket.png',
-  'men-clothing': '$_categoryImageBasePath/47_fashion_mens_clothing_jacket.png',
+      '$_categoryImageBasePath/46_fashion_womens_clothing_jacket.webp',
+  'men-clothing': '$_categoryImageBasePath/47_fashion_mens_clothing_jacket.webp',
   'underwear-homewear':
-      '$_categoryImageBasePath/48_fashion_underwear_loungewear_camisole.png',
+      '$_categoryImageBasePath/48_fashion_underwear_loungewear_camisole.webp',
   'sports-clothing':
-      '$_categoryImageBasePath/49_fashion_sportswear_training_jacket.png',
-  'shoes': '$_categoryImageBasePath/50_fashion_sneakers_shoes_white.png',
-  'bags': '$_categoryImageBasePath/51_fashion_bag_shoulder.png',
-  'wallet-belt': '$_categoryImageBasePath/52_fashion_wallet_belt_black.png',
-  'accessory': '$_categoryImageBasePath/53_fashion_watch_accessory_silver.png',
-  'skincare': '$_categoryImageBasePath/39_beauty_skincare_set.png',
-  'makeup': '$_categoryImageBasePath/54_beauty_makeup_lipstick_blush.png',
-  'cleansing': '$_categoryImageBasePath/55_beauty_cleansing_oil_water.png',
+      '$_categoryImageBasePath/49_fashion_sportswear_training_jacket.webp',
+  'shoes': '$_categoryImageBasePath/50_fashion_sneakers_shoes_white.webp',
+  'bags': '$_categoryImageBasePath/51_fashion_bag_shoulder.webp',
+  'wallet-belt': '$_categoryImageBasePath/52_fashion_wallet_belt_black.webp',
+  'accessory': '$_categoryImageBasePath/53_fashion_watch_accessory_silver.webp',
+  'skincare': '$_categoryImageBasePath/39_beauty_skincare_set.webp',
+  'makeup': '$_categoryImageBasePath/54_beauty_makeup_lipstick_blush.webp',
+  'cleansing': '$_categoryImageBasePath/55_beauty_cleansing_oil_water.webp',
   'haircare':
-      '$_categoryImageBasePath/56_beauty_haircare_shampoo_treatment.png',
-  'bodycare': '$_categoryImageBasePath/57_beauty_bodycare_wash_lotion.png',
-  'fresh-food': '$_categoryImageBasePath/18_fresh_food_meat_fish_eggs_milk.png',
-  'processed-food': '$_categoryImageBasePath/69_food_processed_ramen.png',
+      '$_categoryImageBasePath/56_beauty_haircare_shampoo_treatment.webp',
+  'bodycare': '$_categoryImageBasePath/57_beauty_bodycare_wash_lotion.webp',
+  'fresh-food': '$_categoryImageBasePath/18_fresh_food_meat_fish_eggs_milk.webp',
+  'processed-food': '$_categoryImageBasePath/69_food_processed_ramen.webp',
   'snack-dessert':
-      '$_categoryImageBasePath/19_processed_food_snacks_dessert.png',
-  'beverage': '$_categoryImageBasePath/20_beverages_health_products.png',
-  'health-food': '$_categoryImageBasePath/20_beverages_health_products.png',
-  'daily-supplies': '$_categoryImageBasePath/70_living_daily_supplies_mop.png',
-  'kitchenware': '$_categoryImageBasePath/22_kitchen_essentials_set.png',
+      '$_categoryImageBasePath/19_processed_food_snacks_dessert.webp',
+  'beverage': '$_categoryImageBasePath/20_beverages_health_products.webp',
+  'health-food': '$_categoryImageBasePath/20_beverages_health_products.webp',
+  'daily-supplies': '$_categoryImageBasePath/70_living_daily_supplies_mop.webp',
+  'kitchenware': '$_categoryImageBasePath/22_kitchen_essentials_set.webp',
   'storage-organization':
-      '$_categoryImageBasePath/23_storage_organization_items.png',
-  'safety-tools': '$_categoryImageBasePath/24_safety_tools_items.png',
-  'furniture': '$_categoryImageBasePath/25_modern_furniture_set.png',
-  'bedding': '$_categoryImageBasePath/26_bedding_linen_collection.png',
-  'home-deco': '$_categoryImageBasePath/27_home_decor_items.png',
+      '$_categoryImageBasePath/23_storage_organization_items.webp',
+  'safety-tools': '$_categoryImageBasePath/24_safety_tools_items.webp',
+  'furniture': '$_categoryImageBasePath/25_modern_furniture_set.webp',
+  'bedding': '$_categoryImageBasePath/26_bedding_linen_collection.webp',
+  'home-deco': '$_categoryImageBasePath/27_home_decor_items.webp',
   'diy-construction':
-      '$_categoryImageBasePath/28_diy_home_improvement_items.png',
-  'health-yoga': '$_categoryImageBasePath/29_fitness_yoga_items.png',
-  'hiking-camping': '$_categoryImageBasePath/30_camping_hiking_gear.png',
-  'bicycle-board': '$_categoryImageBasePath/37_bicycle_scooter_safety_gear.png',
-  'golf': '$_categoryImageBasePath/36_golf_sports_equipment.png',
+      '$_categoryImageBasePath/28_diy_home_improvement_items.webp',
+  'health-yoga': '$_categoryImageBasePath/29_fitness_yoga_items.webp',
+  'hiking-camping': '$_categoryImageBasePath/30_camping_hiking_gear.webp',
+  'bicycle-board': '$_categoryImageBasePath/37_bicycle_scooter_safety_gear.webp',
+  'golf': '$_categoryImageBasePath/36_golf_sports_equipment.webp',
   'car-supplies':
-      '$_categoryImageBasePath/35_car_accessories_cleaning_tools.png',
+      '$_categoryImageBasePath/35_car_accessories_cleaning_tools.webp',
   'motorcycle-supplies':
-      '$_categoryImageBasePath/34_motorcycle_riding_gear_accessories.png',
+      '$_categoryImageBasePath/34_motorcycle_riding_gear_accessories.webp',
   'industrial-tools':
-      '$_categoryImageBasePath/33_work_tools_uniform_equipment.png',
+      '$_categoryImageBasePath/33_work_tools_uniform_equipment.webp',
   'birth-childcare':
-      '$_categoryImageBasePath/01_baby_outing_stroller_diapers.png',
+      '$_categoryImageBasePath/01_baby_outing_stroller_diapers.webp',
   'baby-supplies':
-      '$_categoryImageBasePath/02_baby_feeding_bowl_lotion_duck_towel.png',
+      '$_categoryImageBasePath/02_baby_feeding_bowl_lotion_duck_towel.webp',
   'kids-clothing':
-      '$_categoryImageBasePath/03_baby_clothing_cardigan_denim_jacket.png',
+      '$_categoryImageBasePath/03_baby_clothing_cardigan_denim_jacket.webp',
   'toys-education':
-      '$_categoryImageBasePath/04_kids_toys_teddy_blocks_puzzle.png',
-  'dog-supplies': '$_categoryImageBasePath/05_dog_supplies_puppy_food_bowl.png',
-  'cat-supplies': '$_categoryImageBasePath/06_cat_supplies_cat_litter_tree.png',
+      '$_categoryImageBasePath/04_kids_toys_teddy_blocks_puzzle.webp',
+  'dog-supplies': '$_categoryImageBasePath/05_dog_supplies_puppy_food_bowl.webp',
+  'cat-supplies': '$_categoryImageBasePath/06_cat_supplies_cat_litter_tree.webp',
   'small-pet-aquarium':
-      '$_categoryImageBasePath/07_small_pet_bird_aquarium_set.png',
-  'book': '$_categoryImageBasePath/08_books_stack_open_book.png',
+      '$_categoryImageBasePath/07_small_pet_bird_aquarium_set.webp',
+  'book': '$_categoryImageBasePath/08_books_stack_open_book.webp',
   'stationery-office':
-      '$_categoryImageBasePath/09_stationery_pens_notebook_calculator.png',
-  'hobby': '$_categoryImageBasePath/10_hobby_guitar_paintbrush_robot.png',
+      '$_categoryImageBasePath/09_stationery_pens_notebook_calculator.webp',
+  'hobby': '$_categoryImageBasePath/10_hobby_guitar_paintbrush_robot.webp',
   'ticket-goods':
-      '$_categoryImageBasePath/14_ticket_goods_concert_mug_keyring.png',
+      '$_categoryImageBasePath/14_ticket_goods_concert_mug_keyring.webp',
   'travel-supplies':
-      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.png',
+      '$_categoryImageBasePath/11_travel_luggage_packing_cubes_neck_pillow.webp',
   'accommodation-ticket':
-      '$_categoryImageBasePath/12_hotel_resort_photo_and_travel_cards.png',
+      '$_categoryImageBasePath/12_hotel_resort_photo_and_travel_cards.webp',
   'rental-subscription':
-      '$_categoryImageBasePath/13_rental_subscription_box_appliance.png',
+      '$_categoryImageBasePath/13_rental_subscription_box_appliance.webp',
   'luxury-accessory':
-      '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.png',
+      '$_categoryImageBasePath/15_luxury_bag_wallet_watch_set.webp',
   'brand-fashion':
-      '$_categoryImageBasePath/16_brand_fashion_trench_sneakers_sunglasses.png',
+      '$_categoryImageBasePath/16_brand_fashion_trench_sneakers_sunglasses.webp',
   'premium-beauty':
-      '$_categoryImageBasePath/17_premium_beauty_bottle_perfume_device.png',
+      '$_categoryImageBasePath/17_premium_beauty_bottle_perfume_device.webp',
 };
 
 const _defaultBenefitLabels = [
@@ -1180,7 +1180,7 @@ class _PopularCategoryAndPickPreview extends StatelessWidget {
         title: '애플 에어팟 프로 2세대',
         categoryLabel: '디지털/가전',
         assetPath:
-            'assets/images/categories/category_images/68_digital_video_audio_earphones.png',
+            'assets/images/categories/category_images/68_digital_video_audio_earphones.webp',
         priceLabel: '359,000원',
         ratingLabel: '4.8',
         rtiLabel: 'RTI 91',
@@ -1189,7 +1189,7 @@ class _PopularCategoryAndPickPreview extends StatelessWidget {
         title: '딥티 미스트 토너',
         categoryLabel: '뷰티',
         assetPath:
-            'assets/images/categories/category_images/54_beauty_makeup_lipstick_blush.png',
+            'assets/images/categories/category_images/54_beauty_makeup_lipstick_blush.webp',
         priceLabel: '28,000원',
         ratingLabel: '4.9',
         rtiLabel: 'RTI 89',
@@ -1198,7 +1198,7 @@ class _PopularCategoryAndPickPreview extends StatelessWidget {
         title: '동원참치 150g 10캔',
         categoryLabel: '식품',
         assetPath:
-            'assets/images/categories/category_images/69_food_processed_ramen.png',
+            'assets/images/categories/category_images/69_food_processed_ramen.webp',
         priceLabel: '28,000원',
         ratingLabel: '4.7',
         rtiLabel: 'RTI 90',
@@ -1207,7 +1207,7 @@ class _PopularCategoryAndPickPreview extends StatelessWidget {
         title: '다이슨 V15 청소기',
         categoryLabel: '생활/주방',
         assetPath:
-            'assets/images/categories/category_images/44_digital_life_appliance_air_purifier.png',
+            'assets/images/categories/category_images/44_digital_life_appliance_air_purifier.webp',
         priceLabel: '159,000원',
         ratingLabel: '4.6',
         rtiLabel: 'RTI 92',
@@ -1377,7 +1377,7 @@ String _fallbackAssetPathForProduct(HomeProductData product) {
     productName: product.name,
   );
   return _categoryAssetPath(resolved?.id ?? '') ??
-      'assets/images/categories/category_images/58_digital_mobile_tablet_camera.png';
+      'assets/images/categories/category_images/58_digital_mobile_tablet_camera.webp';
 }
 
 class _SubCategoryItem extends StatefulWidget {

@@ -12,7 +12,6 @@ import 'package:re_view_front/features/home/presentation/pages/home_page.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
 import 'package:re_view_front/features/landing/presentation/pages/landing_page.dart';
 import 'package:re_view_front/features/landing/presentation/providers/landing_providers.dart';
-import 'package:re_view_front/shared/widgets/app_network_image.dart';
 
 import '../../../../helpers/landing_data.dart';
 import '../../../../helpers/pump_app.dart';
@@ -67,21 +66,20 @@ void main() {
     );
   });
 
-  testWidgets('clips the background home page behind the landing card', (
+  testWidgets('shows a static home preview instead of building HomePage', (
     tester,
   ) async {
     await pumpApp(tester, buildSubject());
 
-    final homePage = find.byType(HomePage);
-    expect(homePage, findsOneWidget);
+    expect(find.byType(HomePage), findsNothing);
     expect(
-      find.ancestor(of: homePage, matching: find.byType(ClipRect)),
-      findsOneWidget,
-    );
-    expect(
-      find.ancestor(
-        of: homePage,
-        matching: find.byType(AppNetworkImagePlaceholderScope),
+      find.byWidgetPredicate(
+        (widget) =>
+            widget is Image &&
+            widget.image is AssetImage &&
+            (widget.image as AssetImage).assetName.startsWith(
+              'assets/images/landing/home_',
+            ),
       ),
       findsOneWidget,
     );
