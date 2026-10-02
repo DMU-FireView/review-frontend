@@ -8,6 +8,8 @@ class ChatMessage {
   const ChatMessage({
     required this.role,
     required this.content,
+    this.id,
+    this.createdAt,
     this.blocked = false,
     this.blockReason,
     this.error,
@@ -15,6 +17,8 @@ class ChatMessage {
 
   final ChatRole role;
   final String content;
+  final int? id;
+  final DateTime? createdAt;
 
   /// 서버 세이프가드에 걸려 안내 문구로 대체된 답변인지.
   final bool blocked;

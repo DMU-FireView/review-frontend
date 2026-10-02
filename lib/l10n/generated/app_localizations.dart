@@ -1589,6 +1589,48 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'알림'**
   String get headerNotifications;
+
+  /// No description provided for @chatPreviousConversations.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 대화'**
+  String get chatPreviousConversations;
+
+  /// No description provided for @chatBackToConversation.
+  ///
+  /// In ko, this message translates to:
+  /// **'대화로 돌아가기'**
+  String get chatBackToConversation;
+
+  /// No description provided for @chatHistoryLoading.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 대화를 불러오는 중입니다.'**
+  String get chatHistoryLoading;
+
+  /// No description provided for @chatHistoryEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 대화가 없습니다.'**
+  String get chatHistoryEmpty;
+
+  /// No description provided for @chatHistoryLoadError.
+  ///
+  /// In ko, this message translates to:
+  /// **'이전 대화를 불러오지 못했습니다. 다시 시도해 주세요.'**
+  String get chatHistoryLoadError;
+
+  /// No description provided for @chatHistoryLoadMore.
+  ///
+  /// In ko, this message translates to:
+  /// **'더 불러오기'**
+  String get chatHistoryLoadMore;
+
+  /// No description provided for @chatHistoryUntitled.
+  ///
+  /// In ko, this message translates to:
+  /// **'제목 없는 대화'**
+  String get chatHistoryUntitled;
 }
 
 class _AppLocalizationsDelegate

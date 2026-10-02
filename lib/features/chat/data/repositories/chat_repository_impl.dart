@@ -3,7 +3,9 @@ import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/network/api_response.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/chat/data/datasources/chat_remote_data_source.dart';
+import 'package:re_view_front/features/chat/domain/entities/chat_message.dart';
 import 'package:re_view_front/features/chat/domain/entities/chat_reply.dart';
+import 'package:re_view_front/features/chat/domain/entities/chat_session.dart';
 import 'package:re_view_front/features/chat/domain/repositories/chat_repository.dart';
 
 class ChatRepositoryImpl implements ChatRepository {
@@ -16,14 +18,27 @@ class ChatRepositoryImpl implements ChatRepository {
     required String question,
     int? sessionId,
     int? productId,
-  }) async {
+  }) => _guard(
+    () => _dataSource.ask(
+      question: question,
+      sessionId: sessionId,
+      productId: productId,
+    ),
+  );
+
+  @override
+  Future<Result<ChatSessionPage>> getSessions({
+    required int page,
+    required int size,
+  }) => _guard(() => _dataSource.getSessions(page: page, size: size));
+
+  @override
+  Future<Result<List<ChatMessage>>> getSessionMessages(int sessionId) =>
+      _guard(() => _dataSource.getSessionMessages(sessionId));
+
+  Future<Result<T>> _guard<T>(Future<T> Function() request) async {
     try {
-      final reply = await _dataSource.ask(
-        question: question,
-        sessionId: sessionId,
-        productId: productId,
-      );
-      return Success(reply);
+      return Success(await request());
     } on DioException catch (e) {
       final data = e.response?.data;
       return FailureResult(

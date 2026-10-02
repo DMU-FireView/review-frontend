@@ -248,5 +248,12 @@
   "notificationsLoading": "通知を読み込んでいます",
   "notificationsEmpty": "通知はありません",
   "notificationsEmptyBody": "通報・フィードバックの処理結果や分析完了をここでお知らせします。",
-  "headerNotifications": "通知"
+  "headerNotifications": "通知",
+  "chatPreviousConversations": "以前の会話",
+  "chatBackToConversation": "会話に戻る",
+  "chatHistoryLoading": "以前の会話を読み込んでいます。",
+  "chatHistoryEmpty": "以前の会話はありません。",
+  "chatHistoryLoadError": "以前の会話を読み込めませんでした。もう一度お試しください。",
+  "chatHistoryLoadMore": "さらに読み込む",
+  "chatHistoryUntitled": "タイトルのない会話"
 }

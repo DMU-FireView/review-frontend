@@ -9,6 +9,7 @@ import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/chat/domain/entities/chat_message.dart';
 import 'package:re_view_front/features/chat/domain/entities/chat_reply.dart';
+import 'package:re_view_front/features/chat/domain/entities/chat_session.dart';
 import 'package:re_view_front/features/chat/domain/repositories/chat_repository.dart';
 import 'package:re_view_front/features/chat/presentation/providers/chat_providers.dart';
 import 'package:re_view_front/features/chat/presentation/view_models/chat_view_model.dart';
@@ -31,10 +32,191 @@ void main() {
         }),
       ],
     );
+    container.listen(chatViewModelProvider, (previous, next) {});
     viewModel = container.read(chatViewModelProvider.notifier);
   });
 
   tearDown(() => container.dispose());
+
+  const firstSession = ChatSession(id: 12, title: '상품 리뷰', productId: '1');
+  const secondSession = ChatSession(id: 13, title: '일반 질문');
+  const historyMessages = [
+    ChatMessage(id: 21, role: ChatRole.user, content: '이전 질문'),
+    ChatMessage(
+      id: 22,
+      role: ChatRole.assistant,
+      content: '이전 답변',
+      blocked: true,
+      blockReason: '차단 이유',
+    ),
+  ];
+
+  test('loads history pages once and stops at the last page', () async {
+    repository.sessions = const Success(
+      ChatSessionPage(items: [firstSession], page: 0, isLast: false),
+    );
+    await viewModel.showHistory();
+    expect(container.read(chatViewModelProvider).isHistoryOpen, isTrue);
+    final pending = Completer<Result<ChatSessionPage>>();
+    repository.pendingSessions = pending;
+    final loading = viewModel.loadMoreSessions();
+    await viewModel.loadMoreSessions();
+    expect(repository.pages, [0, 1]);
+    pending.complete(
+      const Success(
+        ChatSessionPage(
+          items: [firstSession, secondSession],
+          page: 1,
+          isLast: true,
+        ),
+      ),
+    );
+    await loading;
+    await viewModel.loadMoreSessions();
+    final state = container.read(chatViewModelProvider);
+    expect(state.sessions.map((s) => s.id), [12, 13]);
+    expect(state.sessionsPage, 1);
+    expect(state.isLastSessionPage, isTrue);
+    expect(repository.pages, [0, 1]);
+  });
+
+  test('reports history failures and allows retry', () async {
+    repository.sessions = const FailureResult(Failure(message: '목록 오류'));
+    await viewModel.showHistory();
+    expect(container.read(chatViewModelProvider).historyError, '목록 오류');
+    expect(container.read(chatViewModelProvider).isLoadingSessions, isFalse);
+    repository.sessions = const Success(
+      ChatSessionPage(items: [firstSession], page: 0, isLast: true),
+    );
+    await viewModel.showHistory();
+    expect(container.read(chatViewModelProvider).historyError, isNull);
+    expect(container.read(chatViewModelProvider).sessions, [firstSession]);
+  });
+
+  test(
+    'resumes messages and sends the next question to the same session',
+    () async {
+      viewModel.open();
+      repository.messages = const Success(historyMessages);
+      await viewModel.resumeSession(firstSession);
+      final restored = container.read(chatViewModelProvider);
+      expect(restored.isOpen, isTrue);
+      expect(restored.isHistoryOpen, isFalse);
+      expect(restored.sessionId, 12);
+      expect(restored.sessionProductId, 1);
+      expect(restored.messages, historyMessages);
+      expect(restored.messages.last.blocked, isTrue);
+      expect(restored.messages.last.blockReason, '차단 이유');
+      await viewModel.send('후속 질문', productId: 2);
+      expect(repository.requests.single, (
+        question: '후속 질문',
+        sessionId: 12,
+        productId: null,
+      ));
+    },
+  );
+
+  test(
+    'general history clears the previous product and failed question',
+    () async {
+      await viewModel.send('실패 질문', productId: 1);
+      repository.result = const FailureResult(Failure(message: '실패'));
+      await viewModel.send('다시 질문');
+      await viewModel.resumeSession(secondSession);
+      final state = container.read(chatViewModelProvider);
+      expect(state.sessionId, 13);
+      expect(state.sessionProductId, isNull);
+      expect(state.lastFailedQuestion, isNull);
+      expect(state.messages, isEmpty);
+    },
+  );
+
+  test('failed restoration preserves the current conversation', () async {
+    await viewModel.send('현재 질문', productId: 1);
+    repository.messages = const FailureResult(Failure(message: '복원 오류'));
+    await viewModel.resumeSession(secondSession);
+    final state = container.read(chatViewModelProvider);
+    expect(state.sessionId, 7);
+    expect(state.messages, hasLength(2));
+    expect(state.historyError, '복원 오류');
+    expect(state.isLoadingMessages, isFalse);
+    viewModel.closeHistory();
+    expect(container.read(chatViewModelProvider).historyError, isNull);
+  });
+
+  test('logout clears history and ignores a late session list', () async {
+    repository.pendingSessions = Completer<Result<ChatSessionPage>>();
+    final loading = viewModel.showHistory();
+    tokenStore.setLoggedIn(false);
+    await container.pump();
+    repository.pendingSessions!.complete(
+      const Success(
+        ChatSessionPage(items: [firstSession], page: 0, isLast: true),
+      ),
+    );
+    await loading;
+    expect(container.read(chatViewModelProvider).sessions, isEmpty);
+    expect(container.read(chatViewModelProvider).isHistoryOpen, isFalse);
+    await viewModel.showHistory();
+    expect(repository.pages, [0]);
+  });
+
+  test('logout ignores messages completing after logging in again', () async {
+    repository.pendingMessages = Completer<Result<List<ChatMessage>>>();
+    final restoring = viewModel.resumeSession(firstSession);
+    tokenStore.setLoggedIn(false);
+    await container.pump();
+    tokenStore.setLoggedIn(true);
+    await container.pump();
+    repository.pendingMessages!.complete(const Success(historyMessages));
+    await restoring;
+    expect(container.read(chatViewModelProvider).messages, isEmpty);
+    expect(container.read(chatViewModelProvider).sessionId, isNull);
+  });
+
+  test('latest selected session wins over an older restoration', () async {
+    final pending = Completer<Result<List<ChatMessage>>>();
+    repository.pendingMessages = pending;
+    final first = viewModel.resumeSession(firstSession);
+    repository.pendingMessages = null;
+    await viewModel.resumeSession(secondSession);
+    pending.complete(const Success(historyMessages));
+    await first;
+    expect(container.read(chatViewModelProvider).sessionId, 13);
+    expect(container.read(chatViewModelProvider).messages, isEmpty);
+  });
+
+  for (final action in ['back', 'new']) {
+    test('$action cancels an in-flight restoration', () async {
+      repository.pendingMessages = Completer<Result<List<ChatMessage>>>();
+      final restoring = viewModel.resumeSession(firstSession);
+      if (action == 'back') {
+        viewModel.closeHistory();
+      } else {
+        viewModel.startNew(productId: 2);
+      }
+      repository.pendingMessages!.complete(const Success(historyMessages));
+      await restoring;
+      expect(container.read(chatViewModelProvider).sessionId, isNull);
+      expect(container.read(chatViewModelProvider).messages, isEmpty);
+      expect(container.read(chatViewModelProvider).isHistoryOpen, isFalse);
+    });
+  }
+
+  test('does not send while history is open or browse while sending', () async {
+    await viewModel.showHistory();
+    await viewModel.send('목록 중 질문');
+    expect(repository.requests, isEmpty);
+    viewModel.closeHistory();
+    repository.pending = Completer<Result<ChatReply>>();
+    final sending = viewModel.send('전송 질문');
+    await viewModel.showHistory();
+    await viewModel.resumeSession(firstSession);
+    expect(repository.pages, [0]);
+    expect(repository.messageRequests, isEmpty);
+    repository.pending!.complete(_reply);
+    await sending;
+  });
 
   test('stores user and assistant messages and session on success', () async {
     await viewModel.send('  리뷰를 설명해 주세요  ', productId: 1);
@@ -336,6 +518,30 @@ const _reply = Success(
 typedef _Request = ({String question, int? sessionId, int? productId});
 
 class _FakeChatRepository implements ChatRepository {
+  Result<ChatSessionPage> sessions = const Success(
+    ChatSessionPage(items: [], page: 0, isLast: true),
+  );
+  Result<List<ChatMessage>> messages = const Success([]);
+  Completer<Result<ChatSessionPage>>? pendingSessions;
+  Completer<Result<List<ChatMessage>>>? pendingMessages;
+  final List<int> pages = [];
+  final List<int> messageRequests = [];
+
+  @override
+  Future<Result<ChatSessionPage>> getSessions({
+    required int page,
+    required int size,
+  }) async {
+    pages.add(page);
+    return pendingSessions == null ? sessions : await pendingSessions!.future;
+  }
+
+  @override
+  Future<Result<List<ChatMessage>>> getSessionMessages(int sessionId) async {
+    messageRequests.add(sessionId);
+    return pendingMessages == null ? messages : await pendingMessages!.future;
+  }
+
   Result<ChatReply> result = _reply;
   Completer<Result<ChatReply>>? pending;
   final List<_Request> requests = [];

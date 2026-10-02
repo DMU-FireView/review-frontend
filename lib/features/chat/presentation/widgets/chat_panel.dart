@@ -6,6 +6,7 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/features/chat/presentation/providers/chat_providers.dart';
 import 'package:re_view_front/features/chat/presentation/view_models/chat_state.dart';
+import 'package:re_view_front/features/chat/presentation/widgets/chat_history_view.dart';
 import 'package:re_view_front/features/chat/presentation/widgets/chat_message_bubble.dart';
 import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
@@ -50,12 +51,26 @@ class ChatPanel extends ConsumerWidget {
             child: Column(
               children: [
                 _Header(
-                  canStartNew: isLoggedIn && state.hasConversation,
+                  canStartNew:
+                      isLoggedIn &&
+                      (state.hasConversation || state.isHistoryOpen),
                   onNew: () => vm.startNew(productId: productId),
                   onClose: vm.close,
+                  onHistory: isLoggedIn ? vm.showHistory : null,
+                  historyEnabled: !state.isSending && !state.isLoadingMessages,
                 ),
                 const Divider(height: 1, color: AppColors.border),
-                if (isLoggedIn) ...[
+                if (isLoggedIn && state.isHistoryOpen)
+                  Expanded(
+                    child: ChatHistoryView(
+                      state: state,
+                      onBack: vm.closeHistory,
+                      onSelect: vm.resumeSession,
+                      onLoadMore: vm.loadMoreSessions,
+                      onRetry: vm.showHistory,
+                    ),
+                  )
+                else if (isLoggedIn) ...[
                   _ContextBar(state: state, productId: productId),
                   Expanded(
                     child: state.hasConversation
@@ -82,11 +97,15 @@ class _Header extends StatelessWidget {
     required this.canStartNew,
     required this.onNew,
     required this.onClose,
+    required this.onHistory,
+    required this.historyEnabled,
   });
 
   final bool canStartNew;
   final VoidCallback onNew;
   final VoidCallback onClose;
+  final VoidCallback? onHistory;
+  final bool historyEnabled;
 
   @override
   Widget build(BuildContext context) {
@@ -140,6 +159,13 @@ class _Header extends StatelessWidget {
               tooltip: l10n.chatNewConversation,
               onPressed: onNew,
               icon: const Icon(Icons.add_comment_outlined, size: 20),
+              color: AppColors.textSecondary,
+            ),
+          if (onHistory != null)
+            IconButton(
+              tooltip: l10n.chatPreviousConversations,
+              onPressed: historyEnabled ? onHistory : null,
+              icon: const Icon(Icons.history_rounded, size: 20),
               color: AppColors.textSecondary,
             ),
           IconButton(

@@ -773,4 +773,25 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get headerNotifications => '알림';
+
+  @override
+  String get chatPreviousConversations => '이전 대화';
+
+  @override
+  String get chatBackToConversation => '대화로 돌아가기';
+
+  @override
+  String get chatHistoryLoading => '이전 대화를 불러오는 중입니다.';
+
+  @override
+  String get chatHistoryEmpty => '이전 대화가 없습니다.';
+
+  @override
+  String get chatHistoryLoadError => '이전 대화를 불러오지 못했습니다. 다시 시도해 주세요.';
+
+  @override
+  String get chatHistoryLoadMore => '더 불러오기';
+
+  @override
+  String get chatHistoryUntitled => '제목 없는 대화';
 }
