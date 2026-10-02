@@ -794,4 +794,407 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => '제목 없는 대화';
+
+  @override
+  String get adminUsersSubtitle => '가입한 사용자를 최신 가입순으로 확인하세요.';
+
+  @override
+  String get adminRefresh => '새로고침';
+
+  @override
+  String get adminTotalUsers => '전체 사용자';
+
+  @override
+  String get adminRetry => '다시 시도';
+
+  @override
+  String get adminEmail => '이메일';
+
+  @override
+  String get adminNickname => '닉네임';
+
+  @override
+  String get adminRole => '권한';
+
+  @override
+  String get adminSignupProvider => '가입 경로';
+
+  @override
+  String get adminAtiScore => 'ATI 점수';
+
+  @override
+  String get adminJoinedAt => '가입일';
+
+  @override
+  String get adminUserRole => '사용자';
+
+  @override
+  String get adminUsersEmpty => '가입한 사용자가 없습니다.';
+
+  @override
+  String get adminNaver => '네이버';
+
+  @override
+  String get adminReportPending => '검토 대기';
+
+  @override
+  String get adminUnderReview => '검토 중';
+
+  @override
+  String get adminReportAccepted => '접수 (인정)';
+
+  @override
+  String get adminReportRejected => '기각 (미인정)';
+
+  @override
+  String get adminDanger => '위험';
+
+  @override
+  String get adminWarning => '경고';
+
+  @override
+  String get adminSafe => '안전';
+
+  @override
+  String get adminFeedbackSubmitted => '접수';
+
+  @override
+  String get adminFeedbackResolved => '처리 완료';
+
+  @override
+  String get adminFeedbackRejected => '반려';
+
+  @override
+  String get adminJudgmentTrustworthy => '신뢰도가 더 높아요';
+
+  @override
+  String get adminJudgmentRisky => '위험도가 더 높아요';
+
+  @override
+  String get adminJudgmentUndecided => '판단 보류';
+
+  @override
+  String get adminReviewDetails => '리뷰 상세 정보';
+
+  @override
+  String get adminViewProduct => '상품 페이지 보기';
+
+  @override
+  String get adminRtiAnalysis => 'RTI 분석 결과';
+
+  @override
+  String get adminScoreUnit => '점';
+
+  @override
+  String get adminReviewContent => '리뷰 내용';
+
+  @override
+  String adminDetectedSignals(int count) {
+    return '탐지 신호 ($count)';
+  }
+
+  @override
+  String get adminVerifiedPurchase => '구매 인증';
+
+  @override
+  String get adminVerified => '인증됨';
+
+  @override
+  String get adminNotVerified => '인증 안됨';
+
+  @override
+  String get adminReviewerInfo => '작성자 정보';
+
+  @override
+  String get adminReviewer => '작성자';
+
+  @override
+  String get adminRating => '별점';
+
+  @override
+  String get adminWrittenAt => '작성일';
+
+  @override
+  String adminSelectedCount(int count) {
+    return '$count개 선택됨';
+  }
+
+  @override
+  String get adminSaved => '변경 사항이 저장되었습니다.';
+
+  @override
+  String get adminSaveFailed => '저장에 실패했습니다.';
+
+  @override
+  String get adminFeedbackDetails => '피드백 상세 정보';
+
+  @override
+  String get adminSaveChanges => '변경 사항 저장';
+
+  @override
+  String get adminFeedbackId => '피드백 ID';
+
+  @override
+  String get adminReviewId => '리뷰 ID';
+
+  @override
+  String get adminProductName => '상품명';
+
+  @override
+  String get adminCreatedAt => '등록일';
+
+  @override
+  String get adminUpdatedAt => '수정일';
+
+  @override
+  String get adminFeedbackType => '피드백 유형';
+
+  @override
+  String get adminUserJudgment => '사용자 판단';
+
+  @override
+  String adminRelatedSignals(int count) {
+    return '관련 신호 ($count)';
+  }
+
+  @override
+  String get adminFeedbackContent => '피드백 내용';
+
+  @override
+  String get adminAttachmentLink => '첨부 파일 / 링크';
+
+  @override
+  String get adminReplyEmail => '회신 이메일';
+
+  @override
+  String get adminComment => '관리자 메모';
+
+  @override
+  String get adminCommentHint => '검토 내용이나 조치 사항을 입력하세요...';
+
+  @override
+  String get adminChangeStatus => '상태 변경';
+
+  @override
+  String get adminReportDetails => '신고 상세 정보';
+
+  @override
+  String get adminSave => '저장하기';
+
+  @override
+  String get adminReportInfo => '신고 정보';
+
+  @override
+  String get adminReportId => '신고 ID';
+
+  @override
+  String get adminReportReason => '신고 사유';
+
+  @override
+  String get adminReportedAt => '신고 시간';
+
+  @override
+  String get adminUpdatedTime => '수정 시간';
+
+  @override
+  String get adminReportedReview => '신고 대상 리뷰';
+
+  @override
+  String get adminReportContent => '신고 내용';
+
+  @override
+  String get adminAttachment => '첨부 파일';
+
+  @override
+  String get adminEvidenceIncluded => 'AI 증거 포함';
+
+  @override
+  String get adminIncluded => '포함';
+
+  @override
+  String get adminNotIncluded => '미포함';
+
+  @override
+  String get adminOptionalCommentHint => '메모를 입력하세요. (선택사항)';
+
+  @override
+  String get adminSuspiciousReviewsSubtitle =>
+      'RTI 분석을 통해 탐지된 의심 리뷰를 검토하고 적절한 조치를 취하세요.';
+
+  @override
+  String get adminRtiUpperBound => 'RTI 점수 상한';
+
+  @override
+  String adminScoreBelow(int score) {
+    return '$score점 미만';
+  }
+
+  @override
+  String get adminAll => '전체';
+
+  @override
+  String get adminTotalSuspiciousReviews => '전체 의심 리뷰';
+
+  @override
+  String get adminCurrentFilter => '현재 조회 기준';
+
+  @override
+  String get adminRtiScore => 'RTI 점수';
+
+  @override
+  String get adminTrustGrade => '신뢰 등급';
+
+  @override
+  String get adminSuspiciousReviewsEmpty => '표시할 의심 리뷰가 없습니다.';
+
+  @override
+  String get adminFeedbacksSubtitle =>
+      '사용자가 RTI 분석 결과에 대해 제공한 피드백을 검토하고 처리하세요.';
+
+  @override
+  String get adminTotalFeedbacks => '전체 피드백';
+
+  @override
+  String get adminAllTime => '전체 기간 기준';
+
+  @override
+  String get adminStatus => '상태';
+
+  @override
+  String get adminFeedbacksEmpty => '표시할 분석 피드백이 없습니다.';
+
+  @override
+  String get adminReportsSubtitle => '사용자 신고를 검토하고 처리 상태를 변경하세요.';
+
+  @override
+  String get adminTotalReports => '전체 신고';
+
+  @override
+  String get adminReportsCountHelper => '전체 신고 건수';
+
+  @override
+  String get adminPendingReportsHelper => '검토가 필요한 신고';
+
+  @override
+  String get adminUnderReviewReportsHelper => '현재 검토 중인 신고';
+
+  @override
+  String get adminAcceptedReportsHelper => '신고가 접수된 건';
+
+  @override
+  String get adminRejectedReportsHelper => '신고가 기각된 건';
+
+  @override
+  String adminBulkSuccess(int total) {
+    return '$total건을 처리했습니다.';
+  }
+
+  @override
+  String adminBulkFailure(int total, int failed) {
+    return '$total건 중 $failed건 처리에 실패했습니다. 실패한 항목은 선택된 상태로 남겨 두었습니다.';
+  }
+
+  @override
+  String get adminAcceptReports => '접수 처리';
+
+  @override
+  String get adminRejectReports => '기각 처리';
+
+  @override
+  String get adminEvidence => 'AI 증거';
+
+  @override
+  String get adminReportsEmpty => '표시할 신고가 없습니다.';
+
+  @override
+  String get adminDashboardSubtitle => '리뷰 분석 현황과 처리 대기 업무를 한눈에 확인하세요.';
+
+  @override
+  String get adminModelPerformance => 'AI 모델 성능';
+
+  @override
+  String adminPeriodDays(int days) {
+    return '$days일';
+  }
+
+  @override
+  String get adminTotalReviews => '전체 리뷰';
+
+  @override
+  String get adminTotalReviewsHelper => '분석 대상 리뷰 전체';
+
+  @override
+  String get adminSuspiciousReviews => '의심 리뷰';
+
+  @override
+  String get adminRiskyReviews => '위험 리뷰';
+
+  @override
+  String get adminPendingReports => '처리 대기 신고';
+
+  @override
+  String get adminPendingFeedbacks => '처리 대기 분석 피드백';
+
+  @override
+  String get adminOpenSection => '눌러서 바로가기';
+
+  @override
+  String adminCountPercent(String count, String percent) {
+    return '$count건 · $percent%';
+  }
+
+  @override
+  String get adminRtiDistribution => 'RTI 등급 분포';
+
+  @override
+  String adminAnalyzedCount(String count) {
+    return '분석 리뷰 $count건';
+  }
+
+  @override
+  String get adminSuspicious => '의심';
+
+  @override
+  String get adminAverageRti => '전체 평균 RTI';
+
+  @override
+  String adminDailyTrendTitle(int days) {
+    return '일별 평균 RTI · 분석 건수 (최근 $days일)';
+  }
+
+  @override
+  String get adminTrendEmpty => '기간 내 분석된 리뷰가 없습니다.';
+
+  @override
+  String adminTrendTooltip(String date, String score, String count) {
+    return '$date\n평균 RTI $score · $count건';
+  }
+
+  @override
+  String get adminUserAgreement => '사용자 판정 동의율';
+
+  @override
+  String adminFeedbackCount(String count) {
+    return '피드백 $count건';
+  }
+
+  @override
+  String get adminAgree => '동의';
+
+  @override
+  String get adminDisagree => '이의';
+
+  @override
+  String get adminFeedbackStats => '분석 피드백 처리 현황';
+
+  @override
+  String adminResolutionRate(String percent) {
+    return '처리율 $percent%';
+  }
+
+  @override
+  String get adminApplied => '반영';
+
+  @override
+  String get adminDismissed => '기각';
 }

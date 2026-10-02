@@ -8,6 +8,8 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_detail_p
 import 'package:re_view_front/features/admin/presentation/widgets/admin_status_badge.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/report_status_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class ReportDetailPanel extends ConsumerStatefulWidget {
   const ReportDetailPanel({
@@ -62,20 +64,22 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
           adminComment: unchanged ? null : comment,
         );
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(ok ? '변경 사항이 저장되었습니다.' : '저장에 실패했습니다.')),
+      SnackBar(content: Text(ok ? l10n.adminSaved : l10n.adminSaveFailed)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final r = widget.report;
     final isUpdating = ref.watch(
       adminReportViewModelProvider.select((s) => s.isUpdating),
     );
 
     return AdminDetailPanel(
-      title: '신고 상세 정보',
+      title: l10n.adminReportDetails,
       onClose: widget.onClose,
       actions: [
         Expanded(
@@ -87,7 +91,7 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_outlined, size: 18),
-            label: const Text('저장하기'),
+            label: Text(l10n.adminSave),
           ),
         ),
       ],
@@ -95,20 +99,28 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (r.status != null)
-            AdminStatusBadge(label: r.status!.label, tone: r.status!.tone),
+            AdminStatusBadge(
+              label: r.status!.localizedLabel(l10n),
+              tone: r.status!.tone,
+            ),
           const SizedBox(height: AppSpacing.md),
           _Section(
-            label: '신고 정보',
-            child: _InfoBox(rows: [
-              ('신고 ID', 'RPT-${r.reportId}'),
-              ('리뷰 ID', 'RWV-${r.reviewId}'),
-              ('신고 사유', r.reasonDescription.isEmpty ? r.reason : r.reasonDescription),
-              ('신고 시간', formatAdminDateTime(r.createdAt)),
-              ('수정 시간', formatAdminDateTime(r.updatedAt)),
-            ]),
+            label: l10n.adminReportInfo,
+            child: _InfoBox(
+              rows: [
+                (l10n.adminReportId, 'RPT-${r.reportId}'),
+                (l10n.adminReviewId, 'RWV-${r.reviewId}'),
+                (
+                  l10n.adminReportReason,
+                  r.reasonDescription.isEmpty ? r.reason : r.reasonDescription,
+                ),
+                (l10n.adminReportedAt, formatAdminDateTime(r.createdAt)),
+                (l10n.adminUpdatedTime, formatAdminDateTime(r.updatedAt)),
+              ],
+            ),
           ),
           _Section(
-            label: '신고 대상 리뷰',
+            label: l10n.adminReportedReview,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -126,12 +138,12 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
             ),
           ),
           _Section(
-            label: '신고 내용',
+            label: l10n.adminReportContent,
             child: Text(r.detail.isEmpty ? '-' : r.detail, style: _bodyStyle),
           ),
           if (r.attachmentUrl != null && r.attachmentUrl!.isNotEmpty)
             _Section(
-              label: '첨부 파일',
+              label: l10n.adminAttachment,
               child: Row(
                 children: [
                   const Icon(Icons.attachment_rounded,
@@ -152,23 +164,25 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
               ),
             ),
           _Section(
-            label: 'AI 증거 포함',
+            label: l10n.adminEvidenceIncluded,
             child: AdminStatusBadge(
-              label: r.includeAiEvidence ? '포함됨' : '미포함',
+              label: r.includeAiEvidence
+                  ? l10n.adminIncluded
+                  : l10n.adminNotIncluded,
               tone: r.includeAiEvidence
                   ? AdminBadgeTone.success
                   : AdminBadgeTone.neutral,
             ),
           ),
           _Section(
-            label: '관리자 메모',
+            label: l10n.adminComment,
             child: TextField(
               controller: _commentController,
               maxLines: 4,
               maxLength: 500,
               style: _bodyStyle,
               decoration: InputDecoration(
-                hintText: '메모를 입력하세요. (선택사항)',
+                hintText: l10n.adminOptionalCommentHint,
                 hintStyle: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textTertiary,
@@ -182,7 +196,7 @@ class _ReportDetailPanelState extends ConsumerState<ReportDetailPanel> {
             ),
           ),
           _Section(
-            label: '상태 변경',
+            label: l10n.adminChangeStatus,
             child: Wrap(
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
@@ -301,6 +315,7 @@ class _StatusChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (bg, fg) = switch (status.tone) {
       AdminBadgeTone.info => (AppColors.primaryLight, AppColors.primary),
       AdminBadgeTone.success => (AppColors.successSoft, AppColors.success),
@@ -325,7 +340,7 @@ class _StatusChoice extends StatelessWidget {
           ),
         ),
         child: Text(
-          status.label,
+          status.localizedLabel(l10n),
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,

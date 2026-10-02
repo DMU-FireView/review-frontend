@@ -8,6 +8,8 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_score_ga
 import 'package:re_view_front/features/admin/presentation/widgets/admin_status_badge.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/trust_grade_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class SuspiciousReviewDetailPanel extends StatelessWidget {
   const SuspiciousReviewDetailPanel({
@@ -21,9 +23,10 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final r = review;
     return AdminDetailPanel(
-      title: '리뷰 상세 정보',
+      title: l10n.adminReviewDetails,
       onClose: onClose,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,25 +42,29 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           InkWell(
             onTap: () => context.go('/product/${r.productId}'),
-            child: const Row(
+            child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '상품 페이지 보기',
-                  style: TextStyle(
+                  l10n.adminViewProduct,
+                  style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.primary,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(width: 2),
-                Icon(Icons.open_in_new_rounded, size: 14, color: AppColors.primary),
+                const SizedBox(width: 2),
+                const Icon(
+                  Icons.open_in_new_rounded,
+                  size: 14,
+                  color: AppColors.primary,
+                ),
               ],
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
           _Section(
-            label: 'RTI 분석 결과',
+            label: l10n.adminRtiAnalysis,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,10 +81,10 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 2),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 4),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
                       child: Text(
-                        '점',
+                        l10n.adminScoreUnit,
                         style: TextStyle(
                           fontSize: 13,
                           color: AppColors.textSecondary,
@@ -87,7 +94,7 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
                     const Spacer(),
                     if (r.trustGrade != null)
                       AdminStatusBadge(
-                        label: r.trustGrade!.label,
+                        label: r.trustGrade!.localizedLabel(l10n),
                         tone: r.trustGrade!.tone,
                       ),
                   ],
@@ -98,7 +105,7 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
             ),
           ),
           _Section(
-            label: '리뷰 내용',
+            label: l10n.adminReviewContent,
             child: Text(
               r.content.isEmpty ? '-' : r.content,
               style: const TextStyle(
@@ -110,7 +117,7 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
           ),
           if (r.reasons.isNotEmpty)
             _Section(
-              label: '탐지 신호 (${r.reasons.length})',
+              label: l10n.adminDetectedSignals(r.reasons.length),
               child: Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
@@ -121,21 +128,28 @@ class SuspiciousReviewDetailPanel extends StatelessWidget {
               ),
             ),
           _Section(
-            label: '구매 인증',
+            label: l10n.adminVerifiedPurchase,
             child: AdminStatusBadge(
-              label: r.isVerifiedPurchase ? '인증됨' : '인증 안됨',
+              label: r.isVerifiedPurchase
+                  ? l10n.adminVerified
+                  : l10n.adminNotVerified,
               tone: r.isVerifiedPurchase
                   ? AdminBadgeTone.success
                   : AdminBadgeTone.neutral,
             ),
           ),
           _Section(
-            label: '작성자 정보',
-            child: _InfoBox(rows: [
-              ('작성자', r.reviewerNickname.isEmpty ? '-' : r.reviewerNickname),
-              ('별점', '★ ${r.rating}'),
-              ('작성일', formatAdminDateTime(r.writtenAt)),
-            ]),
+            label: l10n.adminReviewerInfo,
+            child: _InfoBox(
+              rows: [
+                (
+                  l10n.adminReviewer,
+                  r.reviewerNickname.isEmpty ? '-' : r.reviewerNickname,
+                ),
+                (l10n.adminRating, '★ ${r.rating}'),
+                (l10n.adminWrittenAt, formatAdminDateTime(r.writtenAt)),
+              ],
+            ),
           ),
         ],
       ),

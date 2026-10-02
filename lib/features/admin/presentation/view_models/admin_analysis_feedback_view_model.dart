@@ -101,12 +101,11 @@ class AdminAnalysisFeedbackViewModel
     );
     return result.when(
       success: (_) {
-        AdminAnalysisFeedback merge(AdminAnalysisFeedback f) =>
-            f.copyWith(
-              status: status,
-              statusDescription: status.label,
-              updatedAt: DateTime.now(),
-            );
+        AdminAnalysisFeedback merge(AdminAnalysisFeedback f) => f.copyWith(
+          status: status,
+          statusDescription: status.code,
+          updatedAt: DateTime.now(),
+        );
         final items = [
           for (final item in state.items)
             if (item.feedbackId == feedbackId) merge(item) else item,

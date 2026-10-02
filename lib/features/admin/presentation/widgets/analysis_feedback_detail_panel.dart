@@ -8,6 +8,8 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_detail_p
 import 'package:re_view_front/features/admin/presentation/widgets/admin_status_badge.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/analysis_feedback_status_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class AnalysisFeedbackDetailPanel extends ConsumerStatefulWidget {
   const AnalysisFeedbackDetailPanel({
@@ -64,22 +66,22 @@ class _AnalysisFeedbackDetailPanelState
               : _commentController.text.trim(),
         );
     if (!mounted) return;
+    final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(ok ? '변경 사항이 저장되었습니다.' : '저장에 실패했습니다.'),
-      ),
+      SnackBar(content: Text(ok ? l10n.adminSaved : l10n.adminSaveFailed)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final f = widget.feedback;
     final isUpdating = ref.watch(
       adminAnalysisFeedbackViewModelProvider.select((s) => s.isUpdating),
     );
 
     return AdminDetailPanel(
-      title: '피드백 상세 정보',
+      title: l10n.adminFeedbackDetails,
       onClose: widget.onClose,
       actions: [
         Expanded(
@@ -91,7 +93,7 @@ class _AnalysisFeedbackDetailPanelState
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_outlined, size: 18),
-            label: const Text('변경 사항 저장'),
+            label: Text(l10n.adminSaveChanges),
           ),
         ),
       ],
@@ -99,18 +101,23 @@ class _AnalysisFeedbackDetailPanelState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (f.status != null)
-            AdminStatusBadge(label: f.status!.label, tone: f.status!.tone),
+            AdminStatusBadge(
+              label: f.status!.localizedLabel(l10n),
+              tone: f.status!.tone,
+            ),
           const SizedBox(height: AppSpacing.md),
-          _InfoBox(rows: [
-            ('피드백 ID', 'FB-${f.feedbackId}'),
-            ('리뷰 ID', 'RWV-${f.reviewId}'),
-            ('상품명', f.productName),
-            ('등록일', formatAdminDateTime(f.createdAt)),
-            ('수정일', formatAdminDateTime(f.updatedAt)),
-          ]),
+          _InfoBox(
+            rows: [
+              (l10n.adminFeedbackId, 'FB-${f.feedbackId}'),
+              (l10n.adminReviewId, 'RWV-${f.reviewId}'),
+              (l10n.adminProductName, f.productName),
+              (l10n.adminCreatedAt, formatAdminDateTime(f.createdAt)),
+              (l10n.adminUpdatedAt, formatAdminDateTime(f.updatedAt)),
+            ],
+          ),
           const SizedBox(height: AppSpacing.lg),
           _Section(
-            label: '피드백 유형',
+            label: l10n.adminFeedbackType,
             child: Text(
               f.feedbackTypeDescription.isEmpty
                   ? f.feedbackType
@@ -119,15 +126,15 @@ class _AnalysisFeedbackDetailPanelState
             ),
           ),
           _Section(
-            label: '사용자 판단',
+            label: l10n.adminUserJudgment,
             child: AdminStatusBadge(
-              label: f.userJudgmentLabel,
+              label: analysisUserJudgmentLabel(f.userJudgment, l10n),
               tone: AdminBadgeTone.neutral,
             ),
           ),
           if (f.relatedSignals.isNotEmpty)
             _Section(
-              label: '관련 신호 (${f.relatedSignals.length})',
+              label: l10n.adminRelatedSignals(f.relatedSignals.length),
               child: Wrap(
                 spacing: AppSpacing.xs,
                 runSpacing: AppSpacing.xs,
@@ -138,7 +145,7 @@ class _AnalysisFeedbackDetailPanelState
               ),
             ),
           _Section(
-            label: '피드백 내용',
+            label: l10n.adminFeedbackContent,
             child: Text(
               f.detail?.isNotEmpty == true ? f.detail! : '-',
               style: _bodyStyle,
@@ -146,7 +153,7 @@ class _AnalysisFeedbackDetailPanelState
           ),
           if (f.attachmentUrl != null && f.attachmentUrl!.isNotEmpty)
             _Section(
-              label: '첨부 파일 / 링크',
+              label: l10n.adminAttachmentLink,
               child: Row(
                 children: [
                   const Icon(Icons.attachment_rounded,
@@ -167,21 +174,21 @@ class _AnalysisFeedbackDetailPanelState
               ),
             ),
           _Section(
-            label: '회신 이메일',
+            label: l10n.adminReplyEmail,
             child: Text(
               f.replyEmail?.isNotEmpty == true ? f.replyEmail! : '-',
               style: _bodyStyle,
             ),
           ),
           _Section(
-            label: '관리자 메모',
+            label: l10n.adminComment,
             child: TextField(
               controller: _commentController,
               maxLines: 4,
               maxLength: 1000,
               style: _bodyStyle,
               decoration: InputDecoration(
-                hintText: '검토 내용이나 조치 사항을 입력하세요...',
+                hintText: l10n.adminCommentHint,
                 hintStyle: const TextStyle(
                   fontSize: 13,
                   color: AppColors.textTertiary,
@@ -195,7 +202,7 @@ class _AnalysisFeedbackDetailPanelState
             ),
           ),
           _Section(
-            label: '상태 변경',
+            label: l10n.adminChangeStatus,
             child: Wrap(
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
@@ -314,6 +321,7 @@ class _StatusChoice extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final (bg, fg) = switch (status.tone) {
       AdminBadgeTone.info => (AppColors.primaryLight, AppColors.primary),
       AdminBadgeTone.success => (AppColors.successSoft, AppColors.success),
@@ -338,7 +346,7 @@ class _StatusChoice extends StatelessWidget {
           ),
         ),
         child: Text(
-          status.code,
+          status.localizedLabel(l10n),
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
