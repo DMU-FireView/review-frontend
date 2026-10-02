@@ -1632,6 +1632,756 @@ abstract class AppLocalizations {
   /// **'제목 없는 대화'**
   String get chatHistoryUntitled;
 
+  /// No description provided for @adminUsersSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'가입한 사용자를 최신 가입순으로 확인하세요.'**
+  String get adminUsersSubtitle;
+
+  /// No description provided for @adminRefresh.
+  ///
+  /// In ko, this message translates to:
+  /// **'새로고침'**
+  String get adminRefresh;
+
+  /// No description provided for @adminTotalUsers.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 사용자'**
+  String get adminTotalUsers;
+
+  /// No description provided for @adminRetry.
+  ///
+  /// In ko, this message translates to:
+  /// **'다시 시도'**
+  String get adminRetry;
+
+  /// No description provided for @adminEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일'**
+  String get adminEmail;
+
+  /// No description provided for @adminNickname.
+  ///
+  /// In ko, this message translates to:
+  /// **'닉네임'**
+  String get adminNickname;
+
+  /// No description provided for @adminRole.
+  ///
+  /// In ko, this message translates to:
+  /// **'권한'**
+  String get adminRole;
+
+  /// No description provided for @adminSignupProvider.
+  ///
+  /// In ko, this message translates to:
+  /// **'가입 경로'**
+  String get adminSignupProvider;
+
+  /// No description provided for @adminAtiScore.
+  ///
+  /// In ko, this message translates to:
+  /// **'ATI 점수'**
+  String get adminAtiScore;
+
+  /// No description provided for @adminJoinedAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'가입일'**
+  String get adminJoinedAt;
+
+  /// No description provided for @adminUserRole.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자'**
+  String get adminUserRole;
+
+  /// No description provided for @adminUsersEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'가입한 사용자가 없습니다.'**
+  String get adminUsersEmpty;
+
+  /// No description provided for @adminNaver.
+  ///
+  /// In ko, this message translates to:
+  /// **'네이버'**
+  String get adminNaver;
+
+  /// No description provided for @adminReportPending.
+  ///
+  /// In ko, this message translates to:
+  /// **'검토 대기'**
+  String get adminReportPending;
+
+  /// No description provided for @adminUnderReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'검토 중'**
+  String get adminUnderReview;
+
+  /// No description provided for @adminReportAccepted.
+  ///
+  /// In ko, this message translates to:
+  /// **'접수 (인정)'**
+  String get adminReportAccepted;
+
+  /// No description provided for @adminReportRejected.
+  ///
+  /// In ko, this message translates to:
+  /// **'기각 (미인정)'**
+  String get adminReportRejected;
+
+  /// No description provided for @adminDanger.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험'**
+  String get adminDanger;
+
+  /// No description provided for @adminWarning.
+  ///
+  /// In ko, this message translates to:
+  /// **'경고'**
+  String get adminWarning;
+
+  /// No description provided for @adminSafe.
+  ///
+  /// In ko, this message translates to:
+  /// **'안전'**
+  String get adminSafe;
+
+  /// No description provided for @adminFeedbackSubmitted.
+  ///
+  /// In ko, this message translates to:
+  /// **'접수'**
+  String get adminFeedbackSubmitted;
+
+  /// No description provided for @adminFeedbackResolved.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리 완료'**
+  String get adminFeedbackResolved;
+
+  /// No description provided for @adminFeedbackRejected.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려'**
+  String get adminFeedbackRejected;
+
+  /// No description provided for @adminJudgmentTrustworthy.
+  ///
+  /// In ko, this message translates to:
+  /// **'신뢰도가 더 높아요'**
+  String get adminJudgmentTrustworthy;
+
+  /// No description provided for @adminJudgmentRisky.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험도가 더 높아요'**
+  String get adminJudgmentRisky;
+
+  /// No description provided for @adminJudgmentUndecided.
+  ///
+  /// In ko, this message translates to:
+  /// **'판단 보류'**
+  String get adminJudgmentUndecided;
+
+  /// No description provided for @adminReviewDetails.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 상세 정보'**
+  String get adminReviewDetails;
+
+  /// No description provided for @adminViewProduct.
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 페이지 보기'**
+  String get adminViewProduct;
+
+  /// No description provided for @adminRtiAnalysis.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 분석 결과'**
+  String get adminRtiAnalysis;
+
+  /// No description provided for @adminScoreUnit.
+  ///
+  /// In ko, this message translates to:
+  /// **'점'**
+  String get adminScoreUnit;
+
+  /// No description provided for @adminReviewContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 내용'**
+  String get adminReviewContent;
+
+  /// No description provided for @adminDetectedSignals.
+  ///
+  /// In ko, this message translates to:
+  /// **'탐지 신호 ({count})'**
+  String adminDetectedSignals(int count);
+
+  /// No description provided for @adminVerifiedPurchase.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매 인증'**
+  String get adminVerifiedPurchase;
+
+  /// No description provided for @adminVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'인증됨'**
+  String get adminVerified;
+
+  /// No description provided for @adminNotVerified.
+  ///
+  /// In ko, this message translates to:
+  /// **'인증 안됨'**
+  String get adminNotVerified;
+
+  /// No description provided for @adminReviewerInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'작성자 정보'**
+  String get adminReviewerInfo;
+
+  /// No description provided for @adminReviewer.
+  ///
+  /// In ko, this message translates to:
+  /// **'작성자'**
+  String get adminReviewer;
+
+  /// No description provided for @adminRating.
+  ///
+  /// In ko, this message translates to:
+  /// **'별점'**
+  String get adminRating;
+
+  /// No description provided for @adminWrittenAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'작성일'**
+  String get adminWrittenAt;
+
+  /// No description provided for @adminSelectedCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}개 선택됨'**
+  String adminSelectedCount(int count);
+
+  /// No description provided for @adminSaved.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경 사항이 저장되었습니다.'**
+  String get adminSaved;
+
+  /// No description provided for @adminSaveFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장에 실패했습니다.'**
+  String get adminSaveFailed;
+
+  /// No description provided for @adminFeedbackDetails.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 상세 정보'**
+  String get adminFeedbackDetails;
+
+  /// No description provided for @adminSaveChanges.
+  ///
+  /// In ko, this message translates to:
+  /// **'변경 사항 저장'**
+  String get adminSaveChanges;
+
+  /// No description provided for @adminFeedbackId.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 ID'**
+  String get adminFeedbackId;
+
+  /// No description provided for @adminReviewId.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 ID'**
+  String get adminReviewId;
+
+  /// No description provided for @adminProductName.
+  ///
+  /// In ko, this message translates to:
+  /// **'상품명'**
+  String get adminProductName;
+
+  /// No description provided for @adminCreatedAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'등록일'**
+  String get adminCreatedAt;
+
+  /// No description provided for @adminUpdatedAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정일'**
+  String get adminUpdatedAt;
+
+  /// No description provided for @adminFeedbackType.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 유형'**
+  String get adminFeedbackType;
+
+  /// No description provided for @adminUserJudgment.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자 판단'**
+  String get adminUserJudgment;
+
+  /// No description provided for @adminRelatedSignals.
+  ///
+  /// In ko, this message translates to:
+  /// **'관련 신호 ({count})'**
+  String adminRelatedSignals(int count);
+
+  /// No description provided for @adminFeedbackContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 내용'**
+  String get adminFeedbackContent;
+
+  /// No description provided for @adminAttachmentLink.
+  ///
+  /// In ko, this message translates to:
+  /// **'첨부 파일 / 링크'**
+  String get adminAttachmentLink;
+
+  /// No description provided for @adminReplyEmail.
+  ///
+  /// In ko, this message translates to:
+  /// **'회신 이메일'**
+  String get adminReplyEmail;
+
+  /// No description provided for @adminComment.
+  ///
+  /// In ko, this message translates to:
+  /// **'관리자 메모'**
+  String get adminComment;
+
+  /// No description provided for @adminCommentHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'검토 내용이나 조치 사항을 입력하세요...'**
+  String get adminCommentHint;
+
+  /// No description provided for @adminChangeStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'상태 변경'**
+  String get adminChangeStatus;
+
+  /// No description provided for @adminReportDetails.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 상세 정보'**
+  String get adminReportDetails;
+
+  /// No description provided for @adminSave.
+  ///
+  /// In ko, this message translates to:
+  /// **'저장하기'**
+  String get adminSave;
+
+  /// No description provided for @adminReportInfo.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 정보'**
+  String get adminReportInfo;
+
+  /// No description provided for @adminReportId.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 ID'**
+  String get adminReportId;
+
+  /// No description provided for @adminReportReason.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 사유'**
+  String get adminReportReason;
+
+  /// No description provided for @adminReportedAt.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 시간'**
+  String get adminReportedAt;
+
+  /// No description provided for @adminUpdatedTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정 시간'**
+  String get adminUpdatedTime;
+
+  /// No description provided for @adminReportedReview.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 대상 리뷰'**
+  String get adminReportedReview;
+
+  /// No description provided for @adminReportContent.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고 내용'**
+  String get adminReportContent;
+
+  /// No description provided for @adminAttachment.
+  ///
+  /// In ko, this message translates to:
+  /// **'첨부 파일'**
+  String get adminAttachment;
+
+  /// No description provided for @adminEvidenceIncluded.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 증거 포함'**
+  String get adminEvidenceIncluded;
+
+  /// No description provided for @adminIncluded.
+  ///
+  /// In ko, this message translates to:
+  /// **'포함'**
+  String get adminIncluded;
+
+  /// No description provided for @adminNotIncluded.
+  ///
+  /// In ko, this message translates to:
+  /// **'미포함'**
+  String get adminNotIncluded;
+
+  /// No description provided for @adminOptionalCommentHint.
+  ///
+  /// In ko, this message translates to:
+  /// **'메모를 입력하세요. (선택사항)'**
+  String get adminOptionalCommentHint;
+
+  /// No description provided for @adminSuspiciousReviewsSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 분석을 통해 탐지된 의심 리뷰를 검토하고 적절한 조치를 취하세요.'**
+  String get adminSuspiciousReviewsSubtitle;
+
+  /// No description provided for @adminRtiUpperBound.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 점수 상한'**
+  String get adminRtiUpperBound;
+
+  /// No description provided for @adminScoreBelow.
+  ///
+  /// In ko, this message translates to:
+  /// **'{score}점 미만'**
+  String adminScoreBelow(int score);
+
+  /// No description provided for @adminAll.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체'**
+  String get adminAll;
+
+  /// No description provided for @adminTotalSuspiciousReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 의심 리뷰'**
+  String get adminTotalSuspiciousReviews;
+
+  /// No description provided for @adminCurrentFilter.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 조회 기준'**
+  String get adminCurrentFilter;
+
+  /// No description provided for @adminRtiScore.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 점수'**
+  String get adminRtiScore;
+
+  /// No description provided for @adminTrustGrade.
+  ///
+  /// In ko, this message translates to:
+  /// **'신뢰 등급'**
+  String get adminTrustGrade;
+
+  /// No description provided for @adminSuspiciousReviewsEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'표시할 의심 리뷰가 없습니다.'**
+  String get adminSuspiciousReviewsEmpty;
+
+  /// No description provided for @adminFeedbacksSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자가 RTI 분석 결과에 대해 제공한 피드백을 검토하고 처리하세요.'**
+  String get adminFeedbacksSubtitle;
+
+  /// No description provided for @adminTotalFeedbacks.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 피드백'**
+  String get adminTotalFeedbacks;
+
+  /// No description provided for @adminAllTime.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 기간 기준'**
+  String get adminAllTime;
+
+  /// No description provided for @adminStatus.
+  ///
+  /// In ko, this message translates to:
+  /// **'상태'**
+  String get adminStatus;
+
+  /// No description provided for @adminFeedbacksEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'표시할 분석 피드백이 없습니다.'**
+  String get adminFeedbacksEmpty;
+
+  /// No description provided for @adminReportsSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자 신고를 검토하고 처리 상태를 변경하세요.'**
+  String get adminReportsSubtitle;
+
+  /// No description provided for @adminTotalReports.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 신고'**
+  String get adminTotalReports;
+
+  /// No description provided for @adminReportsCountHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 신고 건수'**
+  String get adminReportsCountHelper;
+
+  /// No description provided for @adminPendingReportsHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'검토가 필요한 신고'**
+  String get adminPendingReportsHelper;
+
+  /// No description provided for @adminUnderReviewReportsHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 검토 중인 신고'**
+  String get adminUnderReviewReportsHelper;
+
+  /// No description provided for @adminAcceptedReportsHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고가 접수된 건'**
+  String get adminAcceptedReportsHelper;
+
+  /// No description provided for @adminRejectedReportsHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'신고가 기각된 건'**
+  String get adminRejectedReportsHelper;
+
+  /// No description provided for @adminBulkSuccess.
+  ///
+  /// In ko, this message translates to:
+  /// **'{total}건을 처리했습니다.'**
+  String adminBulkSuccess(int total);
+
+  /// No description provided for @adminBulkFailure.
+  ///
+  /// In ko, this message translates to:
+  /// **'{total}건 중 {failed}건 처리에 실패했습니다. 실패한 항목은 선택된 상태로 남겨 두었습니다.'**
+  String adminBulkFailure(int total, int failed);
+
+  /// No description provided for @adminAcceptReports.
+  ///
+  /// In ko, this message translates to:
+  /// **'접수 처리'**
+  String get adminAcceptReports;
+
+  /// No description provided for @adminRejectReports.
+  ///
+  /// In ko, this message translates to:
+  /// **'기각 처리'**
+  String get adminRejectReports;
+
+  /// No description provided for @adminEvidence.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 증거'**
+  String get adminEvidence;
+
+  /// No description provided for @adminReportsEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'표시할 신고가 없습니다.'**
+  String get adminReportsEmpty;
+
+  /// No description provided for @adminDashboardSubtitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 분석 현황과 처리 대기 업무를 한눈에 확인하세요.'**
+  String get adminDashboardSubtitle;
+
+  /// No description provided for @adminModelPerformance.
+  ///
+  /// In ko, this message translates to:
+  /// **'AI 모델 성능'**
+  String get adminModelPerformance;
+
+  /// No description provided for @adminPeriodDays.
+  ///
+  /// In ko, this message translates to:
+  /// **'{days}일'**
+  String adminPeriodDays(int days);
+
+  /// No description provided for @adminTotalReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 리뷰'**
+  String get adminTotalReviews;
+
+  /// No description provided for @adminTotalReviewsHelper.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 대상 리뷰 전체'**
+  String get adminTotalReviewsHelper;
+
+  /// No description provided for @adminSuspiciousReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'의심 리뷰'**
+  String get adminSuspiciousReviews;
+
+  /// No description provided for @adminRiskyReviews.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험 리뷰'**
+  String get adminRiskyReviews;
+
+  /// No description provided for @adminPendingReports.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리 대기 신고'**
+  String get adminPendingReports;
+
+  /// No description provided for @adminPendingFeedbacks.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리 대기 분석 피드백'**
+  String get adminPendingFeedbacks;
+
+  /// No description provided for @adminOpenSection.
+  ///
+  /// In ko, this message translates to:
+  /// **'눌러서 바로가기'**
+  String get adminOpenSection;
+
+  /// No description provided for @adminCountPercent.
+  ///
+  /// In ko, this message translates to:
+  /// **'{count}건 · {percent}%'**
+  String adminCountPercent(String count, String percent);
+
+  /// No description provided for @adminRtiDistribution.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 등급 분포'**
+  String get adminRtiDistribution;
+
+  /// No description provided for @adminAnalyzedCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 리뷰 {count}건'**
+  String adminAnalyzedCount(String count);
+
+  /// No description provided for @adminSuspicious.
+  ///
+  /// In ko, this message translates to:
+  /// **'의심'**
+  String get adminSuspicious;
+
+  /// No description provided for @adminAverageRti.
+  ///
+  /// In ko, this message translates to:
+  /// **'전체 평균 RTI'**
+  String get adminAverageRti;
+
+  /// No description provided for @adminDailyTrendTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'일별 평균 RTI · 분석 건수 (최근 {days}일)'**
+  String adminDailyTrendTitle(int days);
+
+  /// No description provided for @adminTrendEmpty.
+  ///
+  /// In ko, this message translates to:
+  /// **'기간 내 분석된 리뷰가 없습니다.'**
+  String get adminTrendEmpty;
+
+  /// No description provided for @adminTrendTooltip.
+  ///
+  /// In ko, this message translates to:
+  /// **'{date}\n평균 RTI {score} · {count}건'**
+  String adminTrendTooltip(String date, String score, String count);
+
+  /// No description provided for @adminUserAgreement.
+  ///
+  /// In ko, this message translates to:
+  /// **'사용자 판정 동의율'**
+  String get adminUserAgreement;
+
+  /// No description provided for @adminFeedbackCount.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 {count}건'**
+  String adminFeedbackCount(String count);
+
+  /// No description provided for @adminAgree.
+  ///
+  /// In ko, this message translates to:
+  /// **'동의'**
+  String get adminAgree;
+
+  /// No description provided for @adminDisagree.
+  ///
+  /// In ko, this message translates to:
+  /// **'이의'**
+  String get adminDisagree;
+
+  /// No description provided for @adminFeedbackStats.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 피드백 처리 현황'**
+  String get adminFeedbackStats;
+
+  /// No description provided for @adminResolutionRate.
+  ///
+  /// In ko, this message translates to:
+  /// **'처리율 {percent}%'**
+  String adminResolutionRate(String percent);
+
+  /// No description provided for @adminApplied.
+  ///
+  /// In ko, this message translates to:
+  /// **'반영'**
+  String get adminApplied;
+
+  /// No description provided for @adminDismissed.
+  ///
+  /// In ko, this message translates to:
+  /// **'기각'**
+  String get adminDismissed;
+
   /// 계정 카드 로그인 방식 라벨
   ///
   /// In ko, this message translates to:

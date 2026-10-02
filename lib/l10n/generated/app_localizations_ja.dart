@@ -797,6 +797,408 @@ class AppLocalizationsJa extends AppLocalizations {
   String get chatHistoryUntitled => 'タイトルのない会話';
 
   @override
+  String get adminUsersSubtitle => '登録ユーザーを登録日の新しい順に確認できます。';
+
+  @override
+  String get adminRefresh => '更新';
+
+  @override
+  String get adminTotalUsers => '全ユーザー';
+
+  @override
+  String get adminRetry => '再試行';
+
+  @override
+  String get adminEmail => 'メール';
+
+  @override
+  String get adminNickname => 'ニックネーム';
+
+  @override
+  String get adminRole => '権限';
+
+  @override
+  String get adminSignupProvider => '登録方法';
+
+  @override
+  String get adminAtiScore => 'ATIスコア';
+
+  @override
+  String get adminJoinedAt => '登録日';
+
+  @override
+  String get adminUserRole => 'ユーザー';
+
+  @override
+  String get adminUsersEmpty => '登録ユーザーはいません。';
+
+  @override
+  String get adminNaver => 'Naver';
+
+  @override
+  String get adminReportPending => '確認待ち';
+
+  @override
+  String get adminUnderReview => '確認中';
+
+  @override
+  String get adminReportAccepted => '承認';
+
+  @override
+  String get adminReportRejected => '却下';
+
+  @override
+  String get adminDanger => '危険';
+
+  @override
+  String get adminWarning => '警告';
+
+  @override
+  String get adminSafe => '安全';
+
+  @override
+  String get adminFeedbackSubmitted => '受付済み';
+
+  @override
+  String get adminFeedbackResolved => '対応済み';
+
+  @override
+  String get adminFeedbackRejected => '差し戻し';
+
+  @override
+  String get adminJudgmentTrustworthy => '信頼度がもっと高い';
+
+  @override
+  String get adminJudgmentRisky => '危険度がもっと高い';
+
+  @override
+  String get adminJudgmentUndecided => '判断保留';
+
+  @override
+  String get adminReviewDetails => 'レビュー詳細';
+
+  @override
+  String get adminViewProduct => '商品ページを開く';
+
+  @override
+  String get adminRtiAnalysis => 'RTI分析結果';
+
+  @override
+  String get adminScoreUnit => '点';
+
+  @override
+  String get adminReviewContent => 'レビュー内容';
+
+  @override
+  String adminDetectedSignals(int count) {
+    return '検出シグナル（$count）';
+  }
+
+  @override
+  String get adminVerifiedPurchase => '購入認証';
+
+  @override
+  String get adminVerified => '認証済み';
+
+  @override
+  String get adminNotVerified => '未認証';
+
+  @override
+  String get adminReviewerInfo => '投稿者情報';
+
+  @override
+  String get adminReviewer => '投稿者';
+
+  @override
+  String get adminRating => '評価';
+
+  @override
+  String get adminWrittenAt => '投稿日';
+
+  @override
+  String adminSelectedCount(int count) {
+    return '$count件選択中';
+  }
+
+  @override
+  String get adminSaved => '変更を保存しました。';
+
+  @override
+  String get adminSaveFailed => '保存に失敗しました。';
+
+  @override
+  String get adminFeedbackDetails => 'フィードバック詳細';
+
+  @override
+  String get adminSaveChanges => '変更を保存';
+
+  @override
+  String get adminFeedbackId => 'フィードバックID';
+
+  @override
+  String get adminReviewId => 'レビューID';
+
+  @override
+  String get adminProductName => '商品名';
+
+  @override
+  String get adminCreatedAt => '登録日';
+
+  @override
+  String get adminUpdatedAt => '更新日';
+
+  @override
+  String get adminFeedbackType => 'フィードバック種類';
+
+  @override
+  String get adminUserJudgment => 'ユーザー判断';
+
+  @override
+  String adminRelatedSignals(int count) {
+    return '関連シグナル（$count）';
+  }
+
+  @override
+  String get adminFeedbackContent => 'フィードバック内容';
+
+  @override
+  String get adminAttachmentLink => '添付ファイル／リンク';
+
+  @override
+  String get adminReplyEmail => '返信先メール';
+
+  @override
+  String get adminComment => '管理者メモ';
+
+  @override
+  String get adminCommentHint => '確認内容や対応事項を入力してください…';
+
+  @override
+  String get adminChangeStatus => 'ステータス変更';
+
+  @override
+  String get adminReportDetails => '通報詳細';
+
+  @override
+  String get adminSave => '保存';
+
+  @override
+  String get adminReportInfo => '通報情報';
+
+  @override
+  String get adminReportId => '通報ID';
+
+  @override
+  String get adminReportReason => '通報理由';
+
+  @override
+  String get adminReportedAt => '通報日時';
+
+  @override
+  String get adminUpdatedTime => '更新日時';
+
+  @override
+  String get adminReportedReview => '通報対象レビュー';
+
+  @override
+  String get adminReportContent => '通報内容';
+
+  @override
+  String get adminAttachment => '添付ファイル';
+
+  @override
+  String get adminEvidenceIncluded => 'AI証拠の添付';
+
+  @override
+  String get adminIncluded => 'あり';
+
+  @override
+  String get adminNotIncluded => 'なし';
+
+  @override
+  String get adminOptionalCommentHint => 'メモを入力してください（任意）。';
+
+  @override
+  String get adminSuspiciousReviewsSubtitle =>
+      'RTI分析で検出された疑わしいレビューを確認し、適切に対応してください。';
+
+  @override
+  String get adminRtiUpperBound => 'RTIスコア上限';
+
+  @override
+  String adminScoreBelow(int score) {
+    return '$score点未満';
+  }
+
+  @override
+  String get adminAll => 'すべて';
+
+  @override
+  String get adminTotalSuspiciousReviews => '疑わしいレビュー総数';
+
+  @override
+  String get adminCurrentFilter => '現在の検索条件';
+
+  @override
+  String get adminRtiScore => 'RTIスコア';
+
+  @override
+  String get adminTrustGrade => '信頼ランク';
+
+  @override
+  String get adminSuspiciousReviewsEmpty => '表示する疑わしいレビューはありません。';
+
+  @override
+  String get adminFeedbacksSubtitle => 'RTI分析結果に対するユーザーのフィードバックを確認し、対応してください。';
+
+  @override
+  String get adminTotalFeedbacks => 'フィードバック総数';
+
+  @override
+  String get adminAllTime => '全期間';
+
+  @override
+  String get adminStatus => 'ステータス';
+
+  @override
+  String get adminFeedbacksEmpty => '表示する分析フィードバックはありません。';
+
+  @override
+  String get adminReportsSubtitle => 'ユーザーの通報を確認し、対応状況を更新してください。';
+
+  @override
+  String get adminTotalReports => '通報総数';
+
+  @override
+  String get adminReportsCountHelper => '全通報件数';
+
+  @override
+  String get adminPendingReportsHelper => '確認が必要な通報';
+
+  @override
+  String get adminUnderReviewReportsHelper => '確認中の通報';
+
+  @override
+  String get adminAcceptedReportsHelper => '承認された通報';
+
+  @override
+  String get adminRejectedReportsHelper => '却下された通報';
+
+  @override
+  String adminBulkSuccess(int total) {
+    return '$total件を処理しました。';
+  }
+
+  @override
+  String adminBulkFailure(int total, int failed) {
+    return '$total件中$failed件の処理に失敗しました。失敗した項目は選択したままです。';
+  }
+
+  @override
+  String get adminAcceptReports => '承認する';
+
+  @override
+  String get adminRejectReports => '却下する';
+
+  @override
+  String get adminEvidence => 'AI証拠';
+
+  @override
+  String get adminReportsEmpty => '表示する通報はありません。';
+
+  @override
+  String get adminDashboardSubtitle => 'レビュー分析状況と対応待ちの業務を一覧で確認できます。';
+
+  @override
+  String get adminModelPerformance => 'AIモデル性能';
+
+  @override
+  String adminPeriodDays(int days) {
+    return '$days日';
+  }
+
+  @override
+  String get adminTotalReviews => '全レビュー';
+
+  @override
+  String get adminTotalReviewsHelper => '分析対象の全レビュー';
+
+  @override
+  String get adminSuspiciousReviews => '疑わしいレビュー';
+
+  @override
+  String get adminRiskyReviews => '危険なレビュー';
+
+  @override
+  String get adminPendingReports => '対応待ちの通報';
+
+  @override
+  String get adminPendingFeedbacks => '対応待ちの分析フィードバック';
+
+  @override
+  String get adminOpenSection => 'クリックして開く';
+
+  @override
+  String adminCountPercent(String count, String percent) {
+    return '$count件 · $percent%';
+  }
+
+  @override
+  String get adminRtiDistribution => 'RTIランク分布';
+
+  @override
+  String adminAnalyzedCount(String count) {
+    return '分析済みレビュー$count件';
+  }
+
+  @override
+  String get adminSuspicious => '疑わしい';
+
+  @override
+  String get adminAverageRti => '全体の平均RTI';
+
+  @override
+  String adminDailyTrendTitle(int days) {
+    return '日別平均RTI · 分析件数（過去$days日）';
+  }
+
+  @override
+  String get adminTrendEmpty => '期間内に分析されたレビューはありません。';
+
+  @override
+  String adminTrendTooltip(String date, String score, String count) {
+    return '$date\n平均RTI $score · $count件';
+  }
+
+  @override
+  String get adminUserAgreement => 'ユーザー判定の同意率';
+
+  @override
+  String adminFeedbackCount(String count) {
+    return 'フィードバック$count件';
+  }
+
+  @override
+  String get adminAgree => '同意';
+
+  @override
+  String get adminDisagree => '異議';
+
+  @override
+  String get adminFeedbackStats => '分析フィードバックの対応状況';
+
+  @override
+  String adminResolutionRate(String percent) {
+    return '対応率$percent%';
+  }
+
+  @override
+  String get adminApplied => '反映済み';
+
+  @override
+  String get adminDismissed => '却下';
+
+  @override
   String get settingsAccountLabelLoginMethod => 'ログイン方法';
 
   @override

@@ -15,24 +15,29 @@ import 'package:re_view_front/features/admin/presentation/widgets/admin_status_b
 import 'package:re_view_front/features/admin/presentation/widgets/admin_text_format.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/report_detail_panel.dart';
 import 'package:re_view_front/features/admin/presentation/widgets/report_status_tone.dart';
+import 'package:re_view_front/features/admin/presentation/widgets/admin_labels.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class AdminReportsPage extends ConsumerWidget {
   const AdminReportsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context);
     final state = ref.watch(adminReportViewModelProvider);
     final vm = ref.read(adminReportViewModelProvider.notifier);
 
     return AdminPageScaffold(
-      title: '신고 관리',
-      subtitle: '사용자 신고를 검토하고 처리 상태를 변경하세요.',
+      title: l10n.adminMenuReports,
+      subtitle: l10n.adminReportsSubtitle,
       actions: [
         IconButton(
-          tooltip: '새로고침',
+          tooltip: l10n.adminRefresh,
           onPressed: vm.refresh,
-          icon:
-              const Icon(Icons.refresh_rounded, color: AppColors.textSecondary),
+          icon: const Icon(
+            Icons.refresh_rounded,
+            color: AppColors.textSecondary,
+          ),
         ),
       ],
       body: Row(
@@ -73,18 +78,31 @@ class _FilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Row(
       children: [
         AdminDropdownField<ReportStatus?>(
-          label: '상태',
+          label: l10n.adminStatus,
           value: state.statusFilter,
           width: 180,
-          items: const [
-            AdminDropdownItem(value: null, label: '전체'),
-            AdminDropdownItem(value: ReportStatus.pending, label: '검토 대기'),
-            AdminDropdownItem(value: ReportStatus.underReview, label: '검토 중'),
-            AdminDropdownItem(value: ReportStatus.accepted, label: '접수 (인정)'),
-            AdminDropdownItem(value: ReportStatus.rejected, label: '기각 (미인정)'),
+          items: [
+            AdminDropdownItem(value: null, label: l10n.adminAll),
+            AdminDropdownItem(
+              value: ReportStatus.pending,
+              label: l10n.adminReportPending,
+            ),
+            AdminDropdownItem(
+              value: ReportStatus.underReview,
+              label: l10n.adminUnderReview,
+            ),
+            AdminDropdownItem(
+              value: ReportStatus.accepted,
+              label: l10n.adminReportAccepted,
+            ),
+            AdminDropdownItem(
+              value: ReportStatus.rejected,
+              label: l10n.adminReportRejected,
+            ),
           ],
           onChanged: vm.selectStatus,
         ),
@@ -100,6 +118,7 @@ class _KpiRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     String valueFor(ReportStatus? s) {
       final count = state.countFor(s);
       return count == null ? '-' : formatAdminCount(count);
@@ -109,37 +128,37 @@ class _KpiRow extends StatelessWidget {
       AdminKpiCard(
         icon: Icons.description_outlined,
         iconColor: AppColors.primary,
-        label: '전체 신고',
+        label: l10n.adminTotalReports,
         value: valueFor(null),
-        helper: '전체 신고 건수',
+        helper: l10n.adminReportsCountHelper,
       ),
       AdminKpiCard(
         icon: Icons.hourglass_empty_rounded,
         iconColor: AppColors.warning,
-        label: '검토 대기',
+        label: l10n.adminReportPending,
         value: valueFor(ReportStatus.pending),
-        helper: '검토가 필요한 신고',
+        helper: l10n.adminPendingReportsHelper,
       ),
       AdminKpiCard(
         icon: Icons.person_search_outlined,
         iconColor: AppColors.info,
-        label: '검토 중',
+        label: l10n.adminUnderReview,
         value: valueFor(ReportStatus.underReview),
-        helper: '현재 검토 중인 신고',
+        helper: l10n.adminUnderReviewReportsHelper,
       ),
       AdminKpiCard(
         icon: Icons.check_circle_outline_rounded,
         iconColor: AppColors.success,
-        label: '접수 (인정)',
+        label: l10n.adminReportAccepted,
         value: valueFor(ReportStatus.accepted),
-        helper: '신고가 접수된 건',
+        helper: l10n.adminAcceptedReportsHelper,
       ),
       AdminKpiCard(
         icon: Icons.cancel_outlined,
         iconColor: AppColors.error,
-        label: '기각 (미인정)',
+        label: l10n.adminReportRejected,
         value: valueFor(ReportStatus.rejected),
-        helper: '신고가 기각된 건',
+        helper: l10n.adminRejectedReportsHelper,
       ),
     ];
 
@@ -161,6 +180,7 @@ class _BulkBar extends StatelessWidget {
   final AdminReportViewModel vm;
 
   Future<void> _bulkUpdate(BuildContext context, ReportStatus status) async {
+    final l10n = AppLocalizations.of(context);
     final total = state.selectedIds.length;
     final messenger = ScaffoldMessenger.of(context);
     final failed = await vm.bulkUpdateStatus(status);
@@ -168,8 +188,8 @@ class _BulkBar extends StatelessWidget {
       SnackBar(
         content: Text(
           failed == 0
-              ? '$total건을 처리했습니다.'
-              : '$total건 중 $failed건 처리에 실패했습니다. 실패한 항목은 선택된 상태로 남겨 두었습니다.',
+              ? l10n.adminBulkSuccess(total)
+              : l10n.adminBulkFailure(total, failed),
         ),
       ),
     );
@@ -177,25 +197,26 @@ class _BulkBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final enabled = state.selectedIds.isNotEmpty && !state.isUpdating;
     return AdminBulkActionBar(
       selectedCount: state.selectedIds.length,
       actions: [
         AdminBulkActionButton(
           icon: Icons.check_circle_outline_rounded,
-          label: '접수 처리',
+          label: l10n.adminAcceptReports,
           enabled: enabled,
           onPressed: () => _bulkUpdate(context, ReportStatus.accepted),
         ),
         AdminBulkActionButton(
           icon: Icons.cancel_outlined,
-          label: '기각 처리',
+          label: l10n.adminRejectReports,
           enabled: enabled,
           onPressed: () => _bulkUpdate(context, ReportStatus.rejected),
         ),
         AdminBulkActionButton(
           icon: Icons.person_search_outlined,
-          label: '검토 중',
+          label: l10n.adminUnderReview,
           enabled: enabled,
           onPressed: () => _bulkUpdate(context, ReportStatus.underReview),
         ),
@@ -212,6 +233,7 @@ class _TableArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -226,21 +248,21 @@ class _TableArea extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sm),
-            OutlinedButton(onPressed: vm.refresh, child: const Text('다시 시도')),
+            OutlinedButton(onPressed: vm.refresh, child: Text(l10n.adminRetry)),
           ],
         ),
       );
     }
 
-    const columns = [
-      AdminTableColumn(label: '신고 ID', flex: 3),
-      AdminTableColumn(label: '리뷰 ID', flex: 3),
-      AdminTableColumn(label: '상품명', flex: 3),
-      AdminTableColumn(label: '신고 사유', flex: 3),
-      AdminTableColumn(label: '신고 내용', flex: 4),
-      AdminTableColumn(label: 'AI 증거', flex: 2),
-      AdminTableColumn(label: '상태', flex: 2),
-      AdminTableColumn(label: '신고 시간', flex: 3),
+    final columns = [
+      AdminTableColumn(label: l10n.adminReportId, flex: 3),
+      AdminTableColumn(label: l10n.adminReviewId, flex: 3),
+      AdminTableColumn(label: l10n.adminProductName, flex: 3),
+      AdminTableColumn(label: l10n.adminReportReason, flex: 3),
+      AdminTableColumn(label: l10n.adminReportContent, flex: 4),
+      AdminTableColumn(label: l10n.adminEvidence, flex: 2),
+      AdminTableColumn(label: l10n.adminStatus, flex: 2),
+      AdminTableColumn(label: l10n.adminReportedAt, flex: 3),
     ];
 
     final rows = [
@@ -256,7 +278,9 @@ class _TableArea extends StatelessWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: AdminStatusBadge(
-                label: r.includeAiEvidence ? '포함' : '미포함',
+                label: r.includeAiEvidence
+                    ? l10n.adminIncluded
+                    : l10n.adminNotIncluded,
                 tone: r.includeAiEvidence
                     ? AdminBadgeTone.success
                     : AdminBadgeTone.neutral,
@@ -267,7 +291,7 @@ class _TableArea extends StatelessWidget {
                 : Align(
                     alignment: Alignment.centerLeft,
                     child: AdminStatusBadge(
-                      label: r.status!.label,
+                      label: r.status!.localizedLabel(l10n),
                       tone: r.status!.tone,
                     ),
                   ),
@@ -292,7 +316,7 @@ class _TableArea extends StatelessWidget {
         totalPages: state.totalPages,
         currentPage: state.page,
         onPageChanged: vm.changePage,
-        emptyMessage: '표시할 신고가 없습니다.',
+        emptyMessage: l10n.adminReportsEmpty,
       ),
     );
   }

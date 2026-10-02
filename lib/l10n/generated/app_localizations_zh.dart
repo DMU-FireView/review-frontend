@@ -796,6 +796,407 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chatHistoryUntitled => '无标题对话';
 
   @override
+  String get adminUsersSubtitle => '按注册时间从新到旧查看用户。';
+
+  @override
+  String get adminRefresh => '刷新';
+
+  @override
+  String get adminTotalUsers => '用户总数';
+
+  @override
+  String get adminRetry => '重试';
+
+  @override
+  String get adminEmail => '邮箱';
+
+  @override
+  String get adminNickname => '昵称';
+
+  @override
+  String get adminRole => '权限';
+
+  @override
+  String get adminSignupProvider => '注册方式';
+
+  @override
+  String get adminAtiScore => 'ATI 分数';
+
+  @override
+  String get adminJoinedAt => '注册日期';
+
+  @override
+  String get adminUserRole => '用户';
+
+  @override
+  String get adminUsersEmpty => '暂无注册用户。';
+
+  @override
+  String get adminNaver => 'Naver';
+
+  @override
+  String get adminReportPending => '待审核';
+
+  @override
+  String get adminUnderReview => '审核中';
+
+  @override
+  String get adminReportAccepted => '已采纳';
+
+  @override
+  String get adminReportRejected => '已驳回';
+
+  @override
+  String get adminDanger => '危险';
+
+  @override
+  String get adminWarning => '警告';
+
+  @override
+  String get adminSafe => '安全';
+
+  @override
+  String get adminFeedbackSubmitted => '已提交';
+
+  @override
+  String get adminFeedbackResolved => '已处理';
+
+  @override
+  String get adminFeedbackRejected => '已退回';
+
+  @override
+  String get adminJudgmentTrustworthy => '更可信';
+
+  @override
+  String get adminJudgmentRisky => '风险更高';
+
+  @override
+  String get adminJudgmentUndecided => '暂不判断';
+
+  @override
+  String get adminReviewDetails => '评论详情';
+
+  @override
+  String get adminViewProduct => '查看商品';
+
+  @override
+  String get adminRtiAnalysis => 'RTI 分析结果';
+
+  @override
+  String get adminScoreUnit => '分';
+
+  @override
+  String get adminReviewContent => '评论内容';
+
+  @override
+  String adminDetectedSignals(int count) {
+    return '检测信号（$count）';
+  }
+
+  @override
+  String get adminVerifiedPurchase => '购买认证';
+
+  @override
+  String get adminVerified => '已认证';
+
+  @override
+  String get adminNotVerified => '未认证';
+
+  @override
+  String get adminReviewerInfo => '作者信息';
+
+  @override
+  String get adminReviewer => '作者';
+
+  @override
+  String get adminRating => '评分';
+
+  @override
+  String get adminWrittenAt => '发布日期';
+
+  @override
+  String adminSelectedCount(int count) {
+    return '已选择 $count 项';
+  }
+
+  @override
+  String get adminSaved => '更改已保存。';
+
+  @override
+  String get adminSaveFailed => '保存失败。';
+
+  @override
+  String get adminFeedbackDetails => '反馈详情';
+
+  @override
+  String get adminSaveChanges => '保存更改';
+
+  @override
+  String get adminFeedbackId => '反馈 ID';
+
+  @override
+  String get adminReviewId => '评论 ID';
+
+  @override
+  String get adminProductName => '商品名称';
+
+  @override
+  String get adminCreatedAt => '创建时间';
+
+  @override
+  String get adminUpdatedAt => '更新时间';
+
+  @override
+  String get adminFeedbackType => '反馈类型';
+
+  @override
+  String get adminUserJudgment => '用户判断';
+
+  @override
+  String adminRelatedSignals(int count) {
+    return '相关信号（$count）';
+  }
+
+  @override
+  String get adminFeedbackContent => '反馈内容';
+
+  @override
+  String get adminAttachmentLink => '附件／链接';
+
+  @override
+  String get adminReplyEmail => '回复邮箱';
+
+  @override
+  String get adminComment => '管理员备注';
+
+  @override
+  String get adminCommentHint => '请输入审核内容或处理措施…';
+
+  @override
+  String get adminChangeStatus => '更改状态';
+
+  @override
+  String get adminReportDetails => '举报详情';
+
+  @override
+  String get adminSave => '保存';
+
+  @override
+  String get adminReportInfo => '举报信息';
+
+  @override
+  String get adminReportId => '举报 ID';
+
+  @override
+  String get adminReportReason => '举报原因';
+
+  @override
+  String get adminReportedAt => '举报时间';
+
+  @override
+  String get adminUpdatedTime => '更新时间';
+
+  @override
+  String get adminReportedReview => '被举报评论';
+
+  @override
+  String get adminReportContent => '举报内容';
+
+  @override
+  String get adminAttachment => '附件';
+
+  @override
+  String get adminEvidenceIncluded => '包含 AI 证据';
+
+  @override
+  String get adminIncluded => '包含';
+
+  @override
+  String get adminNotIncluded => '不包含';
+
+  @override
+  String get adminOptionalCommentHint => '请输入备注（可选）。';
+
+  @override
+  String get adminSuspiciousReviewsSubtitle => '审核 RTI 分析检测出的可疑评论并采取适当措施。';
+
+  @override
+  String get adminRtiUpperBound => 'RTI 分数上限';
+
+  @override
+  String adminScoreBelow(int score) {
+    return '低于 $score 分';
+  }
+
+  @override
+  String get adminAll => '全部';
+
+  @override
+  String get adminTotalSuspiciousReviews => '可疑评论总数';
+
+  @override
+  String get adminCurrentFilter => '当前筛选条件';
+
+  @override
+  String get adminRtiScore => 'RTI 分数';
+
+  @override
+  String get adminTrustGrade => '可信等级';
+
+  @override
+  String get adminSuspiciousReviewsEmpty => '暂无可疑评论。';
+
+  @override
+  String get adminFeedbacksSubtitle => '审核并处理用户对 RTI 分析结果的反馈。';
+
+  @override
+  String get adminTotalFeedbacks => '反馈总数';
+
+  @override
+  String get adminAllTime => '所有时间';
+
+  @override
+  String get adminStatus => '状态';
+
+  @override
+  String get adminFeedbacksEmpty => '暂无分析反馈。';
+
+  @override
+  String get adminReportsSubtitle => '审核用户举报并更新处理状态。';
+
+  @override
+  String get adminTotalReports => '举报总数';
+
+  @override
+  String get adminReportsCountHelper => '全部举报数量';
+
+  @override
+  String get adminPendingReportsHelper => '需要审核的举报';
+
+  @override
+  String get adminUnderReviewReportsHelper => '正在审核的举报';
+
+  @override
+  String get adminAcceptedReportsHelper => '已采纳的举报';
+
+  @override
+  String get adminRejectedReportsHelper => '已驳回的举报';
+
+  @override
+  String adminBulkSuccess(int total) {
+    return '已处理 $total 项。';
+  }
+
+  @override
+  String adminBulkFailure(int total, int failed) {
+    return '$total 项中有 $failed 项处理失败。失败项保持选中状态。';
+  }
+
+  @override
+  String get adminAcceptReports => '采纳';
+
+  @override
+  String get adminRejectReports => '驳回';
+
+  @override
+  String get adminEvidence => 'AI 证据';
+
+  @override
+  String get adminReportsEmpty => '暂无举报。';
+
+  @override
+  String get adminDashboardSubtitle => '一览评论分析状况和待处理任务。';
+
+  @override
+  String get adminModelPerformance => 'AI 模型性能';
+
+  @override
+  String adminPeriodDays(int days) {
+    return '$days 天';
+  }
+
+  @override
+  String get adminTotalReviews => '评论总数';
+
+  @override
+  String get adminTotalReviewsHelper => '全部待分析评论';
+
+  @override
+  String get adminSuspiciousReviews => '可疑评论';
+
+  @override
+  String get adminRiskyReviews => '危险评论';
+
+  @override
+  String get adminPendingReports => '待处理举报';
+
+  @override
+  String get adminPendingFeedbacks => '待处理分析反馈';
+
+  @override
+  String get adminOpenSection => '点击查看';
+
+  @override
+  String adminCountPercent(String count, String percent) {
+    return '$count 项 · $percent%';
+  }
+
+  @override
+  String get adminRtiDistribution => 'RTI 等级分布';
+
+  @override
+  String adminAnalyzedCount(String count) {
+    return '已分析 $count 条评论';
+  }
+
+  @override
+  String get adminSuspicious => '可疑';
+
+  @override
+  String get adminAverageRti => '整体平均 RTI';
+
+  @override
+  String adminDailyTrendTitle(int days) {
+    return '每日平均 RTI · 分析数量（最近 $days 天）';
+  }
+
+  @override
+  String get adminTrendEmpty => '此期间没有已分析评论。';
+
+  @override
+  String adminTrendTooltip(String date, String score, String count) {
+    return '$date\n平均 RTI $score · $count 条评论';
+  }
+
+  @override
+  String get adminUserAgreement => '用户判断同意率';
+
+  @override
+  String adminFeedbackCount(String count) {
+    return '$count 条反馈';
+  }
+
+  @override
+  String get adminAgree => '同意';
+
+  @override
+  String get adminDisagree => '异议';
+
+  @override
+  String get adminFeedbackStats => '分析反馈处理情况';
+
+  @override
+  String adminResolutionRate(String percent) {
+    return '处理率 $percent%';
+  }
+
+  @override
+  String get adminApplied => '已应用';
+
+  @override
+  String get adminDismissed => '已驳回';
+
+  @override
   String get settingsAccountLabelLoginMethod => '登录方式';
 
   @override

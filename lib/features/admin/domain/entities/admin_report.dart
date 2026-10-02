@@ -1,14 +1,13 @@
 /// 신고 처리 상태.
 enum ReportStatus {
-  pending('PENDING', '검토 대기'),
-  underReview('UNDER_REVIEW', '검토 중'),
-  accepted('ACCEPTED', '접수 (인정)'),
-  rejected('REJECTED', '기각 (미인정)');
+  pending('PENDING'),
+  underReview('UNDER_REVIEW'),
+  accepted('ACCEPTED'),
+  rejected('REJECTED');
 
-  const ReportStatus(this.code, this.label);
+  const ReportStatus(this.code);
 
   final String code;
-  final String label;
 
   static ReportStatus? fromCode(String? code) {
     for (final value in values) {

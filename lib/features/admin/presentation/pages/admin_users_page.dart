@@ -24,10 +24,10 @@ class AdminUsersPage extends ConsumerWidget {
 
     return AdminPageScaffold(
       title: l10n.adminMenuUsers,
-      subtitle: '가입한 사용자를 최신 가입순으로 확인하세요.',
+      subtitle: l10n.adminUsersSubtitle,
       actions: [
         IconButton(
-          tooltip: '새로고침',
+          tooltip: l10n.adminRefresh,
           onPressed: vm.loadList,
           icon: const Icon(
             Icons.refresh_rounded,
@@ -45,7 +45,7 @@ class AdminUsersPage extends ConsumerWidget {
               child: AdminKpiCard(
                 icon: Icons.group_outlined,
                 iconColor: AppColors.primary,
-                label: '전체 사용자',
+                label: l10n.adminTotalUsers,
                 value: formatAdminCount(state.totalElements),
               ),
             ),
@@ -73,6 +73,7 @@ class _UserTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     if (state.isLoading && state.items.isEmpty) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -86,7 +87,10 @@ class _UserTable extends StatelessWidget {
               style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: AppSpacing.sm),
-            OutlinedButton(onPressed: vm.loadList, child: const Text('다시 시도')),
+            OutlinedButton(
+              onPressed: vm.loadList,
+              child: Text(l10n.adminRetry),
+            ),
           ],
         ),
       );
@@ -94,14 +98,14 @@ class _UserTable extends StatelessWidget {
 
     return SingleChildScrollView(
       child: AdminDataTable(
-        columns: const [
+        columns: [
           AdminTableColumn(label: 'ID', flex: 1),
-          AdminTableColumn(label: '이메일', flex: 4),
-          AdminTableColumn(label: '닉네임', flex: 3),
-          AdminTableColumn(label: '권한', flex: 2),
-          AdminTableColumn(label: '가입 경로', flex: 2),
-          AdminTableColumn(label: 'ATI 점수', flex: 2),
-          AdminTableColumn(label: '가입일', flex: 2),
+          AdminTableColumn(label: l10n.adminEmail, flex: 4),
+          AdminTableColumn(label: l10n.adminNickname, flex: 3),
+          AdminTableColumn(label: l10n.adminRole, flex: 2),
+          AdminTableColumn(label: l10n.adminSignupProvider, flex: 2),
+          AdminTableColumn(label: l10n.adminAtiScore, flex: 2),
+          AdminTableColumn(label: l10n.adminJoinedAt, flex: 2),
         ],
         rows: [
           for (final user in state.items)
@@ -114,13 +118,15 @@ class _UserTable extends StatelessWidget {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: AdminStatusBadge(
-                    label: user.isAdmin ? '관리자' : '사용자',
+                    label: user.isAdmin
+                        ? l10n.adminSidebarTitle
+                        : l10n.adminUserRole,
                     tone: user.isAdmin
                         ? AdminBadgeTone.info
                         : AdminBadgeTone.neutral,
                   ),
                 ),
-                _cell(_providerLabel(user)),
+                _cell(_providerLabel(user, l10n)),
                 _cell(user.atiScore?.toStringAsFixed(1) ?? '-'),
                 _cell(formatAdminDate(user.createdAt)),
               ],
@@ -129,16 +135,16 @@ class _UserTable extends StatelessWidget {
         totalPages: state.totalPages,
         currentPage: state.page,
         onPageChanged: vm.changePage,
-        emptyMessage: '가입한 사용자가 없습니다.',
+        emptyMessage: l10n.adminUsersEmpty,
       ),
     );
   }
 
-  String _providerLabel(AdminUser user) {
+  String _providerLabel(AdminUser user, AppLocalizations l10n) {
     return switch (user.provider?.toUpperCase()) {
       'GOOGLE' => 'Google',
-      'NAVER' => '네이버',
-      null || '' || 'LOCAL' => '이메일',
+      'NAVER' => l10n.adminNaver,
+      null || '' || 'LOCAL' => l10n.adminEmail,
       final other => other,
     };
   }
@@ -165,6 +171,7 @@ class _ErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.md,
@@ -187,7 +194,7 @@ class _ErrorBanner extends StatelessWidget {
               ),
             ),
           ),
-          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+          TextButton(onPressed: onRetry, child: Text(l10n.adminRetry)),
         ],
       ),
     );
