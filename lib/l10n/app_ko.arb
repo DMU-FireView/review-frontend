@@ -732,5 +732,11 @@
   "chatHistoryEmpty": "이전 대화가 없습니다.",
   "chatHistoryLoadError": "이전 대화를 불러오지 못했습니다. 다시 시도해 주세요.",
   "chatHistoryLoadMore": "더 불러오기",
-  "chatHistoryUntitled": "제목 없는 대화"
+  "chatHistoryUntitled": "제목 없는 대화",
+
+  "sessionExpiredMessage": "로그인이 만료됐어요. 다시 로그인해 주세요.",
+  "@sessionExpiredMessage": { "description": "401로 로그아웃됐을 때 알림" },
+
+  "sessionExpiredLogin": "로그인",
+  "@sessionExpiredLogin": { "description": "로그인 만료 알림의 이동 버튼" }
 }

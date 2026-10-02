@@ -829,4 +829,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => 'Untitled conversation';
+
+  @override
+  String get sessionExpiredMessage =>
+      'Your session has expired. Please log in again.';
+
+  @override
+  String get sessionExpiredLogin => 'Log in';
 }

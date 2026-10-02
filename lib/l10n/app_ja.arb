@@ -255,5 +255,7 @@
   "chatHistoryEmpty": "以前の会話はありません。",
   "chatHistoryLoadError": "以前の会話を読み込めませんでした。もう一度お試しください。",
   "chatHistoryLoadMore": "さらに読み込む",
-  "chatHistoryUntitled": "タイトルのない会話"
+  "chatHistoryUntitled": "タイトルのない会話",
+  "sessionExpiredMessage": "ログインの有効期限が切れました。もう一度ログインしてください。",
+  "sessionExpiredLogin": "ログイン"
 }

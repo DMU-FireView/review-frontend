@@ -255,5 +255,7 @@
   "chatHistoryEmpty": "暂无历史对话。",
   "chatHistoryLoadError": "无法加载历史对话，请重试。",
   "chatHistoryLoadMore": "加载更多",
-  "chatHistoryUntitled": "无标题对话"
+  "chatHistoryUntitled": "无标题对话",
+  "sessionExpiredMessage": "登录已过期，请重新登录。",
+  "sessionExpiredLogin": "登录"
 }

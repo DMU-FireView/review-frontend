@@ -25,9 +25,8 @@ class ApiClient {
           handler.next(options);
         },
         onError: (error, handler) {
-          if (error.response?.statusCode == 401 &&
-              tokenStore?.accessToken != null) {
-            tokenStore?.clear();
+          if (error.response?.statusCode == 401) {
+            tokenStore?.expireSession();
           }
           handler.next(error);
         },

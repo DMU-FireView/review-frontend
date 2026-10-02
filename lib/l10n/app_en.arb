@@ -271,5 +271,7 @@
   "chatHistoryEmpty": "No previous conversations.",
   "chatHistoryLoadError": "Could not load previous conversations. Please try again.",
   "chatHistoryLoadMore": "Load more",
-  "chatHistoryUntitled": "Untitled conversation"
+  "chatHistoryUntitled": "Untitled conversation",
+  "sessionExpiredMessage": "Your session has expired. Please log in again.",
+  "sessionExpiredLogin": "Log in"
 }

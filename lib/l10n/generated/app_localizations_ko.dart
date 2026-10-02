@@ -794,4 +794,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => '제목 없는 대화';
+
+  @override
+  String get sessionExpiredMessage => '로그인이 만료됐어요. 다시 로그인해 주세요.';
+
+  @override
+  String get sessionExpiredLogin => '로그인';
 }
