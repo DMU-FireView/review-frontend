@@ -829,4 +829,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => 'Untitled conversation';
+
+  @override
+  String get settingsAccountLabelLoginMethod => 'Sign-in method';
+
+  @override
+  String get settingsLoginMethodEmail => 'Email';
+
+  @override
+  String get settingsLoginMethodNaver => 'Naver';
 }

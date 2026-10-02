@@ -271,5 +271,8 @@
   "chatHistoryEmpty": "No previous conversations.",
   "chatHistoryLoadError": "Could not load previous conversations. Please try again.",
   "chatHistoryLoadMore": "Load more",
-  "chatHistoryUntitled": "Untitled conversation"
+  "chatHistoryUntitled": "Untitled conversation",
+  "settingsAccountLabelLoginMethod": "Sign-in method",
+  "settingsLoginMethodEmail": "Email",
+  "settingsLoginMethodNaver": "Naver"
 }

@@ -23,3 +23,12 @@ final settingsViewModelProvider =
     NotifierProvider.autoDispose<SettingsViewModel, SettingsState>(
       SettingsViewModel.new,
     );
+
+/// 로그인 방식(LOCAL / GOOGLE / NAVER). 불러오지 못하면 null.
+final accountLoginMethodProvider = FutureProvider.autoDispose<String?>((
+  ref,
+) async {
+  if (!ref.watch(isLoggedInProvider)) return null;
+  final result = await ref.read(settingsRepositoryProvider).getLoginMethod();
+  return result.when(success: (method) => method, failure: (_) => null);
+});

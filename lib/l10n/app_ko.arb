@@ -732,5 +732,14 @@
   "chatHistoryEmpty": "이전 대화가 없습니다.",
   "chatHistoryLoadError": "이전 대화를 불러오지 못했습니다. 다시 시도해 주세요.",
   "chatHistoryLoadMore": "더 불러오기",
-  "chatHistoryUntitled": "제목 없는 대화"
+  "chatHistoryUntitled": "제목 없는 대화",
+
+  "settingsAccountLabelLoginMethod": "로그인 방식",
+  "@settingsAccountLabelLoginMethod": { "description": "계정 카드 로그인 방식 라벨" },
+
+  "settingsLoginMethodEmail": "이메일",
+  "@settingsLoginMethodEmail": { "description": "이메일 가입 로그인 방식" },
+
+  "settingsLoginMethodNaver": "네이버",
+  "@settingsLoginMethodNaver": { "description": "네이버 로그인 방식" }
 }

@@ -826,13 +826,16 @@ class _FilterInputLabel extends StatelessWidget {
 // Account panel (right column top)
 // ─────────────────────────────────────────────────────────────
 
-class _AccountPanel extends StatelessWidget {
+class _AccountPanel extends ConsumerWidget {
   const _AccountPanel({required this.profile, required this.onPasswordTap});
   final UserProfile? profile;
   final VoidCallback onPasswordTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final loginMethod = ref.watch(accountLoginMethodProvider).value;
+    // 소셜 로그인 계정은 비밀번호가 없어 변경 링크를 숨긴다.
+    final canChangePassword = loginMethod == null || loginMethod == 'LOCAL';
     final createdAt = profile?.createdAt;
     final joinLabel = createdAt != null
         ? '${createdAt.year}.${createdAt.month.toString().padLeft(2, '0')}.${createdAt.day.toString().padLeft(2, '0')}'
@@ -859,16 +862,17 @@ class _AccountPanel extends StatelessWidget {
                   ),
                 ),
               ),
-              GestureDetector(
-                onTap: onPasswordTap,
-                child: Text(
-                  AppLocalizations.of(context).settingsAccountChangePassword,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.w700,
+              if (canChangePassword)
+                GestureDetector(
+                  onTap: onPasswordTap,
+                  child: Text(
+                    AppLocalizations.of(context).settingsAccountChangePassword,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           const SizedBox(height: AppSpacing.md),
@@ -898,6 +902,19 @@ class _AccountPanel extends StatelessWidget {
                     context,
                   ).settingsAccountMemberLabel(profile!.role),
           ),
+          if (loginMethod != null)
+            _InfoRow(
+              label: AppLocalizations.of(
+                context,
+              ).settingsAccountLabelLoginMethod,
+              value: switch (loginMethod) {
+                'GOOGLE' => 'Google',
+                'NAVER' => AppLocalizations.of(
+                  context,
+                ).settingsLoginMethodNaver,
+                _ => AppLocalizations.of(context).settingsLoginMethodEmail,
+              },
+            ),
         ],
       ),
     );

@@ -794,4 +794,13 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => '无标题对话';
+
+  @override
+  String get settingsAccountLabelLoginMethod => '登录方式';
+
+  @override
+  String get settingsLoginMethodEmail => '邮箱';
+
+  @override
+  String get settingsLoginMethodNaver => 'Naver';
 }

@@ -95,6 +95,27 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'shows the sign-in method and hides password change for social accounts',
+    (tester) async {
+      repository.loginMethod = 'GOOGLE';
+      await pumpApp(tester, subject());
+      await tester.pumpAndSettle();
+
+      expect(find.text('로그인 방식'), findsOneWidget);
+      expect(find.text('Google'), findsOneWidget);
+      expect(find.text('비밀번호 변경'), findsNothing);
+    },
+  );
+
+  testWidgets('keeps password change for email accounts', (tester) async {
+    await pumpApp(tester, subject());
+    await tester.pumpAndSettle();
+
+    expect(find.text('이메일'), findsWidgets);
+    expect(find.text('비밀번호 변경'), findsOneWidget);
+  });
+
   testWidgets('shows load failure and retries', (tester) async {
     repository.getResult = const FailureResult(Failure(message: '조회 오류'));
     await pumpApp(tester, subject());
@@ -196,4 +217,9 @@ class _FakeSettingsRepository implements SettingsRepository {
     saved = settings;
     return updateResult ?? Success(settings);
   }
+
+  String loginMethod = 'LOCAL';
+
+  @override
+  Future<Result<String>> getLoginMethod() async => Success(loginMethod);
 }

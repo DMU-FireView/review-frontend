@@ -794,4 +794,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatHistoryUntitled => '제목 없는 대화';
+
+  @override
+  String get settingsAccountLabelLoginMethod => '로그인 방식';
+
+  @override
+  String get settingsLoginMethodEmail => '이메일';
+
+  @override
+  String get settingsLoginMethodNaver => '네이버';
 }

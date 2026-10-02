@@ -21,6 +21,21 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<Result<SettingsData>> updateSettings(SettingsData settings) =>
       _request(() => _dataSource.updateSettings(settings));
 
+  @override
+  Future<Result<String>> getLoginMethod() async {
+    try {
+      return Success(await _dataSource.getLoginMethod());
+    } on ApiResponseException catch (error) {
+      return FailureResult(failureFromApiResponseException(error));
+    } on DioException catch (error) {
+      return FailureResult(failureFromDioException(error));
+    } on Object catch (error) {
+      return FailureResult(
+        Failure(message: 'Invalid security response', cause: error),
+      );
+    }
+  }
+
   Future<Result<SettingsData>> _request(
     Future<SettingsDto> Function() request,
   ) async {
