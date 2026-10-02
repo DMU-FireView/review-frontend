@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
@@ -8,7 +7,6 @@ import 'package:re_view_front/app/theme/app_spacing.dart';
 import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/core/providers/locale_provider.dart';
 import 'package:re_view_front/features/cart/presentation/providers/cart_providers.dart';
-import 'package:re_view_front/features/category/domain/entities/product_category_master.dart';
 import 'package:re_view_front/features/home/domain/entities/dashboard_product.dart';
 import 'package:re_view_front/features/home/presentation/data/home_content.dart';
 import 'package:re_view_front/features/home/presentation/providers/home_providers.dart';
@@ -17,6 +15,7 @@ import 'package:re_view_front/features/home/presentation/widgets/home/home_heade
 import 'package:re_view_front/features/my_page/domain/entities/user_profile.dart';
 import 'package:re_view_front/features/my_page/presentation/providers/my_page_providers.dart';
 import 'package:re_view_front/features/my_page/presentation/view_models/my_page_state.dart';
+import 'package:re_view_front/features/settings/domain/entities/settings_data.dart';
 import 'package:re_view_front/features/settings/presentation/providers/settings_providers.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 import 'package:re_view_front/features/wishlist/presentation/providers/wishlist_providers.dart';
@@ -32,38 +31,31 @@ class SettingsPage extends ConsumerStatefulWidget {
 }
 
 class _SettingsPageState extends ConsumerState<SettingsPage> {
-  late final TextEditingController _minReviewController;
-  late final TextEditingController _lowRtiController;
-
   @override
   void initState() {
     super.initState();
-    final data = _dataFrom(ref.read(settingsViewModelProvider));
-    _minReviewController =
-        TextEditingController(text: data.minReviewCount.toString());
-    _lowRtiController =
-        TextEditingController(text: data.lowRtiThreshold.toString());
-    Future.microtask(() => ref.read(myPageViewModelProvider.notifier).load());
+    Future.microtask(() {
+      if (mounted && ref.read(isLoggedInProvider)) {
+        ref.read(myPageViewModelProvider.notifier).load();
+      }
+    });
   }
-
-  @override
-  void dispose() {
-    _minReviewController.dispose();
-    _lowRtiController.dispose();
-    super.dispose();
-  }
-
-  SettingsData _dataFrom(SettingsState s) => switch (s) {
-    SettingsIdle(:final settings) => settings,
-    SettingsSaving(:final settings) => settings,
-    SettingsSaved(:final settings) => settings,
-    SettingsError(:final settings) => settings,
-  };
 
   @override
   Widget build(BuildContext context) {
     final isLoggedIn = ref.watch(isLoggedInProvider);
     final settingsState = ref.watch(settingsViewModelProvider);
+    if (!isLoggedIn) {
+      return Scaffold(
+        backgroundColor: AppColors.background,
+        body: Center(
+          child: FilledButton(
+            onPressed: () => context.go(RoutePaths.login),
+            child: Text(AppLocalizations.of(context).actionLogin),
+          ),
+        ),
+      );
+    }
     final currentLocale = ref.watch(localeProvider);
     final dashboardState = ref.watch(homeDashboardViewModelProvider);
     final myPageState = ref.watch(myPageViewModelProvider);
@@ -116,44 +108,12 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 settingsState: settingsState,
                 currentLocale: currentLocale,
                 profile: profile,
-                minReviewController: _minReviewController,
-                lowRtiController: _lowRtiController,
                 onLocaleChanged: (locale) =>
                     ref.read(localeProvider.notifier).setLocale(locale),
-                onEmailNotificationChanged: (v) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setEmailNotification(v),
-                onPushNotificationChanged: (v) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setPushNotification(v),
-                onAdEmailChanged: (v) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setAdEmailNotification(v),
-                onHighlightLowRtiChanged: (v) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setHighlightLowRti(v),
-                onWishlistAlertChanged: (v) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setWishlistAlert(v),
-                onCategoryChanged: (id, label) => ref
-                    .read(settingsViewModelProvider.notifier)
-                    .setCategoryFilter(id, label),
-                onMinReviewCountChanged: (v) {
-                  final n = int.tryParse(v);
-                  if (n != null && n >= 0) {
-                    ref
-                        .read(settingsViewModelProvider.notifier)
-                        .setMinReviewCount(n);
-                  }
-                },
-                onLowRtiThresholdChanged: (v) {
-                  final n = int.tryParse(v);
-                  if (n != null && n >= 0 && n <= 100) {
-                    ref
-                        .read(settingsViewModelProvider.notifier)
-                        .setLowRtiThreshold(n);
-                  }
-                },
+                onChanged: (data) =>
+                    ref.read(settingsViewModelProvider.notifier).update(data),
+                onReload: () =>
+                    ref.read(settingsViewModelProvider.notifier).load(),
                 onSave: () =>
                     ref.read(settingsViewModelProvider.notifier).save(),
                 onMyPageTap: () => context.go(RoutePaths.myPage),
@@ -220,17 +180,9 @@ class _SettingsBody extends StatelessWidget {
     required this.settingsState,
     required this.currentLocale,
     required this.profile,
-    required this.minReviewController,
-    required this.lowRtiController,
     required this.onLocaleChanged,
-    required this.onEmailNotificationChanged,
-    required this.onPushNotificationChanged,
-    required this.onAdEmailChanged,
-    required this.onHighlightLowRtiChanged,
-    required this.onWishlistAlertChanged,
-    required this.onCategoryChanged,
-    required this.onMinReviewCountChanged,
-    required this.onLowRtiThresholdChanged,
+    required this.onChanged,
+    required this.onReload,
     required this.onSave,
     required this.onMyPageTap,
     required this.onCartTap,
@@ -241,17 +193,9 @@ class _SettingsBody extends StatelessWidget {
   final SettingsState settingsState;
   final Locale currentLocale;
   final UserProfile? profile;
-  final TextEditingController minReviewController;
-  final TextEditingController lowRtiController;
   final ValueChanged<Locale> onLocaleChanged;
-  final ValueChanged<bool> onEmailNotificationChanged;
-  final ValueChanged<bool> onPushNotificationChanged;
-  final ValueChanged<bool> onAdEmailChanged;
-  final ValueChanged<bool> onHighlightLowRtiChanged;
-  final ValueChanged<bool> onWishlistAlertChanged;
-  final void Function(String? id, String? label) onCategoryChanged;
-  final ValueChanged<String> onMinReviewCountChanged;
-  final ValueChanged<String> onLowRtiThresholdChanged;
+  final ValueChanged<SettingsData> onChanged;
+  final VoidCallback onReload;
   final VoidCallback onSave;
   final VoidCallback onMyPageTap;
   final VoidCallback onCartTap;
@@ -260,39 +204,51 @@ class _SettingsBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final data = switch (settingsState) {
-      SettingsIdle(:final settings) => settings,
-      SettingsSaving(:final settings) => settings,
-      SettingsSaved(:final settings) => settings,
-      SettingsError(:final settings) => settings,
-    };
+    final data = settingsState.settings;
     final isSaving = settingsState is SettingsSaving;
     final isSaved = settingsState is SettingsSaved;
-
-    final mainContent = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _NotificationSection(
-          data: data,
-          onEmailChanged: onEmailNotificationChanged,
-          onPushChanged: onPushNotificationChanged,
-          onAdEmailChanged: onAdEmailChanged,
+    final l10n = AppLocalizations.of(context);
+    final Widget mainContent;
+    if (settingsState is SettingsLoading) {
+      mainContent = _Card(
+        child: Column(
+          children: [
+            const CircularProgressIndicator(),
+            const SizedBox(height: AppSpacing.md),
+            Text(l10n.settingsLoading),
+          ],
         ),
-        const SizedBox(height: AppSpacing.lg),
-        _FilterSection(
-          data: data,
-          minReviewController: minReviewController,
-          lowRtiController: lowRtiController,
-          onHighlightLowRtiChanged: onHighlightLowRtiChanged,
-          onWishlistAlertChanged: onWishlistAlertChanged,
-          onCategoryChanged: onCategoryChanged,
-          onMinReviewCountChanged: onMinReviewCountChanged,
-          onLowRtiThresholdChanged: onLowRtiThresholdChanged,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        _SaveBar(isSaving: isSaving, isSaved: isSaved, onSave: onSave),
-      ],
-    );
+      );
+    } else if (settingsState case SettingsError(
+      isLoadError: true,
+      :final message,
+    )) {
+      mainContent = _SettingsFailure(
+        title: l10n.settingsLoadFailed,
+        message: message,
+        onRetry: onReload,
+      );
+    } else {
+      mainContent = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AbsorbPointer(
+            absorbing: isSaving,
+            child: _ServerSettingsSections(data: data, onChanged: onChanged),
+          ),
+          if (settingsState case SettingsError(:final message)) ...[
+            const SizedBox(height: AppSpacing.lg),
+            _SettingsFailure(
+              title: l10n.settingsSaveFailed,
+              message: message,
+              onRetry: onSave,
+            ),
+          ],
+          const SizedBox(height: AppSpacing.lg),
+          _SaveBar(isSaving: isSaving, isSaved: isSaved, onSave: onSave),
+        ],
+      );
+    }
 
     // 우측 컬럼: 계정 카드 → 언어 설정
     final rightColumn = Column(
@@ -360,7 +316,10 @@ class _PageTitle extends StatelessWidget {
       children: [
         Row(
           children: [
-            _Breadcrumb(label: AppLocalizations.of(context).navHome, onTap: () => context.go(RoutePaths.home)),
+            _Breadcrumb(
+              label: AppLocalizations.of(context).navHome,
+              onTap: () => context.go(RoutePaths.home),
+            ),
             const _BreadcrumbSep(),
             _Breadcrumb(
               label: AppLocalizations.of(context).navMyPage,
@@ -389,13 +348,17 @@ class _PageTitle extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.md),
-            Text(
-              profile != null
-                  ? AppLocalizations.of(context).settingsSubtitleNamed(profile!.nickname)
-                  : AppLocalizations.of(context).settingsSubtitle,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
+            Expanded(
+              child: Text(
+                profile != null
+                    ? AppLocalizations.of(
+                        context,
+                      ).settingsSubtitleNamed(profile!.nickname)
+                    : AppLocalizations.of(context).settingsSubtitle,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
           ],
@@ -457,11 +420,31 @@ class _SideNavCard extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: AppSpacing.xs),
-          _NavItem(icon: Icons.home_outlined, label: AppLocalizations.of(context).navMyPage, onTap: onMyPageTap),
-          _NavItem(icon: Icons.inventory_2_outlined, label: AppLocalizations.of(context).sideNavOrders, onTap: onCartTap),
-          _NavItem(icon: Icons.favorite_border, label: AppLocalizations.of(context).navWishlist, onTap: onWishlistTap),
-          _NavItem(icon: Icons.history, label: AppLocalizations.of(context).sideNavRecentlyViewed, onTap: onWishlistTap),
-          _NavItem(icon: Icons.rate_review_outlined, label: AppLocalizations.of(context).sideNavReviewActivity, onTap: onMyPageTap),
+          _NavItem(
+            icon: Icons.home_outlined,
+            label: AppLocalizations.of(context).navMyPage,
+            onTap: onMyPageTap,
+          ),
+          _NavItem(
+            icon: Icons.inventory_2_outlined,
+            label: AppLocalizations.of(context).sideNavOrders,
+            onTap: onCartTap,
+          ),
+          _NavItem(
+            icon: Icons.favorite_border,
+            label: AppLocalizations.of(context).navWishlist,
+            onTap: onWishlistTap,
+          ),
+          _NavItem(
+            icon: Icons.history,
+            label: AppLocalizations.of(context).sideNavRecentlyViewed,
+            onTap: onWishlistTap,
+          ),
+          _NavItem(
+            icon: Icons.rate_review_outlined,
+            label: AppLocalizations.of(context).sideNavReviewActivity,
+            onTap: onMyPageTap,
+          ),
           _NavItem(
             icon: Icons.settings_outlined,
             label: AppLocalizations.of(context).sideNavAccountSettings,
@@ -534,53 +517,215 @@ class _NavItem extends StatelessWidget {
 // Notification section
 // ─────────────────────────────────────────────────────────────
 
-class _NotificationSection extends StatelessWidget {
-  const _NotificationSection({
-    required this.data,
-    required this.onEmailChanged,
-    required this.onPushChanged,
-    required this.onAdEmailChanged,
-  });
-
+class _ServerSettingsSections extends StatelessWidget {
+  const _ServerSettingsSections({required this.data, required this.onChanged});
   final SettingsData data;
-  final ValueChanged<bool> onEmailChanged;
-  final ValueChanged<bool> onPushChanged;
-  final ValueChanged<bool> onAdEmailChanged;
+  final ValueChanged<SettingsData> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    return _Card(
+    final l10n = AppLocalizations.of(context);
+    Widget section(String title, IconData icon, List<Widget> children) => _Card(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _SectionHeader(
-            icon: Icons.notifications_outlined,
-            iconColor: const Color(0xFF6366F1),
-            iconBg: const Color(0xFFEEF2FF),
-            title: AppLocalizations.of(context).settingsNotifications,
+            icon: icon,
+            iconColor: AppColors.primary,
+            iconBg: AppColors.primaryLight,
+            title: title,
           ),
           const SizedBox(height: AppSpacing.sm),
+          ...children,
+        ],
+      ),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        section(l10n.settingsNotifications, Icons.notifications_outlined, [
           _ToggleRow(
-            icon: Icons.email_outlined,
-            label: AppLocalizations.of(context).settingsNotificationEmail,
-            description: AppLocalizations.of(context).settingsNotificationEmailDesc,
-            value: data.emailNotification,
-            onChanged: onEmailChanged,
+            icon: Icons.warning_amber_outlined,
+            label: l10n.settingsRiskyProduct,
+            description: l10n.settingsRiskyProductDesc,
+            value: data.notifyRiskyProduct,
+            onChanged: (value) =>
+                onChanged(data.copyWith(notifyRiskyProduct: value)),
+            isLast: false,
           ),
           _ToggleRow(
-            icon: Icons.phone_iphone_outlined,
-            label: AppLocalizations.of(context).settingsNotificationPush,
-            description: AppLocalizations.of(context).settingsNotificationPushDesc,
-            value: data.pushNotification,
-            onChanged: onPushChanged,
+            icon: Icons.analytics_outlined,
+            label: l10n.settingsAnalysisComplete,
+            description: l10n.settingsAnalysisCompleteDesc,
+            value: data.notifyAnalysisComplete,
+            onChanged: (value) =>
+                onChanged(data.copyWith(notifyAnalysisComplete: value)),
+            isLast: false,
+          ),
+          _ToggleRow(
+            icon: Icons.feedback_outlined,
+            label: l10n.settingsFeedbackResult,
+            description: l10n.settingsFeedbackResultDesc,
+            value: data.notifyFeedbackResult,
+            onChanged: (value) =>
+                onChanged(data.copyWith(notifyFeedbackResult: value)),
+            isLast: false,
           ),
           _ToggleRow(
             icon: Icons.campaign_outlined,
-            label: AppLocalizations.of(context).settingsNotificationAdEmail,
-            description: AppLocalizations.of(context).settingsNotificationAdEmailDesc,
-            value: data.adEmailNotification,
-            onChanged: onAdEmailChanged,
+            label: l10n.settingsMarketing,
+            description: l10n.settingsMarketingDesc,
+            value: data.notifyMarketing,
+            onChanged: (value) =>
+                onChanged(data.copyWith(notifyMarketing: value)),
             isLast: true,
+          ),
+        ]),
+        const SizedBox(height: AppSpacing.lg),
+        section(l10n.settingsReviewDisplay, Icons.tune_outlined, [
+          _FilterInputLabel(
+            label: l10n.settingsRtiThreshold,
+            description: l10n.settingsRtiThresholdDesc,
+          ),
+          Text('${data.rtiThreshold}', textAlign: TextAlign.end),
+          Slider(
+            value: data.rtiThreshold.toDouble().clamp(0, 100),
+            min: 0,
+            max: 100,
+            divisions: 100,
+            label: '${data.rtiThreshold}',
+            onChanged: (value) =>
+                onChanged(data.copyWith(rtiThreshold: value.round())),
+          ),
+          _ToggleRow(
+            icon: Icons.visibility_off_outlined,
+            label: l10n.settingsHideRisky,
+            description: l10n.settingsHideRiskyDesc,
+            value: data.hideRiskyReviews,
+            onChanged: (value) =>
+                onChanged(data.copyWith(hideRiskyReviews: value)),
+            isLast: false,
+          ),
+          _ToggleRow(
+            icon: Icons.label_outline,
+            label: l10n.settingsSuspiciousLabel,
+            description: l10n.settingsSuspiciousLabelDesc,
+            value: data.showSuspiciousLabel,
+            onChanged: (value) =>
+                onChanged(data.copyWith(showSuspiciousLabel: value)),
+            isLast: false,
+          ),
+          _ToggleRow(
+            icon: Icons.verified_outlined,
+            label: l10n.settingsVerifiedFirst,
+            description: l10n.settingsVerifiedFirstDesc,
+            value: data.prioritizeVerifiedReviews,
+            onChanged: (value) =>
+                onChanged(data.copyWith(prioritizeVerifiedReviews: value)),
+            isLast: false,
+          ),
+          _ToggleRow(
+            icon: Icons.open_in_new,
+            label: l10n.settingsAutoAnalysis,
+            description: l10n.settingsAutoAnalysisDesc,
+            value: data.autoOpenAnalysisPopup,
+            onChanged: (value) =>
+                onChanged(data.copyWith(autoOpenAnalysisPopup: value)),
+            isLast: true,
+          ),
+          _SettingsSelect(
+            label: l10n.settingsReviewSort,
+            value: data.reviewSortOrder,
+            options: {
+              'VERIFIED_RECENT': l10n.settingsSortVerifiedRecent,
+              'RECENT': l10n.settingsSortRecent,
+              'HELPFUL': l10n.settingsSortHelpful,
+            },
+            onChanged: (value) =>
+                onChanged(data.copyWith(reviewSortOrder: value)),
+          ),
+          _SettingsSelect(
+            label: l10n.settingsRtiLabel,
+            value: data.rtiLabelStyle,
+            options: {
+              'BADGE_SMALL': l10n.settingsLabelSmall,
+              'BADGE_LARGE': l10n.settingsLabelLarge,
+              'NONE': l10n.settingsLabelNone,
+            },
+            onChanged: (value) =>
+                onChanged(data.copyWith(rtiLabelStyle: value)),
+          ),
+          _SettingsSelect(
+            label: l10n.settingsCardDensity,
+            value: data.cardDensity,
+            options: {
+              'COMFORTABLE': l10n.settingsDensityComfortable,
+              'COMPACT': l10n.settingsDensityCompact,
+            },
+            onChanged: (value) => onChanged(data.copyWith(cardDensity: value)),
+          ),
+        ]),
+        const SizedBox(height: AppSpacing.lg),
+        section(l10n.settingsPrivacy, Icons.privacy_tip_outlined, [
+          _ToggleRow(
+            icon: Icons.privacy_tip_outlined,
+            label: l10n.settingsDataAnalysis,
+            description: l10n.settingsDataAnalysisDesc,
+            value: data.allowDataAnalysis,
+            onChanged: (value) =>
+                onChanged(data.copyWith(allowDataAnalysis: value)),
+            isLast: true,
+          ),
+        ]),
+      ],
+    );
+  }
+}
+
+class _SettingsSelect extends StatelessWidget {
+  const _SettingsSelect({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+  final String label;
+  final String value;
+  final Map<String, String> options;
+  final ValueChanged<String> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.md),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            label,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w800,
+              color: AppColors.textPrimary,
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          DropdownButtonFormField<String>(
+            key: ValueKey('$label:$value'),
+            initialValue: value,
+            isExpanded: true,
+            decoration: _inputDecoration(),
+            items: [
+              for (final entry in options.entries)
+                DropdownMenuItem(
+                  value: entry.key,
+                  child: Text(entry.value, overflow: TextOverflow.ellipsis),
+                ),
+              if (!options.containsKey(value))
+                DropdownMenuItem(value: value, child: Text(value)),
+            ],
+            onChanged: (value) {
+              if (value != null) onChanged(value);
+            },
           ),
         ],
       ),
@@ -588,131 +733,38 @@ class _NotificationSection extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Filter section
-// ─────────────────────────────────────────────────────────────
-
-class _FilterSection extends StatelessWidget {
-  const _FilterSection({
-    required this.data,
-    required this.minReviewController,
-    required this.lowRtiController,
-    required this.onHighlightLowRtiChanged,
-    required this.onWishlistAlertChanged,
-    required this.onCategoryChanged,
-    required this.onMinReviewCountChanged,
-    required this.onLowRtiThresholdChanged,
+class _SettingsFailure extends StatelessWidget {
+  const _SettingsFailure({
+    required this.title,
+    required this.message,
+    required this.onRetry,
   });
-
-  final SettingsData data;
-  final TextEditingController minReviewController;
-  final TextEditingController lowRtiController;
-  final ValueChanged<bool> onHighlightLowRtiChanged;
-  final ValueChanged<bool> onWishlistAlertChanged;
-  final void Function(String? id, String? label) onCategoryChanged;
-  final ValueChanged<String> onMinReviewCountChanged;
-  final ValueChanged<String> onLowRtiThresholdChanged;
+  final String title;
+  final String message;
+  final VoidCallback onRetry;
 
   @override
-  Widget build(BuildContext context) {
-    final topCategories =
-        productCategoryTree.map((c) => (id: c.id, label: c.label)).toList();
-
-    return _Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _SectionHeader(
-            icon: Icons.tune_outlined,
-            iconColor: const Color(0xFF0891B2),
-            iconBg: const Color(0xFFCFFAFE),
-            title: AppLocalizations.of(context).settingsFilters,
+  Widget build(BuildContext context) => _Card(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            color: AppColors.error,
+            fontWeight: FontWeight.w700,
           ),
-          const SizedBox(height: AppSpacing.sm),
-          _ToggleRow(
-            icon: Icons.warning_amber_outlined,
-            label: AppLocalizations.of(context).settingsFilterHighlightLowRti,
-            description: AppLocalizations.of(context).settingsFilterHighlightLowRtiDesc,
-            value: data.highlightLowRti,
-            onChanged: onHighlightLowRtiChanged,
-          ),
-          _ToggleRow(
-            icon: Icons.favorite_border,
-            label: AppLocalizations.of(context).settingsFilterWishlistAlert,
-            description: AppLocalizations.of(context).settingsFilterWishlistAlertDesc,
-            value: data.wishlistAlert,
-            onChanged: onWishlistAlertChanged,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          const Divider(color: AppColors.border, height: 1),
-          const SizedBox(height: AppSpacing.md),
-          _FilterInputLabel(
-            label: AppLocalizations.of(context).settingsFilterCategory,
-            description: AppLocalizations.of(context).settingsFilterCategoryDesc,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          DropdownButtonFormField<String>(
-            initialValue: data.categoryFilterId,
-            decoration: _inputDecoration(),
-            hint: Text(AppLocalizations.of(context).settingsFilterCategoryAll),
-            items: [
-              DropdownMenuItem<String>(
-                value: null,
-                child: Text(AppLocalizations.of(context).settingsFilterCategoryAll),
-              ),
-              for (final cat in topCategories)
-                DropdownMenuItem<String>(
-                  value: cat.id,
-                  child: Text(cat.label),
-                ),
-            ],
-            onChanged: (id) {
-              final label = id == null
-                  ? null
-                  : topCategories.firstWhere((c) => c.id == id).label;
-              onCategoryChanged(id, label);
-            },
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _FilterInputLabel(
-            label: AppLocalizations.of(context).settingsFilterMinReview,
-            description: AppLocalizations.of(context).settingsFilterMinReviewDesc,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            width: 160,
-            child: TextFormField(
-              controller: minReviewController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: _inputDecoration(
-                suffixText: AppLocalizations.of(context).settingsFilterMinReviewSuffix,
-              ),
-              onChanged: onMinReviewCountChanged,
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _FilterInputLabel(
-            label: AppLocalizations.of(context).settingsFilterLowRti,
-            description: AppLocalizations.of(context).settingsFilterLowRtiDesc,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            width: 160,
-            child: TextFormField(
-              controller: lowRtiController,
-              keyboardType: TextInputType.number,
-              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              decoration: _inputDecoration(
-                suffixText: AppLocalizations.of(context).settingsFilterLowRtiSuffix,
-              ),
-              onChanged: onLowRtiThresholdChanged,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Text(message),
+        const SizedBox(height: AppSpacing.sm),
+        OutlinedButton(
+          onPressed: onRetry,
+          child: Text(AppLocalizations.of(context).actionRetry),
+        ),
+      ],
+    ),
+  );
 }
 
 InputDecoration _inputDecoration({String? suffixText}) {
@@ -760,9 +812,9 @@ class _FilterInputLabel extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           description,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: AppColors.textSecondary,
-          ),
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
         ),
       ],
     );
@@ -827,13 +879,23 @@ class _AccountPanel extends StatelessWidget {
                 ? AppLocalizations.of(context).settingsAccountDefaultName
                 : profile!.nickname,
           ),
-          _InfoRow(label: AppLocalizations.of(context).settingsAccountLabelEmail, value: profile?.email ?? '-'),
-          _InfoRow(label: AppLocalizations.of(context).settingsAccountLabelJoinDate, value: joinLabel),
+          _InfoRow(
+            label: AppLocalizations.of(context).settingsAccountLabelEmail,
+            value: profile?.email ?? '-',
+          ),
+          _InfoRow(
+            label: AppLocalizations.of(context).settingsAccountLabelJoinDate,
+            value: joinLabel,
+          ),
           _InfoRow(
             label: AppLocalizations.of(context).settingsAccountLabelMemberType,
             value: profile?.role.isEmpty ?? true
-                ? AppLocalizations.of(context).settingsAccountMemberLabel('USER')
-                : AppLocalizations.of(context).settingsAccountMemberLabel(profile!.role),
+                ? AppLocalizations.of(
+                    context,
+                  ).settingsAccountMemberLabel('USER')
+                : AppLocalizations.of(
+                    context,
+                  ).settingsAccountMemberLabel(profile!.role),
           ),
           const SizedBox(height: AppSpacing.sm),
           const Divider(color: AppColors.border, height: 1),
@@ -870,9 +932,9 @@ class _InfoRow extends StatelessWidget {
             width: 60,
             child: Text(
               label,
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
             ),
           ),
           Expanded(
@@ -914,9 +976,7 @@ class _ServiceRow extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
             decoration: BoxDecoration(
-              color: connected
-                  ? AppColors.successSoft
-                  : AppColors.surfaceMuted,
+              color: connected ? AppColors.successSoft : AppColors.surfaceMuted,
               borderRadius: BorderRadius.circular(999),
             ),
             child: Text(
@@ -970,9 +1030,9 @@ class _LanguageSection extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           Text(
             AppLocalizations.of(context).settingsLanguageApplyNow,
-            style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: AppColors.textSecondary,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall?.copyWith(color: AppColors.textSecondary),
           ),
           const SizedBox(height: AppSpacing.md),
           GridView.builder(
@@ -990,7 +1050,8 @@ class _LanguageSection extends StatelessWidget {
               return _LangChip(
                 label: lang.label,
                 sub: lang.sub,
-                selected: currentLocale.languageCode == lang.locale.languageCode,
+                selected:
+                    currentLocale.languageCode == lang.locale.languageCode,
                 onTap: () => onLocaleChanged(lang.locale),
               );
             },
@@ -1112,32 +1173,35 @@ class _SaveBar extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 250),
-          child: isSaved
-              ? Padding(
-                  key: const ValueKey('saved'),
-                  padding: const EdgeInsets.only(right: AppSpacing.md),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(
-                        Icons.check_circle_rounded,
-                        color: AppColors.success,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppLocalizations.of(context).settingsSavedFeedback,
-                        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+        Flexible(
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 250),
+            child: isSaved
+                ? Padding(
+                    key: const ValueKey('saved'),
+                    padding: const EdgeInsets.only(right: AppSpacing.md),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.check_circle_rounded,
                           color: AppColors.success,
-                          fontWeight: FontWeight.w700,
+                          size: 16,
                         ),
-                      ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink(key: ValueKey('idle')),
+                        const SizedBox(width: 6),
+                        Text(
+                          AppLocalizations.of(context).settingsSavedFeedback,
+                          style: Theme.of(context).textTheme.labelMedium
+                              ?.copyWith(
+                                color: AppColors.success,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                      ],
+                    ),
+                  )
+                : const SizedBox.shrink(key: ValueKey('idle')),
+          ),
         ),
         FilledButton(
           onPressed: isSaving ? null : onSave,
@@ -1161,7 +1225,10 @@ class _SaveBar extends StatelessWidget {
                     color: AppColors.onPrimary,
                   ),
                 )
-              : Text(AppLocalizations.of(context).actionSave, style: const TextStyle(fontWeight: FontWeight.w800)),
+              : Text(
+                  AppLocalizations.of(context).actionSave,
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
         ),
       ],
     );
@@ -1191,11 +1258,13 @@ class _SectionHeader extends StatelessWidget {
       children: [
         _IconBadge(icon: icon, iconColor: iconColor, bg: iconBg),
         const SizedBox(width: AppSpacing.xs),
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: AppColors.textPrimary,
-            fontWeight: FontWeight.w900,
+        Expanded(
+          child: Text(
+            title,
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              color: AppColors.textPrimary,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ),
       ],
@@ -1219,7 +1288,10 @@ class _IconBadge extends StatelessWidget {
     return Container(
       width: 32,
       height: 32,
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(8)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Icon(icon, color: iconColor, size: 18),
     );
   }

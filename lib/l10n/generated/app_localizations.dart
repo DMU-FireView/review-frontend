@@ -1355,6 +1355,222 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'AI 답변은 참고용이며 틀릴 수 있어요.'**
   String get chatDisclaimer;
+
+  /// No description provided for @settingsReviewDisplay.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 표시'**
+  String get settingsReviewDisplay;
+
+  /// No description provided for @settingsPrivacy.
+  ///
+  /// In ko, this message translates to:
+  /// **'개인정보'**
+  String get settingsPrivacy;
+
+  /// No description provided for @settingsRtiThreshold.
+  ///
+  /// In ko, this message translates to:
+  /// **'최소 RTI 기준'**
+  String get settingsRtiThreshold;
+
+  /// No description provided for @settingsRtiThresholdDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 기준 미만의 리뷰를 걸러내는 기준입니다.'**
+  String get settingsRtiThresholdDesc;
+
+  /// No description provided for @settingsReviewSort.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 기본 정렬'**
+  String get settingsReviewSort;
+
+  /// No description provided for @settingsSortVerifiedRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매확인 최신순'**
+  String get settingsSortVerifiedRecent;
+
+  /// No description provided for @settingsSortRecent.
+  ///
+  /// In ko, this message translates to:
+  /// **'최신순'**
+  String get settingsSortRecent;
+
+  /// No description provided for @settingsSortHelpful.
+  ///
+  /// In ko, this message translates to:
+  /// **'도움순'**
+  String get settingsSortHelpful;
+
+  /// No description provided for @settingsRtiLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'RTI 라벨 표시'**
+  String get settingsRtiLabel;
+
+  /// No description provided for @settingsLabelSmall.
+  ///
+  /// In ko, this message translates to:
+  /// **'작은 배지'**
+  String get settingsLabelSmall;
+
+  /// No description provided for @settingsLabelLarge.
+  ///
+  /// In ko, this message translates to:
+  /// **'큰 배지'**
+  String get settingsLabelLarge;
+
+  /// No description provided for @settingsLabelNone.
+  ///
+  /// In ko, this message translates to:
+  /// **'표시 안 함'**
+  String get settingsLabelNone;
+
+  /// No description provided for @settingsCardDensity.
+  ///
+  /// In ko, this message translates to:
+  /// **'상품 카드 밀도'**
+  String get settingsCardDensity;
+
+  /// No description provided for @settingsDensityComfortable.
+  ///
+  /// In ko, this message translates to:
+  /// **'여유롭게'**
+  String get settingsDensityComfortable;
+
+  /// No description provided for @settingsDensityCompact.
+  ///
+  /// In ko, this message translates to:
+  /// **'촘촘하게'**
+  String get settingsDensityCompact;
+
+  /// No description provided for @settingsLoading.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정을 불러오는 중입니다.'**
+  String get settingsLoading;
+
+  /// No description provided for @settingsLoadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정을 불러오지 못했습니다.'**
+  String get settingsLoadFailed;
+
+  /// No description provided for @settingsSaveFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'설정을 저장하지 못했습니다.'**
+  String get settingsSaveFailed;
+
+  /// No description provided for @settingsRiskyProduct.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험 상품 알림'**
+  String get settingsRiskyProduct;
+
+  /// No description provided for @settingsRiskyProductDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'찜한 상품의 위험 비율이 높아지면 알림을 받습니다.'**
+  String get settingsRiskyProductDesc;
+
+  /// No description provided for @settingsAnalysisComplete.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 완료 알림'**
+  String get settingsAnalysisComplete;
+
+  /// No description provided for @settingsAnalysisCompleteDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'새 상품의 분석이 완료되면 알림을 받습니다.'**
+  String get settingsAnalysisCompleteDesc;
+
+  /// No description provided for @settingsFeedbackResult.
+  ///
+  /// In ko, this message translates to:
+  /// **'피드백 결과 알림'**
+  String get settingsFeedbackResult;
+
+  /// No description provided for @settingsFeedbackResultDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'제출한 신고와 피드백의 처리 결과를 받습니다.'**
+  String get settingsFeedbackResultDesc;
+
+  /// No description provided for @settingsMarketing.
+  ///
+  /// In ko, this message translates to:
+  /// **'마케팅 알림'**
+  String get settingsMarketing;
+
+  /// No description provided for @settingsMarketingDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'추천 상품과 마케팅 알림을 받습니다.'**
+  String get settingsMarketingDesc;
+
+  /// No description provided for @settingsHideRisky.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험 리뷰 숨김'**
+  String get settingsHideRisky;
+
+  /// No description provided for @settingsHideRiskyDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험 리뷰를 기본적으로 접어서 표시합니다.'**
+  String get settingsHideRiskyDesc;
+
+  /// No description provided for @settingsSuspiciousLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'의심 리뷰 라벨 표시'**
+  String get settingsSuspiciousLabel;
+
+  /// No description provided for @settingsSuspiciousLabelDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'의심스러운 리뷰에 구분 라벨을 표시합니다.'**
+  String get settingsSuspiciousLabelDesc;
+
+  /// No description provided for @settingsVerifiedFirst.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매확인 리뷰 우선'**
+  String get settingsVerifiedFirst;
+
+  /// No description provided for @settingsVerifiedFirstDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'구매가 확인된 리뷰를 먼저 표시합니다.'**
+  String get settingsVerifiedFirstDesc;
+
+  /// No description provided for @settingsAutoAnalysis.
+  ///
+  /// In ko, this message translates to:
+  /// **'분석 팝업 자동 열기'**
+  String get settingsAutoAnalysis;
+
+  /// No description provided for @settingsAutoAnalysisDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'위험 리뷰를 클릭하면 분석 상세를 자동으로 엽니다.'**
+  String get settingsAutoAnalysisDesc;
+
+  /// No description provided for @settingsDataAnalysis.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 분석 데이터 활용 동의'**
+  String get settingsDataAnalysis;
+
+  /// No description provided for @settingsDataAnalysisDesc.
+  ///
+  /// In ko, this message translates to:
+  /// **'리뷰 분석을 위한 데이터 활용에 동의합니다.'**
+  String get settingsDataAnalysisDesc;
 }
 
 class _AppLocalizationsDelegate

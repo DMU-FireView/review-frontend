@@ -1,65 +1,72 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/features/settings/domain/entities/settings_data.dart';
+import 'package:re_view_front/features/settings/presentation/providers/settings_providers.dart';
 import 'package:re_view_front/features/settings/presentation/view_models/settings_state.dart';
 
 class SettingsViewModel extends Notifier<SettingsState> {
+  int _request = 0;
+
   @override
   SettingsState build() {
-    return const SettingsIdle(settings: SettingsData());
+    final isLoggedIn = ref.watch(isLoggedInProvider);
+    ++_request;
+    if (!isLoggedIn) return const SettingsUnauthenticated();
+    Future.microtask(() {
+      if (ref.mounted) load();
+    });
+    return const SettingsLoading();
   }
 
-  SettingsData get _current => switch (state) {
-    SettingsIdle(:final settings) => settings,
-    SettingsSaving(:final settings) => settings,
-    SettingsSaved(:final settings) => settings,
-    SettingsError(:final settings) => settings,
-  };
-
-  void setEmailNotification(bool value) {
-    state = SettingsIdle(settings: _current.copyWith(emailNotification: value));
-  }
-
-  void setPushNotification(bool value) {
-    state = SettingsIdle(settings: _current.copyWith(pushNotification: value));
-  }
-
-  void setAdEmailNotification(bool value) {
-    state =
-        SettingsIdle(settings: _current.copyWith(adEmailNotification: value));
-  }
-
-  void setHighlightLowRti(bool value) {
-    state = SettingsIdle(settings: _current.copyWith(highlightLowRti: value));
-  }
-
-  void setWishlistAlert(bool value) {
-    state = SettingsIdle(settings: _current.copyWith(wishlistAlert: value));
-  }
-
-  void setCategoryFilter(String? id, String? label) {
-    state = SettingsIdle(
-      settings: _current.copyWith(
-        categoryFilterId: id,
-        categoryFilterLabel: label,
+  Future<void> load() async {
+    if (!ref.read(isLoggedInProvider) || state is SettingsSaving) return;
+    final request = ++_request;
+    state = const SettingsLoading();
+    final result = await ref.read(settingsRepositoryProvider).getSettings();
+    if (!ref.mounted || request != _request || !ref.read(isLoggedInProvider)) {
+      return;
+    }
+    state = result.when(
+      success: (settings) => SettingsIdle(settings: settings),
+      failure: (failure) => SettingsError(
+        settings: const SettingsData(),
+        message: failure.message,
+        isLoadError: true,
       ),
     );
   }
 
-  void setMinReviewCount(int value) {
-    state = SettingsIdle(settings: _current.copyWith(minReviewCount: value));
-  }
-
-  void setLowRtiThreshold(int value) {
-    state = SettingsIdle(settings: _current.copyWith(lowRtiThreshold: value));
+  void update(SettingsData settings) {
+    if (state is SettingsLoading ||
+        state is SettingsSaving ||
+        state is SettingsUnauthenticated ||
+        (state is SettingsError && (state as SettingsError).isLoadError)) {
+      return;
+    }
+    state = SettingsIdle(settings: settings);
   }
 
   Future<void> save() async {
-    final current = _current;
-    state = SettingsSaving(settings: current);
-    await Future<void>.delayed(const Duration(milliseconds: 600));
-    state = SettingsSaved(settings: current);
-    await Future<void>.delayed(const Duration(seconds: 2));
-    if (state case SettingsSaved(:final settings)) {
-      state = SettingsIdle(settings: settings);
+    if (!ref.read(isLoggedInProvider) ||
+        state is SettingsLoading ||
+        state is SettingsSaving ||
+        state is SettingsUnauthenticated ||
+        (state is SettingsError && (state as SettingsError).isLoadError)) {
+      return;
     }
+    final request = ++_request;
+    final current = state.settings;
+    state = SettingsSaving(settings: current);
+    final result = await ref
+        .read(settingsRepositoryProvider)
+        .updateSettings(current);
+    if (!ref.mounted || request != _request || !ref.read(isLoggedInProvider)) {
+      return;
+    }
+    state = result.when(
+      success: (settings) => SettingsSaved(settings: settings),
+      failure: (failure) =>
+          SettingsError(settings: current, message: failure.message),
+    );
   }
 }

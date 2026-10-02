@@ -657,4 +657,112 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AIの回答は参考情報であり、誤りを含む場合があります。';
+
+  @override
+  String get settingsReviewDisplay => 'レビュー表示';
+
+  @override
+  String get settingsPrivacy => '個人情報';
+
+  @override
+  String get settingsRtiThreshold => '最低RTI基準';
+
+  @override
+  String get settingsRtiThresholdDesc => 'このRTI値を下回るレビューを絞り込む基準です。';
+
+  @override
+  String get settingsReviewSort => 'レビューの初期並び順';
+
+  @override
+  String get settingsSortVerifiedRecent => '購入確認済み・新しい順';
+
+  @override
+  String get settingsSortRecent => '新しい順';
+
+  @override
+  String get settingsSortHelpful => '役に立った順';
+
+  @override
+  String get settingsRtiLabel => 'RTIラベルの表示';
+
+  @override
+  String get settingsLabelSmall => '小さなバッジ';
+
+  @override
+  String get settingsLabelLarge => '大きなバッジ';
+
+  @override
+  String get settingsLabelNone => '表示しない';
+
+  @override
+  String get settingsCardDensity => '商品カードの密度';
+
+  @override
+  String get settingsDensityComfortable => 'ゆったり';
+
+  @override
+  String get settingsDensityCompact => 'コンパクト';
+
+  @override
+  String get settingsLoading => '設定を読み込んでいます。';
+
+  @override
+  String get settingsLoadFailed => '設定を読み込めませんでした。';
+
+  @override
+  String get settingsSaveFailed => '設定を保存できませんでした。';
+
+  @override
+  String get settingsRiskyProduct => '危険な商品の通知';
+
+  @override
+  String get settingsRiskyProductDesc => '保存した商品の危険度が上がると通知します。';
+
+  @override
+  String get settingsAnalysisComplete => '分析完了の通知';
+
+  @override
+  String get settingsAnalysisCompleteDesc => '商品の分析が完了すると通知します。';
+
+  @override
+  String get settingsFeedbackResult => 'フィードバック結果の通知';
+
+  @override
+  String get settingsFeedbackResultDesc => '報告とフィードバックの処理結果を通知します。';
+
+  @override
+  String get settingsMarketing => 'マーケティング通知';
+
+  @override
+  String get settingsMarketingDesc => 'おすすめ商品やマーケティング通知を受け取ります。';
+
+  @override
+  String get settingsHideRisky => '危険なレビューを隠す';
+
+  @override
+  String get settingsHideRiskyDesc => '危険なレビューを最初は折りたたんで表示します。';
+
+  @override
+  String get settingsSuspiciousLabel => '疑わしいレビューのラベル';
+
+  @override
+  String get settingsSuspiciousLabelDesc => '疑わしいレビューにラベルを表示します。';
+
+  @override
+  String get settingsVerifiedFirst => '購入確認済みレビューを優先';
+
+  @override
+  String get settingsVerifiedFirstDesc => '購入確認済みのレビューを先に表示します。';
+
+  @override
+  String get settingsAutoAnalysis => '分析ポップアップを自動表示';
+
+  @override
+  String get settingsAutoAnalysisDesc => '危険なレビューをクリックすると分析詳細を開きます。';
+
+  @override
+  String get settingsDataAnalysis => 'レビュー分析データの利用に同意';
+
+  @override
+  String get settingsDataAnalysisDesc => 'レビュー分析のためのデータ利用に同意します。';
 }

@@ -681,4 +681,120 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AI answers are for reference and may be wrong.';
+
+  @override
+  String get settingsReviewDisplay => 'Review display';
+
+  @override
+  String get settingsPrivacy => 'Privacy';
+
+  @override
+  String get settingsRtiThreshold => 'Minimum RTI threshold';
+
+  @override
+  String get settingsRtiThresholdDesc => 'Filter reviews below this RTI score.';
+
+  @override
+  String get settingsReviewSort => 'Default review order';
+
+  @override
+  String get settingsSortVerifiedRecent => 'Verified, newest first';
+
+  @override
+  String get settingsSortRecent => 'Newest first';
+
+  @override
+  String get settingsSortHelpful => 'Most helpful';
+
+  @override
+  String get settingsRtiLabel => 'RTI label style';
+
+  @override
+  String get settingsLabelSmall => 'Small badge';
+
+  @override
+  String get settingsLabelLarge => 'Large badge';
+
+  @override
+  String get settingsLabelNone => 'Hidden';
+
+  @override
+  String get settingsCardDensity => 'Product card density';
+
+  @override
+  String get settingsDensityComfortable => 'Comfortable';
+
+  @override
+  String get settingsDensityCompact => 'Compact';
+
+  @override
+  String get settingsLoading => 'Loading settings.';
+
+  @override
+  String get settingsLoadFailed => 'Could not load settings.';
+
+  @override
+  String get settingsSaveFailed => 'Could not save settings.';
+
+  @override
+  String get settingsRiskyProduct => 'Risky product alerts';
+
+  @override
+  String get settingsRiskyProductDesc =>
+      'Get notified when a saved product becomes risky.';
+
+  @override
+  String get settingsAnalysisComplete => 'Analysis complete alerts';
+
+  @override
+  String get settingsAnalysisCompleteDesc =>
+      'Get notified when product analysis is complete.';
+
+  @override
+  String get settingsFeedbackResult => 'Feedback result alerts';
+
+  @override
+  String get settingsFeedbackResultDesc =>
+      'Get updates on submitted reports and feedback.';
+
+  @override
+  String get settingsMarketing => 'Marketing notifications';
+
+  @override
+  String get settingsMarketingDesc =>
+      'Receive recommendations and marketing notifications.';
+
+  @override
+  String get settingsHideRisky => 'Hide risky reviews';
+
+  @override
+  String get settingsHideRiskyDesc => 'Collapse risky reviews by default.';
+
+  @override
+  String get settingsSuspiciousLabel => 'Show suspicious review labels';
+
+  @override
+  String get settingsSuspiciousLabelDesc =>
+      'Label reviews with suspicious behavior.';
+
+  @override
+  String get settingsVerifiedFirst => 'Prioritize verified reviews';
+
+  @override
+  String get settingsVerifiedFirstDesc =>
+      'Show verified purchase reviews first.';
+
+  @override
+  String get settingsAutoAnalysis => 'Open analysis automatically';
+
+  @override
+  String get settingsAutoAnalysisDesc =>
+      'Open analysis details when a risky review is clicked.';
+
+  @override
+  String get settingsDataAnalysis => 'Allow review data analysis';
+
+  @override
+  String get settingsDataAnalysisDesc =>
+      'Allow your data to be used for review analysis.';
 }

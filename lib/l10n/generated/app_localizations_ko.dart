@@ -656,4 +656,112 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatDisclaimer => 'AI 답변은 참고용이며 틀릴 수 있어요.';
+
+  @override
+  String get settingsReviewDisplay => '리뷰 표시';
+
+  @override
+  String get settingsPrivacy => '개인정보';
+
+  @override
+  String get settingsRtiThreshold => '최소 RTI 기준';
+
+  @override
+  String get settingsRtiThresholdDesc => '이 기준 미만의 리뷰를 걸러내는 기준입니다.';
+
+  @override
+  String get settingsReviewSort => '리뷰 기본 정렬';
+
+  @override
+  String get settingsSortVerifiedRecent => '구매확인 최신순';
+
+  @override
+  String get settingsSortRecent => '최신순';
+
+  @override
+  String get settingsSortHelpful => '도움순';
+
+  @override
+  String get settingsRtiLabel => 'RTI 라벨 표시';
+
+  @override
+  String get settingsLabelSmall => '작은 배지';
+
+  @override
+  String get settingsLabelLarge => '큰 배지';
+
+  @override
+  String get settingsLabelNone => '표시 안 함';
+
+  @override
+  String get settingsCardDensity => '상품 카드 밀도';
+
+  @override
+  String get settingsDensityComfortable => '여유롭게';
+
+  @override
+  String get settingsDensityCompact => '촘촘하게';
+
+  @override
+  String get settingsLoading => '설정을 불러오는 중입니다.';
+
+  @override
+  String get settingsLoadFailed => '설정을 불러오지 못했습니다.';
+
+  @override
+  String get settingsSaveFailed => '설정을 저장하지 못했습니다.';
+
+  @override
+  String get settingsRiskyProduct => '위험 상품 알림';
+
+  @override
+  String get settingsRiskyProductDesc => '찜한 상품의 위험 비율이 높아지면 알림을 받습니다.';
+
+  @override
+  String get settingsAnalysisComplete => '분석 완료 알림';
+
+  @override
+  String get settingsAnalysisCompleteDesc => '새 상품의 분석이 완료되면 알림을 받습니다.';
+
+  @override
+  String get settingsFeedbackResult => '피드백 결과 알림';
+
+  @override
+  String get settingsFeedbackResultDesc => '제출한 신고와 피드백의 처리 결과를 받습니다.';
+
+  @override
+  String get settingsMarketing => '마케팅 알림';
+
+  @override
+  String get settingsMarketingDesc => '추천 상품과 마케팅 알림을 받습니다.';
+
+  @override
+  String get settingsHideRisky => '위험 리뷰 숨김';
+
+  @override
+  String get settingsHideRiskyDesc => '위험 리뷰를 기본적으로 접어서 표시합니다.';
+
+  @override
+  String get settingsSuspiciousLabel => '의심 리뷰 라벨 표시';
+
+  @override
+  String get settingsSuspiciousLabelDesc => '의심스러운 리뷰에 구분 라벨을 표시합니다.';
+
+  @override
+  String get settingsVerifiedFirst => '구매확인 리뷰 우선';
+
+  @override
+  String get settingsVerifiedFirstDesc => '구매가 확인된 리뷰를 먼저 표시합니다.';
+
+  @override
+  String get settingsAutoAnalysis => '분석 팝업 자동 열기';
+
+  @override
+  String get settingsAutoAnalysisDesc => '위험 리뷰를 클릭하면 분석 상세를 자동으로 엽니다.';
+
+  @override
+  String get settingsDataAnalysis => '리뷰 분석 데이터 활용 동의';
+
+  @override
+  String get settingsDataAnalysisDesc => '리뷰 분석을 위한 데이터 활용에 동의합니다.';
 }

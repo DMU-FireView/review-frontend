@@ -1656,7 +1656,8 @@ class _HeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
 
   @override
   void dispose() {
-    _removeOverlay();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 
