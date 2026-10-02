@@ -33,8 +33,12 @@ class ReviewListSection extends StatefulWidget {
 }
 
 class _ReviewListSectionState extends State<ReviewListSection> {
+  /// 처음에 그리는 리뷰 수. 리뷰가 많아도 첫 화면을 빨리 그리기 위해 나눠서 보여 준다.
+  static const _pageSize = 10;
+
   ReviewSortOption _sortOption = ReviewSortOption.newest;
   bool _photoOnly = false;
+  int _visibleCount = _pageSize;
 
   List<ProductReview> get _filteredSortedReviews {
     var list = List<ProductReview>.from(widget.reviews);
@@ -63,8 +67,14 @@ class _ReviewListSectionState extends State<ReviewListSection> {
         _FilterRow(
           sortOption: _sortOption,
           photoOnly: _photoOnly,
-          onSortChanged: (v) => setState(() => _sortOption = v),
-          onPhotoOnlyChanged: (v) => setState(() => _photoOnly = v),
+          onSortChanged: (v) => setState(() {
+            _sortOption = v;
+            _visibleCount = _pageSize;
+          }),
+          onPhotoOnlyChanged: (v) => setState(() {
+            _photoOnly = v;
+            _visibleCount = _pageSize;
+          }),
         ),
         const SizedBox(height: AppSpacing.md),
         if (widget.reviews.isEmpty)
@@ -96,41 +106,44 @@ class _ReviewListSectionState extends State<ReviewListSection> {
             child: Center(
               child: Text(
                 '해당 조건에 맞는 리뷰가 없습니다.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.textSecondary,
-                ),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
               ),
             ),
           )
         else ...[
-          ...reviews.map(
-            (review) => Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.md),
-              child: ReviewCard(
-                review: review,
-                safeCount: widget.safeCount,
-                warnCount: widget.warnCount,
-                dangerCount: widget.dangerCount,
-                onFeedback: widget.onFeedback != null
-                    ? (feedbackType) =>
-                          widget.onFeedback!(review.id, feedbackType)
-                    : null,
-                productId: widget.productId,
-                productName: widget.productName,
+          ...reviews
+              .take(_visibleCount)
+              .map(
+                (review) => Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                  child: ReviewCard(
+                    review: review,
+                    safeCount: widget.safeCount,
+                    warnCount: widget.warnCount,
+                    dangerCount: widget.dangerCount,
+                    onFeedback: widget.onFeedback != null
+                        ? (feedbackType) =>
+                              widget.onFeedback!(review.id, feedbackType)
+                        : null,
+                    productId: widget.productId,
+                    productName: widget.productName,
+                  ),
+                ),
+              ),
+          if (reviews.length > _visibleCount)
+            Center(
+              child: OutlinedButton(
+                onPressed: () => setState(() => _visibleCount += _pageSize),
+                style: OutlinedButton.styleFrom(
+                  side: const BorderSide(color: AppColors.borderStrong),
+                  shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
+                  foregroundColor: AppColors.textPrimary,
+                ),
+                child: Text('리뷰 더보기 (${reviews.length - _visibleCount}개 남음)'),
               ),
             ),
-          ),
-          Center(
-            child: OutlinedButton(
-              onPressed: () {},
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: AppColors.borderStrong),
-                shape: RoundedRectangleBorder(borderRadius: AppRadius.small),
-                foregroundColor: AppColors.textPrimary,
-              ),
-              child: const Text('리뷰 더보기'),
-            ),
-          ),
         ],
       ],
     );

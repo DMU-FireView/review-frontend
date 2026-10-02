@@ -32,7 +32,12 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
     if (!ref.mounted) return;
     state = const ProductDetailLoading();
 
-    final detailResult = await _getDetail(productId);
+    // 서로 기다릴 필요가 없는 요청은 함께 보낸다. 분석 서버 확인도 미리 시작한다.
+    final detailFuture = _getDetail(productId);
+    final reviewsFuture = _getReviews(productId);
+    final healthFuture = _checkHealth();
+
+    final detailResult = await detailFuture;
     if (!ref.mounted) return;
 
     final detail = detailResult.when(success: (d) => d, failure: (_) => null);
@@ -47,7 +52,7 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
       return;
     }
 
-    final reviewsResult = await _getReviews(productId);
+    final reviewsResult = await reviewsFuture;
     if (!ref.mounted) return;
 
     final reviews = reviewsResult.when(
@@ -67,11 +72,14 @@ class ProductDetailViewModel extends Notifier<ProductDetailState> {
       isAnalyzing: true,
     );
 
-    _triggerAnalysisInBackground(productId.toString());
+    _triggerAnalysisInBackground(productId.toString(), healthFuture);
   }
 
-  Future<void> _triggerAnalysisInBackground(String productId) async {
-    final isHealthy = await _checkHealth();
+  Future<void> _triggerAnalysisInBackground(
+    String productId,
+    Future<bool> healthFuture,
+  ) async {
+    final isHealthy = await healthFuture;
     if (!ref.mounted) return;
 
     if (!isHealthy) {
