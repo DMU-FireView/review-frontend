@@ -1,8 +1,13 @@
 // ignore_for_file: use_key_in_widget_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:re_view_front/app/router/route_paths.dart';
 import 'package:re_view_front/app/theme/app_colors.dart';
 import 'package:re_view_front/app/theme/app_spacing.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
+import 'package:re_view_front/l10n/generated/app_localizations.dart';
 
 class HeaderUserProfileButton extends StatefulWidget {
   const HeaderUserProfileButton({
@@ -84,6 +89,10 @@ class HomeHeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
                   onLogoutPressed: () {
                     _removeOverlay();
                     widget.onLogoutPressed?.call();
+                  },
+                  onAdminPressed: () {
+                    _removeOverlay();
+                    context.go(RoutePaths.admin);
                   },
                 ),
               ),
@@ -181,6 +190,7 @@ class HomeHeaderProfileDropdown extends StatelessWidget {
     required this.onProfileWishPressed,
     required this.onProfileOrderPressed,
     required this.onLogoutPressed,
+    required this.onAdminPressed,
   });
 
   final String? nickname;
@@ -188,6 +198,7 @@ class HomeHeaderProfileDropdown extends StatelessWidget {
   final VoidCallback onProfileWishPressed;
   final VoidCallback onProfileOrderPressed;
   final VoidCallback onLogoutPressed;
+  final VoidCallback onAdminPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -279,6 +290,16 @@ class HomeHeaderProfileDropdown extends StatelessWidget {
               icon: Icons.receipt_long_outlined,
               label: '주문/활동',
               onTap: onProfileOrderPressed,
+            ),
+            // 관리자 계정에만 보인다. 권한은 로그인 응답의 role 기준이다.
+            Consumer(
+              builder: (context, ref, _) => ref.watch(isAdminProvider)
+                  ? HomeHeaderDropdownItem(
+                      icon: Icons.admin_panel_settings_outlined,
+                      label: AppLocalizations.of(context).adminSidebarTitle,
+                      onTap: onAdminPressed,
+                    )
+                  : const SizedBox.shrink(),
             ),
             const Divider(height: 1, color: AppColors.border),
             HomeHeaderDropdownItem(
