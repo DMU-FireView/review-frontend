@@ -65,7 +65,12 @@ class AdminTopBar extends ConsumerWidget implements PreferredSizeWidget {
               color: AppColors.textSecondary,
             ),
             const SizedBox(width: AppSpacing.sm),
-            if (!isCompact) Flexible(child: _ProfileBadge(nickname: nickname)),
+            // Flexible로 두면 Spacer와 남은 폭을 반씩 나눠 알림 벨이 가운데로 밀린다.
+            if (!isCompact)
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 220),
+                child: _ProfileBadge(nickname: nickname),
+              ),
             if (isCompact) _ProfileAvatar(nickname: nickname),
           ],
         ),
