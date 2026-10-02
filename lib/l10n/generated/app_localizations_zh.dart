@@ -658,6 +658,114 @@ class AppLocalizationsZh extends AppLocalizations {
   String get chatDisclaimer => 'AI 回答仅供参考，可能有误。';
 
   @override
+  String get settingsReviewDisplay => '评论显示';
+
+  @override
+  String get settingsPrivacy => '隐私';
+
+  @override
+  String get settingsRtiThreshold => '最低 RTI 阈值';
+
+  @override
+  String get settingsRtiThresholdDesc => '用于筛选低于此 RTI 分数的评论。';
+
+  @override
+  String get settingsReviewSort => '评论默认排序';
+
+  @override
+  String get settingsSortVerifiedRecent => '已验证购买，最新优先';
+
+  @override
+  String get settingsSortRecent => '最新优先';
+
+  @override
+  String get settingsSortHelpful => '最有帮助';
+
+  @override
+  String get settingsRtiLabel => 'RTI 标签样式';
+
+  @override
+  String get settingsLabelSmall => '小徽章';
+
+  @override
+  String get settingsLabelLarge => '大徽章';
+
+  @override
+  String get settingsLabelNone => '不显示';
+
+  @override
+  String get settingsCardDensity => '商品卡片密度';
+
+  @override
+  String get settingsDensityComfortable => '宽松';
+
+  @override
+  String get settingsDensityCompact => '紧凑';
+
+  @override
+  String get settingsLoading => '正在加载设置。';
+
+  @override
+  String get settingsLoadFailed => '无法加载设置。';
+
+  @override
+  String get settingsSaveFailed => '无法保存设置。';
+
+  @override
+  String get settingsRiskyProduct => '风险商品通知';
+
+  @override
+  String get settingsRiskyProductDesc => '收藏商品的风险比例升高时通知。';
+
+  @override
+  String get settingsAnalysisComplete => '分析完成通知';
+
+  @override
+  String get settingsAnalysisCompleteDesc => '商品分析完成时通知。';
+
+  @override
+  String get settingsFeedbackResult => '反馈结果通知';
+
+  @override
+  String get settingsFeedbackResultDesc => '接收举报和反馈的处理结果。';
+
+  @override
+  String get settingsMarketing => '营销通知';
+
+  @override
+  String get settingsMarketingDesc => '接收推荐商品和营销通知。';
+
+  @override
+  String get settingsHideRisky => '隐藏风险评论';
+
+  @override
+  String get settingsHideRiskyDesc => '默认折叠风险评论。';
+
+  @override
+  String get settingsSuspiciousLabel => '显示可疑评论标签';
+
+  @override
+  String get settingsSuspiciousLabelDesc => '为可疑评论显示标签。';
+
+  @override
+  String get settingsVerifiedFirst => '优先显示已验证购买评论';
+
+  @override
+  String get settingsVerifiedFirstDesc => '先显示已验证购买的评论。';
+
+  @override
+  String get settingsAutoAnalysis => '自动打开分析弹窗';
+
+  @override
+  String get settingsAutoAnalysisDesc => '点击风险评论时自动打开分析详情。';
+
+  @override
+  String get settingsDataAnalysis => '允许使用评论分析数据';
+
+  @override
+  String get settingsDataAnalysisDesc => '同意将数据用于评论分析。';
+
+  @override
   String get notificationsTitle => '通知';
 
   @override

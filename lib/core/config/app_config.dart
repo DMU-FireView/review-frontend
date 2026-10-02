@@ -19,6 +19,7 @@ class AppConfig {
     required this.passwordResetRequestPath,
     required this.passwordResetPath,
     required this.userMePath,
+    required this.userSettingsPath,
     required this.userFeedbackPath,
     required this.landingStatsPath,
     required this.chatBasePath,
@@ -107,6 +108,10 @@ class AppConfig {
         'USER_FEEDBACK_PATH',
         defaultValue: '/api/users/me/feedback',
       ),
+      userSettingsPath: const String.fromEnvironment(
+        'USER_SETTINGS_PATH',
+        defaultValue: '/api/users/me/settings',
+      ),
       landingStatsPath: const String.fromEnvironment(
         'LANDING_STATS_PATH',
         defaultValue: '/api/landing/stats',
@@ -143,6 +148,7 @@ class AppConfig {
   final String passwordResetRequestPath;
   final String passwordResetPath;
   final String userMePath;
+  final String userSettingsPath;
   final String userFeedbackPath;
   final String landingStatsPath;
   final String chatBasePath;
