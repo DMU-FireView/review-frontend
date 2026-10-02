@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:re_view_front/app/router/route_paths.dart';
+import 'package:re_view_front/core/providers/core_providers.dart';
 import 'package:re_view_front/core/error/failure.dart';
 import 'package:re_view_front/core/result/result.dart';
 import 'package:re_view_front/features/notifications/domain/entities/app_notification.dart';
@@ -28,6 +29,7 @@ void main() {
       container = ProviderContainer(
         overrides: [
           notificationRepositoryProvider.overrideWithValue(repository),
+          isLoggedInProvider.overrideWithValue(true),
         ],
       );
       container.listen(notificationListViewModelProvider, (_, _) {});
@@ -55,6 +57,31 @@ void main() {
       final state = container.read(notificationListViewModelProvider);
       expect(state.items.firstWhere((n) => n.id == 1).isRead, isFalse);
       expect(state.errorMessage, '실패');
+    });
+
+    test('keeps the badge in sync after leaving the list', () async {
+      await container.read(unreadNotificationCountProvider.future);
+      final sending = container
+          .read(notificationListViewModelProvider.notifier)
+          .markRead(1);
+      // 읽음 요청 직후 화면을 벗어나 목록 뷰모델이 사라져도 배지는 줄어든다.
+      container.invalidate(notificationListViewModelProvider);
+      await sending;
+
+      expect(container.read(unreadNotificationCountProvider).value, 1);
+    });
+
+    test('rolls back only the failed notification', () async {
+      repository.failMarkRead = true;
+      final vm = container.read(notificationListViewModelProvider.notifier);
+      final failing = vm.markRead(1);
+      repository.failMarkRead = false;
+      await vm.markRead(2);
+      await failing;
+
+      final items = container.read(notificationListViewModelProvider).items;
+      expect(items.firstWhere((n) => n.id == 1).isRead, isFalse);
+      expect(items.firstWhere((n) => n.id == 2).isRead, isTrue);
     });
 
     test('marks every notification as read', () async {

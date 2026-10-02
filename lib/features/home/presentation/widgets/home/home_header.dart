@@ -1792,15 +1792,21 @@ class _HeaderUserProfileButtonState extends State<HeaderUserProfileButton> {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text(
-                          displayName,
-                          style: Theme.of(context).textTheme.labelMedium
-                              ?.copyWith(
-                                color: _isOpen
-                                    ? AppColors.primary
-                                    : AppColors.textPrimary,
-                                fontWeight: FontWeight.w700,
-                              ),
+                        // 긴 닉네임이 헤더 액션 줄을 밀어내지 않게 폭을 제한한다.
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 64),
+                          child: Text(
+                            displayName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: Theme.of(context).textTheme.labelMedium
+                                ?.copyWith(
+                                  color: _isOpen
+                                      ? AppColors.primary
+                                      : AppColors.textPrimary,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                          ),
                         ),
                         const SizedBox(width: 2),
                         Icon(

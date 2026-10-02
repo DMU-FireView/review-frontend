@@ -24,13 +24,13 @@ class AppNotification {
   final String? targetUrl;
   final DateTime? createdAt;
 
-  AppNotification markedRead() => AppNotification(
+  AppNotification withRead(bool read) => AppNotification(
     id: id,
     type: type,
     typeDescription: typeDescription,
     title: title,
     message: message,
-    isRead: true,
+    isRead: read,
     targetUrl: targetUrl,
     createdAt: createdAt,
   );

@@ -21,14 +21,32 @@ final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
 });
 
 /// 읽지 않은 알림 수. 로그아웃 상태면 0이고, 로그인하면 다시 불러온다.
-/// 실패해도 헤더가 깨지지 않게 0으로 둔다.
-final unreadNotificationCountProvider = FutureProvider<int>((ref) async {
-  if (!ref.watch(isLoggedInProvider)) return 0;
-  final result = await ref
-      .read(notificationRepositoryProvider)
-      .getUnreadCount();
-  return result.when(success: (count) => count, failure: (_) => 0);
-});
+///
+/// 목록 화면이 사라져도 배지가 맞도록 읽음 처리 때 이 값을 직접 조정한다.
+final unreadNotificationCountProvider =
+    AsyncNotifierProvider<UnreadNotificationCount, int>(
+      UnreadNotificationCount.new,
+    );
+
+class UnreadNotificationCount extends AsyncNotifier<int> {
+  @override
+  Future<int> build() async {
+    if (!ref.watch(isLoggedInProvider)) return 0;
+    final result = await ref
+        .read(notificationRepositoryProvider)
+        .getUnreadCount();
+    // 실패해도 헤더가 깨지지 않게 0으로 둔다.
+    return result.when(success: (count) => count, failure: (_) => 0);
+  }
+
+  void adjust(int delta) {
+    final current = state.value;
+    if (current == null) return;
+    state = AsyncData((current + delta).clamp(0, 1 << 30));
+  }
+
+  void clear() => state = const AsyncData(0);
+}
 
 final notificationListViewModelProvider =
     NotifierProvider.autoDispose<
