@@ -1,0 +1,42 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:re_view_front/features/admin/domain/repositories/admin_user_repository.dart';
+import 'package:re_view_front/features/admin/presentation/providers/admin_user_providers.dart';
+import 'package:re_view_front/features/admin/presentation/view_models/admin_user_state.dart';
+
+class AdminUserViewModel extends Notifier<AdminUserState> {
+  AdminUserRepository get _repository => ref.read(adminUserRepositoryProvider);
+
+  /// 페이지를 빠르게 넘길 때 늦게 온 이전 페이지 응답을 버리기 위한 번호.
+  int _request = 0;
+
+  @override
+  AdminUserState build() {
+    Future.microtask(loadList);
+    return const AdminUserState(isLoading: true);
+  }
+
+  Future<void> loadList() async {
+    final request = ++_request;
+    state = state.copyWith(isLoading: true, clearError: true);
+    final result = await _repository.getUsers(
+      page: state.page,
+      size: state.pageSize,
+    );
+    if (!ref.mounted || request != _request) return;
+    result.when(
+      success: (page) => state = state.copyWith(
+        items: page.items,
+        totalPages: page.totalPages,
+        totalElements: page.totalElements,
+        isLoading: false,
+      ),
+      failure: (f) =>
+          state = state.copyWith(isLoading: false, errorMessage: f.message),
+    );
+  }
+
+  void changePage(int page) {
+    state = state.copyWith(page: page);
+    loadList();
+  }
+}
