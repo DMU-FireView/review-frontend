@@ -1203,4 +1203,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get sessionExpiredLogin => 'ログイン';
+
+  @override
+  String get settingsAccountLabelLoginMethod => 'ログイン方法';
+
+  @override
+  String get settingsLoginMethodEmail => 'メール';
+
+  @override
+  String get settingsLoginMethodNaver => 'NAVER';
 }

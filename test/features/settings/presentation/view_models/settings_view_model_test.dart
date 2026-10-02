@@ -223,4 +223,7 @@ class _FakeSettingsRepository implements SettingsRepository {
         ? updateResult ?? Success(settings)
         : await onUpdate!();
   }
+
+  @override
+  Future<Result<String>> getLoginMethod() async => const Success('LOCAL');
 }

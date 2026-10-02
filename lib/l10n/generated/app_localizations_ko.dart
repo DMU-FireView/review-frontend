@@ -1203,4 +1203,13 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get sessionExpiredLogin => '로그인';
+
+  @override
+  String get settingsAccountLabelLoginMethod => '로그인 방식';
+
+  @override
+  String get settingsLoginMethodEmail => '이메일';
+
+  @override
+  String get settingsLoginMethodNaver => '네이버';
 }

@@ -2393,6 +2393,24 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'로그인'**
   String get sessionExpiredLogin;
+
+  /// 계정 카드 로그인 방식 라벨
+  ///
+  /// In ko, this message translates to:
+  /// **'로그인 방식'**
+  String get settingsAccountLabelLoginMethod;
+
+  /// 이메일 가입 로그인 방식
+  ///
+  /// In ko, this message translates to:
+  /// **'이메일'**
+  String get settingsLoginMethodEmail;
+
+  /// 네이버 로그인 방식
+  ///
+  /// In ko, this message translates to:
+  /// **'네이버'**
+  String get settingsLoginMethodNaver;
 }
 
 class _AppLocalizationsDelegate

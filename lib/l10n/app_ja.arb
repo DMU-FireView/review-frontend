@@ -382,5 +382,8 @@
   "adminApplied": "反映済み",
   "adminDismissed": "却下",
   "sessionExpiredMessage": "ログインの有効期限が切れました。もう一度ログインしてください。",
-  "sessionExpiredLogin": "ログイン"
+  "sessionExpiredLogin": "ログイン",
+  "settingsAccountLabelLoginMethod": "ログイン方法",
+  "settingsLoginMethodEmail": "メール",
+  "settingsLoginMethodNaver": "NAVER"
 }

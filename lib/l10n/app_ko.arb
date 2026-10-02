@@ -877,5 +877,14 @@
   "@sessionExpiredMessage": { "description": "401로 로그아웃됐을 때 알림" },
 
   "sessionExpiredLogin": "로그인",
-  "@sessionExpiredLogin": { "description": "로그인 만료 알림의 이동 버튼" }
+  "@sessionExpiredLogin": { "description": "로그인 만료 알림의 이동 버튼" },
+
+  "settingsAccountLabelLoginMethod": "로그인 방식",
+  "@settingsAccountLabelLoginMethod": { "description": "계정 카드 로그인 방식 라벨" },
+
+  "settingsLoginMethodEmail": "이메일",
+  "@settingsLoginMethodEmail": { "description": "이메일 가입 로그인 방식" },
+
+  "settingsLoginMethodNaver": "네이버",
+  "@settingsLoginMethodNaver": { "description": "네이버 로그인 방식" }
 }

@@ -7,6 +7,9 @@ import 'package:re_view_front/features/settings/domain/entities/settings_data.da
 abstract interface class SettingsRemoteDataSource {
   Future<SettingsDto> getSettings();
   Future<SettingsDto> updateSettings(SettingsData settings);
+
+  /// 로그인 방식(LOCAL / GOOGLE / NAVER).
+  Future<String> getLoginMethod();
 }
 
 class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
@@ -32,6 +35,19 @@ class SettingsRemoteDataSourceImpl implements SettingsRemoteDataSource {
       data: SettingsDto.toUpdateJson(settings),
     );
     return _parse(response.data);
+  }
+
+  @override
+  Future<String> getLoginMethod() async {
+    final response = await _apiClient.get('${_config.userMePath}/security');
+    final data = response.data;
+    if (data is Map<String, dynamic>) {
+      final body = ApiResponse<Object?>.fromJson(data).requireSuccess();
+      if (body is Map<String, dynamic>) {
+        return body['loginMethod']?.toString() ?? 'LOCAL';
+      }
+    }
+    throw const FormatException('Invalid security response');
   }
 
   SettingsDto _parse(Object? data) {
