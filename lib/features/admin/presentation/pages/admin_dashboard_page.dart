@@ -47,22 +47,25 @@ class AdminDashboardPage extends ConsumerWidget {
             builder: (summary) => _SummaryGrid(summary: summary),
           ),
           const SizedBox(height: AppSpacing.xl),
-          Row(
+          // 좁은 화면에서는 기간 선택기가 제목 아래로 내려간다.
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.sm,
             children: [
-              const Expanded(
-                child: Text(
-                  'AI 모델 성능',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
-                  ),
+              const Text(
+                'AI 모델 성능',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
                 ),
               ),
               SegmentedButton<int>(
                 segments: [
                   for (final days in _periodOptions)
-                    ButtonSegment(value: days, label: Text('최근 $days일')),
+                    ButtonSegment(value: days, label: Text('$days일')),
                 ],
                 selected: {state.days},
                 showSelectedIcon: false,

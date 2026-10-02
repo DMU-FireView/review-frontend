@@ -7,8 +7,9 @@ class AdminDashboardViewModel extends Notifier<AdminDashboardState> {
   AdminDashboardRepository get _repository =>
       ref.read(adminDashboardRepositoryProvider);
 
-  /// 기간을 빠르게 바꿀 때 늦게 온 이전 기간 응답을 버리기 위한 번호.
+  /// 새로고침이나 기간 변경이 겹칠 때 늦게 온 이전 응답을 버리기 위한 번호.
   int _performanceRequest = 0;
+  int _summaryRequest = 0;
 
   @override
   AdminDashboardState build() {
@@ -27,9 +28,10 @@ class AdminDashboardViewModel extends Notifier<AdminDashboardState> {
   }
 
   Future<void> _loadSummary() async {
+    final request = ++_summaryRequest;
     state = state.copyWith(summary: const AsyncLoading());
     final result = await _repository.getSummary();
-    if (!ref.mounted) return;
+    if (!ref.mounted || request != _summaryRequest) return;
     state = state.copyWith(
       summary: result.when(
         success: AsyncData.new,

@@ -15,19 +15,23 @@ class AdminUserViewModel extends Notifier<AdminUserState> {
     return const AdminUserState(isLoading: true);
   }
 
-  Future<void> loadList() async {
+  /// [page]를 불러온다. 성공했을 때만 현재 페이지를 바꿔, 실패해도 표시 중인
+  /// 목록과 페이지 번호가 어긋나지 않게 한다.
+  Future<void> loadList({int? page}) async {
+    final targetPage = page ?? state.page;
     final request = ++_request;
     state = state.copyWith(isLoading: true, clearError: true);
     final result = await _repository.getUsers(
-      page: state.page,
+      page: targetPage,
       size: state.pageSize,
     );
     if (!ref.mounted || request != _request) return;
     result.when(
-      success: (page) => state = state.copyWith(
-        items: page.items,
-        totalPages: page.totalPages,
-        totalElements: page.totalElements,
+      success: (data) => state = state.copyWith(
+        items: data.items,
+        page: targetPage,
+        totalPages: data.totalPages,
+        totalElements: data.totalElements,
         isLoading: false,
       ),
       failure: (f) =>
@@ -35,8 +39,5 @@ class AdminUserViewModel extends Notifier<AdminUserState> {
     );
   }
 
-  void changePage(int page) {
-    state = state.copyWith(page: page);
-    loadList();
-  }
+  void changePage(int page) => loadList(page: page);
 }

@@ -51,6 +51,11 @@ class AdminUsersPage extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
+          // 목록이 있는 상태에서 다른 페이지를 못 불러오면 기존 목록 위에 알린다.
+          if (state.errorMessage != null && state.items.isNotEmpty) ...[
+            _ErrorBanner(message: state.errorMessage!, onRetry: vm.loadList),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           Expanded(
             child: _UserTable(state: state, vm: vm),
           ),
@@ -147,6 +152,43 @@ class _UserTable extends StatelessWidget {
         fontSize: 13,
         fontWeight: strong ? FontWeight.w600 : FontWeight.w400,
         color: AppColors.textPrimary,
+      ),
+    );
+  }
+}
+
+class _ErrorBanner extends StatelessWidget {
+  const _ErrorBanner({required this.message, required this.onRetry});
+
+  final String message;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.errorSoft,
+        borderRadius: BorderRadius.circular(AppRadius.sm),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.error_outline, size: 18, color: AppColors.error),
+          const SizedBox(width: AppSpacing.xs),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 13,
+                color: AppColors.textPrimary,
+              ),
+            ),
+          ),
+          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+        ],
       ),
     );
   }
