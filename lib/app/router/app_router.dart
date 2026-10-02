@@ -43,6 +43,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: authNotifier,
     observers: [popupRouteTracker],
     redirect: (context, state) {
+      if (state.matchedLocation == RoutePaths.passwordReset ||
+          state.matchedLocation == RoutePaths.resetPassword) {
+        return null;
+      }
       final isLoggedIn = ref.read(isLoggedInProvider);
       final tokenStore = ref.read(authTokenStoreProvider.notifier);
       const authPages = {
@@ -169,8 +173,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: RoutePaths.passwordReset,
         name: RouteNames.passwordReset,
-        pageBuilder: (context, state) =>
-            _buildTransitionPage(state, const PasswordResetPage()),
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          PasswordResetPage(resetToken: state.uri.queryParameters['token']),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.resetPassword,
+        name: RouteNames.resetPassword,
+        pageBuilder: (context, state) => _buildTransitionPage(
+          state,
+          PasswordResetPage(resetToken: state.uri.queryParameters['token']),
+        ),
       ),
       GoRoute(
         path: RoutePaths.wishlist,
@@ -232,10 +246,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.adminReviews,
             name: RouteNames.adminReviews,
-            pageBuilder: (context, state) => _buildTransitionPage(
-              state,
-              const AdminSuspiciousReviewsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminSuspiciousReviewsPage()),
           ),
           GoRoute(
             path: RoutePaths.adminReports,
@@ -246,10 +258,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: RoutePaths.adminAnalysisFeedbacks,
             name: RouteNames.adminAnalysisFeedbacks,
-            pageBuilder: (context, state) => _buildTransitionPage(
-              state,
-              const AdminAnalysisFeedbacksPage(),
-            ),
+            pageBuilder: (context, state) =>
+                _buildTransitionPage(state, const AdminAnalysisFeedbacksPage()),
           ),
           GoRoute(
             path: RoutePaths.adminUsers,

@@ -48,6 +48,7 @@ const _hiddenPathPrefixes = [
   RoutePaths.onboarding,
   RoutePaths.oauthCallback,
   RoutePaths.passwordReset,
+  RoutePaths.resetPassword,
   RoutePaths.admin,
 ];
 
