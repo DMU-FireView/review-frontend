@@ -10,6 +10,7 @@ abstract final class RoutePaths {
   static const productDetail = '/product/:id';
   static const oauthCallback = '/auth/callback';
   static const passwordReset = '/password-reset';
+  static const resetPassword = '/reset-password';
   static const wishlist = '/wishlist';
   static const cart = '/cart';
   static const analysisReport = '/product/:id/analysis';
@@ -37,6 +38,7 @@ abstract final class RouteNames {
   static const productDetail = 'productDetail';
   static const oauthCallback = 'oauthCallback';
   static const passwordReset = 'passwordReset';
+  static const resetPassword = 'resetPassword';
   static const wishlist = 'wishlist';
   static const cart = 'cart';
   static const analysisReport = 'analysisReport';
